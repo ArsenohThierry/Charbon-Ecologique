@@ -1,5 +1,16 @@
-CREATE DATABASE IF NOT EXISTS charbon;
-\c charbon;
+-- À exécuter connecté en tant que postgres
+
+CREATE ROLE admin WITH
+    LOGIN
+    PASSWORD 'admin'
+    SUPERUSER
+    CREATEDB
+    CREATEROLE
+    INHERIT;
+
+CREATE DATABASE charbon OWNER admin;
+
+\c charbon admin
 
 CREATE TABLE IF NOT EXISTS role (
     id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -7,7 +18,7 @@ CREATE TABLE IF NOT EXISTS role (
     description TEXT
 );
 
-CREATE TABLE utilisateur (
+CREATE TABLE IF NOT EXISTS utilisateur (
     id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     nom VARCHAR(100) NOT NULL,
     prenom VARCHAR(100) NOT NULL,
