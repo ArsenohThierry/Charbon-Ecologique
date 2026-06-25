@@ -1,245 +1,112 @@
 <!DOCTYPE html>
 
-<html xmlns:th="http://www.thymeleaf.org" class="light" lang="fr">
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
 
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Connexion | Charbon Écologique</title>
-    <!-- <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script> -->
+    <title>Connexion | Charbon Vert</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Courier+Prime&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Playfair+Display:wght@700&amp;display=swap"
         rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-        rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet" />
-    <!-- Shared Style Context & Typography -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#1B331C',
+                            accent: '#C79E5C',
+                            light: '#F8F7F0',
+                            success: '#407B4A',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
             -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            background-color: #faf9f9;
-            /* background from config */
         }
-
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-            display: inline-block;
-            vertical-align: middle;
-        }
-
-        /* Custom checkbox style to match Swiss aesthetic */
-        input[type="checkbox"] {
-            appearance: none;
-            border: 1px solid #CCCCCC;
-            width: 16px;
-            height: 16px;
-            border-radius: 2px;
-            cursor: pointer;
-            position: relative;
-        }
-
-        input[type="checkbox"]:checked {
-            background-color: #E73C02;
-            border-color: #E73C02;
-        }
-
-        input[type="checkbox"]:checked::after {
-            content: 'check';
-            font-family: 'Material Symbols Outlined';
-            font-size: 12px;
-            color: white;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+        input:focus {
+            outline: none !important;
+            border-color: #407B4A !important;
+            box-shadow: 0 0 0 1px #407B4A !important;
         }
     </style>
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "on-surface": "#1a1c1c",
-                        "surface-container-lowest": "#ffffff",
-                        "secondary-container": "#e2e2e2",
-                        "secondary": "#5e5e5e",
-                        "background": "#faf9f9",
-                        "primary-fixed-dim": "#c6c6c7",
-                        "inverse-primary": "#c6c6c7",
-                        "tertiary-container": "#ffffff",
-                        "alert-orange": "#FFA500",
-                        "inverse-on-surface": "#f1f0f0",
-                        "surface-container-highest": "#e3e2e2",
-                        "error-container": "#ffdad6",
-                        "surface-tint": "#5d5f5f",
-                        "secondary-fixed": "#e2e2e2",
-                        "surface-variant": "#e3e2e2",
-                        "on-error": "#ffffff",
-                        "surface-container-low": "#f4f3f3",
-                        "on-background": "#1a1c1c",
-                        "on-secondary": "#ffffff",
-                        "inverse-surface": "#2f3131",
-                        "on-tertiary": "#ffffff",
-                        "tertiary-fixed": "#ffdbd1",
-                        "primary-container": "#ffffff",
-                        "success-green": "#00AA44",
-                        "secondary-fixed-dim": "#c6c6c6",
-                        "on-primary-fixed": "#1a1c1c",
-                        "error": "#ba1a1a",
-                        "on-secondary-container": "#646464",
-                        "on-secondary-fixed": "#1b1b1b",
-                        "outline": "#747878",
-                        "surface-dim": "#dadada",
-                        "on-surface-variant": "#444748",
-                        "error-red": "#E63946",
-                        "on-primary-container": "#747676",
-                        "surface-bright": "#faf9f9",
-                        "on-tertiary-fixed-variant": "#881f00",
-                        "primary-fixed": "#e2e2e2",
-                        "on-primary-fixed-variant": "#454747",
-                        "on-tertiary-fixed": "#3c0800",
-                        "surface-container": "#eeeeee",
-                        "swiss-red": "#E73C02",
-                        "surface-container-high": "#e8e8e8",
-                        "on-secondary-fixed-variant": "#474747",
-                        "outline-variant": "#c4c7c8",
-                        "border-gray": "#CCCCCC",
-                        "tertiary": "#b22c00",
-                        "on-primary": "#ffffff",
-                        "on-tertiary-container": "#dc3800",
-                        "surface": "#faf9f9",
-                        "focus-blue": "#3B82F6",
-                        "primary": "#5d5f5f",
-                        "tertiary-fixed-dim": "#ffb5a1",
-                        "on-error-container": "#93000a"
-                    },
-                    "borderRadius": {
-                        "DEFAULT": "0.125rem",
-                        "lg": "0.25rem",
-                        "xl": "0.5rem",
-                        "full": "0.75rem"
-                    },
-                    "spacing": {
-                        "base": "8px",
-                        "margin-desktop": "32px",
-                        "gutter": "16px",
-                        "max-width": "1280px",
-                        "margin-mobile": "16px"
-                    },
-                    "fontFamily": {
-                        "body-md": ["Inter"],
-                        "headline-sm": ["Inter"],
-                        "headline-md": ["Inter"],
-                        "headline-lg": ["Inter"],
-                        "code": ["Courier Prime"],
-                        "label-caps": ["Inter"],
-                        "body-sm": ["Inter"]
-                    },
-                    "fontSize": {
-                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
-                        "headline-sm": ["18px", { "lineHeight": "24px", "fontWeight": "600" }],
-                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
-                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
-                        "code": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
-                        "label-caps": ["10px", { "lineHeight": "12px", "letterSpacing": "0.05em", "fontWeight": "700" }],
-                        "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }]
-                    }
-                },
-            },
-        }
-    </script>
 </head>
 
-<body class="bg-background min-h-screen flex items-center justify-center p-margin-mobile md:p-0">
-    <!-- 12-column grid layout container for absolute precision -->
-    <main
-        class="w-full max-w-[1280px] mx-auto grid grid-cols-4 md:grid-cols-12 gap-gutter items-center justify-center min-h-screen">
-        <!-- Login Card: spans 4 columns on mobile, 4-6 on desktop centered -->
-        <div
-            class="col-span-4 md:col-start-4 md:col-span-6 lg:col-start-5 lg:col-span-4 bg-surface-container-lowest border border-border-gray p-8 md:p-12 shadow-none rounded-none">
-            <!-- Brand Identity Section -->
+<body class="bg-brand-light min-h-screen flex items-center justify-center p-4">
+    <main class="w-full max-w-[420px]">
+        <!-- Login Card -->
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-10">
+            <!-- Brand -->
             <div class="flex flex-col items-center mb-10">
-                <div class="w-16 h-16 flex items-center justify-center mb-6 bg-swiss-red">
-                    <!-- Custom SVG Icon for Fire/Eco Charcoal -->
-                    <span class="material-symbols-outlined text-surface-container-lowest text-[40px]"
-                        data-icon="local_fire_department"
-                        style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+                <div class="w-16 h-16 bg-brand-dark rounded-full flex items-center justify-center mb-6">
+                    <svg class="h-8 w-8 text-brand-accent" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                        <path d="M21 12c0 1.2-4.03 6-9 6s-9-4.8-9-6c0-1.2 4.03-6 9-6s9 4.8 9 6z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                        <path d="M12 18V6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                    </svg>
                 </div>
-                <h1 class="font-label-caps text-label-caps text-on-surface uppercase tracking-[0.2em] mb-2">Charbon
-                    Écologique</h1>
-                <h2 class="font-headline-md text-headline-md text-on-surface text-center">Connexion au Système</h2>
+                <h1 class="font-serif text-2xl text-brand-dark font-bold mb-1">Charbon Vert</h1>
+                <p class="text-sm text-gray-500">Gestionnaire de stock</p>
             </div>
-            <!-- Login Form -->
-            <!-- Error message -->
-            <div th:if="${error}" class="bg-error-container border border-error text-on-error-container p-4 mb-6 text-body-md">
+
+            <!-- Error -->
+            <div th:if="${error}" class="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3 mb-6">
                 <span th:text="${error}">Erreur</span>
             </div>
-            <form th:action="@{/login}" method="post" class="space-y-6" id="login-form">
-                <!-- Identifiants Field -->
-                <div class="space-y-2">
-                    <label class="font-body-sm text-body-sm font-bold text-on-surface uppercase"
-                        for="username">Identifiants</label>
+
+            <!-- Form -->
+            <form th:action="@{/login}" method="post" class="space-y-5" id="login-form">
+                <div class="space-y-1.5">
+                    <label class="block text-sm font-medium text-gray-700" for="username">Identifiant</label>
                     <input
-                        class="w-full h-12 px-4 border border-border-gray rounded-none focus:ring-0 focus:border-focus-blue font-body-md text-body-md text-on-surface placeholder-secondary/50 outline-none transition-all"
-                        id="username" name="username" required="" type="text" />
+                        class="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-gray-700 text-sm"
+                        id="username" name="username" required="" type="text" placeholder="Votre identifiant" />
                 </div>
-                <!-- Password Field -->
-                <div class="space-y-2">
-                    <label class="font-body-sm text-body-sm font-bold text-on-surface uppercase" for="password">Mot de
-                        passe</label>
+                <div class="space-y-1.5">
+                    <label class="block text-sm font-medium text-gray-700" for="password">Mot de passe</label>
                     <div class="relative">
                         <input
-                            class="w-full h-12 px-4 pr-12 border border-border-gray rounded-none focus:ring-0 focus:border-focus-blue font-body-md text-body-md text-on-surface outline-none transition-all"
-                            id="password" name="password" required="" type="password" />
+                            class="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 pr-12 text-gray-700 text-sm"
+                            id="password" name="password" required="" type="password" placeholder="Votre mot de passe" />
                         <button
-                            class="absolute right-3 top-1/2 -translate-y-1/2 text-secondary hover:text-on-surface cursor-pointer p-1"
+                            class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer p-1"
                             id="toggle-password" type="button">
-                            <span class="material-symbols-outlined" id="password-icon">visibility</span>
+                            <svg class="w-5 h-5" id="password-icon" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                                <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                                <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                            </svg>
                         </button>
                     </div>
                 </div>
-               
-                <!-- Submit Button -->
-                <div class="pt-4">
+                <div class="pt-2">
                     <button
-                        class="w-full h-14 bg-swiss-red text-white font-headline-sm text-headline-sm uppercase tracking-wider hover:bg-on-surface active:scale-[0.98] transition-all duration-200"
+                        class="w-full h-12 bg-brand-success hover:bg-emerald-800 text-white font-semibold rounded-lg transition-all text-sm"
                         type="submit">
                         Se connecter
                     </button>
                 </div>
             </form>
-            <!-- Footer Meta -->
-            <div class="mt-12 pt-8 border-t border-border-gray text-center">
-                <p class="font-body-sm text-body-sm text-secondary">
+
+            <div class="mt-10 pt-6 border-t border-gray-100 text-center">
+                <p class="text-xs text-gray-400">
                     Propulsé par le système de gestion de production durable.<br />
-                    <span class="font-code text-code mt-2 block opacity-50">v2.4.0-STABLE</span>
+                    <span class="text-[10px] opacity-50 mt-1 block">v2.4.0-STABLE</span>
                 </p>
             </div>
         </div>
-        <!-- Decorative Grid Lines (Atmospheric Swiss Design) -->
-        <div class="fixed inset-0 pointer-events-none z-[-1] opacity-[0.03]">
-            <div class="max-w-[1280px] mx-auto h-full grid grid-cols-12 gap-gutter px-margin-desktop">
-                <div class="border-x border-on-surface h-full"></div>
-                <div class="border-x border-on-surface h-full"></div>
-                <div class="border-x border-on-surface h-full"></div>
-                <div class="border-x border-on-surface h-full"></div>
-                <div class="border-x border-on-surface h-full"></div>
-                <div class="border-x border-on-surface h-full"></div>
-                <div class="border-x border-on-surface h-full"></div>
-                <div class="border-x border-on-surface h-full"></div>
-                <div class="border-x border-on-surface h-full"></div>
-                <div class="border-x border-on-surface h-full"></div>
-                <div class="border-x border-on-surface h-full"></div>
-                <div class="border-x border-on-surface h-full"></div>
-            </div>
-        </div>
     </main>
-    <!-- Micro-interactions Script -->
+
     <script>
-        // Password visibility toggle
         const toggleBtn = document.getElementById('toggle-password');
         const passwordInput = document.getElementById('password');
         const icon = document.getElementById('password-icon');
@@ -247,15 +114,16 @@
         toggleBtn.addEventListener('click', () => {
             const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordInput.setAttribute('type', type);
-            icon.textContent = type === 'password' ? 'visibility' : 'visibility_off';
+            icon.innerHTML = type === 'password'
+                ? '<path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>'
+                : '<path d="M17.94 17.94A10.07 10.07 0 0112 20c-4.477 0-8.268-2.943-9.542-7a10.102 10.102 0 012.602-3.94" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><path d="M9.9 4.24A9.12 9.12 0 0112 4c4.477 0 8.268 2.943 9.542 7a10.102 10.102 0 01-2.602 3.94" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><path d="M3 3l18 18" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>';
         });
 
-        // Form submission feedback
         const loginForm = document.getElementById('login-form');
         loginForm.addEventListener('submit', () => {
             const btn = loginForm.querySelector('button[type="submit"]');
             btn.disabled = true;
-            btn.textContent = 'Traitement...';
+            btn.textContent = 'Connexion...';
             btn.classList.add('opacity-80');
         });
     </script>
