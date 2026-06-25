@@ -1,6 +1,6 @@
 package com.example.charbonecolo.controller;
 
-import com.example.charbonecolo.model.Utilisateur;
+import com.example.charbonecolo.model.UtilisateurModel;
 import com.example.charbonecolo.repository.UtilisateurRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
@@ -46,7 +46,7 @@ public class AuthController {
 
     @GetMapping("/dashboard")
     public String dashboard(HttpSession session, Model model) {
-        Utilisateur user = (Utilisateur) session.getAttribute("user");
+        UtilisateurModel user = (UtilisateurModel) session.getAttribute("user");
         if (user == null) {
             return "redirect:/login";
         }
