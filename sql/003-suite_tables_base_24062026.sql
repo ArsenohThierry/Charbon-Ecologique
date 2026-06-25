@@ -34,7 +34,10 @@ CREATE TABLE type_matiere_premiere (
 
 CREATE TABLE IF NOT EXISTS mouvement_stock_matiere_premiere(
     id,
-    id_
+    id_type_matiere_premiere,
+    quantite,
+    type_mouvement_stock_mp
+    date_mouvement_mp,
 );
 
 -- ============================================
@@ -52,9 +55,11 @@ CREATE TABLE IF NOT EXISTS lot_statuts(
 CREATE TABLE IF NOT EXISTS produit(
     id,
     nom,
-    pu,
+    pu, -- ex : Charbon , rond , charbon rectange , grand , ...
 );
 
+
+-- On insere dans cette table quand le statut d'un lot est : "Termine"
 CREATE TABLE IF NOT EXISTS produits_finis(
     id,
     reference,
@@ -63,6 +68,7 @@ CREATE TABLE IF NOT EXISTS produits_finis(
     id_lot_production,
 );
 
+-- seuil pour definir l etat du stock : ex : 20 : stock presque epuisee
 CREATE TABLE IF NOT EXISTS alerte_seuil (
     id,
     libelle -- ( Qtt faible , Qtt Epuisee, Qtt suffisant)
@@ -167,8 +173,41 @@ CREATE TABLE IF NOT EXISTS clients (
     date_ajout
 );
 
+
+CREATE TABLE IF NOT EXISTS commande_statuts(
+    id SERIAL PRIMARY KEY,
+    libelle VARCHAR(255) NOT NULL
+    -- commande , en livraison , livre , annule, en attente , 
+);
+
+CREATE TABLE IF NOT EXISTS commandes (
+    id SERIAL PRIMARY KEY,
+    reference,
+    id_client -- foreign key,
+    date_commande TIMESTAMP NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS statuts_commandes (
+    id SERIAL PRIMARY KEY,
+    id_commandes INT NOT NULL,
+    id_commande_statuts INT NOT NULL,
+    date_statut_commande TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+
+CREATE TABLE IF NOT EXISTS detail_commande(
+    id,
+    id_commande,
+    id_produit, -- tyoe de charbon
+    quantite,
+    montant
+);
+
+-- en ajoutant une commande ca enregistre une sortie de stock et ajoute le statut commande 
+-- on peut ensuite annuler ce qui va supprimer la ligne dans mouvement_stock et inserer un statut annule dans commande_statuts
+
 -- 
-CREATE TABLE IF NOT EXISTS statut_paiement(
+CREATE TABLE IF NOT EXISTS paiement_statuts(
     id,
     libelle -- ex : Paye , non payee , paye partiellement
 );
@@ -183,50 +222,30 @@ CREATE TABLE IF NOT EXISTS paiement(
     reference,
     id_commande,
     nontant_total,
-    id_methode_paiement,
-    id_statut_paiement
 );
 
-CREATE TABLE IF NOT EXISTS paiement_statut(
-
+CREATE TABLE IF NOT EXISTS statuts_paiements(
+    id,
+    id_statut_paiement
+    id_methode_paiement,
 )
 
 -- Un paiment s'effectue soit : 
 --  - Apres que le livreur a fini sa livraison
 --  - Soit en avance par autres methodes de paiement
 
-CREATE TABLE IF NOT EXISTS commande_statuts(
-    id SERIAL PRIMARY KEY,
-    libelle VARCHAR(255) NOT NULL
-    -- commande , en livraison , livre , annule, en attente , 
-);
-
-CREATE TABLE IF NOT EXISTS commandes (
-    id SERIAL PRIMARY KEY,
-    id_client -- foreign key,
-    id_produit, -- charbon rond , ovale , bonne qualite,...
-    quantite INT NOT NULL,
-    date_commande TIMESTAMP NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS statuts_commandes (
-    id SERIAL PRIMARY KEY,
-    id_commandes INT NOT NULL,
-    id_commande_statuts INT NOT NULL,
-    date_statut_commande TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
-
-CREATE TABLE IF NOT EXISTS detail_commande(
-    id,
-);
-
--- en ajoutant une commande ca enregistre une sortie de stock et ajoute le statut commande 
--- on peut ensuite annuler ce qui va supprimer la ligne dans mouvement_stock et inserer un statut annule dans commande_statuts
 
 -- ============================================
 -- Livraison
 -- ============================================
+
+CREATE TABLE IF NOT EXISTS livreurs(
+    id,
+    nom,
+    email,
+    telephone
+);
+
 
 -- en creant une nouvelle livraison , on doit : pouvoir selectionner  le(les) commandes "statuts commandes" ,..., puis valider 
 -- ca va actuellement ajouter un statut aux commandes : "En livraison"
@@ -242,7 +261,13 @@ CREATE TABLE IF NOT EXISTS livraison_statuts (
 
 CREATE TABLE IF NOT EXISTS livraison (
     id SERIAL PRIMARY KEY,
-    date_livraison TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    reference,
+    id_commande,
+    date_livraison TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP -- date commencement de la livraison
+    date_reportage_livraison,
+    date_livraison_reel,
+    lieu,
+    id_livreur
 );
 
 CREATE TABLE IF NOT EXISTS statuts_livraisons (
@@ -251,3 +276,41 @@ CREATE TABLE IF NOT EXISTS statuts_livraisons (
     id_livraisons_statuts INT NOT NULL,
     date_statuts_livraison TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Facture
+
+CREATE TABLE IF NOT EXISTS facture(
+    id,
+    reference,
+    id_paiement,
+);
+
+CREATE TABLE IF NOT EXISTS facture_detail(
+    id,
+    id_facture,
+    montant,
+    libelle -- paiement, frais de livraison
+);
+
+CREATE TABLE IF NOT EXISTS type_journal( -- vente, achat, banque, caisse
+    id,
+    libelle,
+    code 
+);
+
+CREATE TABLE IF NOT EXISTS origine( -- commande, paiement, achat
+    id,
+    libelle
+);
+
+CREATE TABLE IF NOT EXISTS journal_financier(
+    id,
+    reference,
+    date_operation,
+    id_type_journal,
+    id_origine,
+    debit,
+    credit,
+    sens,
+    description
+);  
