@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "utilisateur")
-public class Utilisateur {
+public class UtilisateurModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +28,7 @@ public class Utilisateur {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_role", nullable = false)
-    private Role role;
+    private RoleModel role;
 
     @Column(name = "date_creation", nullable = false)
     private LocalDateTime dateCreation;
@@ -36,7 +36,7 @@ public class Utilisateur {
     @Column(nullable = false)
     private Boolean actif;
 
-    public Utilisateur() {}
+    public UtilisateurModel() {}
 
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
@@ -50,8 +50,8 @@ public class Utilisateur {
     public void setTelephone(String telephone) { this.telephone = telephone; }
     public String getMotPasse() { return motPasse; }
     public void setMotPasse(String motPasse) { this.motPasse = motPasse; }
-    public Role getRole() { return role; }
-    public void setRole(Role role) { this.role = role; }
+    public RoleModel getRole() { return role; }
+    public void setRole(RoleModel role) { this.role = role; }
     public LocalDateTime getDateCreation() { return dateCreation; }
     public void setDateCreation(LocalDateTime dateCreation) { this.dateCreation = dateCreation; }
     public Boolean getActif() { return actif; }

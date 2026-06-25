@@ -32,6 +32,11 @@ CREATE TABLE type_matiere_premiere (
         REFERENCES fournisseur(id)
 );
 
+CREATE TABLE IF NOT EXISTS mouvement_stock_matiere_premiere(
+    id,
+    id_
+);
+
 -- ============================================
 -- LOT PRODUCTION ( Ex : LOT-001, ...)
 -- ============================================
@@ -44,14 +49,39 @@ CREATE TABLE IF NOT EXISTS lot_statuts(
     -- les statuts sont : En preparation, Termine , En stock (voila son cycle de vie puis disparait mais est toujours enregistre)
 );
 
+CREATE TABLE IF NOT EXISTS produit(
+    id,
+    nom,
+    pu,
+);
+
+CREATE TABLE IF NOT EXISTS produits_finis(
+    id,
+    reference,
+    quantite,
+    id_produit
+    id_lot_production,
+);
+
+CREATE TABLE IF NOT EXISTS alerte_seuil (
+    id,
+    libelle -- ( Qtt faible , Qtt Epuisee, Qtt suffisant)
+);
+
+CREATE TABLE IF NOT EXISTS seuil (
+    id,
+    id_alerte_seuil
+);
+
 CREATE TABLE IF NOT EXISTS lot_production (
     id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     reference VARCHAR(50) NOT NULL UNIQUE,
     id_type_matiere_premiere INTEGER NOT NULL,
-    quantite_utilisee NUMERIC(10,2) NOT NULL, -- kg de matiere premiere utilises
-    quantite_prevue INT NOT NULL,             -- quantite de charbon attendue
+    quantite_matiere_utilisee NUMERIC(10,2) NOT NULL, -- kg de matiere premiere utilises
+    quantite_produit_prevue INT NOT NULL,
+    quantite_produit_reelle INT DEFAULT NULL,             -- quantite de charbon attendue
     date_fin_prevue TIMESTAMP,
-    date_fin_reelle TIMESTAMP,
+    date_fin_reelle TIMESTAMP DEFAULT NULL,
     remarques TEXT,
     date_entree_lot TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -87,6 +117,15 @@ CREATE TABLE IF NOT EXISTS statuts_lot_production(
 
 -- On insere en plus : la quantite de charbon produit , ne doit pas etre superieur a la quantite prevuee + 
 
+CREATE TABLE IF NOT EXISTS type_mouvement_stock (
+    id,
+    libelle,
+    motif
+);
+
+-- A faire : TRIGGER lors de l'insertion : il y a un motif pour la sortie stock , un motif different pour chaque type de sortie stock 
+-- pas de motif pour entree stock
+
 CREATE TABLE IF NOT EXISTS mouvement_stock(
     id SERIAL PRIMARY KEY,
     id_type_charbon INT DEFAULT NULL,
@@ -94,7 +133,7 @@ CREATE TABLE IF NOT EXISTS mouvement_stock(
     id_commande INT DEFAULT NULL,         -- NULL si c'est une entree
     quantite INT NOT NULL,
     date_mouvement TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    type_mouvement VARCHAR(50) NOT NULL, -- Entree ou Sortie
+    id_type_mouvement , -- Entree ou Sortie
 
     CONSTRAINT fk_mouvement_stock_lot_production
         FOREIGN KEY (id_lot_production)
@@ -102,7 +141,9 @@ CREATE TABLE IF NOT EXISTS mouvement_stock(
     CONSTRAINT fk_mouvement_stock_commande
         FOREIGN KEY (id_commande)
         REFERENCES commandes(id)
+    -- foreign key vers type_mouvement_stock
 );
+
 
 -- etat de stock , pas de table qui stocke la quantite actuelle , on verifie par requetes (otran tam le cheqe an Mr Naina iny)
 -- en validant ca va UPDATE la date_fin_reelle du lot
@@ -112,21 +153,58 @@ CREATE TABLE IF NOT EXISTS mouvement_stock(
 -- Ventes/commandes ( Sortie de stock )
 -- ============================================
 
--- commande = sortie de stock
+-- commande = sortie de stock : avec motif : "COMMANDE"
 -- normalement si on a le temps :: les commandes se font via interface utilisateur 
 -- mais on peut quand meme ajouter manuellement des commandes ( un peu comme si les clients demandent a se faire livrer des pizzas)
 -- LOGIQUEMENT , on ne vend que du charbon : et 1 seul type pour le moment 
 
+CREATE TABLE IF NOT EXISTS clients (
+    id,
+    nom,
+    numero,
+    email,
+    adresse,
+    date_ajout
+);
+
+-- 
+CREATE TABLE IF NOT EXISTS statut_paiement(
+    id,
+    libelle -- ex : Paye , non payee , paye partiellement
+);
+
+CREATE TABLE IF NOT EXISTS methode_paiement(
+    id,
+    libelle -- ex : Mobile money , Carte , Espece,...
+);
+
+CREATE TABLE IF NOT EXISTS paiement(
+    id,
+    reference,
+    id_commande,
+    nontant_total,
+    id_methode_paiement,
+    id_statut_paiement
+);
+
+CREATE TABLE IF NOT EXISTS paiement_statut(
+
+)
+
+-- Un paiment s'effectue soit : 
+--  - Apres que le livreur a fini sa livraison
+--  - Soit en avance par autres methodes de paiement
+
 CREATE TABLE IF NOT EXISTS commande_statuts(
     id SERIAL PRIMARY KEY,
     libelle VARCHAR(255) NOT NULL
-    -- commande , en livraison , livre , annule
+    -- commande , en livraison , livre , annule, en attente , 
 );
 
 CREATE TABLE IF NOT EXISTS commandes (
     id SERIAL PRIMARY KEY,
-    num_client VARCHAR(20) NOT NULL, -- numero de telephone du client
-    id_type_charbon INT DEFAULT NULL,
+    id_client -- foreign key,
+    id_produit, -- charbon rond , ovale , bonne qualite,...
     quantite INT NOT NULL,
     date_commande TIMESTAMP NOT NULL
 );
@@ -136,6 +214,11 @@ CREATE TABLE IF NOT EXISTS statuts_commandes (
     id_commandes INT NOT NULL,
     id_commande_statuts INT NOT NULL,
     date_statut_commande TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+
+CREATE TABLE IF NOT EXISTS detail_commande(
+    id,
 );
 
 -- en ajoutant une commande ca enregistre une sortie de stock et ajoute le statut commande 
