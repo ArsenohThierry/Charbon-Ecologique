@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Historique des mouvements - Charbon Vert</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&amp;family=Inter:wght@400;500;600&amp;display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'charbon-dark': '#1B3022',
+                        'charbon-green': '#3E7B4F',
+                        'charbon-light-green': '#4A8B5D',
+                        'charbon-beige': '#F8F7F0',
+                        'charbon-gold': '#D4A373',
+                        'charbon-accent': '#E2C28E',
+                    },
+                    fontFamily: {
+                        'serif': ['Playfair Display', 'serif'],
+                        'sans': ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        h1, h2 {
+            font-family: 'Playfair Display', serif;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .sidebar-active {
+            background-color: rgba(226, 194, 142, 0.3);
+            border-left: 4px solid #E2C28E;
+        }
+        .sub-menu-active {
+            background-color: #D4A373;
+            color: #1B3022 !important;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+
+<body class="bg-charbon-beige min-h-screen flex">
+    <!-- BEGIN: Sidebar -->
+    <aside class="w-64 bg-charbon-dark text-white flex flex-col shrink-0 min-h-screen">
+        <div class="p-6 flex items-center space-x-3">
+            <div class="w-10 h-10 bg-charbon-accent rounded-full flex items-center justify-center text-charbon-dark">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"
+                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                </svg>
+            </div>
+            <div>
+                <h1 class="text-lg font-bold leading-none">Charbon Vert</h1>
+                <p class="text-xs text-gray-400 mt-1 uppercase tracking-tighter">Gestionnaire de stock</p>
+            </div>
+        </div>
+        <nav class="flex-1 px-3 mt-4 space-y-1">
+            <a class="flex items-center px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/10 rounded-md"
+                href="#">
+                <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                    <path
+                        d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                </svg>
+                Tableau de bord
+            </a>
+            <div>
+                <button
+                    class="w-full flex items-center justify-between px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/10 rounded-md">
+                    <div class="flex items-center">
+                        <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                            <path
+                                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                                stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                        </svg>
+                        Approvisionnement &amp; mat...
+                    </div>
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                        <path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="space-y-1">
+                <button
+                    class="w-full flex items-center justify-between px-3 py-2 text-sm font-medium text-white hover:bg-white/10 rounded-md">
+                    <div class="flex items-center">
+                        <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                            <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+                                stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                        </svg>
+                        Lots de production
+                    </div>
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                        <path d="M5 15l7-7 7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                    </svg>
+                </button>
+                <div class="pl-11 space-y-1 pr-2">
+                    <a class="block px-3 py-2 text-xs font-medium text-gray-400 hover:text-white" href="#">Insérer les matières premières</a>
+                    <a class="block px-3 py-2 text-xs font-medium text-gray-400 hover:text-white" href="#">Liste des lots</a>
+                    <a class="block px-3 py-2 text-xs font-medium sub-menu-active" href="#">Historique des mouvements</a>
+                </div>
+            </div>
+            <a class="flex items-center justify-between px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/10 rounded-md"
+                href="#">
+                <div class="flex items-center">
+                    <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                        <path d="M9 17v-2a4 4 0 10-8 0v2a2 2 0 002 2h4a2 2 0 002-2zm3-2a9 9 0 1118 0s-1 7-9 7-9-7-9-7z"
+                            stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                    </svg>
+                    Généralités stocks
+                </div>
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                    <path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                </svg>
+            </a>
+            <a class="flex items-center px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/10 rounded-md"
+                href="#">
+                <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                    <path
+                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                </svg>
+                Ventes / Commandes
+            </a>
+            <a class="flex items-center px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/10 rounded-md"
+                href="#">
+                <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                    <path
+                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                </svg>
+                Rapports
+            </a>
+        </nav>
+        <div class="p-4 border-t border-white/10">
+            <a class="flex items-center text-xs text-gray-400 hover:text-white" href="#">
+                <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                    <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                </svg>
+                Changer de rôle
+            </a>
+        </div>
+    </aside>
+    <!-- END: Sidebar -->
+    <!-- BEGIN: Main Content -->
+    <main class="flex-1 flex flex-col h-screen overflow-y-auto">
+        <header
+            class="h-16 px-8 flex items-center justify-between border-b border-gray-200 bg-charbon-beige sticky top-0 z-10">
+            <div>
+                <h2 class="text-xl font-serif text-charbon-dark leading-tight">Gestionnaire de stock</h2>
+                <p class="text-[10px] text-gray-500 uppercase tracking-widest mt-0.5">Approvisionnement, lots &amp; inventaire</p>
+            </div>
+            <div class="flex items-center space-x-4">
+                <span class="text-xs text-charbon-green bg-green-100 px-3 py-1 rounded-full font-medium">Maquette &bull; données fictives</span>
+                <div class="w-8 h-8 bg-charbon-green rounded-full flex items-center justify-center text-white font-bold text-sm">N</div>
+            </div>
+        </header>
+        <!-- BEGIN: Page Content -->
+        <div class="p-12 max-w-6xl">
+            <section class="mb-8">
+                <h1 class="text-4xl font-serif text-charbon-dark mb-2">Historique des mouvements</h1>
+                <p class="text-gray-600">Consulter l'historique des entrées et sorties de matières premières.</p>
+            </section>
+            <!-- Search & Filters -->
+            <div class="flex flex-wrap items-center gap-4 mb-6">
+                <div class="relative w-72">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                            <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round"
+                                stroke-linejoin="round" stroke-width="2"></path>
+                        </svg>
+                    </span>
+                    <input
+                        class="block w-full pl-10 pr-3 py-2 border border-gray-200 rounded-lg focus:ring-charbon-green focus:border-charbon-green text-sm bg-white"
+                        placeholder="Rechercher une matière..." type="text" />
+                </div>
+                <select
+                    class="h-10 px-4 border border-gray-200 rounded-lg focus:ring-charbon-green focus:border-charbon-green text-sm bg-white text-gray-500">
+                    <option>Tous les mouvements</option>
+                    <option>Entrée</option>
+                    <option>Sortie</option>
+                </select>
+                <input
+                    class="h-10 px-4 border border-gray-200 rounded-lg focus:ring-charbon-green focus:border-charbon-green text-sm bg-white text-gray-500"
+                    type="date" value="2026-06-01" />
+                <span class="text-gray-400 text-sm">au</span>
+                <input
+                    class="h-10 px-4 border border-gray-200 rounded-lg focus:ring-charbon-green focus:border-charbon-green text-sm bg-white text-gray-500"
+                    type="date" value="2026-06-26" />
+            </div>
+            <!-- Movements Table -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-gray-50 border-b border-gray-100 text-gray-500 text-sm">
+                            <th class="px-6 py-4 font-medium">ID</th>
+                            <th class="px-6 py-4 font-medium">Matière première</th>
+                            <th class="px-6 py-4 font-medium">Quantité (kg)</th>
+                            <th class="px-6 py-4 font-medium">Type</th>
+                            <th class="px-6 py-4 font-medium">Date du mouvement</th>
+                            <th class="px-6 py-4 font-medium text-right"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-50">
+                        <tr class="hover:bg-gray-50 transition-colors text-sm">
+                            <td class="px-6 py-4 font-medium">1</td>
+                            <td class="px-6 py-4">Feuille de maïs</td>
+                            <td class="px-6 py-4 font-medium">500.00</td>
+                            <td class="px-6 py-4">
+                                <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium">Entrée</span>
+                            </td>
+                            <td class="px-6 py-4 text-gray-500">26/06/2026 08:30</td>
+                            <td class="px-6 py-4 text-right">
+                                <button class="text-xs font-medium text-gray-700 bg-white border border-gray-300 px-3 py-1.5 rounded-md hover:bg-gray-100 transition-colors">Détails</button>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 transition-colors text-sm">
+                            <td class="px-6 py-4 font-medium">2</td>
+                            <td class="px-6 py-4">Tige de maïs</td>
+                            <td class="px-6 py-4 font-medium">200.00</td>
+                            <td class="px-6 py-4">
+                                <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium">Entrée</span>
+                            </td>
+                            <td class="px-6 py-4 text-gray-500">25/06/2026 14:15</td>
+                            <td class="px-6 py-4 text-right">
+                                <button class="text-xs font-medium text-gray-700 bg-white border border-gray-300 px-3 py-1.5 rounded-md hover:bg-gray-100 transition-colors">Détails</button>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 transition-colors text-sm">
+                            <td class="px-6 py-4 font-medium">3</td>
+                            <td class="px-6 py-4">Balle de riz</td>
+                            <td class="px-6 py-4 font-medium">150.00</td>
+                            <td class="px-6 py-4">
+                                <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-medium">Sortie</span>
+                            </td>
+                            <td class="px-6 py-4 text-gray-500">24/06/2026 09:00</td>
+                            <td class="px-6 py-4 text-right">
+                                <button class="text-xs font-medium text-gray-700 bg-white border border-gray-300 px-3 py-1.5 rounded-md hover:bg-gray-100 transition-colors">Détails</button>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 transition-colors text-sm">
+                            <td class="px-6 py-4 font-medium">4</td>
+                            <td class="px-6 py-4">Coque d'arachide</td>
+                            <td class="px-6 py-4 font-medium">300.00</td>
+                            <td class="px-6 py-4">
+                                <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium">Entrée</span>
+                            </td>
+                            <td class="px-6 py-4 text-gray-500">23/06/2026 11:45</td>
+                            <td class="px-6 py-4 text-right">
+                                <button class="text-xs font-medium text-gray-700 bg-white border border-gray-300 px-3 py-1.5 rounded-md hover:bg-gray-100 transition-colors">Détails</button>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 transition-colors text-sm">
+                            <td class="px-6 py-4 font-medium">5</td>
+                            <td class="px-6 py-4">Sciure de bois</td>
+                            <td class="px-6 py-4 font-medium">80.00</td>
+                            <td class="px-6 py-4">
+                                <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-medium">Sortie</span>
+                            </td>
+                            <td class="px-6 py-4 text-gray-500">22/06/2026 16:20</td>
+                            <td class="px-6 py-4 text-right">
+                                <button class="text-xs font-medium text-gray-700 bg-white border border-gray-300 px-3 py-1.5 rounded-md hover:bg-gray-100 transition-colors">Détails</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- Pagination -->
+            <div class="flex items-center justify-between mt-6 text-sm text-gray-500">
+                <p>Affichage de 1 &agrave; 5 sur 12 mouvements</p>
+                <div class="flex items-center space-x-2">
+                    <button class="px-3 py-1.5 border border-gray-200 rounded-lg bg-white hover:bg-gray-50 transition-colors disabled:opacity-50" disabled>&laquo;</button>
+                    <button class="px-3 py-1.5 border border-gray-200 rounded-lg bg-white hover:bg-gray-50 transition-colors">1</button>
+                    <button class="px-3 py-1.5 border border-gray-200 rounded-lg bg-white hover:bg-gray-50 transition-colors">2</button>
+                    <button class="px-3 py-1.5 border border-gray-200 rounded-lg bg-white hover:bg-gray-50 transition-colors">3</button>
+                    <button class="px-3 py-1.5 border border-gray-200 rounded-lg bg-white hover:bg-gray-50 transition-colors">&raquo;</button>
+                </div>
+            </div>
+        </div>
+        <!-- END: Page Content -->
+        <!-- Floating Toolbar -->
+        <div
+            class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-white/80 backdrop-blur border border-gray-200 rounded-full shadow-lg px-6 py-3 flex items-center space-x-6 z-50">
+            <button class="text-gray-400 hover:text-gray-600"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+                    viewbox="0 0 24 24">
+                    <path d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"
+                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                </svg></button>
+            <button class="text-gray-400 hover:text-gray-600"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+                    viewbox="0 0 24 24">
+                    <path
+                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                </svg></button>
+            <button class="text-gray-400 hover:text-gray-600"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+                    viewbox="0 0 24 24">
+                    <path
+                        d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
+                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                </svg></button>
+            <button class="text-gray-400 hover:text-gray-600"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+                    viewbox="0 0 24 24">
+                    <path
+                        d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
+                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                </svg></button>
+        </div>
+    </main>
+    <!-- END: Main Content -->
+</body>
+
+</html>
