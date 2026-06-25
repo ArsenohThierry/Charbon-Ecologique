@@ -35,11 +35,11 @@ CREATE TABLE type_matiere_premiere (
 
 -- Pendant l'insertion des matieres premieres en stock : ex : feuille de mais: 2kg :  26/06/2026
 CREATE TABLE IF NOT EXISTS mouvement_stock_matiere_premiere(
-    id SERIAL PRIMARY KEY,
-    id_type_matiere_premiere INT NOT NULL,
-    quantite NUMERIC(10,2) NOT NULL,
-    type_mouvement_stock_mp VARCHAR(50) NOT NULL,
-    date_mouvement_mp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    id,
+    id_type_matiere_premiere,
+    quantite,
+    type_mouvement_stock_mp
+    date_mouvement_mp,
 );
 
 -- ============================================
@@ -48,9 +48,9 @@ CREATE TABLE IF NOT EXISTS mouvement_stock_matiere_premiere(
 
 -- Produits 
 CREATE TABLE IF NOT EXISTS produit( -- ex : Charbon , rond , charbon rectange , grand , ...
-    id SERIAL PRIMARY KEY,
-    nom VARCHAR(150) NOT NULL,
-    pu NUMERIC(10,2) NOT NULL
+    id,
+    nom,
+    pu, 
 );
 
 -- en gros Un lot c'est la preparation de plusieurs charbons apres avoir insere la quantite de matieres premieres a utiliser
@@ -63,16 +63,13 @@ CREATE TABLE IF NOT EXISTS lot_statuts(
 
 -- seuil pour definir l etat du stock : ex : 20 : stock presque epuisee
 CREATE TABLE IF NOT EXISTS alerte_seuil (
-    id SERIAL PRIMARY KEY,
-    libelle VARCHAR(255) NOT NULL -- ( Qtt faible , Qtt Epuisee, Qtt suffisant)
+    id,
+    libelle -- ( Qtt faible , Qtt Epuisee, Qtt suffisant)
 );
 
 CREATE TABLE IF NOT EXISTS seuil (
-    id SERIAL PRIMARY KEY,
-    id_alerte_seuil INT NOT NULL,
-    CONSTRAINT fk_seuil_alerte_seuil
-        FOREIGN KEY (id_alerte_seuil)
-        REFERENCES alerte_seuil(id)
+    id,
+    id_alerte_seuil
 );
 
 -- creer un lot -> preparer des charbons : en inserant une quantite de matieres premieres :
@@ -84,7 +81,7 @@ CREATE TABLE IF NOT EXISTS lot_production (
     id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     reference VARCHAR(50) NOT NULL UNIQUE,
     id_type_matiere_premiere INTEGER NOT NULL,
-    id_produit INT NOT NULL,                                -- on precise aussi quel type de charbon on va creer 
+    id_produit,                                             -- on precise aussi quel type de charbon on va creer 
     quantite_matiere_utilisee NUMERIC(10,2) NOT NULL,       -- kg de matiere premiere utilises
     quantite_produit_prevue INT NOT NULL,                   -- calcule dans le code (ex : 2kg Mais + 1Kg de liant : 50 briquettes)
     quantite_produit_reelle INT DEFAULT NULL,               -- quantite de charbon attendue (ajoutee apres avoir insere dans le stock , null par defaut)
@@ -94,10 +91,7 @@ CREATE TABLE IF NOT EXISTS lot_production (
 
     CONSTRAINT fk_lot_production_type_matiere_premiere
         FOREIGN KEY (id_type_matiere_premiere)
-        REFERENCES type_matiere_premiere(id),
-    CONSTRAINT fk_lot_production_produit
-        FOREIGN KEY (id_produit)
-        REFERENCES produit(id)
+        REFERENCES type_matiere_premiere(id)
 );
 
 CREATE TABLE IF NOT EXISTS statuts_lot_production(
@@ -112,28 +106,17 @@ CREATE TABLE IF NOT EXISTS statuts_lot_production(
 
 -- On insere dans cette table quand le statut d'un lot est : "Termine"
 CREATE TABLE IF NOT EXISTS produits_finis(
-    id SERIAL PRIMARY KEY,
-    reference VARCHAR(50) NOT NULL UNIQUE,
-    quantite INT NOT NULL,
-    id_produit INT NOT NULL,
-    id_lot_production INT NOT NULL,
-    
-    CONSTRAINT fk_produits_finis_produit
-        FOREIGN KEY (id_produit)
-        REFERENCES produit(id),
-    CONSTRAINT fk_produits_finis_lot_production
-        FOREIGN KEY (id_lot_production)
-        REFERENCES lot_production(id)
+    id,
+    reference,
+    quantite,
+    id_produit
+    id_lot_production,
 );
 
 CREATE TABLE IF NOT EXISTS statut_produit_finis(
-    id SERIAL PRIMARY KEY,
-    id_produit_fini INT NOT NULL,
-    statut VARCHAR(50) NOT NULL, -- insere ou en attente
-
-    CONSTRAINT fk_statut_produit_finis_produit_fini
-        FOREIGN KEY (id_produit_fini)
-        REFERENCES produits_finis(id)
+    id,
+    id_produit_fini,
+    statut, -- insere ou en attente
 );
 
 -- ============================================
@@ -148,9 +131,10 @@ CREATE TABLE IF NOT EXISTS statut_produit_finis(
 
 -- Regle gestion :  la quantite de charbon produit  ne doit pas etre superieur a la quantite prevuee  
 
-CREATE TABLE IF NOT EXISTS type_mouvement_stock ( -- entree , -- sortie
-    id SERIAL PRIMARY KEY,
-    libelle VARCHAR(100) NOT NULL
+CREATE TABLE IF NOT EXISTS type_mouvement_stock ( -- entree , -- sortie avec motifs
+    id,
+    libelle,
+    motif
 );
 
 -- A faire : TRIGGER lors de l'insertion : il y a un motif pour la sortie stock , un motif different pour chaque type de sortie stock 
@@ -158,20 +142,20 @@ CREATE TABLE IF NOT EXISTS type_mouvement_stock ( -- entree , -- sortie
 
 CREATE TABLE IF NOT EXISTS mouvement_stock(
     id SERIAL PRIMARY KEY,
+    id_type_charbon INT DEFAULT NULL,
     id_lot_production INT DEFAULT NULL,  -- NULL si c'est une sortie
     id_commande INT DEFAULT NULL,         -- NULL si c'est une entree
     quantite INT NOT NULL,
     date_mouvement TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    id_type_mouvement INT NOT NULL,       -- Entree ou Sortie
-    motif VARCHAR(100) DEFAULT NULL,      -- commande, suppression, perte, etc. (requis si sortie)
+    id_type_mouvement , -- Entree ou Sortie
 
     CONSTRAINT fk_mouvement_stock_lot_production
         FOREIGN KEY (id_lot_production)
         REFERENCES lot_production(id),
-    CONSTRAINT fk_mouvement_stock_type_mouvement
-        FOREIGN KEY (id_type_mouvement)
-        REFERENCES type_mouvement_stock(id)
-    -- FK vers commandes : ajoutee apres creation de la table commandes (cf ALTER TABLE)
+    CONSTRAINT fk_mouvement_stock_commande
+        FOREIGN KEY (id_commande)
+        REFERENCES commandes(id)
+    -- foreign key vers type_mouvement_stock
 );
 
 
@@ -188,12 +172,12 @@ CREATE TABLE IF NOT EXISTS mouvement_stock(
 -- mais on peut quand meme ajouter manuellement des commandes ( un peu comme si les clients demandent a se faire livrer des pizzas)
 
 CREATE TABLE IF NOT EXISTS clients (
-    id SERIAL PRIMARY KEY,
-    nom VARCHAR(150) NOT NULL,
-    numero VARCHAR(20) NOT NULL,
-    email VARCHAR(150),
-    adresse TEXT,
-    date_ajout TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    id,
+    nom,
+    numero,
+    email,
+    adresse,
+    date_ajout
 );
 
 CREATE TABLE IF NOT EXISTS commande_statuts(
@@ -204,43 +188,25 @@ CREATE TABLE IF NOT EXISTS commande_statuts(
 
 CREATE TABLE IF NOT EXISTS commandes (
     id SERIAL PRIMARY KEY,
-    reference VARCHAR(50) NOT NULL UNIQUE, -- COM-001
-    id_client INT NOT NULL,
-    date_commande TIMESTAMP NOT NULL,
-
-    CONSTRAINT fk_commandes_client
-        FOREIGN KEY (id_client)
-        REFERENCES clients(id)
+    reference,              -- COM-001
+    id_client   
+    date_commande TIMESTAMP NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS statuts_commandes (
     id SERIAL PRIMARY KEY,
     id_commandes INT NOT NULL,
     id_commande_statuts INT NOT NULL,
-    date_statut_commande TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT fk_statuts_commandes_commande
-        FOREIGN KEY (id_commandes)
-        REFERENCES commandes(id),
-    CONSTRAINT fk_statuts_commandes_statut
-        FOREIGN KEY (id_commande_statuts)
-        REFERENCES commande_statuts(id)
+    date_statut_commande TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- une commande peut avoir plusieurs details ( car le client peut acheter differentes types de charbons )
 CREATE TABLE IF NOT EXISTS detail_commande(
-    id SERIAL PRIMARY KEY,
-    id_commande INT NOT NULL,
-    id_produit INT NOT NULL, -- type de charbon
-    quantite INT NOT NULL,
-    montant NUMERIC(10,2) NOT NULL,
-
-    CONSTRAINT fk_detail_commande_commande
-        FOREIGN KEY (id_commande)
-        REFERENCES commandes(id),
-    CONSTRAINT fk_detail_commande_produit
-        FOREIGN KEY (id_produit)
-        REFERENCES produit(id)
+    id,
+    id_commande,
+    id_produit, -- type de charbon
+    quantite,
+    montant
 );
 
 -- en ajoutant une commande ca enregistre une sortie de stock et ajoute le statut commande 
@@ -248,38 +214,29 @@ CREATE TABLE IF NOT EXISTS detail_commande(
 
 -- 
 CREATE TABLE IF NOT EXISTS paiement_statuts(
-    id SERIAL PRIMARY KEY,
-    libelle VARCHAR(255) NOT NULL -- ex : Paye , non payee , paye partiellement
+    id,
+    libelle -- ex : Paye , non payee , paye partiellement
 );
 
 CREATE TABLE IF NOT EXISTS methode_paiement(
-    id SERIAL PRIMARY KEY,
-    libelle VARCHAR(255) NOT NULL -- ex : Mobile money , Carte , Espece,...
+    id,
+    libelle -- ex : Mobile money , Carte , Espece,...
 );
 
 CREATE TABLE IF NOT EXISTS paiement(
-    id SERIAL PRIMARY KEY,
-    reference VARCHAR(50) NOT NULL UNIQUE,
-    id_commande INT NOT NULL,
-    montant_total NUMERIC(10,2) NOT NULL,
-
-    CONSTRAINT fk_paiement_commande
-        FOREIGN KEY (id_commande)
-        REFERENCES commandes(id)
+    id,
+    reference,
+    id_commande,
+    nontant_total,
 );
+
+-- condition de paiement : On cree une facture apres que le montant total ait ete paye ( dans la facture preciser tous les modes de paiements)
 
 CREATE TABLE IF NOT EXISTS statuts_paiements(
-    id SERIAL PRIMARY KEY,
-    id_statut_paiement INT NOT NULL,
-    id_methode_paiement INT NOT NULL,
-
-    CONSTRAINT fk_statuts_paiements_statut
-        FOREIGN KEY (id_statut_paiement)
-        REFERENCES paiement_statuts(id),
-    CONSTRAINT fk_statuts_paiements_methode
-        FOREIGN KEY (id_methode_paiement)
-        REFERENCES methode_paiement(id)
-);
+    id,
+    id_statut_paiement
+    id_methode_paiement,
+)
 
 -- Un paiment s'effectue soit : 
 --  - Apres que le livreur a fini sa livraison
@@ -291,10 +248,10 @@ CREATE TABLE IF NOT EXISTS statuts_paiements(
 -- ============================================
 
 CREATE TABLE IF NOT EXISTS livreurs(
-    id SERIAL PRIMARY KEY,
-    nom VARCHAR(150) NOT NULL,
-    email VARCHAR(150),
-    telephone VARCHAR(20)
+    id,
+    nom,
+    email,
+    telephone
 );
 
 -- en creant une nouvelle livraison , on doit : pouvoir selectionner  le(les) commandes "statuts commandes" ,..., puis valider 
@@ -312,96 +269,59 @@ CREATE TABLE IF NOT EXISTS livraison_statuts (
 
 CREATE TABLE IF NOT EXISTS livraison (
     id SERIAL PRIMARY KEY,
-    reference VARCHAR(50) NOT NULL UNIQUE,
-    date_livraison TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, -- date commencement de la livraison
-    date_reportage_livraison TIMESTAMP,
-    date_livraison_reel TIMESTAMP,
-    lieu VARCHAR(255),
-    id_livreur INT,
-
-    CONSTRAINT fk_livraison_livreur
-        FOREIGN KEY (id_livreur)
-        REFERENCES livreurs(id)
-);
-
--- Une livraison peut regrouper plusieurs commandes
-CREATE TABLE IF NOT EXISTS livraison_commandes(
-    id SERIAL PRIMARY KEY,
-    id_livraison INT NOT NULL,
-    id_commande INT NOT NULL,
-
-    CONSTRAINT fk_livraison_commandes_livraison
-        FOREIGN KEY (id_livraison)
-        REFERENCES livraison(id),
-    CONSTRAINT fk_livraison_commandes_commande
-        FOREIGN KEY (id_commande)
-        REFERENCES commandes(id),
-    CONSTRAINT uq_livraison_commandes UNIQUE (id_livraison, id_commande)
+    reference,
+    id_commande,
+    date_livraison TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP -- date commencement de la livraison
+    date_reportage_livraison,
+    date_livraison_reel,
+    lieu,
+    id_livreur
 );
 
 CREATE TABLE IF NOT EXISTS statuts_livraisons (
     id SERIAL PRIMARY KEY,
     id_livraison INT NOT NULL,
     id_livraisons_statuts INT NOT NULL,
-    date_statuts_livraison TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT fk_statuts_livraisons_livraison
-        FOREIGN KEY (id_livraison)
-        REFERENCES livraison(id),
-    CONSTRAINT fk_statuts_livraisons_statut
-        FOREIGN KEY (id_livraisons_statuts)
-        REFERENCES livraison_statuts(id)
+    date_statuts_livraison TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Facture
 
 CREATE TABLE IF NOT EXISTS facture(
-    id SERIAL PRIMARY KEY,
-    reference VARCHAR(50) NOT NULL UNIQUE,
-    id_paiement INT NOT NULL,
-
-    CONSTRAINT fk_facture_paiement
-        FOREIGN KEY (id_paiement)
-        REFERENCES paiement(id)
+    id,
+    reference,
+    id_paiement,
 );
 
 CREATE TABLE IF NOT EXISTS facture_detail(
-    id SERIAL PRIMARY KEY,
-    id_facture INT NOT NULL,
-    montant NUMERIC(10,2) NOT NULL,
-    libelle VARCHAR(255) NOT NULL, -- paiement, frais de livraison
-
-    CONSTRAINT fk_facture_detail_facture
-        FOREIGN KEY (id_facture)
-        REFERENCES facture(id)
+    id,
+    id_facture,
+    montant,
+    libelle -- paiement, frais de livraison
 );
 
 CREATE TABLE IF NOT EXISTS type_journal( -- vente, achat, banque, caisse
-    id SERIAL PRIMARY KEY,
-    libelle VARCHAR(255) NOT NULL,
-    code VARCHAR(50) NOT NULL
+    id,
+    libelle,
+    code 
 );
 
 CREATE TABLE IF NOT EXISTS origine( -- commande, paiement, achat
-    id SERIAL PRIMARY KEY,
-    libelle VARCHAR(255) NOT NULL
+    id,
+    libelle
 );
 
 CREATE TABLE IF NOT EXISTS journal_financier(
-    id SERIAL PRIMARY KEY,
-    reference VARCHAR(50) NOT NULL UNIQUE,
-    date_operation TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    id_type_journal INT NOT NULL,
-    id_origine INT NOT NULL,
-    debit NUMERIC(10,2) NOT NULL DEFAULT 0,
-    credit NUMERIC(10,2) NOT NULL DEFAULT 0,
-    sens VARCHAR(10) NOT NULL,
-    description TEXT,
+    id,
+    reference,
+    date_operation,
+    id_type_journal,
+    id_origine,
+    debit,
+    credit,
+    sens,
+    description
+);  
 
-    CONSTRAINT fk_journal_financier_type_journal
-        FOREIGN KEY (id_type_journal)
-        REFERENCES type_journal(id),
-    CONSTRAINT fk_journal_financier_origine
-        FOREIGN KEY (id_origine)
-        REFERENCES origine(id)
-);
+
+corrige 1 , 2 , 3: comment on definit alors plusieurs tupes de charbon dans un lot , 4, 5 ,reponses : oui plusieurs commandes en une livraison, comment on fait pour plusieurs types de charbon dans un meme lot
