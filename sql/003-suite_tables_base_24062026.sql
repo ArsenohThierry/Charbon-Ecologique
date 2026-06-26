@@ -153,7 +153,7 @@ CREATE TABLE IF NOT EXISTS type_mouvement_stock ( -- entree , -- sortie
     libelle VARCHAR(100) NOT NULL
 );
 
--- A faire : TRIGGER lors de l'insertion : il y a un motif pour la sortie stock , un motif different pour chaque type de sortie stock 
+-- Pour chaque type de sotie de stock : il doit y avoir un motif obligatoire , un motif different pour chaque type de sortie stock 
 -- pas de motif pour entree stock
 
 CREATE TABLE IF NOT EXISTS mouvement_stock(
