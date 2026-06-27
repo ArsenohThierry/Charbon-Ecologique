@@ -110,38 +110,12 @@ CREATE TABLE IF NOT EXISTS statuts_lot_production(
     FOREIGN KEY (id_lot_statuts) REFERENCES lot_statuts(id)
 );
 
--- On insere dans cette table quand le statut d'un lot est : "Termine"
-CREATE TABLE IF NOT EXISTS produits_finis(
-    id SERIAL PRIMARY KEY,
-    reference VARCHAR(50) NOT NULL UNIQUE,
-    quantite INT NOT NULL,
-    id_produit INT NOT NULL,
-    id_lot_production INT NOT NULL,
-    
-    CONSTRAINT fk_produits_finis_produit
-        FOREIGN KEY (id_produit)
-        REFERENCES produit(id),
-    CONSTRAINT fk_produits_finis_lot_production
-        FOREIGN KEY (id_lot_production)
-        REFERENCES lot_production(id)
-);
-
-CREATE TABLE IF NOT EXISTS statut_produit_finis(
-    id SERIAL PRIMARY KEY,
-    id_produit_fini INT NOT NULL,
-    statut VARCHAR(50) NOT NULL, -- insere ou en attente
-
-    CONSTRAINT fk_statut_produit_finis_produit_fini
-        FOREIGN KEY (id_produit_fini)
-        REFERENCES produits_finis(id)
-);
-
 -- ============================================
 -- Stock
 -- ============================================
 
--- Enregister dans le stock veut dire , faire entrer les produits finis dans notre stock 
--- on ne peut y inserer que les Lots deja finis (termine) et les produits finis en attente
+-- Enregister dans le stock veut dire , faire entrer les lots de productions termines dans notre stock 
+-- on ne peut y inserer que les Lots deja finis (termine)
 
 -- comment ca marche : Quand on appuie sur +Ajouter au stock :
 -- Ca ammene a un formulaire avec un checkbox de tous les produits finis  statuts termines ( apres date_fin_prevuee )
