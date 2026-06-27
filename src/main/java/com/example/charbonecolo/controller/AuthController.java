@@ -1,7 +1,8 @@
 package com.example.charbonecolo.controller;
 
+import com.example.charbonecolo.exception.BusinessException;
 import com.example.charbonecolo.model.UtilisateurModel;
-import com.example.charbonecolo.repository.UtilisateurRepository;
+import com.example.charbonecolo.service.UtilisateurService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,10 +13,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class AuthController {
 
-    private final UtilisateurRepository utilisateurRepository;
+    private final UtilisateurService utilisateurService;
 
-    public AuthController(UtilisateurRepository utilisateurRepository) {
-        this.utilisateurRepository = utilisateurRepository;
+    public AuthController(UtilisateurService utilisateurService) {
+        this.utilisateurService = utilisateurService;
     }
 
     @GetMapping("/")
@@ -34,14 +35,14 @@ public class AuthController {
     @PostMapping("/login")
     public String login(@RequestParam String username, @RequestParam String password,
                         HttpSession session, Model model) {
-       
-        var optUser = utilisateurRepository.findByUsername(username);
-        if (optUser.isEmpty() || !optUser.get().getMotPasse().equals(password) || !optUser.get().getActif()) {
-            model.addAttribute("error", "Identifiants invalides ou compte désactivé");
+        try {
+            UtilisateurModel user = utilisateurService.authenticate(username, password);
+            session.setAttribute("user", user);
+            return "redirect:/dashboard";
+        } catch (BusinessException e) {
+            model.addAttribute("error", e.getMessage());
             return "login";
         }
-        session.setAttribute("user", optUser.get());
-        return "redirect:/dashboard";
     }
 
     @GetMapping("/dashboard")

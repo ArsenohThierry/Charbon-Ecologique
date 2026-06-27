@@ -33,13 +33,26 @@ CREATE TABLE type_matiere_premiere (
 );
 
 
+-- Type de mouvement pour les matieres premieres (entree, sortie)
+CREATE TABLE IF NOT EXISTS type_mouvement_mp (
+    id SERIAL PRIMARY KEY,
+    libelle VARCHAR(100) NOT NULL
+);
+
 -- Pendant l'insertion des matieres premieres en stock : ex : feuille de mais: 2kg :  26/06/2026
 CREATE TABLE IF NOT EXISTS mouvement_stock_matiere_premiere(
     id SERIAL PRIMARY KEY,
     id_type_matiere_premiere INT NOT NULL,
     quantite NUMERIC(10,2) NOT NULL,
-    type_mouvement_stock_mp VARCHAR(50) NOT NULL,
-    date_mouvement_mp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    id_type_mouvement_mp INT NOT NULL,
+    date_mouvement_mp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_mouvement_stock_mp_type_matiere_premiere
+        FOREIGN KEY (id_type_matiere_premiere)
+        REFERENCES type_matiere_premiere(id),
+    CONSTRAINT fk_mouvement_stock_mp_type_mouvement
+        FOREIGN KEY (id_type_mouvement_mp)
+        REFERENCES type_mouvement_mp(id)
 );
 
 -- ============================================
@@ -69,7 +82,13 @@ CREATE TABLE IF NOT EXISTS alerte_seuil (
 
 CREATE TABLE IF NOT EXISTS seuil (
     id SERIAL PRIMARY KEY,
+    id_produit INT DEFAULT NULL,
+    valeur NUMERIC(10,2) NOT NULL,
     id_alerte_seuil INT NOT NULL,
+
+    CONSTRAINT fk_seuil_produit
+        FOREIGN KEY (id_produit)
+        REFERENCES produit(id),
     CONSTRAINT fk_seuil_alerte_seuil
         FOREIGN KEY (id_alerte_seuil)
         REFERENCES alerte_seuil(id)
@@ -110,38 +129,12 @@ CREATE TABLE IF NOT EXISTS statuts_lot_production(
     FOREIGN KEY (id_lot_statuts) REFERENCES lot_statuts(id)
 );
 
--- On insere dans cette table quand le statut d'un lot est : "Termine"
-CREATE TABLE IF NOT EXISTS produits_finis(
-    id SERIAL PRIMARY KEY,
-    reference VARCHAR(50) NOT NULL UNIQUE,
-    quantite INT NOT NULL,
-    id_produit INT NOT NULL,
-    id_lot_production INT NOT NULL,
-    
-    CONSTRAINT fk_produits_finis_produit
-        FOREIGN KEY (id_produit)
-        REFERENCES produit(id),
-    CONSTRAINT fk_produits_finis_lot_production
-        FOREIGN KEY (id_lot_production)
-        REFERENCES lot_production(id)
-);
-
-CREATE TABLE IF NOT EXISTS statut_produit_finis(
-    id SERIAL PRIMARY KEY,
-    id_produit_fini INT NOT NULL,
-    statut VARCHAR(50) NOT NULL, -- insere ou en attente
-
-    CONSTRAINT fk_statut_produit_finis_produit_fini
-        FOREIGN KEY (id_produit_fini)
-        REFERENCES produits_finis(id)
-);
-
 -- ============================================
 -- Stock
 -- ============================================
 
--- Enregister dans le stock veut dire , faire entrer les produits finis dans notre stock 
--- on ne peut y inserer que les Lots deja finis (termine) et les produits finis en attente
+-- Enregister dans le stock veut dire , faire entrer les lots de productions termines dans notre stock 
+-- on ne peut y inserer que les Lots deja finis (termine)
 
 -- comment ca marche : Quand on appuie sur +Ajouter au stock :
 -- Ca ammene a un formulaire avec un checkbox de tous les produits finis  statuts termines ( apres date_fin_prevuee )
@@ -153,25 +146,31 @@ CREATE TABLE IF NOT EXISTS type_mouvement_stock ( -- entree , -- sortie
     libelle VARCHAR(100) NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS motif_sortie (
+    id SERIAL PRIMARY KEY,
+    libelle VARCHAR(255) NOT NULL
+);
+
 -- Pour chaque type de sotie de stock : il doit y avoir un motif obligatoire , un motif different pour chaque type de sortie stock 
 -- pas de motif pour entree stock
 
 CREATE TABLE IF NOT EXISTS mouvement_stock(
     id SERIAL PRIMARY KEY,
     id_lot_production INT DEFAULT NULL,  -- NULL si c'est une sortie
-    id_commande INT DEFAULT NULL,         -- NULL si c'est une entree
     quantite INT NOT NULL,
     date_mouvement TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     id_type_mouvement INT NOT NULL,       -- Entree ou Sortie
-    motif VARCHAR(100) DEFAULT NULL,      -- commande, suppression, perte, etc. (requis si sortie)
+    id_motif_sortie INT DEFAULT NULL,     -- commande, suppression, perte, etc. (requis si sortie)
 
     CONSTRAINT fk_mouvement_stock_lot_production
         FOREIGN KEY (id_lot_production)
         REFERENCES lot_production(id),
     CONSTRAINT fk_mouvement_stock_type_mouvement
         FOREIGN KEY (id_type_mouvement)
-        REFERENCES type_mouvement_stock(id)
-    -- FK vers commandes : ajoutee apres creation de la table commandes (cf ALTER TABLE)
+        REFERENCES type_mouvement_stock(id),
+    CONSTRAINT fk_mouvement_stock_motif_sortie
+        FOREIGN KEY (id_motif_sortie)
+        REFERENCES motif_sortie(id)
 );
 
 
@@ -270,9 +269,14 @@ CREATE TABLE IF NOT EXISTS paiement(
 
 CREATE TABLE IF NOT EXISTS statuts_paiements(
     id SERIAL PRIMARY KEY,
+    id_paiement INT NOT NULL,
     id_statut_paiement INT NOT NULL,
-    id_methode_paiement INT NOT NULL,
+    id_methode_paiement INT DEFAULT NULL,
+    date_statut TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
+    CONSTRAINT fk_statuts_paiements_paiement
+        FOREIGN KEY (id_paiement)
+        REFERENCES paiement(id),
     CONSTRAINT fk_statuts_paiements_statut
         FOREIGN KEY (id_statut_paiement)
         REFERENCES paiement_statuts(id),
@@ -395,7 +399,7 @@ CREATE TABLE IF NOT EXISTS journal_financier(
     id_origine INT NOT NULL,
     debit NUMERIC(10,2) NOT NULL DEFAULT 0,
     credit NUMERIC(10,2) NOT NULL DEFAULT 0,
-    sens VARCHAR(10) NOT NULL,
+    sens VARCHAR(10) NOT NULL CHECK (sens IN ('debit', 'credit')),
     description TEXT,
 
     CONSTRAINT fk_journal_financier_type_journal
