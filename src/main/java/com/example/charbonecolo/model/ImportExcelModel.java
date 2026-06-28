@@ -20,9 +20,6 @@ public class ImportExcelModel {
     @Column(name = "nb_lignes")
     private Integer nbLignes;
 
-    @Column(name = "nb_erreurs")
-    private Integer nbErreurs;
-
     @Column(nullable = false, length = 20)
     private String statut; // SUCCES, PARTIEL, ECHEC
 
@@ -37,7 +34,6 @@ public class ImportExcelModel {
         this.nomFichier = nomFichier;
         this.dateImport = dateImport;
         this.nbLignes = nbLignes;
-        this.nbErreurs = nbErreurs;
         this.statut = statut;
         this.messageLog = messageLog;
     }
@@ -53,9 +49,6 @@ public class ImportExcelModel {
 
     public Integer getNbLignes() { return nbLignes; }
     public void setNbLignes(Integer nbLignes) { this.nbLignes = nbLignes; }
-
-    public Integer getNbErreurs() { return nbErreurs; }
-    public void setNbErreurs(Integer nbErreurs) { this.nbErreurs = nbErreurs; }
 
     public String getStatut() { return statut; }
     public void setStatut(String statut) { this.statut = statut; }
