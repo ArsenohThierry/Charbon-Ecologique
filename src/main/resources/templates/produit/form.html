@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${titre}">Produit</title>
+</head>
+<body>
+
+<h1 th:text="${titre}">Produit</h1>
+
+<!--
+    Si produit.id est null  → POST /produits/nouveau        (création)
+    Sinon                   → POST /produits/{id}/modifier  (modification)
+-->
+<form th:action="${produit.id == null}
+                    ? @{/produits/nouveau}
+                    : @{/produits/{id}/modifier(id=${produit.id})}"
+      th:object="${produit}"
+      method="post">
+
+    <fieldset>
+        <legend>Informations du produit</legend>
+
+        <label for="nom">Nom :</label><br>
+        <input type="text"
+               id="nom"
+               name="nom"
+               th:value="*{nom}"
+               required
+               placeholder="Ex : Charbon de bois 5 kg"><br><br>
+
+        <label for="pu">Prix unitaire (Ar) :</label><br>
+        <input type="number"
+               id="pu"
+               name="pu"
+               th:value="*{pu}"
+               step="0.01"
+               min="0"
+               required
+               placeholder="Ex : 15000"><br><br>
+
+        <button type="submit"
+                th:text="${produit.id == null} ? 'Créer' : 'Enregistrer les modifications'">
+            Enregistrer
+        </button>
+        &nbsp;
+        <a href="/produits">Annuler</a>
+    </fieldset>
+
+</form>
+
+</body>
+</html>
