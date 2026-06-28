@@ -20,8 +20,8 @@ TODO — Pages nécessaires minimum (selon la base et les commentaires)
 
 3. PRODUCTION
    [ ] Produits (types de charbon vendables) — "ex: Charbon rond, rectange"
-       [x] - Liste (GET /produits)
-       [x] - Ajouter (GET+POST /produits/ajouter)
+       - [ ] Liste (GET /produits)
+       - [ ] Ajouter (GET+POST /produits/ajouter)
    [ ] Lots de production
        - Liste lots (GET /lots)
        - Créer lot (GET+POST /lots/creer)
