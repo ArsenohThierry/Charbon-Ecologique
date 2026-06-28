@@ -1,9 +1,9 @@
 
-## — Données et logique métier
+## — Donnees et logique metier
 
-### Base de données
+### Base de donnees
 
-* Créer et modifier les tables :
+* Creer et modifier les tables :
 
   * type_journal(id,libelle,code)
   * origine(id,libelle,code)
@@ -13,11 +13,11 @@
 
 ### Modèles
 
-* Créer TypeJournalModel
-* Créer OrigineModel
-* Créer JournalFinancierModel
-* Créer TresorerieModel
-* Créer ImportExcelModel
+* Creer TypeJournalModel
+* Creer OrigineModel
+* Creer JournalFinancierModel
+* Creer TresorerieModel
+* Creer ImportExcelModel
 
 ### Repositories
 
@@ -29,12 +29,12 @@
 
 ### Services
 
-Créer les services :
+Creer les services :
 
 * JournalFinancierService
 * TresorerieService
 
-Implémenter :
+Implementer :
 
 * enregistrer()
 * calculerCA()
@@ -48,7 +48,7 @@ Implémenter :
 
 ### Controllers
 
-Créer :
+Creer :
 
 * JournalController
 * BilanController
@@ -64,7 +64,7 @@ Ajouter les routes :
 
 ### Pages Thymeleaf
 
-Créer :
+Creer :
 
 * journal.html
 * bilan.html
@@ -74,9 +74,9 @@ Créer :
 ### Affichage
 
 * Afficher le journal financier
-* Afficher la trésorerie
+* Afficher la tresorerie
 * Afficher le bilan
 * Afficher les indicateurs KPI
-* Connecter les vues aux services créés
+* Connecter les vues aux services crees
 
 ---

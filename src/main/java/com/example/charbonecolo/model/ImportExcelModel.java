@@ -21,7 +21,7 @@ public class ImportExcelModel {
     private Integer nbLignes;
 
     @Column(nullable = false, length = 20)
-    private String statut; // SUCCES, PARTIEL, ECHEC
+    private String statut; // SUCCES, ECHEC
 
     @Column(name = "message_log", columnDefinition = "TEXT")
     private String messageLog;
