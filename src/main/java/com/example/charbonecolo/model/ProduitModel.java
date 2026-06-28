@@ -12,6 +12,7 @@ public class ProduitModel {
 
     private String nom;
 
+    @Column(columnDefinition = "NUMERIC")
     private Double pu;
 
     public Integer getId() {
@@ -30,10 +31,12 @@ public class ProduitModel {
         this.nom = nom;
     }
 
+    @Column(columnDefinition = "NUMERIC")
     public Double getPu() {
         return pu;
     }
 
+    @Column(columnDefinition = "NUMERIC")
     public void setPu(Double pu) {
         this.pu = pu;
     }
