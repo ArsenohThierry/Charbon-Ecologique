@@ -27,7 +27,7 @@ public class FournisseurController {
 
     @GetMapping("/home")
     public ModelAndView getFournisseurs(@ModelAttribute("fournisseurModel") FournisseurModel fournisseurModel) {
-        ModelAndView mav = new ModelAndView("stitch/module_stock/fournisseurs");
+        ModelAndView mav = new ModelAndView("fournisseur/fournisseurs");
 
         mav.addObject("listeFournisseurs", fournisseurService.getAll());
         if (fournisseurModel == null || fournisseurModel.getId() == null) {
