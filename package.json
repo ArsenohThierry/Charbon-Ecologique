@@ -1,0 +1,30 @@
+{
+  "name": "charbon-ecologique",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:css": "npx tailwindcss -i ./src/main/resources/static/css/tailwind.css -o ./src/main/resources/static/css/output.css",
+    "watch:css": "npx tailwindcss -i ./src/main/resources/static/css/tailwind.css -o ./src/main/resources/static/css/output.css --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ArsenohThierry/Charbon-Ecologique.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ArsenohThierry/Charbon-Ecologique/issues"
+  },
+  "homepage": "https://github.com/ArsenohThierry/Charbon-Ecologique#readme",
+  "devDependencies": {
+    "@tailwindcss/container-queries": "^0.1.1",
+    "@tailwindcss/forms": "^0.5.11",
+    "tailwindcss": "^3.4.19"
+  }
+}

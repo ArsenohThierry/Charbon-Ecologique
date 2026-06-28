@@ -6,33 +6,8 @@
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Charbon Vert - Gestionnaire de stock</title>
-    <!-- Tailwind CSS CDN with plugins -->
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <!-- Google Fonts: Serif for headings, Sans for body -->
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Playfair+Display:wght@700&amp;display=swap"
-        rel="stylesheet" />
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            dark: '#1b3221',    /* Deep green sidebar */
-                            accent: '#d4a358',  /* Gold/Yellow accent */
-                            light: '#fbfbf4',   /* Off-white background */
-                            button: '#3a724b',  /* Green primary button */
-                            active: '#e0b571'   /* Highlighted menu item */
-                        }
-                    },
-                    fontFamily: {
-                        serif: ['Playfair Display', 'serif'],
-                        sans: ['Inter', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
+    <link rel="stylesheet" th:href="@{/css/output.css}" href="../../../static/css/output.css" />
+    <link rel="stylesheet" th:href="@{/css/fonts.css}" href="../../../static/css/fonts.css" />
     <style data-purpose="custom-layout">
         body {
             font-family: 'Inter', sans-serif;

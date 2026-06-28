@@ -66,6 +66,8 @@ CREATE TABLE IF NOT EXISTS produit( -- ex : Charbon , rond , charbon rectange , 
     pu NUMERIC(10,2) NOT NULL
 );
 
+
+
 -- en gros Un lot c'est la preparation de plusieurs charbons apres avoir insere la quantite de matieres premieres a utiliser
 
 CREATE TABLE IF NOT EXISTS lot_statuts(
@@ -73,27 +75,6 @@ CREATE TABLE IF NOT EXISTS lot_statuts(
     libelle VARCHAR(255) NOT NULL
     -- les statuts sont : En preparation, Termine , En stock (voila son cycle de vie puis disparait mais est toujours enregistre)
 );
-
--- seuil pour definir l etat du stock : ex : 20 : stock presque epuisee
-CREATE TABLE IF NOT EXISTS alerte_seuil (
-    id SERIAL PRIMARY KEY,
-    libelle VARCHAR(255) NOT NULL -- ( Qtt faible , Qtt Epuisee, Qtt suffisant)
-);
-
-CREATE TABLE IF NOT EXISTS seuil (
-    id SERIAL PRIMARY KEY,
-    id_produit INT DEFAULT NULL,
-    valeur NUMERIC(10,2) NOT NULL,
-    id_alerte_seuil INT NOT NULL,
-
-    CONSTRAINT fk_seuil_produit
-        FOREIGN KEY (id_produit)
-        REFERENCES produit(id),
-    CONSTRAINT fk_seuil_alerte_seuil
-        FOREIGN KEY (id_alerte_seuil)
-        REFERENCES alerte_seuil(id)
-);
-
 -- creer un lot -> preparer des charbons : en inserant une quantite de matieres premieres :
 -- ca va generer ex : LOT-001 : 1kg matieres premieres 
 -- dans historiques lots : il y a les etapes des preparation du charbon en checkbox : , quand tous les etapes sont coches , on met la date et on valide, ca ajoute le statut termine dans la base (sinon c'est encore en cours de preparation) , a chaque checkbox on ajoute dans la base le statut actuel , le bouton valider apparait quand tout est ok
@@ -177,6 +158,26 @@ CREATE TABLE IF NOT EXISTS mouvement_stock(
 -- etat de stock , pas de table qui stocke la quantite actuelle , on verifie par requetes (otran tam le cheque an Mr Naina iny)
 -- en validant ca va UPDATE la date_fin_reelle du lot
 -- enregister les pertes sur la quantite final - qtt prevuee
+
+-- seuil pour definir l etat du stock : ex : 20 : stock presque epuisee
+CREATE TABLE IF NOT EXISTS alerte_seuil (
+    id SERIAL PRIMARY KEY,
+    libelle VARCHAR(255) NOT NULL -- ( Qtt faible , Qtt Epuisee, Qtt suffisant)
+);
+
+CREATE TABLE IF NOT EXISTS seuil (
+    id SERIAL PRIMARY KEY,
+    id_produit INT DEFAULT NULL,
+    valeur NUMERIC(10,2) NOT NULL,
+    id_alerte_seuil INT NOT NULL,
+
+    CONSTRAINT fk_seuil_produit
+        FOREIGN KEY (id_produit)
+        REFERENCES produit(id),
+    CONSTRAINT fk_seuil_alerte_seuil
+        FOREIGN KEY (id_alerte_seuil)
+        REFERENCES alerte_seuil(id)
+);
 
 -- ============================================
 -- Ventes/commandes ( Sortie de stock )
