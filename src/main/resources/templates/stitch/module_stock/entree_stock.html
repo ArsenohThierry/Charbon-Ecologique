@@ -1,13 +1,11 @@
 <!DOCTYPE html>
-
-<html lang="fr"><head>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Entrée de stock - Charbon Vert</title>
-<!-- Tailwind CSS v3 with Plugins -->
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<!-- Google Fonts: Libre Caslon Text and Inter -->
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Libre+Caslon+Text:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Libre+Caslon+Text:wght@400;700&display=swap" rel="stylesheet"/>
 <script>
     tailwind.config = {
       theme: {
@@ -26,222 +24,214 @@
         }
       }
     }
-  </script>
+</script>
 <style data-purpose="custom-scrollbar">
-    /* Hide scrollbar for Chrome, Safari and Opera */
-    .no-scrollbar::-webkit-scrollbar {
-      display: none;
-    }
-    /* Hide scrollbar for IE, Edge and Firefox */
-    .no-scrollbar {
-      -ms-overflow-style: none;  /* IE and Edge */
-      scrollbar-width: none;  /* Firefox */
-    }
-  </style>
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+</style>
 </head>
 <body class="bg-sand-bg text-forest-green font-sans min-h-screen flex">
+
 <!-- BEGIN: Sidebar -->
 <aside class="w-64 bg-forest-green text-white flex flex-col fixed inset-y-0 left-0 z-50">
-<div class="p-6 flex items-center gap-3">
-<div class="w-10 h-10 bg-gold-accent rounded-full flex items-center justify-center">
-<img alt="Logo" class="w-6 h-6 object-contain opacity-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3yh1Inrl70hKoC7de-CHeZnHlfWnwiAxy4jm5ueWDT4rbKXKL8QRU6TjUg5u_CROBcWIqH5izh7rscfPlxVDo-H2Ov3O-QZgo1Qe61UvKE-e5MZlRLrFEaX_7N6Lqc0vMDkLnaNSQVtsiLbYbxXNBd0fQMTfmO9y-i-B_vcQB3j7JdwX25UzfCoWu4axIR3nP4ciM5X090Tj-HspaDBaSvfLrAze5Z2rypIeGWgwI8zP3Iu7NOiBbR7MeKYh_ooNKylsQ0DyI5qY"/> <!-- Using placeholder reference invisibly to maintain context -->
-<span class="text-forest-green font-bold text-xl">C</span>
-</div>
-<div>
-<h1 class="font-serif font-bold text-lg leading-tight">Charbon Vert</h1>
-<p class="text-xs text-gray-400">Gestionnaire de stock</p>
-</div>
-</div>
-<nav class="flex-1 px-4 py-4 space-y-2 overflow-y-auto no-scrollbar">
-<!-- Nav Item -->
-<a class="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:bg-moss-green rounded-lg transition-colors" href="#">
-<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-        Tableau de bord
-      </a>
-<!-- Dropdown: Approvisionnement -->
-<div data-purpose="sidebar-dropdown">
-<button class="w-full flex items-center justify-between px-4 py-2 text-sm text-gray-300 hover:bg-moss-green rounded-lg transition-colors group">
-<div class="flex items-center gap-3">
-<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-            Approvisionnement
-          </div>
-<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-</button>
-<div class="ml-9 mt-1 space-y-1">
-<a class="block px-4 py-1.5 text-xs text-gray-400 hover:text-white" href="#">Nouveaux types de matières</a>
-<a class="block px-4 py-1.5 text-xs text-gray-400 hover:text-white" href="#">Ajouter un fournisseur</a>
-<a class="block px-4 py-1.5 text-xs text-gray-400 hover:text-white" href="#">Liste des fournisseurs</a>
-</div>
-</div>
-<!-- Dropdown: Lots de production -->
-<div data-purpose="sidebar-dropdown">
-<button class="w-full flex items-center justify-between px-4 py-2 text-sm text-gray-300 hover:bg-moss-green rounded-lg transition-colors">
-<div class="flex items-center gap-3">
-<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-            Lots de production
-          </div>
-<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-</button>
-</div>
-<!-- Dropdown: Généralités stocks (Active) -->
-<div data-purpose="sidebar-dropdown">
-<button class="w-full flex items-center justify-between px-4 py-2 text-sm text-white bg-moss-green rounded-lg">
-<div class="flex items-center gap-3">
-<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V7M3 7a2 2 0 012-2h14a2 2 0 012 2M3 7l9 6 9-6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-            Généralités stocks
-          </div>
-<svg class="w-4 h-4 rotate-180 transition-transform" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-</button>
-<div class="ml-9 mt-1 space-y-1">
-<a class="block px-4 py-1.5 text-xs text-gray-400 hover:text-white" href="#">État du stock</a>
-<a class="block px-4 py-1.5 text-sm text-gold-accent bg-forest-green/50 border-l-2 border-gold-accent" href="#">Entrée de stock</a>
-<a class="block px-4 py-1.5 text-xs text-gray-400 hover:text-white" href="#">Sortie de stock</a>
-</div>
-</div>
-<!-- Other sections -->
-<a class="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:bg-moss-green rounded-lg transition-colors" href="#">
-<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-        Ventes / Commandes
-      </a>
-<a class="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:bg-moss-green rounded-lg transition-colors" href="#">
-<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-        Rapports
-      </a>
-</nav>
-<div class="p-4 border-t border-moss-green">
-<button class="flex items-center gap-3 text-sm text-gray-400 hover:text-white transition-colors">
-<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-        Changer de rôle
+  <div class="p-6 flex items-center gap-3">
+    <div class="w-10 h-10 bg-gold-accent rounded-full flex items-center justify-center">
+      <span class="text-forest-green font-bold text-xl">C</span>
+    </div>
+    <div>
+      <h1 class="font-serif font-bold text-lg leading-tight">Charbon Vert</h1>
+      <p class="text-xs text-gray-400">Gestionnaire de stock</p>
+    </div>
+  </div>
+  <nav class="flex-1 px-4 py-4 space-y-2 overflow-y-auto no-scrollbar">
+    <a class="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:bg-moss-green rounded-lg transition-colors" href="#">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+      Tableau de bord
+    </a>
+    <div data-purpose="sidebar-dropdown">
+      <button class="w-full flex items-center justify-between px-4 py-2 text-sm text-gray-300 hover:bg-moss-green rounded-lg transition-colors group">
+        <div class="flex items-center gap-3">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+          Approvisionnement
+        </div>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
       </button>
-</div>
+      <div class="ml-9 mt-1 space-y-1">
+        <a class="block px-4 py-1.5 text-xs text-gray-400 hover:text-white" href="#">Nouveaux types de matières</a>
+        <a class="block px-4 py-1.5 text-xs text-gray-400 hover:text-white" href="#">Ajouter un fournisseur</a>
+        <a class="block px-4 py-1.5 text-xs text-gray-400 hover:text-white" href="#">Liste des fournisseurs</a>
+      </div>
+    </div>
+    <div data-purpose="sidebar-dropdown">
+      <button class="w-full flex items-center justify-between px-4 py-2 text-sm text-gray-300 hover:bg-moss-green rounded-lg transition-colors">
+        <div class="flex items-center gap-3">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+          Lots de production
+        </div>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+      </button>
+    </div>
+    <div data-purpose="sidebar-dropdown">
+      <button class="w-full flex items-center justify-between px-4 py-2 text-sm text-white bg-moss-green rounded-lg">
+        <div class="flex items-center gap-3">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V7M3 7a2 2 0 012-2h14a2 2 0 012 2M3 7l9 6 9-6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+          Généralités stocks
+        </div>
+        <svg class="w-4 h-4 rotate-180 transition-transform" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+      </button>
+      <div class="ml-9 mt-1 space-y-1">
+        <a class="block px-4 py-1.5 text-xs text-gray-400 hover:text-white" href="#">État du stock</a>
+        <a class="block px-4 py-1.5 text-sm text-gold-accent bg-forest-green/50 border-l-2 border-gold-accent" th:href="@{/stock/entree}">Entrée de stock</a>
+        <a class="block px-4 py-1.5 text-xs text-gray-400 hover:text-white" th:href="@{/stock/sortie}">Sortie de stock</a>
+      </div>
+    </div>
+    <a class="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:bg-moss-green rounded-lg transition-colors" href="#">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+      Ventes / Commandes
+    </a>
+    <a class="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:bg-moss-green rounded-lg transition-colors" href="#">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+      Rapports
+    </a>
+  </nav>
+  <div class="p-4 border-t border-moss-green">
+    <button class="flex items-center gap-3 text-sm text-gray-400 hover:text-white transition-colors">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+      Changer de rôle
+    </button>
+  </div>
 </aside>
 <!-- END: Sidebar -->
+
 <!-- BEGIN: Main Content Area -->
 <main class="flex-1 ml-64 p-8">
-<!-- Header -->
-<header class="flex justify-between items-start mb-10">
-<div>
-<h2 class="text-2xl font-serif font-bold text-forest-green">Gestionnaire de stock</h2>
-<p class="text-sm text-gray-500">Approvisionnement, lots &amp; inventaire</p>
-</div>
-<div class="flex items-center gap-4">
-<span class="bg-gray-100 px-3 py-1 rounded-full text-xs text-gray-600 border border-gray-200">Maquette · données fictives</span>
-<div class="w-10 h-10 bg-leaf-green rounded-full flex items-center justify-center text-white font-bold">N</div>
-</div>
-</header>
-<!-- Page Title Section -->
-<section class="mb-10">
-<h3 class="text-3xl font-serif font-bold mb-1">Enregistrer une entrée de stock</h3>
-<p class="text-gray-500 text-sm italic">Ajoutez les matières premières réceptionnées dans l'entrepôt.</p>
-</section>
-<!-- BEGIN: Stock Entry Form -->
-<section class="bg-white rounded-xl border border-gray-100 shadow-sm p-8 mb-12" data-purpose="stock-entry-card">
-<form class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
-<!-- Matière Première -->
-<div class="space-y-1.5">
-<label class="block text-sm font-semibold text-gray-700" for="matiere">Matière première</label>
-<select class="w-full h-11 px-4 rounded-lg border-gray-200 focus:ring-leaf-green focus:border-leaf-green text-sm" id="matiere">
-<option value="">Sélectionner...</option>
-<option value="sciure">Sciure de bois</option>
-<option value="copeaux">Copeaux</option>
-<option value="paille">Paille de riz</option>
-</select>
-</div>
-<!-- Quantité -->
-<div class="space-y-1.5">
-<label class="block text-sm font-semibold text-gray-700" for="quantite">Quantité (kg)</label>
-<input class="w-full h-11 px-4 rounded-lg border-gray-200 focus:ring-leaf-green focus:border-leaf-green text-sm" id="quantite" placeholder="0.00" type="number"/>
-</div>
-<!-- Fournisseur -->
-<div class="space-y-1.5">
-<label class="block text-sm font-semibold text-gray-700" for="fournisseur">Fournisseur</label>
-<select class="w-full h-11 px-4 rounded-lg border-gray-200 focus:ring-leaf-green focus:border-leaf-green text-sm" id="fournisseur">
-<option value="">Sélectionner le fournisseur...</option>
-<option value="f1">Scierie du Nord</option>
-<option value="f2">Agri-Coop Sud</option>
-</select>
-</div>
-<!-- Date de réception -->
-<div class="space-y-1.5">
-<label class="block text-sm font-semibold text-gray-700" for="date_reception">Date de réception</label>
-<input class="w-full h-11 px-4 rounded-lg border-gray-200 focus:ring-leaf-green focus:border-leaf-green text-sm" id="date_reception" type="date"/>
-</div>
-<!-- Buttons Row -->
-<div class="md:col-span-2 pt-4 flex items-center gap-4">
-<button class="bg-leaf-green hover:bg-forest-green text-white px-8 py-2.5 rounded-lg font-medium transition-colors text-sm" type="submit">
-            Valider l'entrée
-          </button>
-<button class="px-8 py-2.5 rounded-lg border border-gray-200 text-gray-600 font-medium hover:bg-gray-50 transition-colors text-sm" type="reset">
-            Annuler
-          </button>
-<p class="text-xs text-gray-400 italic">Le stock sera mis à jour dès validation.</p>
-</div>
-</form>
-</section>
-<!-- END: Stock Entry Form -->
-<!-- BEGIN: Recent Entries Table -->
-<section>
-<div class="flex justify-between items-end mb-6">
-<h4 class="text-xl font-serif font-bold text-forest-green">Historique récent des entrées</h4>
-<button class="text-sm font-medium text-leaf-green hover:underline">Voir tout l'historique</button>
-</div>
-<div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-<table class="w-full text-left border-collapse">
-<thead class="bg-gray-50/50">
-<tr>
-<th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Date</th>
-<th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Référence</th>
-<th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Matière</th>
-<th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Quantité</th>
-<th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Fournisseur</th>
-<th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Statut</th>
-</tr>
-</thead>
-<tbody class="divide-y divide-gray-100">
-<!-- Row 1 -->
-<tr class="hover:bg-sand-bg/50 transition-colors">
-<td class="px-6 py-4 text-sm text-gray-600">25 Juin 2024</td>
-<td class="px-6 py-4 text-sm font-medium text-forest-green">#ENT-4582</td>
-<td class="px-6 py-4 text-sm text-gray-600">Sciure de bois</td>
-<td class="px-6 py-4 text-sm text-right font-bold text-forest-green">1,200 kg</td>
-<td class="px-6 py-4 text-sm text-gray-600">Scierie du Nord</td>
-<td class="px-6 py-4">
-<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                  Validé
-                </span>
-</td>
-</tr>
-<!-- Row 2 -->
-<tr class="hover:bg-sand-bg/50 transition-colors">
-<td class="px-6 py-4 text-sm text-gray-600">24 Juin 2024</td>
-<td class="px-6 py-4 text-sm font-medium text-forest-green">#ENT-4581</td>
-<td class="px-6 py-4 text-sm text-gray-600">Paille de riz</td>
-<td class="px-6 py-4 text-sm text-right font-bold text-forest-green">850 kg</td>
-<td class="px-6 py-4 text-sm text-gray-600">Agri-Coop Sud</td>
-<td class="px-6 py-4">
-<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                  Validé
-                </span>
-</td>
-</tr>
-<!-- Row 3 -->
-<tr class="hover:bg-sand-bg/50 transition-colors">
-<td class="px-6 py-4 text-sm text-gray-600">23 Juin 2024</td>
-<td class="px-6 py-4 text-sm font-medium text-forest-green">#ENT-4580</td>
-<td class="px-6 py-4 text-sm text-gray-600">Sciure de bois</td>
-<td class="px-6 py-4 text-sm text-right font-bold text-forest-green">2,100 kg</td>
-<td class="px-6 py-4 text-sm text-gray-600">Scierie du Nord</td>
-<td class="px-6 py-4">
-<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                  Validé
-                </span>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<!-- END: Recent Entries Table -->
+  <header class="flex justify-between items-start mb-10">
+    <div>
+      <h2 class="text-2xl font-serif font-bold text-forest-green">Gestionnaire de stock</h2>
+      <p class="text-sm text-gray-500">Approvisionnement, lots &amp; inventaire</p>
+    </div>
+    <div class="flex items-center gap-4">
+      <div class="w-10 h-10 bg-leaf-green rounded-full flex items-center justify-center text-white font-bold">N</div>
+    </div>
+  </header>
+
+  <section class="mb-10">
+    <h3 class="text-3xl font-serif font-bold mb-1">Enregistrer une entrée de stock</h3>
+    <p class="text-gray-500 text-sm italic">Ajoutez les produits finis issus d'un lot de production.</p>
+  </section>
+
+  <!-- BEGIN: Stock Entry Form -->
+  <section class="bg-white rounded-xl border border-gray-100 shadow-sm p-8 mb-12" data-purpose="stock-entry-card">
+
+    <!-- ✅ FORM THYMELEAF -->
+    <form th:action="@{/stock/entree}" method="post" class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
+
+      <!-- Lot de production -->
+      <div class="space-y-1.5">
+        <label class="block text-sm font-semibold text-gray-700">Lot de production</label>
+        <select name="idLot" class="w-full h-11 px-4 rounded-lg border-gray-200 focus:ring-leaf-green focus:border-leaf-green text-sm">
+          <option value="">Sélectionner un lot...</option>
+          <option th:each="lot : ${lots}"
+                  th:value="${lot.id}"
+                  th:text="${lot.reference} + ' — ' + ${lot.quantiteMatiereUtilisee} + ' kg'">
+          </option>
+        </select>
+      </div>
+
+      <!-- Quantité -->
+      <div class="space-y-1.5">
+        <label class="block text-sm font-semibold text-gray-700">Quantité (unités)</label>
+        <input name="quantite" type="number" placeholder="0"
+               class="w-full h-11 px-4 rounded-lg border-gray-200 focus:ring-leaf-green focus:border-leaf-green text-sm"/>
+      </div>
+
+      <!-- Date -->
+      <div class="space-y-1.5">
+        <label class="block text-sm font-semibold text-gray-700">Date</label>
+        <input name="date" type="date"
+               class="w-full h-11 px-4 rounded-lg border-gray-200 focus:ring-leaf-green focus:border-leaf-green text-sm"/>
+      </div>
+
+      <!-- Boutons -->
+      <div class="md:col-span-2 pt-4 flex items-center gap-4">
+        <button type="submit"
+                class="bg-leaf-green hover:bg-forest-green text-white px-8 py-2.5 rounded-lg font-medium transition-colors text-sm">
+          Valider l'entrée
+        </button>
+        <a th:href="@{/stock/entree}"
+           class="px-8 py-2.5 rounded-lg border border-gray-200 text-gray-600 font-medium hover:bg-gray-50 transition-colors text-sm">
+          Annuler
+        </a>
+        <p class="text-xs text-gray-400 italic">Le stock sera mis à jour dès validation.</p>
+      </div>
+
+    </form>
+  </section>
+  <!-- END: Stock Entry Form -->
+
+  <!-- BEGIN: Recent Entries Table -->
+  <section>
+    <div class="flex justify-between items-end mb-6">
+      <h4 class="text-xl font-serif font-bold text-forest-green">Historique récent des entrées</h4>
+      <button class="text-sm font-medium text-leaf-green hover:underline">Voir tout l'historique</button>
+    </div>
+    <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+      <table class="w-full text-left border-collapse">
+        <thead class="bg-gray-50/50">
+          <tr>
+            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Date</th>
+            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Lot</th>
+            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Matière</th>
+            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Quantité</th>
+            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Fournisseur</th>
+            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Statut</th>
+            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Actions</th>
+          </tr>
+        </thead>
+
+        <!-- ✅ TBODY THYMELEAF -->
+        <tbody class="divide-y divide-gray-100">
+          <tr th:each="m : ${mouvements}"
+              th:if="${m.typeMouvement.libelle == 'Entree'}"
+              class="hover:bg-sand-bg/50 transition-colors">
+            <td class="px-6 py-4 text-sm text-gray-600"
+                th:text="${#temporals.format(m.dateMouvement, 'dd/MM/yyyy')}"></td>
+            <td class="px-6 py-4 text-sm font-medium text-forest-green"
+                th:text="${m.lotProduction?.reference}"></td>
+            <td class="px-6 py-4 text-sm text-gray-600">—</td>
+            <td class="px-6 py-4 text-sm text-right font-bold text-forest-green"
+                th:text="${m.quantite} + ' unités'"></td>
+            <td class="px-6 py-4 text-sm text-gray-600">—</td>
+            <td class="px-6 py-4">
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                Validé
+              </span>
+            </td>
+            <td class="px-6 py-4">
+              <div class="flex items-center gap-2">
+                <a th:href="@{/stock/mouvement/modifier(id=${m.id})}"
+                   class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
+                  Modifier
+                </a>
+                <form th:action="@{/stock/mouvement/supprimer}" method="post" style="display:inline">
+                  <input type="hidden" name="id" th:value="${m.id}"/>
+                  <button type="submit" onclick="return confirm('Supprimer ce mouvement ?')"
+                          class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 hover:bg-red-100 rounded-lg transition-colors">
+                    Supprimer
+                  </button>
+                </form>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+
+      </table>
+    </div>
+  </section>
+  <!-- END: Recent Entries Table -->
+
 </main>
 <!-- END: Main Content Area -->
-</body></html>
+
+</body>
+</html>

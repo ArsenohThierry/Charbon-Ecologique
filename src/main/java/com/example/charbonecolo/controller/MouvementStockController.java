@@ -1,7 +1,15 @@
 package com.example.charbonecolo.controller;
 
+import com.example.charbonecolo.model.MouvementStockModel;
+import com.example.charbonecolo.service.MouvementStockService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.time.LocalDate;
 
 /**
  * Controller for Stock Movement module
@@ -9,21 +17,99 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class MouvementStockController {
 
+    private final MouvementStockService mouvementStockService;
+
+    public MouvementStockController(MouvementStockService mouvementStockService) {
+        this.mouvementStockService = mouvementStockService;
+    }
+
+    // ── ENTRÉE ───────────────────────────────────────────────────
+
     /**
-     * Redirects to the entrée stock page
-     * @return view name for entrée stock page
+     * Affiche la page d'entrée stock avec les lots et l'historique
      */
     @GetMapping("stock/entree")
-    public String entreeStock() {
+    public String entreeStock(Model model) {
+        model.addAttribute("lots", mouvementStockService.getLotsTermines());
+        model.addAttribute("mouvements", mouvementStockService.getAllMouvementsStock());
         return "stitch/module_stock/entree_stock";
     }
 
     /**
-     * Redirects to the sortie stock page
-     * @return view name for sortie stock page
+     * Enregistre une entrée stock et redirige
+     */
+    @PostMapping("stock/entree")
+    public String saveEntreeStock(@RequestParam Integer idLot,
+                                  @RequestParam Integer quantite,
+                                  @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+        mouvementStockService.saveEntreeStock(idLot, quantite, date);
+        return "redirect:/stock/entree";
+    }
+
+    // ── SORTIE ───────────────────────────────────────────────────
+
+    /**
+     * Affiche la page de sortie stock avec les motifs et l'historique
      */
     @GetMapping("stock/sortie")
-    public String sortieStock() {
+    public String sortieStock(Model model) {
+        model.addAttribute("motifs", mouvementStockService.getAllMotifsSortie());
+        model.addAttribute("mouvements", mouvementStockService.getAllMouvementsStock());
         return "stitch/module_stock/sortie_stock";
+    }
+
+    /**
+     * Enregistre une sortie stock et redirige
+     */
+    @PostMapping("stock/sortie")
+    public String saveSortieStock(@RequestParam Integer quantite,
+                                  @RequestParam Integer idMotif,
+                                  @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+        mouvementStockService.saveSortieStock(quantite, idMotif, date);
+        return "redirect:/stock/sortie";
+    }
+
+    // ── MODIFIER ─────────────────────────────────────────────────
+
+    /**
+     * Affiche le formulaire de modification pré-rempli
+     */
+    @GetMapping("stock/mouvement/modifier")
+    public String editMouvement(@RequestParam Integer id, Model model) {
+        MouvementStockModel m = mouvementStockService.getMouvementStockById(id).orElseThrow();
+        model.addAttribute("mouvement", m);
+        model.addAttribute("lots", mouvementStockService.getLotsTermines());
+        model.addAttribute("motifs", mouvementStockService.getAllMotifsSortie());
+        return "stitch/module_stock/edit_mouvement";
+    }
+
+    /**
+     * Sauvegarde les modifications
+     */
+    @PostMapping("stock/mouvement/modifier")
+    public String saveEditMouvement(@RequestParam Integer id,
+                                    @RequestParam(required = false) Integer idLot,
+                                    @RequestParam Integer quantite,
+                                    @RequestParam(required = false) Integer idMotif,
+                                    @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+        MouvementStockModel m = mouvementStockService.getMouvementStockById(id).orElseThrow();
+        boolean isEntree = m.getTypeMouvement().getId() == 1;
+        if (isEntree) {
+            mouvementStockService.updateEntreeStock(id, idLot, quantite, date);
+            return "redirect:/stock/entree";
+        } else {
+            mouvementStockService.updateSortieStock(id, quantite, idMotif, date);
+            return "redirect:/stock/sortie";
+        }
+    }
+
+    // ── SUPPRIMER ────────────────────────────────────────────────
+
+    @PostMapping("stock/mouvement/supprimer")
+    public String deleteMouvement(@RequestParam Integer id) {
+        MouvementStockModel m = mouvementStockService.getMouvementStockById(id).orElseThrow();
+        boolean isEntree = m.getTypeMouvement().getId() == 1;
+        mouvementStockService.deleteMouvementStock(id);
+        return isEntree ? "redirect:/stock/entree" : "redirect:/stock/sortie";
     }
 }
