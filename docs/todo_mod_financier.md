@@ -5,42 +5,42 @@
 
 * Créer et modifier les tables :
 
-  * `type_journal(id,libelle,code)`
-  * `origine(id,libelle,code)`
-  * `journal_financier(id,reference,date_operation,id_type_journal,id_origine,debit,credit,description)`
-  * `tresorerie(id,date_mouvement,type,montant,solde,libelle,journal_id)`
-  * `import_excel(id,nom_fichier,date_import,nb_lignes,statut,message_log)`
+  * type_journal(id,libelle,code)
+  * origine(id,libelle,code)
+  * journal_financier(id,reference,date_operation,id_type_journal,id_origine,debit,credit,description)
+  * tresorerie(id,date_mouvement,type,montant,solde,libelle,journal_id)
+  * import_excel(id,nom_fichier,date_import,nb_lignes,statut,message_log)
 
 ### Modèles
 
-* Créer `TypeJournalModel`
-* Créer `OrigineModel`
-* Créer `JournalFinancierModel`
-* Créer `TresorerieModel`
-* Créer `ImportExcelModel`
+* Créer TypeJournalModel
+* Créer OrigineModel
+* Créer JournalFinancierModel
+* Créer TresorerieModel
+* Créer ImportExcelModel
 
 ### Repositories
 
-* `TypeJournalRepository`
-* `OrigineRepository`
-* `JournalFinancierRepository`
-* `TresorerieRepository`
-* `ImportExcelRepository`
+* TypeJournalRepository
+* OrigineRepository
+* JournalFinancierRepository
+* TresorerieRepository
+* ImportExcelRepository
 
 ### Services
 
 Créer les services :
 
-* `JournalFinancierService`
-* `TresorerieService`
+* JournalFinancierService
+* TresorerieService
 
 Implémenter :
 
-* `enregistrer()`
-* `calculerCA()`
-* `calculerBenefice()`
-* `calculerSolde()`
-* `filtrerJournal()`
+* enregistrer()
+* calculerCA()
+* calculerBenefice()
+* calculerSolde()
+* filtrerJournal()
 
 ---
 
@@ -50,26 +50,26 @@ Implémenter :
 
 Créer :
 
-* `JournalController`
-* `BilanController`
-* `TresorerieController`
-* `KpiController`
+* JournalController
+* BilanController
+* TresorerieController
+* KpiController
 
 Ajouter les routes :
 
-* `/finance/journal`
-* `/finance/bilan`
-* `/finance/tresorerie`
-* `/finance/kpi`
+* /finance/journal
+* /finance/bilan
+* /finance/tresorerie
+* /finance/kpi
 
 ### Pages Thymeleaf
 
 Créer :
 
-* `journal.html`
-* `bilan.html`
-* `tresorerie.html`
-* `kpi.html`
+* journal.html
+* bilan.html
+* tresorerie.html
+* kpi.html
 
 ### Affichage
 
