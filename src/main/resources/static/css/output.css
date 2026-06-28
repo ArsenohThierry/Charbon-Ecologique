@@ -749,40 +749,6 @@ input:where([type='file']):focus {
   outline: 1px auto -webkit-focus-ring-color;
 }
 
-.container {
-  width: 100%;
-}
-
-@media (min-width: 640px) {
-  .container {
-    max-width: 640px;
-  }
-}
-
-@media (min-width: 768px) {
-  .container {
-    max-width: 768px;
-  }
-}
-
-@media (min-width: 1024px) {
-  .container {
-    max-width: 1024px;
-  }
-}
-
-@media (min-width: 1280px) {
-  .container {
-    max-width: 1280px;
-  }
-}
-
-@media (min-width: 1536px) {
-  .container {
-    max-width: 1536px;
-  }
-}
-
 .pointer-events-none {
   pointer-events: none;
 }
@@ -853,6 +819,11 @@ input:where([type='file']):focus {
   margin-right: 0.25rem;
 }
 
+.mx-2 {
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+}
+
 .mx-auto {
   margin-left: auto;
   margin-right: auto;
@@ -905,14 +876,6 @@ input:where([type='file']):focus {
 
 .ml-64 {
   margin-left: 16rem;
-}
-
-.ml-8 {
-  margin-left: 2rem;
-}
-
-.ml-9 {
-  margin-left: 2.25rem;
 }
 
 .mr-2 {
@@ -1035,10 +998,6 @@ input:where([type='file']):focus {
   width: 2.5rem;
 }
 
-.w-12 {
-  width: 3rem;
-}
-
 .w-16 {
   width: 4rem;
 }
@@ -1095,6 +1054,10 @@ input:where([type='file']):focus {
   min-width: 180px;
 }
 
+.max-w-2xl {
+  max-width: 42rem;
+}
+
 .max-w-4xl {
   max-width: 56rem;
 }
@@ -1105,10 +1068,6 @@ input:where([type='file']):focus {
 
 .max-w-6xl {
   max-width: 72rem;
-}
-
-.max-w-\[1280px\] {
-  max-width: 1280px;
 }
 
 .max-w-\[420px\] {
@@ -1151,6 +1110,11 @@ input:where([type='file']):focus {
 
 .-translate-y-1\/2 {
   --tw-translate-y: -50%;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.-rotate-180 {
+  --tw-rotate: -180deg;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
@@ -1387,10 +1351,6 @@ input:where([type='file']):focus {
   border-bottom-width: 1px;
 }
 
-.border-l-2 {
-  border-left-width: 2px;
-}
-
 .border-r-2 {
   border-right-width: 2px;
 }
@@ -1401,11 +1361,6 @@ input:where([type='file']):focus {
 
 .border-t {
   border-top-width: 1px;
-}
-
-.border-border-gray {
-  --tw-border-opacity: 1;
-  border-color: rgb(204 204 204 / var(--tw-border-opacity, 1));
 }
 
 .border-brand-light {
@@ -1496,11 +1451,6 @@ input:where([type='file']):focus {
 .bg-\[\#2A5A46\] {
   --tw-bg-opacity: 1;
   background-color: rgb(42 90 70 / var(--tw-bg-opacity, 1));
-}
-
-.bg-background {
-  --tw-bg-opacity: 1;
-  background-color: rgb(250 249 249 / var(--tw-bg-opacity, 1));
 }
 
 .bg-black\/10 {
@@ -1714,16 +1664,6 @@ input:where([type='file']):focus {
   background-color: rgb(220 38 38 / var(--tw-bg-opacity, 1));
 }
 
-.bg-surface-container-lowest {
-  --tw-bg-opacity: 1;
-  background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
-}
-
-.bg-swiss-red {
-  --tw-bg-opacity: 1;
-  background-color: rgb(231 60 2 / var(--tw-bg-opacity, 1));
-}
-
 .bg-white {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
@@ -1858,11 +1798,6 @@ input:where([type='file']):focus {
   padding-bottom: 1.5rem;
 }
 
-.py-8 {
-  padding-top: 2rem;
-  padding-bottom: 2rem;
-}
-
 .pb-2 {
   padding-bottom: 0.5rem;
 }
@@ -1966,29 +1901,6 @@ input:where([type='file']):focus {
   font-size: 11px;
 }
 
-.text-\[30px\] {
-  font-size: 30px;
-}
-
-.text-body-md {
-  font-size: 14px;
-  line-height: 20px;
-  font-weight: 400;
-}
-
-.text-headline-md {
-  font-size: 24px;
-  line-height: 32px;
-  letter-spacing: -0.01em;
-  font-weight: 700;
-}
-
-.text-headline-sm {
-  font-size: 18px;
-  line-height: 24px;
-  font-weight: 600;
-}
-
 .text-lg {
   font-size: 1.125rem;
   line-height: 1.75rem;
@@ -2070,6 +1982,11 @@ input:where([type='file']):focus {
 .text-brand-dark {
   --tw-text-opacity: 1;
   color: rgb(27 51 28 / var(--tw-text-opacity, 1));
+}
+
+.text-brand-success {
+  --tw-text-opacity: 1;
+  color: rgb(64 123 74 / var(--tw-text-opacity, 1));
 }
 
 .text-charbon-dark {
@@ -2177,11 +2094,6 @@ input:where([type='file']):focus {
   color: rgb(22 101 52 / var(--tw-text-opacity, 1));
 }
 
-.text-on-surface {
-  --tw-text-opacity: 1;
-  color: rgb(26 28 28 / var(--tw-text-opacity, 1));
-}
-
 .text-orange-700 {
   --tw-text-opacity: 1;
   color: rgb(194 65 12 / var(--tw-text-opacity, 1));
@@ -2207,34 +2119,9 @@ input:where([type='file']):focus {
   color: rgb(153 27 27 / var(--tw-text-opacity, 1));
 }
 
-.text-secondary {
-  --tw-text-opacity: 1;
-  color: rgb(94 94 94 / var(--tw-text-opacity, 1));
-}
-
-.text-slate-300 {
-  --tw-text-opacity: 1;
-  color: rgb(203 213 225 / var(--tw-text-opacity, 1));
-}
-
-.text-slate-400 {
-  --tw-text-opacity: 1;
-  color: rgb(148 163 184 / var(--tw-text-opacity, 1));
-}
-
 .text-slate-800 {
   --tw-text-opacity: 1;
   color: rgb(30 41 59 / var(--tw-text-opacity, 1));
-}
-
-.text-surface-container-lowest {
-  --tw-text-opacity: 1;
-  color: rgb(255 255 255 / var(--tw-text-opacity, 1));
-}
-
-.text-swiss-red {
-  --tw-text-opacity: 1;
-  color: rgb(231 60 2 / var(--tw-text-opacity, 1));
 }
 
 .text-white {
@@ -2486,11 +2373,6 @@ input:where([type='file']):focus {
   color: rgb(75 85 99 / var(--tw-text-opacity, 1));
 }
 
-.hover\:text-on-surface:hover {
-  --tw-text-opacity: 1;
-  color: rgb(26 28 28 / var(--tw-text-opacity, 1));
-}
-
 .hover\:text-red-600:hover {
   --tw-text-opacity: 1;
   color: rgb(220 38 38 / var(--tw-text-opacity, 1));
@@ -2510,8 +2392,8 @@ input:where([type='file']):focus {
   text-decoration-line: underline;
 }
 
-.hover\:opacity-100:hover {
-  opacity: 1;
+.hover\:opacity-90:hover {
+  opacity: 0.9;
 }
 
 .focus\:border-brand-button:focus {
@@ -2598,11 +2480,6 @@ input:where([type='file']):focus {
 
 .disabled\:opacity-50:disabled {
   opacity: 0.5;
-}
-
-.group:hover .group-hover\:rotate-180 {
-  --tw-rotate: 180deg;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
 @media (min-width: 768px) {

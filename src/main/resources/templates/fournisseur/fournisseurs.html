@@ -5,64 +5,12 @@
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Fournisseurs - Charbon Vert</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: { dark: '#1B331C', accent: '#C79E5C', light: '#F8F7F0', success: '#407B4A' }
-                    },
-                    fontFamily: { sans: ['Inter', 'sans-serif'], serif: ['Playfair Display', 'serif'] }
-                }
-            }
-        }
-    </script>
-    <style>
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-        }
-
-        input:focus,
-        select:focus,
-        textarea:focus {
-            outline: none !important;
-            border-color: #407B4A !important;
-            ring: 1px solid #407B4A !important;
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/output.css}" href="../static/css/output.css" />
+    <link rel="stylesheet" th:href="@{/css/fonts.css}" href="../static/css/fonts.css" />
 </head>
 
 <body class="bg-brand-light font-sans text-slate-800 min-h-screen flex">
-    <aside class="w-64 bg-brand-dark text-white flex flex-col shrink-0">
-        <div class="p-6 flex items-center gap-3">
-            <div class="w-8 h-8 bg-brand-accent rounded-full flex items-center justify-center">
-                <svg class="h-5 w-5 text-brand-dark" fill="none" stroke="currentColor" viewbox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path d="M21 12c0 1.2-4.03 6-9 6s-9-4.8-9-6c0-1.2 4.03-6 9-6s9 4.8 9 6z" stroke-linecap="round"
-                        stroke-linejoin="round" stroke-width="2"></path>
-                    <path d="M12 18V6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
-                </svg>
-            </div>
-            <div>
-                <h1 class="font-bold text-lg leading-tight">Charbon Vert</h1>
-                <p class="text-xs text-gray-400">Gestionnaire de stock</p>
-            </div>
-        </div>
-        <nav class="flex-1 px-4 mt-4 space-y-1 overflow-y-auto custom-scrollbar">
-            <a class="flex items-center gap-3 px-3 py-2 text-sm text-gray-300 hover:bg-white/10 rounded-md transition-colors"
-                href="#">Tableau de bord</a>
-            <div class="mt-1 ml-4 space-y-1">
-                <a class="block px-3 py-2 text-xs font-medium text-brand-dark bg-brand-accent rounded-l-md"
-                    href="#">Fournisseurs</a>
-            </div>
-        </nav>
-    </aside>
+    <aside th:replace="~{fragments/sidebar :: sidebar('fournisseurs')}"></aside>
 
     <main class="flex-1 flex flex-col min-w-0">
         <header class="h-16 px-8 flex items-center justify-between border-b border-gray-200">
