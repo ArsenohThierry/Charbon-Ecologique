@@ -17,6 +17,14 @@ public class FournisseurModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     @Column(length = 150, nullable = false)
     private String nom;
 
@@ -28,7 +36,7 @@ public class FournisseurModel {
 
     private String adresse;
 
-    @Column(name = "date_creation", nullable = false)
+    @Column(name = "date_creation")
     private LocalDateTime date_creation;
 
     @Column(name = "actif", nullable = false)
@@ -40,6 +48,14 @@ public class FournisseurModel {
 
     public void setActif(boolean actif) {
         this.actif = actif;
+    }
+
+    public void setActif(String s){
+        if(s.equals("true")){
+            setActif(true);
+        }else{
+            setActif(false);
+        }
     }
 
     public String getNom() {
