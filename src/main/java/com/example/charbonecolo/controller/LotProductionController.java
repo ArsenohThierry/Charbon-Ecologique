@@ -29,7 +29,7 @@ public class LotProductionController {
     }
 
     @GetMapping("/nouveau")
-    public String nouveauLot(Model model) {
+    public String addLot(Model model) {
         model.addAttribute("lotProduction", new LotProductionModel());
         return "stitch/module_stock/nouveau_lot";
     }
@@ -42,7 +42,7 @@ public class LotProductionController {
     }
 
     @PostMapping("/nouveau")
-    public String creerLot(@Valid @ModelAttribute("lotProduction") LotProductionModel lotProduction,
+    public String createLot(@Valid @ModelAttribute("lotProduction") LotProductionModel lotProduction,
             BindingResult result, Model model) {
         if (result.hasErrors()) {
             return "stitch/module_stock/nouveau_lot";
@@ -58,7 +58,7 @@ public class LotProductionController {
     }
 
     @GetMapping("/modifier/{id}")
-    public String modifierLot(@PathVariable Integer id, Model model) {
+    public String changeLot(@PathVariable Integer id, Model model) {
         Optional<LotProductionModel> lot = lotProductionService.getLotProductionById(id);
         if (lot.isEmpty()) {
             return "redirect:/stock/lot/liste";
@@ -80,7 +80,7 @@ public class LotProductionController {
     }
 
     @PostMapping("/supprimer/{id}")
-    public String supprimerLot(@PathVariable Integer id) {
+    public String deleteLot(@PathVariable Integer id) {
         lotProductionService.deleteLotProduction(id);
         return "redirect:/stock/lot/liste";
     }
