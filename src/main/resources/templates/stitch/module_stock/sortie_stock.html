@@ -1,13 +1,11 @@
 <!DOCTYPE html>
-
-<html lang="fr"><head>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Sortie de stock - Charbon Vert</title>
-<!-- Tailwind CSS v3 with Plugins -->
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<!-- Google Fonts: Libre Caslon Text -->
-<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"/>
 <script>
     tailwind.config = {
       theme: {
@@ -25,7 +23,7 @@
               lowest: '#ffffff',
               low: '#edf6f0',
             },
-            accent: '#c99a5c', // For active states and accents
+            accent: '#c99a5c',
           },
           fontFamily: {
             serif: ['Libre Caslon Text', 'serif'],
@@ -36,223 +34,215 @@
         }
       }
     }
-  </script>
+</script>
 <style data-purpose="typography">
-    body {
-      font-family: 'Libre Caslon Text', serif;
-      background-color: #f3fbf6;
-    }
-    h1, h2, h3 {
-      color: #1b3c2e;
-    }
-  </style>
+    body { font-family: 'Libre Caslon Text', serif; background-color: #f3fbf6; }
+    h1, h2, h3 { color: #1b3c2e; }
+</style>
 <style data-purpose="layout">
     .sidebar-width { width: 260px; }
     .main-content { margin-left: 260px; min-height: 100vh; }
-    .active-nav-item {
-      background-color: #c99a5c;
-      color: #1b3c2e !important;
-      border-radius: 8px;
-    }
-  </style>
+    .active-nav-item { background-color: #c99a5c; color: #1b3c2e !important; border-radius: 8px; }
+</style>
 </head>
 <body class="text-gray-800">
-<!-- BEGIN: MainContainer -->
 <div class="flex">
-<!-- BEGIN: Sidebar -->
-<aside class="sidebar-width bg-brand text-white fixed h-screen flex flex-col overflow-y-auto">
-<div class="p-6">
-<!-- Brand Logo -->
-<div class="flex items-center gap-3 mb-10">
-<div class="w-10 h-10 bg-accent rounded-full flex items-center justify-center text-brand">
-<svg class="h-6 w-6" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-<path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M12 7a5 5 0 100 10 5 5 0 000-10z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
-</svg>
-</div>
-<div>
-<h1 class="text-xl font-bold leading-none">Charbon Vert</h1>
-<p class="text-xs opacity-70">Gestionnaire de stock</p>
-</div>
-</div>
-<!-- Navigation -->
-<nav class="space-y-1">
-<a class="flex items-center gap-3 px-3 py-2 text-sm opacity-80 hover:opacity-100" href="#">
-<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-            Tableau de bord
+
+  <!-- BEGIN: Sidebar -->
+  <aside class="sidebar-width bg-brand text-white fixed h-screen flex flex-col overflow-y-auto">
+    <div class="p-6">
+      <div class="flex items-center gap-3 mb-10">
+        <div class="w-10 h-10 bg-accent rounded-full flex items-center justify-center text-brand">
+          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+            <path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M12 7a5 5 0 100 10 5 5 0 000-10z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold leading-none">Charbon Vert</h1>
+          <p class="text-xs opacity-70">Gestionnaire de stock</p>
+        </div>
+      </div>
+      <nav class="space-y-1">
+        <a class="flex items-center gap-3 px-3 py-2 text-sm opacity-80 hover:opacity-100" href="#">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+          Tableau de bord
+        </a>
+        <div class="pt-2">
+          <button class="w-full flex items-center justify-between px-3 py-2 text-sm opacity-80 hover:opacity-100">
+            <span class="flex items-center gap-3">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+              Approvisionnement &amp; mat...
+            </span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+          </button>
+        </div>
+        <div class="pt-2">
+          <button class="w-full flex items-center justify-between px-3 py-2 text-sm opacity-80 hover:opacity-100">
+            <span class="flex items-center gap-3">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+              Lots de production
+            </span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+          </button>
+        </div>
+        <div class="pt-2">
+          <button class="w-full flex items-center justify-between px-3 py-2 text-sm">
+            <span class="flex items-center gap-3">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+              Généralités stocks
+            </span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+          </button>
+          <div class="ml-8 mt-1 space-y-1">
+            <a class="block px-3 py-2 text-xs opacity-70 hover:opacity-100" href="#">État du stock</a>
+            <a class="block px-3 py-2 text-xs opacity-70 hover:opacity-100" th:href="@{/stock/entree}">Entrée de stock</a>
+            <a class="block px-3 py-2 text-xs active-nav-item font-bold" th:href="@{/stock/sortie}">Sortie de stock</a>
+          </div>
+        </div>
+        <a class="flex items-center gap-3 px-3 py-2 text-sm opacity-80 hover:opacity-100 pt-2" href="#">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+          Ventes / Commandes
+        </a>
+        <a class="flex items-center gap-3 px-3 py-2 text-sm opacity-80 hover:opacity-100" href="#">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+          Rapports
+        </a>
+      </nav>
+    </div>
+    <div class="mt-auto p-4 border-t border-white/10">
+      <button class="flex items-center gap-3 text-xs opacity-80 hover:opacity-100">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1h3a2 2 0 002-2V5a2 2 0 00-2-2h-3v1m-1 4H7a2 2 0 00-2 2v6a2 2 0 002 2h3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+        Changer de rôle
+      </button>
+    </div>
+  </aside>
+  <!-- END: Sidebar -->
+
+  <!-- BEGIN: MainContent -->
+  <main class="main-content flex-grow p-8">
+    <header class="flex justify-between items-start mb-10">
+      <div>
+        <h2 class="text-2xl font-bold">Gestionnaire de stock</h2>
+        <p class="text-sm text-gray-500">Approvisionnement, lots &amp; inventaire</p>
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="w-10 h-10 bg-brand text-white rounded-full flex items-center justify-center font-bold">N</div>
+      </div>
+    </header>
+
+    <div class="mb-8">
+      <h1 class="text-4xl font-bold mb-2">Sortie de stock</h1>
+      <p class="text-gray-600">Enregistrer une sortie de charbon. Le stock disponible est vérifié.</p>
+    </div>
+
+    <!-- BEGIN: SortieFormSection -->
+    <section class="bg-white rounded-custom shadow-sm border border-gray-100 p-8 mb-10" data-purpose="form-container">
+
+      <!-- ✅ FORM THYMELEAF -->
+      <form th:action="@{/stock/sortie}" method="post" class="space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+
+          <!-- Quantité -->
+          <div data-purpose="form-field">
+            <label class="block text-sm font-bold mb-2">Quantité (unités)</label>
+            <input name="quantite" type="number" placeholder="50"
+                   class="w-full border-gray-200 rounded-custom focus:ring-brand focus:border-brand"/>
+          </div>
+
+          <!-- Motif -->
+          <div data-purpose="form-field">
+            <label class="block text-sm font-bold mb-2">Motif</label>
+            <select name="idMotif" class="w-full border-gray-200 rounded-custom focus:ring-brand focus:border-brand">
+              <option value="">Sélectionner...</option>
+              <option th:each="motif : ${motifs}"
+                      th:value="${motif.id}"
+                      th:text="${motif.libelle}">
+              </option>
+            </select>
+          </div>
+
+          <!-- Date -->
+          <div data-purpose="form-field">
+            <label class="block text-sm font-bold mb-2">Date</label>
+            <input name="date" type="date"
+                   class="w-full border-gray-200 rounded-custom focus:ring-brand focus:border-brand"/>
+          </div>
+
+        </div>
+
+        <!-- Boutons -->
+        <div class="flex items-center gap-4 pt-4">
+          <button type="submit"
+                  class="bg-brand text-white px-6 py-2.5 rounded-custom font-bold hover:bg-brand-dark transition-colors">
+            Enregistrer la sortie
+          </button>
+          <a th:href="@{/stock/sortie}"
+             class="bg-white border border-gray-200 text-gray-700 px-6 py-2.5 rounded-custom font-bold hover:bg-gray-50 transition-colors">
+            Annuler
           </a>
-<!-- Approvisionnement Menu -->
-<div class="pt-2">
-<button class="w-full flex items-center justify-between px-3 py-2 text-sm opacity-80 hover:opacity-100">
-<span class="flex items-center gap-3">
-<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-                Approvisionnement &amp; mat...
-              </span>
-<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-</button>
+          <span class="text-xs text-gray-400 italic">Vérification automatique : stock suffisant requis.</span>
+        </div>
+      </form>
+
+    </section>
+    <!-- END: SortieFormSection -->
+
+    <!-- BEGIN: TableSection -->
+    <section>
+      <h3 class="text-xl font-bold mb-4">Sorties par référence</h3>
+      <div class="bg-white rounded-custom border border-gray-100 overflow-hidden shadow-sm">
+        <table class="w-full text-left">
+          <thead class="bg-surface-low border-b border-gray-100">
+            <tr>
+              <th class="px-6 py-4 text-sm font-bold text-gray-500 uppercase tracking-wider">Référence</th>
+              <th class="px-6 py-4 text-sm font-bold text-gray-500 uppercase tracking-wider">Produit</th>
+              <th class="px-6 py-4 text-sm font-bold text-gray-500 uppercase tracking-wider text-right">Quantité</th>
+              <th class="px-6 py-4 text-sm font-bold text-gray-500 uppercase tracking-wider">Motif</th>
+              <th class="px-6 py-4 text-sm font-bold text-gray-500 uppercase tracking-wider">Date</th>
+              <th class="px-6 py-4 text-sm font-bold text-gray-500 uppercase tracking-wider">Actions</th>
+            </tr>
+          </thead>
+
+          <!-- ✅ TBODY THYMELEAF -->
+          <tbody class="divide-y divide-gray-100">
+            <tr th:each="m : ${mouvements}"
+                th:if="${m.typeMouvement.libelle == 'Sortie'}"
+                class="hover:bg-gray-50 transition-colors">
+              <td class="px-6 py-4 text-sm font-bold"
+                  th:text="'SOR-' + ${m.id}"></td>
+              <td class="px-6 py-4 text-sm text-gray-700">—</td>
+              <td class="px-6 py-4 text-sm text-gray-700 text-right font-medium"
+                  th:text="${m.quantite} + ' unités'"></td>
+              <td class="px-6 py-4 text-sm text-gray-700"
+                  th:text="${m.motifSortie?.libelle}"></td>
+              <td class="px-6 py-4 text-sm text-gray-700"
+                  th:text="${#temporals.format(m.dateMouvement, 'dd/MM/yyyy')}"></td>
+              <td class="px-6 py-4">
+                <div class="flex items-center gap-2">
+                  <a th:href="@{/stock/mouvement/modifier(id=${m.id})}"
+                     class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
+                    Modifier
+                  </a>
+                  <form th:action="@{/stock/mouvement/supprimer}" method="post" style="display:inline">
+                    <input type="hidden" name="id" th:value="${m.id}"/>
+                    <button type="submit" onclick="return confirm('Supprimer ce mouvement ?')"
+                            class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 hover:bg-red-100 rounded-lg transition-colors">
+                      Supprimer
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+
+        </table>
+      </div>
+    </section>
+    <!-- END: TableSection -->
+
+  </main>
+  <!-- END: MainContent -->
+
 </div>
-<!-- Lots Menu -->
-<div class="pt-2">
-<button class="w-full flex items-center justify-between px-3 py-2 text-sm opacity-80 hover:opacity-100">
-<span class="flex items-center gap-3">
-<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-                Lots de production
-              </span>
-<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-</button>
-</div>
-<!-- Généralités stocks Menu (Expanded) -->
-<div class="pt-2">
-<button class="w-full flex items-center justify-between px-3 py-2 text-sm">
-<span class="flex items-center gap-3">
-<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-                Généralités stocks
-              </span>
-<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-</button>
-<div class="ml-8 mt-1 space-y-1">
-<a class="block px-3 py-2 text-xs opacity-70 hover:opacity-100" href="#">État du stock</a>
-<a class="block px-3 py-2 text-xs opacity-70 hover:opacity-100" href="#">Entrée de stock</a>
-<a class="block px-3 py-2 text-xs active-nav-item font-bold" href="#">Sortie de stock</a>
-</div>
-</div>
-<a class="flex items-center gap-3 px-3 py-2 text-sm opacity-80 hover:opacity-100 pt-2" href="#">
-<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-            Ventes / Commandes
-          </a>
-<a class="flex items-center gap-3 px-3 py-2 text-sm opacity-80 hover:opacity-100" href="#">
-<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-            Rapports
-          </a>
-</nav>
-</div>
-<!-- User footer in sidebar -->
-<div class="mt-auto p-4 border-t border-white/10">
-<button class="flex items-center gap-3 text-xs opacity-80 hover:opacity-100">
-<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1h3a2 2 0 002-2V5a2 2 0 00-2-2h-3v1m-1 4H7a2 2 0 00-2 2v6a2 2 0 002 2h3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-          Changer de rôle
-        </button>
-</div>
-</aside>
-<!-- END: Sidebar -->
-<!-- BEGIN: MainContent -->
-<main class="main-content flex-grow p-8">
-<!-- Header -->
-<header class="flex justify-between items-start mb-10">
-<div>
-<h2 class="text-2xl font-bold">Gestionnaire de stock</h2>
-<p class="text-sm text-gray-500">Approvisionnement, lots &amp; inventaire</p>
-</div>
-<div class="flex items-center gap-4">
-<span class="bg-surface-low border border-surface-dim px-3 py-1 rounded-full text-xs text-gray-600">Maquette · données fictives</span>
-<div class="w-10 h-10 bg-brand text-white rounded-full flex items-center justify-center font-bold">N</div>
-</div>
-</header>
-<!-- Page Title -->
-<div class="mb-8">
-<h1 class="text-4xl font-bold mb-2">Sortie de stock</h1>
-<p class="text-gray-600">Enregistrer une sortie de charbon. Le stock disponible est vérifié.</p>
-</div>
-<!-- BEGIN: SortieFormSection -->
-<section class="bg-white rounded-custom shadow-sm border border-gray-100 p-8 mb-10" data-purpose="form-container">
-<form class="space-y-6">
-<div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-<!-- Field: Produit -->
-<div data-purpose="form-field">
-<label class="block text-sm font-bold mb-2" for="produit">Produit</label>
-<select class="w-full border-gray-200 rounded-custom focus:ring-brand focus:border-brand" id="produit">
-<option value="">Sélectionner...</option>
-</select>
-</div>
-<!-- Field: Quantité -->
-<div data-purpose="form-field">
-<label class="block text-sm font-bold mb-2" for="quantite">Quantité (kg)</label>
-<input class="w-full border-gray-200 rounded-custom focus:ring-brand focus:border-brand" id="quantite" placeholder="50" type="number"/>
-</div>
-<!-- Field: Motif -->
-<div data-purpose="form-field">
-<label class="block text-sm font-bold mb-2" for="motif">Motif</label>
-<select class="w-full border-gray-200 rounded-custom focus:ring-brand focus:border-brand" id="motif">
-<option value="">Sélectionner...</option>
-</select>
-</div>
-<!-- Field: Date de sortie -->
-<div data-purpose="form-field">
-<label class="block text-sm font-bold mb-2" for="date_sortie">Date de sortie</label>
-<input class="w-full border-gray-200 rounded-custom focus:ring-brand focus:border-brand" id="date_sortie" placeholder="jj / mm / aaaa" type="text"/>
-</div>
-<!-- Field: Destinataire -->
-<div class="md:col-span-1" data-purpose="form-field">
-<label class="block text-sm font-bold mb-2" for="destinataire">Destinataire</label>
-<input class="w-full border-gray-200 rounded-custom focus:ring-brand focus:border-brand" id="destinataire" placeholder="Resto Chez Voahangy" type="text"/>
-</div>
-</div>
-<!-- Form Buttons -->
-<div class="flex items-center gap-4 pt-4">
-<button class="bg-brand text-white px-6 py-2.5 rounded-custom font-bold hover:bg-brand-dark transition-colors" type="submit">
-              Enregistrer la sortie
-            </button>
-<button class="bg-white border border-gray-200 text-gray-700 px-6 py-2.5 rounded-custom font-bold hover:bg-gray-50 transition-colors" type="button">
-              Annuler
-            </button>
-<span class="text-xs text-gray-400 italic">Vérification automatique : stock suffisant requis.</span>
-</div>
-</form>
-</section>
-<!-- END: SortieFormSection -->
-<!-- BEGIN: TableSection -->
-<section>
-<h3 class="text-xl font-bold mb-4">Sorties par référence</h3>
-<div class="bg-white rounded-custom border border-gray-100 overflow-hidden shadow-sm">
-<table class="w-full text-left">
-<thead class="bg-surface-low border-b border-gray-100">
-<tr>
-<th class="px-6 py-4 text-sm font-bold text-gray-500 uppercase tracking-wider">Référence</th>
-<th class="px-6 py-4 text-sm font-bold text-gray-500 uppercase tracking-wider">Produit</th>
-<th class="px-6 py-4 text-sm font-bold text-gray-500 uppercase tracking-wider text-right">Quantité</th>
-<th class="px-6 py-4 text-sm font-bold text-gray-500 uppercase tracking-wider">Motif</th>
-<th class="px-6 py-4 text-sm font-bold text-gray-500 uppercase tracking-wider">Date</th>
-</tr>
-</thead>
-<tbody class="divide-y divide-gray-100">
-<!-- Row 1 -->
-<tr class="hover:bg-gray-50 transition-colors">
-<td class="px-6 py-4 text-sm font-bold">SOR-118</td>
-<td class="px-6 py-4 text-sm text-gray-700">Briquette standard</td>
-<td class="px-6 py-4 text-sm text-gray-700 text-right font-medium">50 kg</td>
-<td class="px-6 py-4 text-sm text-gray-700">Commande client</td>
-<td class="px-6 py-4 text-sm text-gray-700">16/06/2026</td>
-</tr>
-<!-- Row 2 -->
-<tr class="hover:bg-gray-50 transition-colors">
-<td class="px-6 py-4 text-sm font-bold">SOR-117</td>
-<td class="px-6 py-4 text-sm text-gray-700">Charbon en vrac</td>
-<td class="px-6 py-4 text-sm text-gray-700 text-right font-medium">200 kg</td>
-<td class="px-6 py-4 text-sm text-gray-700">Commande client</td>
-<td class="px-6 py-4 text-sm text-gray-700">14/06/2026</td>
-</tr>
-<!-- Row 3 -->
-<tr class="hover:bg-gray-50 transition-colors">
-<td class="px-6 py-4 text-sm font-bold">SOR-116</td>
-<td class="px-6 py-4 text-sm text-gray-700">Briquette premium</td>
-<td class="px-6 py-4 text-sm text-gray-700 text-right font-medium">10 kg</td>
-<td class="px-6 py-4 text-sm text-gray-700">Échantillon</td>
-<td class="px-6 py-4 text-sm text-gray-700">13/06/2026</td>
-</tr>
-<!-- Row 4 -->
-<tr class="hover:bg-gray-50 transition-colors">
-<td class="px-6 py-4 text-sm font-bold">SOR-115</td>
-<td class="px-6 py-4 text-sm text-gray-700">Briquette standard</td>
-<td class="px-6 py-4 text-sm text-gray-700 text-right font-medium">5 kg</td>
-<td class="px-6 py-4 text-sm text-gray-700">Perte / casse</td>
-<td class="px-6 py-4 text-sm text-gray-700">11/06/2026</td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<!-- END: TableSection -->
-</main>
-<!-- END: MainContent -->
-</div>
-<!-- END: MainContainer -->
-</body></html>
+</body>
+</html>
