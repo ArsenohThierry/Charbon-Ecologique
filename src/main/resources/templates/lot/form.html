@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${titre}">Lot de production</title>
+</head>
+<body>
+
+<h1 th:text="${titre}">Lot de production</h1>
+
+<form th:action="${lot.id == null}
+                    ? @{/lots/nouveau}
+                    : @{/lots/{id}/modifier(id=${lot.id})}"
+      th:object="${lot}"
+      method="post">
+
+    <fieldset>
+        <legend>Informations du lot</legend>
+
+        <!-- Référence : affichée en lecture seule si modification -->
+        <div th:if="${lot.id != null}">
+            <label>Référence :</label><br>
+            <input type="text" th:value="*{reference}" disabled><br><br>
+        </div>
+
+        <label for="idTypeMatiere">Matière première :</label><br>
+        <select id="idTypeMatiere" name="idTypeMatiere" required>
+            <option value="">-- Choisir --</option>
+            <option th:each="m : ${matieres}"
+                    th:value="${m.id}"
+                    th:text="${m.libelle} + ' (' + ${m.reference} + ')'"
+                    th:selected="${lot.typeMatierePremiere != null and lot.typeMatierePremiere.id == m.id}">
+            </option>
+        </select><br><br>
+
+        <label for="idProduit">Produit fabriqué :</label><br>
+        <select id="idProduit" name="idProduit" required>
+            <option value="">-- Choisir --</option>
+            <option th:each="p : ${produits}"
+                    th:value="${p.id}"
+                    th:text="${p.nom}"
+                    th:selected="${lot.produit != null and lot.produit.id == p.id}">
+            </option>
+        </select><br><br>
+
+        <label for="quantiteMatiereUtilisee">Quantité matière utilisée (kg) :</label><br>
+        <input type="number"
+               id="quantiteMatiereUtilisee"
+               name="quantiteMatiereUtilisee"
+               th:value="*{quantiteMatiereUtilisee}"
+               step="0.01"
+               min="0"
+               required
+               placeholder="Ex : 2.5"><br><br>
+
+        <label for="remarques">Remarques :</label><br>
+        <textarea id="remarques"
+                  name="remarques"
+                  rows="4"
+                  cols="50"
+                  th:text="*{remarques}"
+                  placeholder="Observations éventuelles..."></textarea><br><br>
+
+        <button type="submit"
+                th:text="${lot.id == null} ? 'Créer le lot' : 'Enregistrer les modifications'">
+            Enregistrer
+        </button>
+        &nbsp;
+        <a href="/lots">Annuler</a>
+
+    </fieldset>
+
+</form>
+
+</body>
+</html>
