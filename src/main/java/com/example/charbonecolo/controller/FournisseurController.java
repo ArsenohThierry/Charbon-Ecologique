@@ -7,6 +7,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,10 +40,22 @@ public class FournisseurController {
         return mav;
     }
 
-    @GetMapping("/modifier")
-    public String getUpdateForm(@RequestParam("id") Integer id, RedirectAttributes rad) {
+    @GetMapping("/modifier/{id}")
+    public String getUpdateForm(@PathVariable Integer id, RedirectAttributes rad) {
         FournisseurModel fournisseurModel = fournisseurService.getById(id);
         rad.addFlashAttribute("fournisseurModel", fournisseurModel);
+        return "redirect:/fournisseur/home";
+    }
+
+    @GetMapping("/supprimer/{id}")
+    public String supprimerFournisseur(@PathVariable Integer id, RedirectAttributes rad) {
+        try {
+            fournisseurService.deleteById(id);
+            rad.addFlashAttribute("success", "Le fournisseur a été supprimé avec succès.");
+        } catch (Exception e) {
+            rad.addFlashAttribute("error",
+                    "Impossible de supprimer ce fournisseur car il est lié à des matières premières.");
+        }
         return "redirect:/fournisseur/home";
     }
 

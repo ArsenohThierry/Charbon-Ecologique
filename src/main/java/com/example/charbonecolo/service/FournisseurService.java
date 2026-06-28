@@ -27,4 +27,9 @@ public class FournisseurService {
     public FournisseurModel getById(Integer id){
         return fournisseurRepository.findById(id).get();
     }
+
+    @Transactional
+    public void deleteById(Integer id){
+        fournisseurRepository.deleteById(id);
+    }
 }
