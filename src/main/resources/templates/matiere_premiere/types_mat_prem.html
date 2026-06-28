@@ -5,82 +5,12 @@
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Charbon Vert - Gestionnaire de stock</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600&amp;family=Playfair+Display:wght=700&amp;display=swap"
-        rel="stylesheet" />
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: { dark: '#1b3221', accent: '#d4a358', light: '#fbfbf4', button: '#3a724b', active: '#e0b571' }
-                    },
-                    fontFamily: { serif: ['Playfair Display', 'serif'], sans: ['Inter', 'sans-serif'] }
-                }
-            }
-        }
-    </script>
-    <style data-purpose="custom-layout">
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #fbfbf4;
-        }
-
-        .sidebar-active {
-            background-color: #d4a358;
-            color: #1b3221;
-        }
-
-        h1,
-        h2,
-        h3 {
-            font-family: 'Playfair Display', serif;
-        }
-
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 2px;
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/output.css}" href="../../static/css/output.css" />
+    <link rel="stylesheet" th:href="@{/css/fonts.css}" href="../../static/css/fonts.css" />
 </head>
 
-<body class="flex h-screen overflow-hidden">
-    <aside class="w-64 bg-brand-dark text-white flex flex-col shrink-0">
-        <div class="p-6 border-b border-white/10 flex items-center gap-3">
-            <div class="w-10 h-10 bg-brand-active rounded-full flex items-center justify-center">
-                <svg class="h-6 w-6 text-brand-dark" fill="none" stroke="currentColor" viewbox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path
-                        d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707m12.728 12.728L5.636 5.636"
-                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
-                </svg>
-            </div>
-            <div>
-                <h1 class="text-sm font-bold leading-tight">Charbon Vert</h1>
-                <p class="text-[10px] text-white/60">Gestionnaire de stock</p>
-            </div>
-        </div>
-        <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto custom-scrollbar">
-            <a class="flex items-center gap-3 px-3 py-2 text-sm text-white/80 hover:text-white transition-colors"
-                href="#">Tableau de bord</a>
-            <div class="space-y-1">
-                <button class="w-full flex items-center justify-between px-3 py-2 text-sm text-white/80 group">
-                    <span class="flex items-center gap-3">Approvisionnement &amp; mat...</span>
-                </button>
-                <div class="pl-6 space-y-1">
-                    <a class="sidebar-active flex items-center gap-3 px-3 py-2 text-xs rounded-lg font-medium"
-                        th:href="@{/matiere/home}">Nouveaux types de matières</a>
-                    <a class="flex items-center gap-3 px-3 py-2 text-xs text-white/60 hover:text-white"
-                        th:href="@{/fournisseur/home}">Liste des fournisseurs</a>
-                </div>
-            </div>
-        </nav>
-    </aside>
+<body class="bg-brand-light font-sans text-slate-800 min-h-screen flex">
+    <aside th:replace="~{fragments/sidebar :: sidebar('matieres')}"></aside>
     <main class="flex-1 flex flex-col overflow-hidden relative">
         <header class="px-8 py-4 flex items-center justify-between border-b border-gray-200/50">
             <div>

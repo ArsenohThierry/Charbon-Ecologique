@@ -4,107 +4,12 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Entrée de stock - Charbon Vert</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Libre+Caslon+Text:wght@400;700&display=swap" rel="stylesheet"/>
-<script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            'forest-green': '#14301d',
-            'leaf-green': '#3d6e42',
-            'moss-green': '#2d4d35',
-            'gold-accent': '#d4a056',
-            'sand-bg': '#fcfcf9',
-          },
-          fontFamily: {
-            serif: ['"Libre Caslon Text"', 'serif'],
-            sans: ['Inter', 'sans-serif'],
-          },
-        }
-      }
-    }
-</script>
-<style data-purpose="custom-scrollbar">
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-</style>
+<link rel="stylesheet" th:href="@{/css/output.css}" href="../../../static/css/output.css" />
+<link rel="stylesheet" th:href="@{/css/fonts.css}" href="../../../static/css/fonts.css" />
 </head>
-<body class="bg-sand-bg text-forest-green font-sans min-h-screen flex">
-
-<!-- BEGIN: Sidebar -->
-<aside class="w-64 bg-forest-green text-white flex flex-col fixed inset-y-0 left-0 z-50">
-  <div class="p-6 flex items-center gap-3">
-    <div class="w-10 h-10 bg-gold-accent rounded-full flex items-center justify-center">
-      <span class="text-forest-green font-bold text-xl">C</span>
-    </div>
-    <div>
-      <h1 class="font-serif font-bold text-lg leading-tight">Charbon Vert</h1>
-      <p class="text-xs text-gray-400">Gestionnaire de stock</p>
-    </div>
-  </div>
-  <nav class="flex-1 px-4 py-4 space-y-2 overflow-y-auto no-scrollbar">
-    <a class="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:bg-moss-green rounded-lg transition-colors" href="#">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-      Tableau de bord
-    </a>
-    <div data-purpose="sidebar-dropdown">
-      <button class="w-full flex items-center justify-between px-4 py-2 text-sm text-gray-300 hover:bg-moss-green rounded-lg transition-colors group">
-        <div class="flex items-center gap-3">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-          Approvisionnement
-        </div>
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-      </button>
-      <div class="ml-9 mt-1 space-y-1">
-        <a class="block px-4 py-1.5 text-xs text-gray-400 hover:text-white" href="#">Nouveaux types de matières</a>
-        <a class="block px-4 py-1.5 text-xs text-gray-400 hover:text-white" href="#">Ajouter un fournisseur</a>
-        <a class="block px-4 py-1.5 text-xs text-gray-400 hover:text-white" href="#">Liste des fournisseurs</a>
-      </div>
-    </div>
-    <div data-purpose="sidebar-dropdown">
-      <button class="w-full flex items-center justify-between px-4 py-2 text-sm text-gray-300 hover:bg-moss-green rounded-lg transition-colors">
-        <div class="flex items-center gap-3">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-          Lots de production
-        </div>
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-      </button>
-    </div>
-    <div data-purpose="sidebar-dropdown">
-      <button class="w-full flex items-center justify-between px-4 py-2 text-sm text-white bg-moss-green rounded-lg">
-        <div class="flex items-center gap-3">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V7M3 7a2 2 0 012-2h14a2 2 0 012 2M3 7l9 6 9-6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-          Généralités stocks
-        </div>
-        <svg class="w-4 h-4 rotate-180 transition-transform" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-      </button>
-      <div class="ml-9 mt-1 space-y-1">
-        <a class="block px-4 py-1.5 text-xs text-gray-400 hover:text-white" href="#">État du stock</a>
-        <a class="block px-4 py-1.5 text-sm text-gold-accent bg-forest-green/50 border-l-2 border-gold-accent" th:href="@{/stock/entree}">Entrée de stock</a>
-        <a class="block px-4 py-1.5 text-xs text-gray-400 hover:text-white" th:href="@{/stock/sortie}">Sortie de stock</a>
-      </div>
-    </div>
-    <a class="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:bg-moss-green rounded-lg transition-colors" href="#">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-      Ventes / Commandes
-    </a>
-    <a class="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:bg-moss-green rounded-lg transition-colors" href="#">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-      Rapports
-    </a>
-  </nav>
-  <div class="p-4 border-t border-moss-green">
-    <button class="flex items-center gap-3 text-sm text-gray-400 hover:text-white transition-colors">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-      Changer de rôle
-    </button>
-  </div>
-</aside>
-<!-- END: Sidebar -->
-
-<!-- BEGIN: Main Content Area -->
-<main class="flex-1 ml-64 p-8">
+<body class="bg-brand-light font-sans text-slate-800 min-h-screen flex">
+<aside th:replace="~{fragments/sidebar :: sidebar('entree-stock')}"></aside>
+<main class="flex-1 p-8">
   <header class="flex justify-between items-start mb-10">
     <div>
       <h2 class="text-2xl font-serif font-bold text-forest-green">Gestionnaire de stock</h2>

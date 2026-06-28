@@ -2,48 +2,54 @@
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Liste des produits</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des produits - Charbon Vert</title>
+    <link rel="stylesheet" th:href="@{/css/output.css}" href="../static/css/output.css" />
+    <link rel="stylesheet" th:href="@{/css/fonts.css}" href="../static/css/fonts.css" />
 </head>
-<body>
+<body class="bg-brand-light font-sans text-slate-800 min-h-screen flex">
+<aside th:replace="~{fragments/sidebar :: sidebar('produits')}"></aside>
+<main class="flex-1 p-8">
 
-<h1>Produits</h1>
+<h1 class="text-3xl font-bold text-brand-dark mb-6">Produits</h1>
 
-<p th:if="${succes}" th:text="${succes}"></p>
+<p th:if="${succes}" th:text="${succes}" class="mb-4 p-4 bg-green-100 text-green-800 rounded-xl"></p>
 
-<a href="/produits/nouveau">+ Nouveau produit</a>
- 
-<br><br>
+<a th:href="@{/produits/nouveau}" class="inline-block mb-6 px-6 py-2 bg-brand-success text-white rounded-lg hover:opacity-90 transition-colors">+ Nouveau produit</a>
 
-<table border="1" cellpadding="8" cellspacing="0">
+<div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+<table class="w-full text-sm">
     <thead>
-        <tr>
-            <th>#</th>
-            <th>Nom</th>
-            <th>Prix unitaire (Ar)</th>
-            <th>Actions</th>
+        <tr class="bg-gray-50 text-left text-gray-600">
+            <th class="p-4 font-semibold">#</th>
+            <th class="p-4 font-semibold">Nom</th>
+            <th class="p-4 font-semibold">Prix unitaire (Ar)</th>
+            <th class="p-4 font-semibold">Actions</th>
         </tr>
     </thead>
     <tbody>
-        <tr th:each="produit : ${produits}">
-            <td th:text="${produit.id}"></td>
-            <td th:text="${produit.nom}"></td>
-            <td th:text="${#numbers.formatDecimal(produit.pu, 1, 2)}"></td>
-            <td>
-                <a th:href="@{/produits/{id}/modifier(id=${produit.id})}">Modifier</a>
-                &nbsp;|&nbsp;
+        <tr th:each="produit : ${produits}" class="border-t border-gray-100 hover:bg-gray-50">
+            <td class="p-4" th:text="${produit.id}"></td>
+            <td class="p-4" th:text="${produit.nom}"></td>
+            <td class="p-4" th:text="${#numbers.formatDecimal(produit.pu, 1, 2)}"></td>
+            <td class="p-4">
+                <a th:href="@{/produits/{id}/modifier(id=${produit.id})}" class="text-brand-success hover:underline">Modifier</a>
+                <span class="mx-2 text-gray-300">|</span>
                 <form th:action="@{/produits/{id}/supprimer(id=${produit.id})}"
                       method="post"
                       style="display:inline"
                       onsubmit="return confirm('Supprimer ce produit ?')">
-                    <button type="submit">Supprimer</button>
+                    <button type="submit" class="text-red-500 hover:underline">Supprimer</button>
                 </form>
             </td>
         </tr>
         <tr th:if="${#lists.isEmpty(produits)}">
-            <td colspan="4">Aucun produit enregistré.</td>
+            <td colspan="4" class="p-4 text-center text-gray-500">Aucun produit enregistré.</td>
         </tr>
     </tbody>
 </table>
+</div>
 
+</main>
 </body>
 </html>
