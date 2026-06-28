@@ -218,7 +218,9 @@
     <td class="px-6 py-4 text-gray-600" th:text="${lot.produit?.nom}"></td>
     
     <td class="px-6 py-4">
-      <span class="status-badge status-preparation">Préparation</span>
+      <span class="status-badge status-preparation">
+        Préparation
+      </span>
     </td>
     <td class="px-6 py-4 text-right space-x-2">
       <a th:href="@{/stock/lot/modifier/{id}(id=${lot.id})}"
