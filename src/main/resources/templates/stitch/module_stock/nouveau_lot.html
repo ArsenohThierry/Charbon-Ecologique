@@ -306,24 +306,20 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
 
             <!-- Matière première -->
-            <div class="flex flex-col gap-2">
-              <label class="text-sm font-semibold text-gray-700" for="idTypeMatierePremiere">Matière première</label>
-              <input
-                class="rounded-eight border-gray-300 focus:border-brand focus:ring-brand h-11 px-4 text-gray-600 bg-white"
-                id="idTypeMatierePremiere" type="number" min="1" placeholder="1" th:field="*{idTypeMatierePremiere}">
-              <span class="text-red-500 text-xs" th:if="${#fields.hasErrors('idTypeMatierePremiere')}"
-                th:errors="*{idTypeMatierePremiere}"></span>
-            </div>
+            <select name="idTypeMatierePremiere"
+              class="rounded-eight border-gray-300 focus:border-brand focus:ring-brand h-11 px-4 text-gray-600 bg-white">
+              <option value="">Sélectionner...</option>
+              <option th:each="matiere : ${matieres}" th:value="${matiere.id}" th:text="${matiere.libelle}">
+              </option>
+            </select>
 
             <!-- Produit -->
-            <div class="flex flex-col gap-2">
-              <label class="text-sm font-semibold text-gray-700" for="idProduit">Produit</label>
-              <input
-                class="rounded-eight border-gray-300 focus:border-brand focus:ring-brand h-11 px-4 text-gray-600 bg-white"
-                id="idProduit" type="number" min="1" placeholder="1" th:field="*{idProduit}">
-              <span class="text-red-500 text-xs" th:if="${#fields.hasErrors('idProduit')}"
-                th:errors="*{idProduit}"></span>
-            </div>
+            <select name="idProduit"
+              class="rounded-eight border-gray-300 focus:border-brand focus:ring-brand h-11 px-4 text-gray-600 bg-white">
+              <option value="">Sélectionner...</option>
+              <option th:each="produit : ${produits}" th:value="${produit.id}" th:text="${produit.nom}">
+              </option>
+            </select>
 
             <!-- Quantité matière utilisée -->
             <div class="flex flex-col gap-2">

@@ -201,6 +201,7 @@
 <th class="px-6 py-4">Matière</th>
 <th class="px-6 py-4">Quantité</th>
 <th class="px-6 py-4">Date</th>
+<th class="px-6 py-4">Produit</th>
 <th class="px-6 py-4">Statut</th>
 <th class="px-6 py-4 text-right">Actions</th>
 </tr>
@@ -208,9 +209,14 @@
 <tbody class="divide-y divide-gray-100 text-sm" th:if="${!lots.isEmpty()}">
   <tr class="hover:bg-gray-50 transition-colors" th:each="lot : ${lots}">
     <td class="px-6 py-4 font-medium text-gray-700" th:text="${lot.reference}"></td>
-    <td class="px-6 py-4 text-gray-600" th:text="${lot.idTypeMatierePremiere}"></td>
+    
+    <td class="px-6 py-4 text-gray-600" th:text="${lot.typeMatierePremiere?.libelle}"></td>
+    
     <td class="px-6 py-4 text-gray-600" th:text="${lot.quantiteMatiereUtilisee} + ' kg'"></td>
     <td class="px-6 py-4 text-gray-600" th:text="${#temporals.format(lot.dateEntreeLot, 'dd/MM/yyyy')}"></td>
+    
+    <td class="px-6 py-4 text-gray-600" th:text="${lot.produit?.nom}"></td>
+    
     <td class="px-6 py-4">
       <span class="status-badge status-preparation">Préparation</span>
     </td>
@@ -221,21 +227,11 @@
       </a>
       <form th:action="@{/stock/lot/supprimer/{id}(id=${lot.id})}" method="post" class="inline"
             onsubmit="return confirm('Supprimer ce lot ?')">
-        <input type="hidden" name="_method" value="delete"/>
         <button type="submit"
                 class="text-xs font-semibold px-3 py-1 border border-red-300 text-red-500 rounded hover:bg-red-50">
           Supprimer
         </button>
       </form>
-    </td>
-  </tr>
-</tbody>
-
-<!-- Message si liste vide -->
-<tbody th:if="${lots.isEmpty()}">
-  <tr>
-    <td colspan="6" class="px-6 py-12 text-center text-gray-400 text-sm">
-      Aucun lot de production enregistré.
     </td>
   </tr>
 </tbody>
