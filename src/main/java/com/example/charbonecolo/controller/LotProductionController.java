@@ -1,84 +1,87 @@
 package com.example.charbonecolo.controller;
 
-import com.example.charbonecolo.model.LotProductionModel;
-import com.example.charbonecolo.service.LotProductionService;
-import com.example.charbonecolo.service.ProduitService;
-import com.example.charbonecolo.service.TypeMatierePremiereService;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.example.charbonecolo.model.LotProductionModel;
+import com.example.charbonecolo.service.LotProductionService;
+
+import jakarta.validation.Valid;
 
 @Controller
-@RequestMapping("/lots")
+@RequestMapping("stock/lot")
 public class LotProductionController {
 
-    @Autowired
-    private LotProductionService lotProductionService;
+    private final LotProductionService lotProductionService;
 
-    @Autowired
-    private TypeMatierePremiereService typeMatierePremiereService;
-
-    @Autowired
-    private ProduitService produitService;
-
-    // ── LIST ──────────────────────────────────────────────────────────────────
-    @GetMapping
-    public String list(Model model) {
-        model.addAttribute("lots", lotProductionService.getAll());
-        return "lot/list";
+    public LotProductionController(LotProductionService lotProductionService) {
+        this.lotProductionService = lotProductionService;
     }
 
-    // ── CREATE ────────────────────────────────────────────────────────────────
     @GetMapping("/nouveau")
-    public String showCreateForm(Model model) {
-        model.addAttribute("lot", new LotProductionModel());
-        model.addAttribute("matieres", typeMatierePremiereService.getAll());
-        model.addAttribute("produits", produitService.findAll());
-        model.addAttribute("titre", "Nouveau lot de production");
-        return "lot/form";
+    public String addLot(Model model) {
+        model.addAttribute("lotProduction", new LotProductionModel());
+        return "stitch/module_stock/nouveau_lot";
+    }
+
+    @GetMapping("/liste")
+    public String listLots(Model model) {
+        List<LotProductionModel> lots = lotProductionService.getAllLotProductions();
+        model.addAttribute("lots", lots);
+        return "stitch/module_stock/liste_lot";
     }
 
     @PostMapping("/nouveau")
-    public String create(@ModelAttribute LotProductionModel lot,
-                         @RequestParam Integer idTypeMatiere,
-                         @RequestParam Integer idProduit,
-                         RedirectAttributes redirectAttributes) {
-        lotProductionService.save(lot, idTypeMatiere, idProduit);
-        redirectAttributes.addFlashAttribute("succes", "Lot créé avec succès.");
-        return "redirect:/lots";
+    public String createLot(@Valid @ModelAttribute("lotProduction") LotProductionModel lotProduction,
+            BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            return "stitch/module_stock/nouveau_lot";
+        }
+
+        // Set default values if not provided
+        if (lotProduction.getDateEntreeLot() == null) {
+            lotProduction.setDateEntreeLot(LocalDateTime.now());
+        }
+
+        lotProductionService.saveLotProduction(lotProduction);
+        return "redirect:/stock/lot/liste";
     }
 
-    // ── EDIT ──────────────────────────────────────────────────────────────────
-    @GetMapping("/{id}/modifier")
-    public String showEditForm(@PathVariable Integer id, Model model) {
-        LotProductionModel lot = lotProductionService.getById(id);
-        model.addAttribute("lot", lot);
-        model.addAttribute("matieres", typeMatierePremiereService.getAll());
-        model.addAttribute("produits", produitService.findAll());
-        model.addAttribute("titre", "Modifier le lot " + lot.getReference());
-        return "lot/form";
+    @GetMapping("/modifier/{id}")
+    public String changeLot(@PathVariable Integer id, Model model) {
+        Optional<LotProductionModel> lot = lotProductionService.getLotProductionById(id);
+        if (lot.isEmpty()) {
+            return "redirect:/stock/lot/liste";
+        }
+        model.addAttribute("lotProduction", lot.get());
+        return "stitch/module_stock/nouveau_lot"; // réutilise le même formulaire
     }
 
-    @PostMapping("/{id}/modifier")
-    public String update(@PathVariable Integer id,
-                         @ModelAttribute LotProductionModel lot,
-                         @RequestParam Integer idTypeMatiere,
-                         @RequestParam Integer idProduit,
-                         RedirectAttributes redirectAttributes) {
-        lot.setId(id);
-        lotProductionService.save(lot, idTypeMatiere, idProduit);
-        redirectAttributes.addFlashAttribute("succes", "Lot modifié avec succès.");
-        return "redirect:/lots";
+    @PostMapping("/modifier/{id}")
+    public String updateLot(@PathVariable Integer id,
+            @Valid @ModelAttribute("lotProduction") LotProductionModel lotProduction,
+            BindingResult result) {
+        if (result.hasErrors()) {
+            return "stitch/module_stock/nouveau_lot";
+        }
+        lotProduction.setId(id); // forcer le bon ID
+        lotProductionService.updateLotProduction(lotProduction);
+        return "redirect:/stock/lot/liste";
     }
 
-    // ── DELETE ────────────────────────────────────────────────────────────────
-    @PostMapping("/{id}/supprimer")
-    public String delete(@PathVariable Integer id,
-                         RedirectAttributes redirectAttributes) {
-        lotProductionService.deleteById(id);
-        redirectAttributes.addFlashAttribute("succes", "Lot supprimé.");
-        return "redirect:/lots";
+    @PostMapping("/supprimer/{id}")
+    public String deleteLot(@PathVariable Integer id) {
+        lotProductionService.deleteLotProduction(id);
+        return "redirect:/stock/lot/liste";
     }
 }
