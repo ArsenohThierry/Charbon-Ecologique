@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Charbon Vert - Liste des commandes</title>
+    <!-- Tailwind CSS v3 with Plugins -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <!-- Custom Fonts (Assuming a clean sans-serif/serif combo) -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Playfair+Display:wght@700&amp;display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'forest-green': '#1a3a2a',
+                        'leaf-green': '#3d7a4d',
+                        'action-green': '#2d6a4f',
+                        'gold-light': '#fdf6e3',
+                        'amber-soft': '#d97706',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style data-purpose="layout-styles">
+        body {
+            background-color: #f8fafc;
+        }
+
+        /* Custom Scrollbar for Sidebar */
+        .sidebar-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .sidebar-scroll::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+    </style>
+    <style data-purpose="component-styles">
+        /* Active menu item styling */
+        .nav-item-active {
+            background-color: #eab308;
+            /* Goldish yellow from screenshot */
+            color: #1a3a2a !important;
+            border-radius: 4px;
+        }
+
+        .badge {
+            padding: 2px 12px;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge-pending {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+
+        /* En attente */
+        .badge-delivered {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+
+        /* Livrée */
+        .badge-shipping {
+            background-color: #ffedd5;
+            color: #9a3412;
+        }
+
+        /* En livraison */
+        .badge-cancelled {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Annulée */
+    </style>
+</head>
+
+<body class="font-sans text-slate-800 flex h-screen overflow-hidden">
+    <!-- BEGIN: Sidebar -->
+    <aside class="w-64 bg-forest-green text-white flex flex-col h-full shrink-0" data-purpose="main-sidebar">
+        <div class="p-6 flex items-center gap-3">
+            <div class="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center">
+                <!-- Logo Placeholder -->
+                <img alt="Logo" class="w-8 h-8 object-contain"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVp7iFMgyKdvkj9FR6HJtPXQWFwC3oeVlnt60PT0Itvgkp6i3A55rMMV35xn5Pyp9x2N83snS603Ut-I1OQbjGuRb77-dqcs_KHbbSbJkGTRzTtyZ2AeyXj9VGCr8ENyahpuimZ0cqagOGpmbS1dWLe_ekPYOhcQtUsfCP9bn0etGM5HvCKTI0KrvDb6P4IxJzFUfHPYf_X8FOEKUB3jOQSgLFCNM8Pmbzyuz5xpFiLPFz-rGSlstgnevegRl_4ztQ09H3vv5W53k" />
+            </div>
+            <div>
+                <h1 class="font-bold text-lg leading-none">Charbon Vert</h1>
+                <p class="text-[10px] text-white/60">Commercial &amp; finance</p>
+            </div>
+        </div>
+        <nav class="flex-1 overflow-y-auto sidebar-scroll px-4 py-4 space-y-6">
+            <!-- General Section -->
+            <div>
+                <ul class="space-y-1">
+                    <li
+                        class="flex items-center gap-3 px-3 py-2 text-sm text-white/80 hover:bg-white/10 rounded cursor-pointer transition">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                            <path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round" stroke-linejoin="round"
+                                stroke-width="2"></path>
+                        </svg>
+                        Tableau de bord
+                    </li>
+                </ul>
+            </div>
+            <!-- Orders Section -->
+            <div data-purpose="nav-group">
+                <div class="flex items-center justify-between px-3 py-2 text-white/90">
+                    <div class="flex items-center gap-3 text-sm">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                            <path
+                                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+                                stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                        </svg>
+                        Gestion des commandes
+                    </div>
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                        <path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                    </svg>
+                </div>
+                <ul class="mt-1 ml-9 space-y-1">
+                    <li class="px-3 py-2 text-sm text-white/60 hover:text-white cursor-pointer">Nouvelle commande</li>
+                    <li class="px-3 py-2 text-sm nav-item-active font-medium cursor-pointer">Liste des commandes</li>
+                </ul>
+            </div>
+            <!-- Delivery Section -->
+            <div data-purpose="nav-group">
+                <div class="flex items-center justify-between px-3 py-2 text-white/90">
+                    <div class="flex items-center gap-3 text-sm">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                            <path d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"
+                                stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                            <path
+                                d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"
+                                stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                        </svg>
+                        Gestion de livraison
+                    </div>
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                        <path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                    </svg>
+                </div>
+            </div>
+            <!-- Billing Section -->
+            <div data-purpose="nav-group">
+                <div class="flex items-center justify-between px-3 py-2 text-white/90">
+                    <div class="flex items-center gap-3 text-sm">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                            <path
+                                d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"
+                                stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                        </svg>
+                        Facturation
+                    </div>
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                        <path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                    </svg>
+                </div>
+            </div>
+            <!-- Finances Section -->
+            <div data-purpose="nav-group">
+                <div class="flex items-center justify-between px-3 py-2 text-white/90">
+                    <div class="flex items-center gap-3 text-sm">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                            <path
+                                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                                stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                        </svg>
+                        Gestion de finances
+                    </div>
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                        <path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                    </svg>
+                </div>
+            </div>
+            <!-- Reports Section -->
+            <div data-purpose="nav-group">
+                <div
+                    class="flex items-center gap-3 px-3 py-2 text-sm text-white/80 hover:bg-white/10 rounded cursor-pointer">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                        <path
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                            stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                    </svg>
+                    Rapports
+                </div>
+            </div>
+        </nav>
+        <!-- Sidebar Bottom Footer -->
+        <div class="p-4 border-t border-white/10">
+            <button class="flex items-center gap-3 text-sm text-white/60 hover:text-white">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                    <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                </svg>
+                Changer de rôle
+            </button>
+        </div>
+    </aside>
+    <!-- END: Sidebar -->
+    <!-- Main Content Area -->
+    <main class="flex-1 flex flex-col overflow-hidden">
+        <!-- BEGIN: TopHeader -->
+        <header class="h-16 bg-white border-b border-slate-200 px-8 flex items-center justify-between"
+            data-purpose="top-header">
+            <div>
+                <h2 class="text-lg font-bold">Commercial &amp; finance</h2>
+                <p class="text-xs text-slate-400">Commandes, livraisons &amp; trésorerie</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <span
+                    class="text-xs px-3 py-1 bg-slate-100 rounded-full text-slate-600 font-medium border border-slate-200">Maquette
+                    · données fictives</span>
+                <div
+                    class="w-8 h-8 rounded-full bg-leaf-green text-white flex items-center justify-center font-bold text-sm">
+                    N
+                </div>
+            </div>
+        </header>
+        <!-- END: TopHeader -->
+        <!-- BEGIN: Content Scrollable -->
+        <div class="flex-1 overflow-y-auto bg-slate-50 p-12">
+            <div class="max-w-8xl mx-auto">
+                <!-- Header Section with Add Button -->
+                <div class="flex justify-between items-start mb-8">
+                    <div>
+                        <h1 class="font-serif text-4xl text-forest-green mb-2">Liste des commandes</h1>
+                        <p class="text-slate-500">Consulter, modifier ou annuler une commande.</p>
+                    </div>
+                    <button
+                        class="bg-leaf-green hover:bg-forest-green text-white px-6 py-2 rounded-lg flex items-center gap-2 font-medium transition shadow-sm">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                            <path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                            </path>
+                        </svg>
+                        Nouvelle
+                    </button>
+                </div>
+                <!-- BEGIN: Search and Filter Bar -->
+                <div class="flex gap-4 mb-6" data-purpose="filter-bar">
+                    <div class="relative flex-1">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                                <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round"
+                                    stroke-linejoin="round" stroke-width="2"></path>
+                            </svg>
+                        </span>
+                        <input
+                            class="w-full pl-10 pr-4 py-2 border-slate-200 rounded-lg focus:ring-leaf-green focus:border-leaf-green text-sm bg-white"
+                            placeholder="Rechercher une commande..." type="text" />
+                    </div>
+                    <select
+                        class="w-32 py-2 border-slate-200 rounded-lg focus:ring-leaf-green focus:border-leaf-green text-sm bg-white">
+                        <option>Tous</option>
+                        <option>En attente</option>
+                        <option>Livrée</option>
+                    </select>
+                    <button
+                        class="bg-leaf-green text-white px-6 py-2 rounded-lg flex items-center gap-2 text-sm font-medium hover:bg-forest-green transition">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                            <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round"
+                                stroke-linejoin="round" stroke-width="2"></path>
+                        </svg>
+                        Rechercher
+                    </button>
+                </div>
+                <!-- END: Search and Filter Bar -->
+                <!-- BEGIN: Order Table -->
+                <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm"
+                    data-purpose="order-table-container">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr
+                                class="bg-slate-50 border-b border-slate-200 text-xs uppercase tracking-wider text-slate-500">
+                                <th class="px-6 py-4 font-semibold">Réf.</th>
+                                <th class="px-6 py-4 font-semibold">Client</th>
+                                <th class="px-6 py-4 font-semibold">Produit</th>
+                                <th class="px-6 py-4 font-semibold">Qté</th>
+                                <th class="px-6 py-4 font-semibold">PU</th>
+                                <th class="px-6 py-4 font-semibold">Montant</th>
+                                <th class="px-6 py-4 font-semibold">Statut</th>
+                                <th class="px-6 py-4 font-semibold text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <tr th:each="dto : ${commandes}" class="hover:bg-slate-50 transition text-sm">
+
+                                <td class="px-6 py-4 text-slate-600 align-top" th:text="${dto.commande.reference}">
+                                    CMD-1042</td>
+
+                                <td class="px-6 py-4 font-medium align-top" th:text="${dto.commande.client.nom}">Resto
+                                    Chez Voahangy</td>
+
+                                <td class="px-6 py-4 align-top">
+                                    <div class="space-y-1">
+                                        <div th:each="detail : ${dto.details}" th:text="${detail.produit.nom}"
+                                            class="text-slate-700 font-normal">
+                                            Briquette standard
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td class="px-6 py-4 align-top">
+                                    <div class="space-y-1">
+                                        <div th:each="detail : ${dto.details}" th:text="${detail.quantite} + ' kg'"
+                                            class="text-slate-500 font-medium">
+                                            50 kg
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td class="px-6 py-4 align-top">
+                                    <div class="space-y-1">
+                                        <div th:each="detail : ${dto.details}" th:text="${#numbers.formatDecimal(detail.produit.pu, 1, 'DEFAULT', 2, 'POINT')} + ' Ar'"
+                                            class="text-slate-500 font-medium">
+                                            50 kg
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td class="px-6 py-4 align-top font-semibold text-slate-700"
+                                    th:text="${#numbers.formatDecimal(dto.montant, 1, 'DEFAULT', 2, 'POINT')} + ' Ar'">
+                                    90 000 Ar
+                                </td>
+
+                                <td class="px-6 py-4 align-top">
+                                    <span th:if="${dto.currentStatut != null}"
+                                        th:class="'badge badge-' + ${dto.currentStatut.statut.libelle == 'en attente' ? 'pending' : 'success'}"
+                                        th:text="${dto.currentStatut.statut.libelle}">
+                                        En attente
+                                    </span>
+                                    <span th:if="${dto.currentStatut == null}" class="badge text-slate-400">-</span>
+                                </td>
+
+                                <td class="px-6 py-4 text-right align-top">
+                                    <div class="flex justify-end gap-3">
+                                        <a th:href="@{/commercial/commande/modifier/{id}(id=${dto.commande.id})}"
+                                            class="flex items-center gap-1 text-slate-500 hover:text-leaf-green transition border border-slate-200 px-3 py-1.5 rounded text-xs">
+                                            Modifier
+                                        </a>
+                                        <button th:data-id="${dto.commande.id}"
+                                            onclick="annulerCommande(this.getAttribute('data-id'))"
+                                            class="flex items-center gap-1 text-red-400 hover:text-red-600 transition border border-slate-200 px-3 py-1.5 rounded text-xs">
+                                            Annuler
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <!-- Row 2 -->
+                        <!-- <tr class="hover:bg-slate-50 transition text-sm">
+                                <td class="px-6 py-4 text-slate-600">CMD-1041</td>
+                                <td class="px-6 py-4 font-medium">Ménage Rason</td>
+                                <td class="px-6 py-4">Briquette premium</td>
+                                <td class="px-6 py-4">10 kg</td>
+                                <td class="px-6 py-4">25 000 Ar</td>
+                                <td class="px-6 py-4">
+                                    <span class="badge badge-delivered">Livrée</span>
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <div class="flex justify-end gap-3">
+                                        <button
+                                            class="flex items-center gap-1 text-slate-500 hover:text-leaf-green transition border border-slate-200 px-3 py-1.5 rounded text-xs">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor"
+                                                viewbox="0 0 24 24">
+                                                <path
+                                                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                                                    stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                                </path>
+                                            </svg>
+                                            Modifier
+                                        </button>
+                                        <button
+                                            class="flex items-center gap-1 text-red-400 hover:text-red-600 transition border border-slate-200 px-3 py-1.5 rounded text-xs">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor"
+                                                viewbox="0 0 24 24">
+                                                <path
+                                                    d="M18.364 18.364A9 9 0 115.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
+                                                    stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                                </path>
+                                            </svg>
+                                            Annuler
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            Row 3 -->
+                        <!-- <tr class="hover:bg-slate-50 transition text-sm">
+                                <td class="px-6 py-4 text-slate-600">CMD-1040</td>
+                                <td class="px-6 py-4 font-medium">École Sainte-Marie</td>
+                                <td class="px-6 py-4">Charbon en vrac</td>
+                                <td class="px-6 py-4">200 kg</td>
+                                <td class="px-6 py-4">300 000 Ar</td>
+                                <td class="px-6 py-4">
+                                    <span class="badge badge-shipping">En livraison</span>
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <div class="flex justify-end gap-3">
+                                        <button
+                                            class="flex items-center gap-1 text-slate-500 hover:text-leaf-green transition border border-slate-200 px-3 py-1.5 rounded text-xs">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor"
+                                                viewbox="0 0 24 24">
+                                                <path
+                                                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                                                    stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                                </path>
+                                            </svg>
+                                            Modifier
+                                        </button>
+                                        <button
+                                            class="flex items-center gap-1 text-red-400 hover:text-red-600 transition border border-slate-200 px-3 py-1.5 rounded text-xs">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor"
+                                                viewbox="0 0 24 24">
+                                                <path
+                                                    d="M18.364 18.364A9 9 0 115.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
+                                                    stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                                </path>
+                                            </svg>
+                                            Annuler
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        -->
+                        </tbody>
+                    </table>
+                    <!-- Empty Space to match visual weight of screenshot table -->
+                    <div class="h-12 bg-white"></div>
+                </div>
+                <!-- END: Order Table -->
+            </div>
+        </div>
+        <!-- END: Content Scrollable -->
+    </main>
+</body>
+
+</html>
