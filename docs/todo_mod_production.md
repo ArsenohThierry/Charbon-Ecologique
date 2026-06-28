@@ -15,3 +15,19 @@
 
 - CRUD et liste des Types de charbons a vendre ( ex : Charbon Rond , Charbon 200g , ...)
     template : src/main/resources/templates/stitch/module_stock/produits.html
+
+
+
+A FAIRE : 
+- Cloner le repo git
+- Creer une nouvelle branche ( ex : features-CRUD-production)
+- Publier la branche 
+- Commencer ce que j ai dit eo ambony
+- Push refa mahavita 1 ( Push sur la bonne branche )
+- BIEN TESTER 
+- Continuer su les autres , ...
+- Push sur la branche (features-CRUD-production ) 
+- BIEN TESTER
+- Pull request vers dev 
+- attendre 
+- ...
