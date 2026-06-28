@@ -22,14 +22,14 @@ public class LotProductionModel {
     @JoinColumn(name = "id_produit", nullable = false)
     private ProduitModel produit;
 
-    @Column(name = "quantite_matiere_utilisee", nullable = false)
+    @Column(name = "quantite_matiere_utilisee", nullable = false, columnDefinition = "NUMERIC")
     private Double quantiteMatiereUtilisee;
 
     @Column(name = "quantite_produit_prevue", nullable = false)
-    private Double quantiteProduitPrevue;
+    private Integer quantiteProduitPrevue;
 
     @Column(name = "quantite_produit_reelle")
-    private Double quantiteProduitReelle;
+    private Integer quantiteProduitReelle;
 
     @Column(name = "date_fin_reelle")
     private LocalDateTime dateFinReelle;
@@ -40,6 +40,7 @@ public class LotProductionModel {
     @Column(name = "date_entree_lot", nullable = false)
     private LocalDateTime dateEntreeLot;
 
+    // ── Getters / Setters ─────────────────────────────────────────────────────
 
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
@@ -60,13 +61,13 @@ public class LotProductionModel {
         this.quantiteMatiereUtilisee = quantiteMatiereUtilisee;
     }
 
-    public Double getQuantiteProduitPrevue() { return quantiteProduitPrevue; }
-    public void setQuantiteProduitPrevue(Double quantiteProduitPrevue) {
+    public Integer getQuantiteProduitPrevue() { return quantiteProduitPrevue; }
+    public void setQuantiteProduitPrevue(Integer quantiteProduitPrevue) {
         this.quantiteProduitPrevue = quantiteProduitPrevue;
     }
 
-    public Double getQuantiteProduitReelle() { return quantiteProduitReelle; }
-    public void setQuantiteProduitReelle(Double quantiteProduitReelle) {
+    public Integer getQuantiteProduitReelle() { return quantiteProduitReelle; }
+    public void setQuantiteProduitReelle(Integer quantiteProduitReelle) {
         this.quantiteProduitReelle = quantiteProduitReelle;
     }
 

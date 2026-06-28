@@ -49,7 +49,7 @@ public class LotProductionService {
             // TODO: Arranger la règle de gestion — la quantité prévue doit être calculée
             //       selon les ratios définis par le responsable (ex: Xkg matière → Y briquettes).
             //       Pour l'instant on met (qteMatierePremiere / 2) par exemple
-            lot.setQuantiteProduitPrevue(lot.getQuantiteMatiereUtilisee() / 2.);
+            lot.setQuantiteProduitPrevue(lot.getQuantiteMatiereUtilisee().intValue());
         }
 
         lotProductionRepository.save(lot);
