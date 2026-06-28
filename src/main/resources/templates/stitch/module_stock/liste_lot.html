@@ -1,131 +1,174 @@
 <!DOCTYPE html>
 
-<html lang="fr"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Charbon Vert - Liste des lots de production</title>
-<link rel="stylesheet" th:href="@{/css/output.css}" href="../../../static/css/output.css" />
-<link rel="stylesheet" th:href="@{/css/fonts.css}" href="../../../static/css/fonts.css" />
-<style>
+<html lang="fr">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Charbon Vert - Liste des lots de production</title>
+  <link rel="stylesheet" th:href="@{/css/output.css}" href="../../../static/css/output.css" />
+  <link rel="stylesheet" th:href="@{/css/fonts.css}" href="../../../static/css/fonts.css" />
+  <style>
     .status-badge {
       font-size: 0.75rem;
       padding: 0.125rem 0.75rem;
       border-radius: 9999px;
       font-weight: 500;
     }
-    .status-termine { background-color: #def7ec; color: #03543f; }
-    .status-sechage { background-color: #fef3c7; color: #92400e; }
-    .status-encours { background-color: #fee2e2; color: #991b1b; }
-    .status-preparation { background-color: #e5e7eb; color: #374151; }
+
+    .status-termine {
+      background-color: #def7ec;
+      color: #03543f;
+    }
+
+    .status-sechage {
+      background-color: #fef3c7;
+      color: #92400e;
+    }
+
+    .status-encours {
+      background-color: #fee2e2;
+      color: #991b1b;
+    }
+
+    .status-preparation {
+      background-color: #e5e7eb;
+      color: #374151;
+    }
   </style>
 </head>
+
 <body class="bg-brand-light font-sans text-slate-800 min-h-screen flex">
-<aside th:replace="~{fragments/sidebar :: sidebar('lots')}"></aside>
-<main class="flex-1 min-h-screen">
-<!-- BEGIN: Top Bar -->
-<header class="flex items-center justify-between px-8 py-4 bg-white border-b border-gray-100" data-purpose="top-header">
-<div>
-<h2 class="text-lg font-bold font-serif text-forest">Gestionnaire de stock</h2>
-<p class="text-xs text-gray-500">Approvisionnement, lots &amp; inventaire</p>
-</div>
-<div class="flex items-center space-x-4">
-<span class="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full border border-gray-200">Maquette · données fictives</span>
-<div class="w-8 h-8 bg-forest text-white rounded-full flex items-center justify-center text-sm font-bold">N</div>
-</div>
-</header>
-<!-- END: Top Bar -->
-<!-- BEGIN: Content Container -->
-<section class="p-8">
-<!-- Page Title and CTA -->
-<div class="flex justify-between items-start mb-8">
-<div>
-<h1 class="text-4xl font-serif text-forest mb-2">Liste des lots de production</h1>
-<p class="text-gray-500">Filtrer par date ou statut, consulter et modifier les lots.</p>
-</div>
-<button class="bg-[#2A5A46] hover:bg-forest text-white px-6 py-2 rounded-lg flex items-center space-x-2 shadow-sm transition-all">
-<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-<span class="font-medium">Nouveau lot</span>
-</button>
-</div>
-<!-- BEGIN: Filters Section -->
-<div class="flex flex-wrap gap-4 mb-8 items-center" data-purpose="filter-bar">
-<!-- Search Input -->
-<div class="relative w-72">
-<span class="absolute inset-y-0 left-0 flex items-center pl-3">
-<svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-</span>
-<input class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-forest focus:border-forest" placeholder="Rechercher un lot..." type="text"/>
-</div>
-<!-- Date Picker -->
-<div class="w-40">
-<input class="block w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-forest focus:border-forest bg-white" placeholder="jj / mm / aaaa" type="text"/>
-</div>
-<!-- Status Dropdown -->
-<div class="w-48">
-<select class="block w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-forest focus:border-forest bg-white">
-<option>Tous les statuts</option>
-<option>Terminé</option>
-<option>Séchage</option>
-<option>En cours</option>
-<option>Préparation</option>
-</select>
-</div>
-<!-- Search Action Button -->
-<button class="bg-forest hover:bg-forest-dark text-white px-6 py-2 rounded-lg flex items-center space-x-2 transition-all">
-<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-<span class="text-sm font-medium">Rechercher</span>
-</button>
-</div>
-<!-- END: Filters Section -->
-<!-- BEGIN: Data Table -->
-<div class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm" data-purpose="lots-table-container">
-<table class="w-full text-left border-collapse">
-<thead>
-<tr class="bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-<th class="px-6 py-4">Lot</th>
-<th class="px-6 py-4">Matière</th>
-<th class="px-6 py-4">Quantité</th>
-<th class="px-6 py-4">Date</th>
-<th class="px-6 py-4">Produit</th>
-<th class="px-6 py-4">Statut</th>
-<th class="px-6 py-4 text-right">Actions</th>
-</tr>
-</thead>
-<tbody class="divide-y divide-gray-100 text-sm" th:if="${!lots.isEmpty()}">
-  <tr class="hover:bg-gray-50 transition-colors" th:each="lot : ${lots}">
-    <td class="px-6 py-4 font-medium text-gray-700" th:text="${lot.reference}"></td>
-    
-    <td class="px-6 py-4 text-gray-600" th:text="${lot.typeMatierePremiere?.libelle}"></td>
-    
-    <td class="px-6 py-4 text-gray-600" th:text="${lot.quantiteMatiereUtilisee} + ' kg'"></td>
-    <td class="px-6 py-4 text-gray-600" th:text="${#temporals.format(lot.dateEntreeLot, 'dd/MM/yyyy')}"></td>
-    
-    <td class="px-6 py-4 text-gray-600" th:text="${lot.produit?.nom}"></td>
-    
-    <td class="px-6 py-4">
-      <span class="status-badge status-preparation">
-        Préparation
-      </span>
-    </td>
-    <td class="px-6 py-4 text-right space-x-2">
-      <a th:href="@{/stock/lot/modifier/{id}(id=${lot.id})}"
-         class="text-xs font-semibold px-3 py-1 border border-gray-300 rounded hover:bg-gray-100">
-        Modifier
-      </a>
-      <form th:action="@{/stock/lot/supprimer/{id}(id=${lot.id})}" method="post" class="inline"
-            onsubmit="return confirm('Supprimer ce lot ?')">
-        <button type="submit"
-                class="text-xs font-semibold px-3 py-1 border border-red-300 text-red-500 rounded hover:bg-red-50">
-          Supprimer
+  <aside th:replace="~{fragments/sidebar :: sidebar('lots')}"></aside>
+  <main class="flex-1 min-h-screen">
+    <!-- BEGIN: Top Bar -->
+    <header class="flex items-center justify-between px-8 py-4 bg-white border-b border-gray-100"
+      data-purpose="top-header">
+      <div>
+        <h2 class="text-lg font-bold font-serif text-forest">Gestionnaire de stock</h2>
+        <p class="text-xs text-gray-500">Approvisionnement, lots &amp; inventaire</p>
+      </div>
+      <div class="flex items-center space-x-4">
+        <span class="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full border border-gray-200">Maquette · données
+          fictives</span>
+        <div class="w-8 h-8 bg-forest text-white rounded-full flex items-center justify-center text-sm font-bold">N
+        </div>
+      </div>
+    </header>
+    <!-- END: Top Bar -->
+    <!-- BEGIN: Content Container -->
+    <section class="p-8">
+      <!-- Page Title and CTA -->
+      <div class="flex justify-between items-start mb-8">
+        <div>
+          <h1 class="text-4xl font-serif text-forest mb-2">Liste des lots de production</h1>
+          <p class="text-gray-500">Filtrer par date ou statut, consulter et modifier les lots.</p>
+        </div>
+        <button
+          class="bg-[#2A5A46] hover:bg-forest text-white px-6 py-2 rounded-lg flex items-center space-x-2 shadow-sm transition-all">
+          <a href="/stock/lot/nouveau">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+            <path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+          </svg>
+          <span class="font-medium">Nouveau lot</span>
+          </a>
         </button>
-      </form>
-    </td>
-  </tr>
-</tbody>
-</table>
-</div>
-<!-- END: Data Table -->
-</section>
-<!-- END: Content Container -->
-</main>
-</body></html>
+      </div>
+      <!-- BEGIN: Filters Section -->
+      <div class="flex flex-wrap gap-4 mb-8 items-center" data-purpose="filter-bar">
+        <!-- Search Input -->
+        <div class="relative w-72">
+          <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+              <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round"
+                stroke-width="2"></path>
+            </svg>
+          </span>
+          <input
+            class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-forest focus:border-forest"
+            placeholder="Rechercher un lot..." type="text" />
+        </div>
+        <!-- Date Picker -->
+        <div class="w-40">
+          <input
+            class="block w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-forest focus:border-forest bg-white"
+            placeholder="jj / mm / aaaa" type="text" />
+        </div>
+        <!-- Status Dropdown -->
+        <div class="w-48">
+          <select
+            class="block w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-forest focus:border-forest bg-white">
+            <option>Tous les statuts</option>
+            <option>Terminé</option>
+            <option>Séchage</option>
+            <option>En cours</option>
+            <option>Préparation</option>
+          </select>
+        </div>
+        <!-- Search Action Button -->
+        <button
+          class="bg-forest hover:bg-forest-dark text-white px-6 py-2 rounded-lg flex items-center space-x-2 transition-all">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+            <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round"
+              stroke-width="2"></path>
+          </svg>
+          <span class="text-sm font-medium">Rechercher</span>
+        </button>
+      </div>
+      <!-- END: Filters Section -->
+      <!-- BEGIN: Data Table -->
+      <div class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm"
+        data-purpose="lots-table-container">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr
+              class="bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              <th class="px-6 py-4">Lot</th>
+              <th class="px-6 py-4">Matière</th>
+              <th class="px-6 py-4">Quantité</th>
+              <th class="px-6 py-4">Date</th>
+              <th class="px-6 py-4">Produit</th>
+              <th class="px-6 py-4">Statut</th>
+              <th class="px-6 py-4 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100 text-sm" th:if="${!lots.isEmpty()}">
+            <tr class="hover:bg-gray-50 transition-colors" th:each="lot : ${lots}">
+              <td class="px-6 py-4 font-medium text-gray-700" th:text="${lot.reference}"></td>
+
+              <td class="px-6 py-4 text-gray-600" th:text="${lot.typeMatierePremiere?.libelle}"></td>
+
+              <td class="px-6 py-4 text-gray-600" th:text="${lot.quantiteMatiereUtilisee} + ' kg'"></td>
+              <td class="px-6 py-4 text-gray-600" th:text="${#temporals.format(lot.dateEntreeLot, 'dd/MM/yyyy')}"></td>
+
+              <td class="px-6 py-4 text-gray-600" th:text="${lot.produit?.nom}"></td>
+
+              <td class="px-6 py-4">
+                <span class="status-badge status-preparation">
+                  Préparation
+                </span>
+              </td>
+              <td class="px-6 py-4 text-right space-x-2">
+                <a th:href="@{/stock/lot/modifier/{id}(id=${lot.id})}"
+                  class="text-xs font-semibold px-3 py-1 border border-gray-300 rounded hover:bg-gray-100">
+                  Modifier
+                </a>
+                <form th:action="@{/stock/lot/supprimer/{id}(id=${lot.id})}" method="post" class="inline"
+                  onsubmit="return confirm('Supprimer ce lot ?')">
+                  <button type="submit"
+                    class="text-xs font-semibold px-3 py-1 border border-red-300 text-red-500 rounded hover:bg-red-50">
+                    Supprimer
+                  </button>
+                </form>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- END: Data Table -->
+    </section>
+    <!-- END: Content Container -->
+  </main>
+</body>
+
+</html>

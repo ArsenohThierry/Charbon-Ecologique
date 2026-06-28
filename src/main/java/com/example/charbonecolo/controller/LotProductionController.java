@@ -4,14 +4,11 @@ import com.example.charbonecolo.model.LotProductionModel;
 import com.example.charbonecolo.service.LotProductionService;
 import com.example.charbonecolo.service.ProduitService;
 import com.example.charbonecolo.service.TypeMatierePremiereService;
-import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 @Controller
