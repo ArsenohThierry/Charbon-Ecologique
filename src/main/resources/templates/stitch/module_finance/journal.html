@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Journal financier</title></head>
+<body>
+  <form method="get" th:action="@{/finance/journal}">
+    <select name="type">
+      <option value="">Tous</option>
+      <option th:each="t : ${types}"
+              th:value="${t.libelle}"
+              th:text="${t.libelle}"
+              th:selected="${t.libelle == typeSelectionne}"/>
+    </select>
+    <input type="date" name="debut"/>
+    <input type="date" name="fin"/>
+    <button type="submit">Filtrer</button>
+    <a th:href="@{/finance/journal/export-csv}">Export CSV</a>
+  </form>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Date</th><th>Type</th><th>Référence</th>
+        <th>Description</th><th>Débit</th><th>Crédit</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:if="${#lists.isEmpty(lignes)}">
+        <td colspan="6">Aucune donnée</td>
+      </tr>
+      <tr th:each="l : ${lignes}">
+        <td th:text="${l.dateOperation}"/>
+        <td th:text="${l.typeJournal.libelle}"/>
+        <td th:text="${l.reference}"/>
+        <td th:text="${l.description}"/>
+        <td th:text="${l.debit}"/>
+        <td th:text="${l.credit}"/>
+      </tr>
+    </tbody>
+  </table>
+</body>
+</html>

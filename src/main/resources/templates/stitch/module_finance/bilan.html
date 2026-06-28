@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Bilan</title></head>
+<body>
+  <form method="get" th:action="@{/finance/bilan}">
+    <input type="date" name="debut"/>
+    <input type="date" name="fin"/>
+    <button type="submit">Générer</button>
+  </form>
+
+  <table>
+    <tr><td>Chiffre d'affaires</td><td th:text="${ca}"/></tr>
+    <tr><td>Total entrées</td>      <td th:text="${totalEntrees}"/></tr>
+    <tr><td>Total sorties</td>      <td th:text="${totalSorties}"/></tr>
+    <tr><td>Bénéfice net</td>       <td th:text="${benefice}"/></tr>
+    <tr><td>Solde trésorerie</td>   <td th:text="${solde}"/></tr>
+  </table>
+
+  <a th:href="@{/finance/bilan/export-excel}">Export Excel</a>
+</body>
+</html>
