@@ -48,8 +48,8 @@ public class LotProductionService {
 
             // TODO: Arranger la règle de gestion — la quantité prévue doit être calculée
             //       selon les ratios définis par le responsable (ex: Xkg matière → Y briquettes).
-            //       Pour l'instant on met une valeur très grande
-            lot.setQuantiteProduitPrevue(Integer.MAX_VALUE);
+            //       Pour l'instant on met (qteMatierePremiere / 2) par exemple
+            lot.setQuantiteProduitPrevue(lot.getQuantiteMatiereUtilisee() / 2.);
         }
 
         lotProductionRepository.save(lot);
@@ -65,7 +65,7 @@ public class LotProductionService {
 
     // ── Génération de référence LOT-001, LOT-002, ... ────────────────────────
     private String genererReference() {
-        long count = lotProductionRepository.countAll() + 1;
-        return String.format("LOT-%03d", count);
+        long count = lotProductionRepository.getNextId();
+        return String.format("LOT-%04d", count);
     }
 }

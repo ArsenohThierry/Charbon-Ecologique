@@ -12,6 +12,6 @@ public interface LotProductionRepository extends JpaRepository<LotProductionMode
 
     Optional<LotProductionModel> findByReference(String reference);
 
-    @Query("SELECT COUNT(*) FROM LotProductionModel")
-    long countAll();
+    @Query("SELECT COALESCE(MAX(l.id), 0) + 1 FROM LotProductionModel l")
+    long getNextId();
 }
