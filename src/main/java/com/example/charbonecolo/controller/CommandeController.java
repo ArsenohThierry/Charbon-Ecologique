@@ -2,11 +2,14 @@ package com.example.charbonecolo.controller;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.example.charbonecolo.dto.CommandeDto;
 import com.example.charbonecolo.model.CommandeModel;
 import com.example.charbonecolo.model.DetailCommandeModel;
 import com.example.charbonecolo.model.ProduitModel;
@@ -29,10 +33,19 @@ import jakarta.servlet.http.HttpSession;
 @RequestMapping("/cmd")
 public class CommandeController {
 
+    private static final Map<String, String> sortReferences;
+
     private final CommandeRepository commandeRepository;
     private final CommandeService commandeService;
     private final ClientService clientService;
     private final ProduitService produitService;
+    static {
+        sortReferences = new HashMap<>();
+        sortReferences.put("reference", "reference");
+        sortReferences.put("client_nom", "cli.nom");
+        sortReferences.put("date", "date_commande");
+        sortReferences.put("montant", "montant_total");
+    }
 
     public CommandeController(CommandeRepository commandeRepository, CommandeService commandeService, ClientService clientService, ProduitService produitService) {
         this.commandeRepository = commandeRepository;
@@ -89,22 +102,29 @@ public class CommandeController {
     @GetMapping
     public ModelAndView list(
         HttpSession session, 
-        @RequestParam(required = false, name = "page") Integer page, 
-        @RequestParam(required = false, name = "limit") Integer limit,
+        @RequestParam(required = false, name = "page", defaultValue = "1") Integer page, 
+        @RequestParam(required = false, name = "limit", defaultValue = "10") Integer limit,
         @RequestParam(required = false, name = "sort") String currentSort,
         @RequestParam(required = false, name = "dir") String currentDir
-    ) {
-        if(limit == null) {
-            limit = 10;
+    ) { 
+        Pageable pageable = null;
+        if(currentSort != null && currentDir != null) {
+            if(!currentSort.isEmpty() && !currentDir.isEmpty()) {
+                String sort = sortReferences.get(currentSort);
+                Sort.Direction direction = currentDir.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+                pageable = PageRequest.of(page - 1, limit, Sort.by(direction, sort));
+            }
         }
-        if(page == null) {
-            page = 1;
+        if(pageable == null) {
+                pageable = PageRequest.of(page - 1, limit);
         }
+        Page<CommandeDto> pageService = commandeService.listCommandes(pageable);
         ModelAndView mav = new ModelAndView("stitch/module_commercial/liste_commande");
-        mav.addObject("commandes", commandeService.listCommandes(page, limit));
+        mav.addObject("commandes", pageService.getContent());
         mav.addObject("currentPage", page);
         mav.addObject("currentDir", currentDir);
         mav.addObject("currentSort", currentSort);
+        mav.addObject("page", pageService);
         return mav;
     }
 

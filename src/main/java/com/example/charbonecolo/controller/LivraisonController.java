@@ -50,7 +50,7 @@ public class LivraisonController {
 
     // Sauvegarde modification
     @PostMapping("/update/{id}")
-    public String update(@PathVariable Long id, @ModelAttribute LivraisonModel livraison) {
+    public String update(@PathVariable Integer id, @ModelAttribute LivraisonModel livraison) {
         livraison.setId(id);
         livraisonService.save(livraison);
         return "redirect:/livraisons";

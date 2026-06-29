@@ -12,6 +12,8 @@ import org.springframework.stereotype.Repository;
 import com.example.charbonecolo.dto.CommandeDto;
 import com.example.charbonecolo.model.CommandeModel;
 
+import jakarta.persistence.NamedNativeQuery;
+
 @Repository
 public interface CommandeRepository extends JpaRepository<CommandeModel, Integer> {
     // Maka anle liste par pagination
@@ -39,7 +41,7 @@ public interface CommandeRepository extends JpaRepository<CommandeModel, Integer
                 JOIN commande_statuts cs ON cs.id = sc.id_commande_statuts
                 ORDER BY id_commandes, date_statut_commande DESC
             ) dernier_statut ON dernier_statut.id_commandes = c.id
-                        """, countQuery = "SELECT COUNT(*) FROM commandes",
+                        """, countQuery = "SELECT COUNT(*) FROM commandes", 
                     nativeQuery = true)
-    Page<CommandeDto> findCustomCommandes(Pageable pageable);
+    Page<Object[]> findCustomCommandes(Pageable pageable);
 }

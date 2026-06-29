@@ -1,6 +1,9 @@
 package com.example.charbonecolo.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
+import com.example.charbonecolo.model.DetailCommandeModel;
 
 public class CommandeDto {
     private Integer id;
@@ -10,6 +13,15 @@ public class CommandeDto {
     private Double montant;
     private Integer idCommandeStatuts;
     private String statutLibelle;
+    private List<DetailCommandeModel> details;
+
+    public List<DetailCommandeModel> getDetails() {
+        return details;
+    }
+
+    public void setDetails(List<DetailCommandeModel> details) {
+        this.details = details;
+    }
 
     // 1. Le constructeur EXACT pour le @SqlResultSetMapping
     public CommandeDto(Integer id, String reference, LocalDateTime dateCommande, 

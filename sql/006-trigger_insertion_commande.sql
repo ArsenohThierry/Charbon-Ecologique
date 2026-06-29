@@ -8,14 +8,14 @@ BEGIN
     current_month := to_char(COALESCE(NEW.date_commande, CURRENT_TIMESTAMP), 'YYYYMM');
     prefix := 'COM-' || current_month || '-';
 
-    SELECT COALESCE(MAX(CAST(SUBSTRING(reference FROM '\d{3}$') AS INT)), 0)
+    SELECT COALESCE(MAX(CAST(SUBSTRING(reference FROM '\d{7}$') AS INT)), 0)
     INTO next_num
     FROM commandes
     WHERE reference LIKE prefix || '%';
 
     next_num := next_num + 1;
 
-    NEW.reference := prefix || lpad(next_num::text, 4, '0');
+    NEW.reference := prefix || lpad(next_num::text, 8, '0');
 
     RETURN NEW;
 END;

@@ -10,33 +10,40 @@ public class LivraisonModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
-    @Column(name = "reference", nullable = false, unique = true)
+    // @Column(name = "reference", nullable = false, unique = true)
+    @Transient
     private String reference;
 
-    @Column(name = "date_livraison", nullable = false)
+    // @Column(name = "date_livraison", nullable = false)
+    @Transient
     private LocalDate dateLivraison;
 
-    @Column(name = "adresse_livraison", nullable = false)
+    // @Column(name = "adresse_livraison", nullable = false)
+    @Transient
     private String adresseLivraison;
 
-    @Column(name = "statut", nullable = false)
+    // @Column(name = "statut", nullable = false)
+    @Transient
     private String statut;
 
-    @Column(name = "id_commande")
+    // @Column(name = "id_commande")
+    @Transient
     private Long idCommande;
 
-    @Column(name = "date_creation")
+    // @Column(name = "date_creation")
+    @Transient
     private LocalDateTime dateCreation;
 
-    @Column(name = "actif")
+    // @Column(name = "actif")
+    @Transient
     private Boolean actif;
 
     // -------- Getters & Setters --------
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Integer getId() { return id; }
+    public void setId(Integer id) { this.id = id; }
 
     public String getReference() { return reference; }
     public void setReference(String reference) { this.reference = reference; }

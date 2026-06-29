@@ -1,6 +1,7 @@
 package com.example.charbonecolo.service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -37,9 +38,28 @@ public class CommandeService {
     }
 
     @Transactional(readOnly = true)
-    public Page<CommandeDto> listCommandes(Integer page, Integer limit) {
-        Pageable pageable = PageRequest.of(page - 1, limit);
-        return commandeRepository.findCustomCommandes(pageable);
+    public Page<CommandeDto> listCommandes(Pageable pageable) {
+        Page<Object[]> pageBrute = commandeRepository.findCustomCommandes(pageable);
+
+        Page<CommandeDto> ret = pageBrute.map(ligne -> new CommandeDto(
+                (Integer) ligne[0],
+                (String) ligne[1],
+                (LocalDateTime) ligne[2],
+                (String) ligne[4],
+                ((BigDecimal) ligne[5]).doubleValue(),
+                (Integer) ligne[6],
+                (String) ligne[7]));
+        List<CommandeDto> listRet = ret.getContent();
+        List<Integer> commandeIds = listRet.stream().map(CommandeDto::getId).toList();
+        List<DetailCommandeModel> details = detailCommandeRepository.findAllByCommandeIdIn(commandeIds);
+        Map<Integer, List<DetailCommandeModel>> detailsParCommande = details.stream()
+                .collect(Collectors.groupingBy(d -> d.getCommande().getId()));
+
+        listRet.forEach(dto -> {
+            List<DetailCommandeModel> listDetails = detailsParCommande.getOrDefault(dto.getId(), List.of());
+            dto.setDetails(listDetails);
+        });
+        return ret;
     }
 
     @Transactional

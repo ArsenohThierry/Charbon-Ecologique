@@ -22,21 +22,6 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "commandes")
 @SQLRestriction("deleted_at IS NULL")
-@SqlResultSetMapping(
-    name = "CommandeDtoMapping",
-    classes = @ConstructorResult(
-        targetClass = CommandeDto.class,
-        columns = {
-            @ColumnResult(name = "id", type = Integer.class),
-            @ColumnResult(name = "reference", type = String.class),
-            @ColumnResult(name = "date_commande", type = LocalDateTime.class),
-            @ColumnResult(name = "client_nom", type = String.class),
-            @ColumnResult(name = "montant_total", type = Double.class),
-            @ColumnResult(name = "id_commande_statuts", type = Integer.class),
-            @ColumnResult(name = "statut_libelle", type = String.class),
-        }
-    )
-)
 public class CommandeModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
