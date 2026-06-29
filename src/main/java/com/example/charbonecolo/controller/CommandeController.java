@@ -87,7 +87,13 @@ public class CommandeController {
     }
 
     @GetMapping
-    public ModelAndView list(HttpSession session, @RequestParam(required = false, name = "page") Integer page, @RequestParam(required = false, name = "limit") Integer limit) {
+    public ModelAndView list(
+        HttpSession session, 
+        @RequestParam(required = false, name = "page") Integer page, 
+        @RequestParam(required = false, name = "limit") Integer limit,
+        @RequestParam(required = false, name = "sort") String currentSort,
+        @RequestParam(required = false, name = "dir") String currentDir
+    ) {
         if(limit == null) {
             limit = 10;
         }
@@ -97,6 +103,8 @@ public class CommandeController {
         ModelAndView mav = new ModelAndView("stitch/module_commercial/liste_commande");
         mav.addObject("commandes", commandeService.listCommandes(page, limit));
         mav.addObject("currentPage", page);
+        mav.addObject("currentDir", currentDir);
+        mav.addObject("currentSort", currentSort);
         return mav;
     }
 

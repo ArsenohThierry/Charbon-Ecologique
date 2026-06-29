@@ -1,38 +1,86 @@
 package com.example.charbonecolo.dto;
 
-import java.util.List;
-
-import com.example.charbonecolo.model.CommandeModel;
-import com.example.charbonecolo.model.DetailCommandeModel;
-import com.example.charbonecolo.model.StatutCommandeModel;
+import java.time.LocalDateTime;
 
 public class CommandeDto {
-    private CommandeModel commande;
-    private List<DetailCommandeModel> details;
+    private Integer id;
+    private String reference;
+    private LocalDateTime dateCommande;
+    private String clientNom;
     private Double montant;
-    private StatutCommandeModel currentStatut;
-    public CommandeModel getCommande() {
-        return commande;
+    private Integer idCommandeStatuts;
+    private String statutLibelle;
+
+    // 1. Le constructeur EXACT pour le @SqlResultSetMapping
+    public CommandeDto(Integer id, String reference, LocalDateTime dateCommande, 
+                       String clientNom, Double montant, Integer idCommandeStatuts, String statutLibelle) {
+        this.id = id;
+        this.reference = reference;
+        this.dateCommande = dateCommande;
+        this.clientNom = clientNom;
+        this.montant = montant;
+        this.idCommandeStatuts = idCommandeStatuts;
+        this.statutLibelle = statutLibelle;
     }
-    public void setCommande(CommandeModel commande) {
-        this.commande = commande;
+
+    // 2. Constructeur par défaut (recommandé)
+    public CommandeDto() {
     }
-    public List<DetailCommandeModel> getDetails() {
-        return details;
+
+    // 3. Getters et Setters
+    public Integer getId() {
+        return id;
     }
-    public void setDetails(List<DetailCommandeModel> details) {
-        this.details = details;
+
+    public void setId(Integer id) {
+        this.id = id;
     }
+
+    public String getReference() {
+        return reference;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
+    }
+
+    public LocalDateTime getDateCommande() {
+        return dateCommande;
+    }
+
+    public void setDateCommande(LocalDateTime dateCommande) {
+        this.dateCommande = dateCommande;
+    }
+
+    public String getClientNom() {
+        return clientNom;
+    }
+
+    public void setClientNom(String clientNom) {
+        this.clientNom = clientNom;
+    }
+
     public Double getMontant() {
         return montant;
     }
+
     public void setMontant(Double montant) {
         this.montant = montant;
     }
-    public StatutCommandeModel getCurrentStatut() {
-        return currentStatut;
+
+    public Integer getIdCommandeStatuts() {
+        return idCommandeStatuts;
     }
-    public void setCurrentStatut(StatutCommandeModel currentStatut) {
-        this.currentStatut = currentStatut;
+
+    public void setIdCommandeStatuts(Integer idCommandeStatuts) {
+        this.idCommandeStatuts = idCommandeStatuts;
+    }
+
+    public String getStatutLibelle() {
+        return statutLibelle;
+    }
+
+    public void setStatutLibelle(String statutLibelle) {
+        this.statutLibelle = statutLibelle;
     }
 }

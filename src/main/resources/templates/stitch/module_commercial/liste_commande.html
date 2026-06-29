@@ -286,73 +286,86 @@
                         <thead>
                             <tr
                                 class="bg-slate-50 border-b border-slate-200 text-xs uppercase tracking-wider text-slate-500">
-                                <th class="px-6 py-4 font-semibold">Réf.</th>
-                                <th class="px-6 py-4 font-semibold">Client</th>
+                                <th class="px-6 py-4 font-semibold">
+                                    <a th:href="@{/stitch/module_commercial/liste_commande(page=1, limit=${limit}, sort='reference', dir=${currentSort == 'reference' && currentDir == 'asc' ? 'desc' : 'asc'})}"
+                                        class="flex items-center gap-1 hover:text-slate-800">
+                                        Réf.
+                                        <span th:if="${currentSort == 'reference'}"
+                                            th:text="${currentDir == 'asc' ? '▲' : '▼'}"></span>
+                                    </a>
+                                </th>
+
+                                <th class="px-6 py-4 font-semibold">
+                                    <a th:href="@{/stitch/module_commercial/liste_commande(page=1, limit=${limit}, sort='client.nom', dir=${currentSort == 'client.nom' && currentDir == 'asc' ? 'desc' : 'asc'})}"
+                                        class="flex items-center gap-1 hover:text-slate-800">
+                                        Client
+                                        <span th:if="${currentSort == 'client.nom'}"
+                                            th:text="${currentDir == 'asc' ? '▲' : '▼'}"></span>
+                                    </a>
+                                </th>
+
                                 <th class="px-6 py-4 font-semibold">Produit</th>
                                 <th class="px-6 py-4 font-semibold">Qté</th>
                                 <th class="px-6 py-4 font-semibold">PU</th>
-                                <th class="px-6 py-4 font-semibold">Montant</th>
+
+                                <th class="px-6 py-4 font-semibold">
+                                    <a th:href="@{/stitch/module_commercial/liste_commande(page=1, limit=${limit}, sort='montant', dir=${currentSort == 'montant' && currentDir == 'asc' ? 'desc' : 'asc'})}"
+                                        class="flex items-center gap-1 hover:text-slate-800">
+                                        Montant
+                                        <span th:if="${currentSort == 'montant'}"
+                                            th:text="${currentDir == 'asc' ? '▲' : '▼'}"></span>
+                                    </a>
+                                </th>
+
                                 <th class="px-6 py-4 font-semibold">Statut</th>
+
                                 <th class="px-6 py-4 font-semibold text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100">
                             <tr th:each="dto : ${commandes}" class="hover:bg-slate-50 transition text-sm">
 
-                                <td class="px-6 py-4 text-slate-600 align-top" th:text="${dto.commande.reference}">
-                                    CMD-1042</td>
+                                <td class="px-6 py-4 text-slate-600 align-top" th:text="${dto.reference}">
+                                    CMD-1042
+                                </td>
 
-                                <td class="px-6 py-4 font-medium align-top" th:text="${dto.commande.client.nom}">Resto
-                                    Chez Voahangy</td>
-
-                                <td class="px-6 py-4 align-top">
-                                    <div class="space-y-1">
-                                        <div th:each="detail : ${dto.details}" th:text="${detail.produit.nom}"
-                                            class="text-slate-700 font-normal">
-                                            Briquette standard
-                                        </div>
-                                    </div>
+                                <td class="px-6 py-4 font-medium align-top" th:text="${dto.clientNom}">
+                                    Resto Chez Voahangy
                                 </td>
 
                                 <td class="px-6 py-4 align-top">
-                                    <div class="space-y-1">
-                                        <div th:each="detail : ${dto.details}" th:text="${detail.quantite} + ' kg'"
-                                            class="text-slate-500 font-medium">
-                                            50 kg
-                                        </div>
-                                    </div>
+                                    <span class="text-slate-400 italic text-xs">Voir détails</span>
                                 </td>
 
                                 <td class="px-6 py-4 align-top">
-                                    <div class="space-y-1">
-                                        <div th:each="detail : ${dto.details}" th:text="${#numbers.formatDecimal(detail.produit.pu, 1, 'DEFAULT', 2, 'POINT')} + ' Ar'"
-                                            class="text-slate-500 font-medium">
-                                            50 kg
-                                        </div>
-                                    </div>
+                                    <span class="text-slate-400">-</span>
+                                </td>
+
+                                <td class="px-6 py-4 align-top">
+                                    <span class="text-slate-400">-</span>
                                 </td>
 
                                 <td class="px-6 py-4 align-top font-semibold text-slate-700"
                                     th:text="${#numbers.formatDecimal(dto.montant, 1, 'DEFAULT', 2, 'POINT')} + ' Ar'">
-                                    90 000 Ar
+                                    90 000.00 Ar
                                 </td>
 
                                 <td class="px-6 py-4 align-top">
-                                    <span th:if="${dto.currentStatut != null}"
-                                        th:class="'badge badge-' + ${dto.currentStatut.statut.libelle == 'en attente' ? 'pending' : 'success'}"
-                                        th:text="${dto.currentStatut.statut.libelle}">
+                                    <span th:if="${dto.statutLibelle != null}"
+                                        th:class="'badge badge-' + ${#strings.toLowerCase(dto.statutLibelle) == 'en attente' ? 'pending' : 'success'}"
+                                        th:text="${dto.statutLibelle}">
                                         En attente
                                     </span>
-                                    <span th:if="${dto.currentStatut == null}" class="badge text-slate-400">-</span>
+                                    <span th:if="${dto.statutLibelle == null}" class="badge text-slate-400">-</span>
                                 </td>
 
                                 <td class="px-6 py-4 text-right align-top">
                                     <div class="flex justify-end gap-3">
-                                        <a th:href="@{/commercial/commande/modifier/{id}(id=${dto.commande.id})}"
+                                        <a th:href="@{/commercial/commande/modifier/{id}(id=${dto.id})}"
                                             class="flex items-center gap-1 text-slate-500 hover:text-leaf-green transition border border-slate-200 px-3 py-1.5 rounded text-xs">
                                             Modifier
                                         </a>
-                                        <button th:data-id="${dto.commande.id}"
+                                        <button th:data-id="${dto.id}"
                                             onclick="annulerCommande(this.getAttribute('data-id'))"
                                             class="flex items-center gap-1 text-red-400 hover:text-red-600 transition border border-slate-200 px-3 py-1.5 rounded text-xs">
                                             Annuler
