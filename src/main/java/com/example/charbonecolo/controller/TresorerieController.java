@@ -16,13 +16,12 @@ public class TresorerieController {
         this.tresorerieService = tresorerieService;
     }
 
-    /** GET /finance/tresorerie — Affiche les mouvements de trésorerie et le solde */
     @GetMapping
     public String afficherTresorerie(Model model) {
         model.addAttribute("mouvements", tresorerieService.findAll());
-        model.addAttribute("solde",      tresorerieService.calculerSolde());
-        model.addAttribute("entrees",    tresorerieService.findByType("ENTREE"));
-        model.addAttribute("sorties",    tresorerieService.findByType("SORTIE"));
+        model.addAttribute("solde", tresorerieService.calculerSolde());
+        model.addAttribute("totalEntrees", tresorerieService.calculerTotalEntrees());
+        model.addAttribute("totalSorties", tresorerieService.calculerTotalSorties());
         return "stitch/module_finance/tresorerie";
     }
 }

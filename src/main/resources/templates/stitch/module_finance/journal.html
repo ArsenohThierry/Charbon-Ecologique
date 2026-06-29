@@ -136,8 +136,13 @@
                 </select>
             </div>
             <div>
-                <label class="block text-xs font-medium text-slate-500 mb-1">Montant (MGA) *</label>
-                <input type="number" name="montant" id="montant" step="0.01" min="0" required
+                <label class="block text-xs font-medium text-slate-500 mb-1">Debit (MGA)</label>
+                <input type="number" name="debit" id="debit" step="0.01" min="0" value="0"
+                       class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-success"/>
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-slate-500 mb-1">Credit (MGA)</label>
+                <input type="number" name="credit" id="credit" step="0.01" min="0" value="0"
                        class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-success"/>
             </div>
             <div>
@@ -173,7 +178,8 @@
                         <th class="px-6 py-3 text-left">Type</th>
                         <th class="px-6 py-3 text-left">Origine</th>
                         <th class="px-6 py-3 text-left">Référence</th>
-                        <th class="px-6 py-3 text-right">Montant</th>
+                        <th class="px-6 py-3 text-right">Debit</th>
+                        <th class="px-6 py-3 text-right">Credit</th>
                         <th class="px-6 py-3 text-left">Description</th>
                     </tr>
                 </thead>
@@ -184,19 +190,20 @@
                             th:text="${#temporals.format(e.dateOperation,'dd/MM/yyyy HH:mm')}"></td>
                         <td class="px-6 py-3">
                             <span class="px-2 py-0.5 rounded text-xs font-medium"
-                                  th:classappend="${e.typeJournal.code == 'VENTE'} ? 'bg-green-100 text-green-700' :
-                                                  (${e.typeJournal.code == 'ACHAT'} ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700')"
+                                  th:classappend="${e.typeJournal.code == 'VTE' || e.typeJournal.code == 'VENTE'} ? 'bg-green-100 text-green-700' :
+                                                  (${e.typeJournal.code == 'ACH' || e.typeJournal.code == 'ACHAT'} ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700')"
                                   th:text="${e.typeJournal.libelle}"></span>
                         </td>
                         <td class="px-6 py-3 text-slate-600" th:text="${e.origine != null ? e.origine.libelle : '—'}"></td>
                         <td class="px-6 py-3 text-slate-500 font-mono text-xs" th:text="${e.reference != null ? e.reference : '—'}"></td>
-                        <td class="px-6 py-3 text-right font-semibold"
-                            th:classappend="${e.typeJournal.code == 'VENTE'} ? 'text-green-600' : 'text-red-600'"
-                            th:text="${#numbers.formatDecimal(e.montant, 1, 'COMMA', 0, 'POINT')} + ' MGA'"></td>
+                        <td class="px-6 py-3 text-right font-semibold text-green-600"
+                            th:text="${#numbers.formatDecimal(e.debit, 1, 'COMMA', 0, 'POINT')} + ' MGA'"></td>
+                        <td class="px-6 py-3 text-right font-semibold text-red-600"
+                            th:text="${#numbers.formatDecimal(e.credit, 1, 'COMMA', 0, 'POINT')} + ' MGA'"></td>
                         <td class="px-6 py-3 text-slate-500 max-w-xs truncate" th:text="${e.description != null ? e.description : ''}"></td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(ecritures)}">
-                        <td colspan="6" class="px-6 py-12 text-center text-slate-400">Aucune écriture trouvée.</td>
+                        <td colspan="7" class="px-6 py-12 text-center text-slate-400">Aucune écriture trouvée.</td>
                     </tr>
                 </tbody>
             </table>

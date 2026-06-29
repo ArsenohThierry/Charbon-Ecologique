@@ -24,10 +24,10 @@ public class JournalFinancierModel {
     private OrigineModel origine;
 
     @Column(nullable = false, precision = 15, scale = 2)
-    private BigDecimal montant;
+    private BigDecimal debit = BigDecimal.ZERO;
 
-    @Column(length = 10)
-    private String devise;
+    @Column(nullable = false, precision = 15, scale = 2)
+    private BigDecimal credit = BigDecimal.ZERO;
 
     @Column(length = 50)
     private String reference;
@@ -38,13 +38,13 @@ public class JournalFinancierModel {
     public JournalFinancierModel() {}
 
     public JournalFinancierModel(LocalDateTime dateOperation, TypeJournalModel typeJournal,
-                                  OrigineModel origine, BigDecimal montant,
-                                  String devise, String reference, String description) {
+                                  OrigineModel origine, BigDecimal debit,
+                                  BigDecimal credit, String reference, String description) {
         this.dateOperation = dateOperation;
         this.typeJournal = typeJournal;
         this.origine = origine;
-        this.montant = montant;
-        this.devise = devise;
+        this.debit = debit;
+        this.credit = credit;
         this.reference = reference;
         this.description = description;
     }
@@ -61,11 +61,11 @@ public class JournalFinancierModel {
     public OrigineModel getOrigine() { return origine; }
     public void setOrigine(OrigineModel origine) { this.origine = origine; }
 
-    public BigDecimal getMontant() { return montant; }
-    public void setMontant(BigDecimal montant) { this.montant = montant; }
+    public BigDecimal getDebit() { return debit; }
+    public void setDebit(BigDecimal debit) { this.debit = debit; }
 
-    public String getDevise() { return devise; }
-    public void setDevise(String devise) { this.devise = devise; }
+    public BigDecimal getCredit() { return credit; }
+    public void setCredit(BigDecimal credit) { this.credit = credit; }
 
     public String getReference() { return reference; }
     public void setReference(String reference) { this.reference = reference; }

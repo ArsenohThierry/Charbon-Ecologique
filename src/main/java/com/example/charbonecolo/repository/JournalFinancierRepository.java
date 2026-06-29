@@ -16,6 +16,8 @@ public interface JournalFinancierRepository extends JpaRepository<JournalFinanci
 
     List<JournalFinancierModel> findAllByOrderByDateOperationDesc();
 
+    List<JournalFinancierModel> findAllByOrderByDateOperationAscIdAsc();
+
     List<JournalFinancierModel> findByDateOperationBetweenOrderByDateOperationDesc(
             LocalDateTime debut, LocalDateTime fin);
 
@@ -23,32 +25,29 @@ public interface JournalFinancierRepository extends JpaRepository<JournalFinanci
 
     List<JournalFinancierModel> findByOrigine_IdOrderByDateOperationDesc(Integer origineId);
 
-    // Chiffre d'affaires = somme des montants de type VENTE
-    @Query("SELECT COALESCE(SUM(j.montant), 0) FROM JournalFinancierModel j " +
-           "WHERE j.typeJournal.code = 'VENTE' AND j.dateOperation BETWEEN :debut AND :fin")
+    @Query("SELECT COALESCE(SUM(j.debit), 0) FROM JournalFinancierModel j " +
+           "WHERE j.typeJournal.code IN ('VTE', 'VENTE') AND j.dateOperation BETWEEN :debut AND :fin")
     BigDecimal calculerCA(@Param("debut") LocalDateTime debut, @Param("fin") LocalDateTime fin);
 
-    // Bénéfice = VENTE - ACHAT
-    @Query("SELECT COALESCE(SUM(CASE WHEN j.typeJournal.code = 'VENTE' THEN j.montant " +
-           "WHEN j.typeJournal.code = 'ACHAT' THEN -j.montant ELSE 0 END), 0) " +
+    @Query("SELECT COALESCE(SUM(j.debit), 0) - COALESCE(SUM(j.credit), 0) " +
            "FROM JournalFinancierModel j WHERE j.dateOperation BETWEEN :debut AND :fin")
     BigDecimal calculerBenefice(@Param("debut") LocalDateTime debut, @Param("fin") LocalDateTime fin);
 
-    // Total entrées (BANQUE et CAISSE positifs = VENTE + BANQUE_ENTREE)
-    @Query("SELECT COALESCE(SUM(j.montant), 0) FROM JournalFinancierModel j " +
-           "WHERE j.typeJournal.code IN ('VENTE', 'BANQUE') AND j.dateOperation BETWEEN :debut AND :fin")
+    @Query("SELECT COALESCE(SUM(j.debit), 0) FROM JournalFinancierModel j " +
+           "WHERE j.dateOperation BETWEEN :debut AND :fin")
     BigDecimal calculerTotalEntrees(@Param("debut") LocalDateTime debut, @Param("fin") LocalDateTime fin);
 
-    // Total sorties (ACHAT)
-    @Query("SELECT COALESCE(SUM(j.montant), 0) FROM JournalFinancierModel j " +
-           "WHERE j.typeJournal.code = 'ACHAT' AND j.dateOperation BETWEEN :debut AND :fin")
+    @Query("SELECT COALESCE(SUM(j.credit), 0) FROM JournalFinancierModel j " +
+           "WHERE j.dateOperation BETWEEN :debut AND :fin")
     BigDecimal calculerTotalSorties(@Param("debut") LocalDateTime debut, @Param("fin") LocalDateTime fin);
 
-    // Évolution mensuelle du CA (pour graphiques)
-    @Query(value = "SELECT TO_CHAR(j.date_operation, 'YYYY-MM') AS mois, SUM(j.montant) AS total " +
+    @Query("SELECT COALESCE(SUM(j.debit), 0) - COALESCE(SUM(j.credit), 0) FROM JournalFinancierModel j")
+    BigDecimal calculerSolde();
+
+    @Query(value = "SELECT TO_CHAR(j.date_operation, 'YYYY-MM') AS mois, SUM(j.debit) AS total " +
                    "FROM journal_financier j " +
                    "JOIN type_journal tj ON j.id_type_journal = tj.id " +
-                   "WHERE tj.code = 'VENTE' AND j.date_operation >= :debut " +
+                   "WHERE tj.code IN ('VTE', 'VENTE') AND j.date_operation >= :debut " +
                    "GROUP BY mois ORDER BY mois",
            nativeQuery = true)
     List<Map<String, Object>> evolutionMensuelleCA(@Param("debut") LocalDateTime debut);

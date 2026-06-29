@@ -1,8 +1,6 @@
 package com.example.charbonecolo.controller;
 
 import com.example.charbonecolo.model.JournalFinancierModel;
-import com.example.charbonecolo.model.OrigineModel;
-import com.example.charbonecolo.model.TypeJournalModel;
 import com.example.charbonecolo.repository.OrigineRepository;
 import com.example.charbonecolo.repository.TypeJournalRepository;
 import com.example.charbonecolo.service.JournalFinancierService;
@@ -12,7 +10,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
@@ -31,14 +32,13 @@ public class JournalController {
     private final OrigineRepository origineRepo;
 
     public JournalController(JournalFinancierService journalService,
-                              TypeJournalRepository typeJournalRepo,
-                              OrigineRepository origineRepo) {
+                             TypeJournalRepository typeJournalRepo,
+                             OrigineRepository origineRepo) {
         this.journalService = journalService;
         this.typeJournalRepo = typeJournalRepo;
         this.origineRepo = origineRepo;
     }
 
-    /** GET /finance/journal — Affiche la liste du journal */
     @GetMapping
     public String afficherJournal(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime debut,
@@ -65,21 +65,20 @@ public class JournalController {
         return "stitch/module_finance/journal";
     }
 
-    /** POST /finance/journal — Enregistre une nouvelle écriture */
     @PostMapping
     public String enregistrer(
             @RequestParam("dateOperation") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateOperation,
             @RequestParam("typeJournalId") Integer typeJournalId,
             @RequestParam(value = "origineId", required = false) Integer origineId,
-            @RequestParam("montant") BigDecimal montant,
-            @RequestParam(value = "devise", defaultValue = "MGA") String devise,
+            @RequestParam(value = "debit", defaultValue = "0") BigDecimal debit,
+            @RequestParam(value = "credit", defaultValue = "0") BigDecimal credit,
             @RequestParam(value = "reference", required = false) String reference,
             @RequestParam(value = "description", required = false) String description) {
 
         JournalFinancierModel ecriture = new JournalFinancierModel();
         ecriture.setDateOperation(dateOperation);
-        ecriture.setMontant(montant);
-        ecriture.setDevise(devise);
+        ecriture.setDebit(debit);
+        ecriture.setCredit(credit);
         ecriture.setReference(reference);
         ecriture.setDescription(description);
 
@@ -92,7 +91,6 @@ public class JournalController {
         return "redirect:/finance/journal";
     }
 
-    /** GET /finance/journal/export-csv — Export CSV du journal */
     @GetMapping("/export-csv")
     public ResponseEntity<byte[]> exportCsv() throws Exception {
         List<JournalFinancierModel> ecritures = journalService.findAll();
@@ -100,12 +98,11 @@ public class JournalController {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         OutputStreamWriter writer = new OutputStreamWriter(baos, StandardCharsets.UTF_8);
 
-        // BOM UTF-8 pour Excel
         baos.write(0xEF);
         baos.write(0xBB);
         baos.write(0xBF);
 
-        writer.write("ID;Date;Type Journal;Origine;Montant;Devise;Référence;Description\n");
+        writer.write("ID;Date;Type Journal;Origine;Debit;Credit;Reference;Description\n");
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         for (JournalFinancierModel e : ecritures) {
             writer.write(String.format("%d;%s;%s;%s;%s;%s;%s;%s\n",
@@ -113,8 +110,8 @@ public class JournalController {
                     e.getDateOperation().format(fmt),
                     e.getTypeJournal().getLibelle(),
                     e.getOrigine() != null ? e.getOrigine().getLibelle() : "",
-                    e.getMontant().toPlainString(),
-                    e.getDevise() != null ? e.getDevise() : "",
+                    e.getDebit().toPlainString(),
+                    e.getCredit().toPlainString(),
                     e.getReference() != null ? e.getReference() : "",
                     e.getDescription() != null ? e.getDescription() : ""
             ));

@@ -76,18 +76,20 @@
         <p class="text-sm text-green-200 mb-1">Solde courant</p>
         <p class="text-4xl font-bold"
            th:text="${#numbers.formatDecimal(solde, 1, 'COMMA', 0, 'POINT')} + ' MGA'"></p>
-        <p class="text-xs text-green-300 mt-2">Basé sur tous les mouvements enregistrés</p>
+        <p class="text-xs text-green-300 mt-2">Calcule depuis le journal financier</p>
     </div>
 
     <!-- Stats rapides -->
     <div class="grid grid-cols-2 gap-5 mb-8">
         <div class="bg-white rounded-xl border border-slate-100 shadow-sm p-5">
-            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">Nb. Entrées</p>
-            <p class="text-2xl font-bold text-blue-600" th:text="${#lists.size(entrees)}"></p>
+            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">Total entrees</p>
+            <p class="text-2xl font-bold text-blue-600"
+               th:text="${#numbers.formatDecimal(totalEntrees, 1, 'COMMA', 0, 'POINT')} + ' MGA'"></p>
         </div>
         <div class="bg-white rounded-xl border border-slate-100 shadow-sm p-5">
-            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">Nb. Sorties</p>
-            <p class="text-2xl font-bold text-red-600" th:text="${#lists.size(sorties)}"></p>
+            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">Total sorties</p>
+            <p class="text-2xl font-bold text-red-600"
+               th:text="${#numbers.formatDecimal(totalSorties, 1, 'COMMA', 0, 'POINT')} + ' MGA'"></p>
         </div>
     </div>
 
@@ -101,30 +103,28 @@
                 <thead class="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">
                     <tr>
                         <th class="px-6 py-3 text-left">Date</th>
-                        <th class="px-6 py-3 text-left">Type</th>
-                        <th class="px-6 py-3 text-left">Libellé</th>
-                        <th class="px-6 py-3 text-right">Montant</th>
-                        <th class="px-6 py-3 text-right">Solde cumulé</th>
+                        <th class="px-6 py-3 text-left">Reference</th>
+                        <th class="px-6 py-3 text-left">Description</th>
+                        <th class="px-6 py-3 text-right">Debit</th>
+                        <th class="px-6 py-3 text-right">Credit</th>
+                        <th class="px-6 py-3 text-right">Solde cumule</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
                     <tr th:each="m : ${mouvements}" class="hover:bg-slate-50 transition-colors">
                         <td class="px-6 py-3 text-slate-600 whitespace-nowrap"
-                            th:text="${#temporals.format(m.dateMouvement,'dd/MM/yyyy HH:mm')}"></td>
-                        <td class="px-6 py-3">
-                            <span class="px-2 py-0.5 rounded text-xs font-medium"
-                                  th:classappend="${m.type == 'ENTREE'} ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'"
-                                  th:text="${m.type}"></span>
-                        </td>
-                        <td class="px-6 py-3 text-slate-600" th:text="${m.libelle != null ? m.libelle : '—'}"></td>
-                        <td class="px-6 py-3 text-right font-semibold"
-                            th:classappend="${m.type == 'ENTREE'} ? 'text-green-600' : 'text-red-600'"
-                            th:text="${#numbers.formatDecimal(m.montant, 1, 'COMMA', 0, 'POINT')} + ' MGA'"></td>
+                            th:text="${#temporals.format(m.dateOperation,'dd/MM/yyyy HH:mm')}"></td>
+                        <td class="px-6 py-3 text-slate-500 font-mono text-xs" th:text="${m.reference != null ? m.reference : '—'}"></td>
+                        <td class="px-6 py-3 text-slate-600" th:text="${m.description != null ? m.description : '—'}"></td>
+                        <td class="px-6 py-3 text-right font-semibold text-green-600"
+                            th:text="${#numbers.formatDecimal(m.debit, 1, 'COMMA', 0, 'POINT')} + ' MGA'"></td>
+                        <td class="px-6 py-3 text-right font-semibold text-red-600"
+                            th:text="${#numbers.formatDecimal(m.credit, 1, 'COMMA', 0, 'POINT')} + ' MGA'"></td>
                         <td class="px-6 py-3 text-right text-slate-700 font-mono text-xs"
                             th:text="${m.solde != null ? #numbers.formatDecimal(m.solde, 1, 'COMMA', 0, 'POINT') + ' MGA' : '—'}"></td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(mouvements)}">
-                        <td colspan="5" class="px-6 py-12 text-center text-slate-400">Aucun mouvement enregistré.</td>
+                        <td colspan="6" class="px-6 py-12 text-center text-slate-400">Aucun mouvement enregistré.</td>
                     </tr>
                 </tbody>
             </table>
