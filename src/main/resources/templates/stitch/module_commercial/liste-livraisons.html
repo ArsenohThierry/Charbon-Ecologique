@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des Livraisons</title>
+</head>
+<body>
+
+<h1>Liste des Livraisons</h1>
+
+<a th:href="@{/livraisons/new}">+ Nouvelle Livraison</a>
+
+<table border="1" cellpadding="8">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Référence</th>
+            <th>Date Livraison</th>
+            <th>Adresse</th>
+            <th>Statut</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="livraison : ${livraisons}">
+            <td th:text="${livraison.id}"></td>
+            <td th:text="${livraison.reference}"></td>
+            <td th:text="${livraison.dateLivraison}"></td>
+            <td th:text="${livraison.adresseLivraison}"></td>
+            <td th:text="${livraison.statut}"></td>
+            <td>
+                <a th:href="@{/livraisons/edit/{id}(id=${livraison.id})}">Modifier</a>
+                |
+                <a th:href="@{/livraisons/delete/{id}(id=${livraison.id})}"
+                   onclick="return confirm('Supprimer cette livraison ?')">
+                    Supprimer
+                </a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

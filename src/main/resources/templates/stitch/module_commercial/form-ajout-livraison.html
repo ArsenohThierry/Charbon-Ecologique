@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Nouvelle Livraison</title>
+</head>
+<body>
+
+<h1>Nouvelle Livraison</h1>
+
+<form th:action="@{/livraisons/save}" th:object="${livraison}" method="post">
+
+    <label>Référence :</label>
+    <input type="text" th:field="*{reference}" required /><br/><br/>
+
+    <label>Date de livraison :</label>
+    <input type="date" th:field="*{dateLivraison}" required /><br/><br/>
+
+    <label>Adresse de livraison :</label>
+    <input type="text" th:field="*{adresseLivraison}" required /><br/><br/>
+
+    <label>Statut :</label>
+    <select th:field="*{statut}">
+        <option value="EN_COURS">En cours</option>
+        <option value="LIVREE">Livrée</option>
+        <option value="ANNULEE">Annulée</option>
+    </select><br/><br/>
+
+    <button type="submit">Enregistrer</button>
+    <a th:href="@{/livraisons}">Annuler</a>
+
+</form>
+
+</body>
+</html>
