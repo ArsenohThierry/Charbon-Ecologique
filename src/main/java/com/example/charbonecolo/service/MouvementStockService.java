@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class MouvementStockService {
@@ -22,6 +23,10 @@ public class MouvementStockService {
     private MotifSortieRepository motifSortieRepository;
     @Autowired
     private LotProductionRepository lotProductionRepository;
+    @Autowired
+    private StatutsLotProductionRepository statutsLotProductionRepository;
+    @Autowired
+    private LotStatutsRepository lotStatutsRepository;
 
     // ── Méthodes existantes ──────────────────────────────────────
 
@@ -41,7 +46,15 @@ public class MouvementStockService {
 
     // Pour alimenter le <select> des lots dans le formulaire d'entrée
     public List<LotProductionModel> getLotsTermines() {
-        return lotProductionRepository.findAll();
+        Optional<LotStatutsModel> termineOpt = lotStatutsRepository.findByLibelle("Termine");
+        if (termineOpt.isEmpty()) return List.of();
+        LotStatutsModel termine = termineOpt.get();
+        return lotProductionRepository.findAll().stream()
+                .filter(lot -> statutsLotProductionRepository
+                        .findTopByLotProductionOrderByDateStatutDesc(lot)
+                        .map(s -> s.getLotStatuts() != null && termine.getId().equals(s.getLotStatuts().getId()))
+                        .orElse(false))
+                .collect(Collectors.toList());
     }
 
     public List<TypeMouvementStockModel> getAllTypesMouvement() {

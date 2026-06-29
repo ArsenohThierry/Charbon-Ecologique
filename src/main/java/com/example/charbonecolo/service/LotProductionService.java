@@ -1,6 +1,8 @@
 package com.example.charbonecolo.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -52,6 +54,19 @@ public class LotProductionService {
 
     public List<LotProductionModel> getAllLotProductions() {
         return lotProductionRepository.findAll();
+    }
+
+    public Map<Integer, String> getLatestStatutsForAllLots() {
+        List<LotProductionModel> lots = lotProductionRepository.findAll();
+        Map<Integer, String> statusMap = new HashMap<>();
+        for (LotProductionModel lot : lots) {
+            String status = statutsLotProductionRepository
+                    .findTopByLotProductionOrderByDateStatutDesc(lot)
+                    .map(s -> s.getLotStatuts() != null ? s.getLotStatuts().getLibelle() : "Inconnu")
+                    .orElse("Inconnu");
+            statusMap.put(lot.getId(), status);
+        }
+        return statusMap;
     }
 
     public Optional<LotProductionModel> getLotProductionById(Integer id) {

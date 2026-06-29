@@ -2,11 +2,14 @@ package com.example.charbonecolo.controller;
 
 import com.example.charbonecolo.model.LotProductionModel;
 import com.example.charbonecolo.service.LotProductionService;
+import com.example.charbonecolo.service.LotStatutsService;
 import com.example.charbonecolo.service.ProduitService;
 import com.example.charbonecolo.service.TypeMatierePremiereService;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -18,18 +21,23 @@ public class LotProductionController {
     private final LotProductionService lotProductionService;
     private final ProduitService produitService;
     private final TypeMatierePremiereService typeMatierePremiereService;
+    private final LotStatutsService lotsStatutsService;
 
     public LotProductionController(LotProductionService lotProductionService,
                                    ProduitService produitService,
-                                   TypeMatierePremiereService typeMatierePremiereService) {
+                                   TypeMatierePremiereService typeMatierePremiereService,
+                                   LotStatutsService lotStatutsService) {
         this.lotProductionService = lotProductionService;
         this.produitService = produitService;
         this.typeMatierePremiereService = typeMatierePremiereService;
+        this.lotsStatutsService=lotStatutsService;
     }
     
     @GetMapping("/liste")
 public String listLots(Model model) {
     model.addAttribute("lots", lotProductionService.getAllLotProductions());
+    model.addAttribute("statusMap", lotProductionService.getLatestStatutsForAllLots());
+    model.addAttribute("lotStatuts",lotsStatutsService.getAllLotsStatuts());
     return "stitch/module_stock/liste_lot";
 }
 
@@ -102,8 +110,12 @@ public String updateLot(@PathVariable Integer id,
 }
 
 @PostMapping("/supprimer/{id}")
-public String supprimerLot(@PathVariable Integer id) {
-    lotProductionService.deleteLotProduction(id);
+public String supprimerLot(@PathVariable Integer id, RedirectAttributes ra) {
+    try {
+        lotProductionService.deleteLotProduction(id);
+    } catch (DataIntegrityViolationException e) {
+        ra.addFlashAttribute("error", "Impossible de supprimer ce lot : il est référencé par des statuts ou mouvements.");
+    }
     return "redirect:/stock/lot/liste";
 }
 }

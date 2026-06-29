@@ -21,7 +21,7 @@
       color: #03543f;
     }
 
-    .status-sechage {
+    .status-en-stock {
       background-color: #fef3c7;
       color: #92400e;
     }
@@ -35,6 +35,10 @@
       background-color: #e5e7eb;
       color: #374151;
     }
+
+    .lot-row.hidden-row {
+      display: none;
+    }
   </style>
 </head>
 
@@ -45,13 +49,13 @@
     <header class="flex items-center justify-between px-8 py-4 bg-white border-b border-gray-100"
       data-purpose="top-header">
       <div>
-        <h2 class="text-lg font-bold font-serif text-forest">Gestionnaire de stock</h2>
+        <h2 class="text-lg font-bold text-brand-dark">Gestionnaire de stock</h2>
         <p class="text-xs text-gray-500">Approvisionnement, lots &amp; inventaire</p>
       </div>
       <div class="flex items-center space-x-4">
         <span class="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full border border-gray-200">Maquette · données
           fictives</span>
-        <div class="w-8 h-8 bg-forest text-white rounded-full flex items-center justify-center text-sm font-bold">N
+        <div class="w-8 h-8 bg-brand-dark text-white rounded-full flex items-center justify-center text-sm font-bold">N
         </div>
       </div>
     </header>
@@ -61,58 +65,72 @@
       <!-- Page Title and CTA -->
       <div class="flex justify-between items-start mb-8">
         <div>
-          <h1 class="text-4xl font-serif text-forest mb-2">Liste des lots de production</h1>
+          <h1 class="text-4xl font-bold text-brand-dark mb-2">Liste des lots de production</h1>
           <p class="text-gray-500">Filtrer par date ou statut, consulter et modifier les lots.</p>
         </div>
-        <button
-          class="bg-[#2A5A46] hover:bg-forest text-white px-6 py-2 rounded-lg flex items-center space-x-2 shadow-sm transition-all">
-          <a href="/stock/lot/nouveau">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+        <a href="/stock/lot/nouveau"
+          class="bg-brand-success hover:bg-brand-dark text-white px-6 py-2 rounded-lg flex items-center space-x-2 shadow-sm transition-all">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
             <path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
           </svg>
           <span class="font-medium">Nouveau lot</span>
-          </a>
-        </button>
+        </a>
       </div>
+      <div th:if="${error}"
+        class="mb-6 p-4 bg-red-100 border border-red-200 text-red-800 rounded-lg text-sm font-medium"
+        th:text="${error}"></div>
+
       <!-- BEGIN: Filters Section -->
-      <div class="flex flex-wrap gap-4 mb-8 items-center" data-purpose="filter-bar">
+      <div class="flex flex-wrap gap-4 mb-8 items-end" data-purpose="filter-bar">
         <!-- Search Input -->
-        <div class="relative w-72">
-          <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-              <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round"
-                stroke-width="2"></path>
-            </svg>
-          </span>
-          <input
-            class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-forest focus:border-forest"
-            placeholder="Rechercher un lot..." type="text" />
+        <div class="w-72">
+          <label class="block text-xs font-semibold text-gray-500 mb-1">Recherche</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+              <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round"
+                  stroke-width="2"></path>
+              </svg>
+            </span>
+            <input id="filterSearch"
+              class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-brand-success focus:border-brand-success"
+              placeholder="Réf., matière, produit..." type="text" />
+          </div>
         </div>
-        <!-- Date Picker -->
-        <div class="w-40">
-          <input
-            class="block w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-forest focus:border-forest bg-white"
-            placeholder="jj / mm / aaaa" type="text" />
+        <!-- Date Range -->
+        <div>
+          <label class="block text-xs font-semibold text-gray-500 mb-1">Date début</label>
+          <input id="filterDateFrom"
+            class="block w-44 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-brand-success focus:border-brand-success bg-white"
+            type="date" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-500 mb-1">Date fin</label>
+          <input id="filterDateTo"
+            class="block w-44 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-brand-success focus:border-brand-success bg-white"
+            type="date" />
         </div>
         <!-- Status Dropdown -->
-        <div class="w-48">
-          <select
-            class="block w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-forest focus:border-forest bg-white">
-            <option>Tous les statuts</option>
-            <option>Terminé</option>
-            <option>Séchage</option>
-            <option>En cours</option>
-            <option>Préparation</option>
+        <div>
+          <label class="block text-xs font-semibold text-gray-500 mb-1">Statut</label>
+          <select id="filterStatus"
+            class="block w-48 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-brand-success focus:border-brand-success bg-white">
+
+            <option value="">Tous les statuts</option>
+
+            <option th:each="statut : ${lotStatuts}" th:value="${statut.libelle}" th:text="${statut.libelle}">
+            </option>
+
           </select>
         </div>
-        <!-- Search Action Button -->
-        <button
-          class="bg-forest hover:bg-forest-dark text-white px-6 py-2 rounded-lg flex items-center space-x-2 transition-all">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-            <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round"
-              stroke-width="2"></path>
-          </svg>
-          <span class="text-sm font-medium">Rechercher</span>
+        <!-- Action Buttons -->
+        <button id="filterApply"
+          class="bg-brand-success hover:bg-brand-dark text-white px-6 py-2 rounded-lg text-sm font-medium transition-colors">
+          Filtrer
+        </button>
+        <button id="filterClear"
+          class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 py-2 rounded-lg text-sm font-medium transition-colors">
+          Effacer
         </button>
       </div>
       <!-- END: Filters Section -->
@@ -132,21 +150,23 @@
               <th class="px-6 py-4 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-gray-100 text-sm" th:if="${!lots.isEmpty()}">
-            <tr class="hover:bg-gray-50 transition-colors" th:each="lot : ${lots}">
+          <tbody id="lotTableBody" class="divide-y divide-gray-100 text-sm" th:if="${!lots.isEmpty()}">
+            <tr class="lot-row hover:bg-gray-50 transition-colors" th:each="lot : ${lots}"
+                th:attr="data-search=${lot.reference + ' ' + lot.typeMatierePremiere?.libelle + ' ' + lot.produit?.nom},
+                          data-date=${#temporals.format(lot.dateEntreeLot, 'yyyy-MM-dd')},
+                          data-status=${statusMap[lot.id] != null ? statusMap[lot.id] : 'Inconnu'}">
               <td class="px-6 py-4 font-medium text-gray-700" th:text="${lot.reference}"></td>
-
               <td class="px-6 py-4 text-gray-600" th:text="${lot.typeMatierePremiere?.libelle}"></td>
-
               <td class="px-6 py-4 text-gray-600" th:text="${lot.quantiteMatiereUtilisee} + ' kg'"></td>
-              <td class="px-6 py-4 text-gray-600" th:text="${#temporals.format(lot.dateEntreeLot, 'dd/MM/yyyy')}"></td>
-
+              <td class="px-6 py-4 text-gray-600 lot-date" th:text="${#temporals.format(lot.dateEntreeLot, 'dd/MM/yyyy')}"></td>
               <td class="px-6 py-4 text-gray-600" th:text="${lot.produit?.nom}"></td>
-
               <td class="px-6 py-4">
-                <span class="status-badge status-preparation">
-                  Préparation
-                </span>
+                <th:block th:switch="${statusMap[lot.id]}">
+                  <span class="status-badge lot-status status-termine" th:case="'Termine'" th:text="${statusMap[lot.id]}"></span>
+                  <span class="status-badge lot-status status-en-stock" th:case="'En stock'" th:text="${statusMap[lot.id]}"></span>
+                  <span class="status-badge lot-status status-encours" th:case="'En preparation'" th:text="${statusMap[lot.id]}"></span>
+                  <span class="status-badge lot-status status-preparation" th:case="*" th:text="${statusMap[lot.id] != null ? statusMap[lot.id] : 'Inconnu'}"></span>
+                </th:block>
               </td>
               <td class="px-6 py-4 text-right space-x-2">
                 <a th:href="@{/stock/lot/modifier/{id}(id=${lot.id})}"
@@ -169,6 +189,56 @@
     </section>
     <!-- END: Content Container -->
   </main>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var searchInput = document.getElementById('filterSearch');
+      var dateFrom = document.getElementById('filterDateFrom');
+      var dateTo = document.getElementById('filterDateTo');
+      var statusSelect = document.getElementById('filterStatus');
+      var applyBtn = document.getElementById('filterApply');
+      var clearBtn = document.getElementById('filterClear');
+      var rows = document.querySelectorAll('.lot-row');
+
+      function filterRows() {
+        var q = searchInput.value.toLowerCase().trim();
+        var dFrom = dateFrom.value;
+        var dTo = dateTo.value;
+        var s = statusSelect.value;
+
+        rows.forEach(function (row) {
+          var show = true;
+
+          if (q) {
+            var searchData = (row.getAttribute('data-search') || '').toLowerCase();
+            if (searchData.indexOf(q) === -1) show = false;
+          }
+
+          if (show && (dFrom || dTo)) {
+            var dateVal = row.getAttribute('data-date') || '';
+            if (dFrom && dateVal < dFrom) show = false;
+            if (dTo && dateVal > dTo) show = false;
+          }
+
+          if (show && s) {
+            var statusVal = row.getAttribute('data-status') || '';
+            if (statusVal !== s) show = false;
+          }
+
+          row.classList.toggle('hidden-row', !show);
+        });
+      }
+
+      applyBtn.addEventListener('click', filterRows);
+
+      clearBtn.addEventListener('click', function () {
+        searchInput.value = '';
+        dateFrom.value = '';
+        dateTo.value = '';
+        statusSelect.value = '';
+        filterRows();
+      });
+    });
+  </script>
 </body>
 
 </html>

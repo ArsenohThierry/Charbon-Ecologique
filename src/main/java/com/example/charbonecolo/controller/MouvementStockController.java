@@ -2,12 +2,14 @@ package com.example.charbonecolo.controller;
 
 import com.example.charbonecolo.model.MouvementStockModel;
 import com.example.charbonecolo.service.MouvementStockService;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 
@@ -30,7 +32,7 @@ public class MouvementStockController {
      */
     @GetMapping("stock/entree")
     public String entreeStock(Model model) {
-        model.addAttribute("lots", mouvementStockService.getLotsTermines());
+        model.addAttribute("lotsTermines", mouvementStockService.getLotsTermines());
         model.addAttribute("mouvements", mouvementStockService.getAllMouvementsStock());
         return "stitch/module_stock/entree_stock";
     }
@@ -78,7 +80,7 @@ public class MouvementStockController {
     public String editMouvement(@RequestParam Integer id, Model model) {
         MouvementStockModel m = mouvementStockService.getMouvementStockById(id).orElseThrow();
         model.addAttribute("mouvement", m);
-        model.addAttribute("lots", mouvementStockService.getLotsTermines());
+        model.addAttribute("lotsTermines", mouvementStockService.getLotsTermines());
         model.addAttribute("motifs", mouvementStockService.getAllMotifsSortie());
         return "stitch/module_stock/edit_mouvement";
     }
@@ -106,10 +108,14 @@ public class MouvementStockController {
     // ── SUPPRIMER ────────────────────────────────────────────────
 
     @PostMapping("stock/mouvement/supprimer")
-    public String deleteMouvement(@RequestParam Integer id) {
+    public String deleteMouvement(@RequestParam Integer id, RedirectAttributes ra) {
         MouvementStockModel m = mouvementStockService.getMouvementStockById(id).orElseThrow();
         boolean isEntree = m.getTypeMouvement().getId() == 1;
-        mouvementStockService.deleteMouvementStock(id);
+        try {
+            mouvementStockService.deleteMouvementStock(id);
+        } catch (DataIntegrityViolationException e) {
+            ra.addFlashAttribute("error", "Impossible de supprimer ce mouvement : il est référencé par d'autres enregistrements.");
+        }
         return isEntree ? "redirect:/stock/entree" : "redirect:/stock/sortie";
     }
 }
