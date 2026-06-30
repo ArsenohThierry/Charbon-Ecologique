@@ -30,7 +30,6 @@ public class GlobalExceptionHandler {
     //     model.addAttribute("error", "Une erreur inattendue est survenue");
     //     return "error";
     // }
-
     @ExceptionHandler(Exception.class)
     public String handleAllExceptions(Exception ex, Model model) {
         StringWriter sw = new StringWriter();
