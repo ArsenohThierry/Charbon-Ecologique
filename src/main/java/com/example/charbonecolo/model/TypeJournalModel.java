@@ -3,29 +3,33 @@ package com.example.charbonecolo.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "role")
-public class RoleModel {
+@Table(name = "type_journal")
+public class TypeJournalModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(nullable = false, unique = true, length = 50)
+    @Column(nullable = false)
     private String libelle;
 
-    @Column(columnDefinition = "TEXT")
-    private String description;
+    @Column(nullable = false, length = 50)
+    private String code;
 
-    public RoleModel() {}
+    public TypeJournalModel() {}
 
-    public RoleModel(String libelle) {
+    public TypeJournalModel(Integer id, String libelle, String code) {
+        this.id = id;
         this.libelle = libelle;
+        this.code = code;
     }
 
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
+
     public String getLibelle() { return libelle; }
     public void setLibelle(String libelle) { this.libelle = libelle; }
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+
+    public String getCode() { return code; }
+    public void setCode(String code) { this.code = code; }
 }

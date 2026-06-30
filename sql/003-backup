@@ -323,5 +323,5 @@ CREATE TABLE IF NOT EXISTS journal_financier(
     description
 );  
 
-
+.
 corrige 1 , 2 , 3: comment on definit alors plusieurs tupes de charbon dans un lot , 4, 5 ,reponses : oui plusieurs commandes en une livraison, comment on fait pour plusieurs types de charbon dans un meme lot

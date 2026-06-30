@@ -381,32 +381,32 @@ CREATE TABLE IF NOT EXISTS facture_detail(
         REFERENCES facture(id)
 );
 
-CREATE TABLE IF NOT EXISTS type_journal( -- vente, achat, banque, caisse
-    id SERIAL PRIMARY KEY,
-    libelle VARCHAR(255) NOT NULL,
-    code VARCHAR(50) NOT NULL
-);
+-- CREATE TABLE IF NOT EXISTS type_journal( -- vente, achat, banque, caisse
+--     id SERIAL PRIMARY KEY,
+--     libelle VARCHAR(255) NOT NULL,
+--     code VARCHAR(50) NOT NULL
+-- );
 
-CREATE TABLE IF NOT EXISTS origine( -- commande, paiement, achat
-    id SERIAL PRIMARY KEY,
-    libelle VARCHAR(255) NOT NULL
-);
+-- CREATE TABLE IF NOT EXISTS origine( -- commande, paiement, achat
+--     id SERIAL PRIMARY KEY,
+--     libelle VARCHAR(255) NOT NULL
+-- );
 
-CREATE TABLE IF NOT EXISTS journal_financier(
-    id SERIAL PRIMARY KEY,
-    reference VARCHAR(50) NOT NULL UNIQUE,
-    date_operation TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    id_type_journal INT NOT NULL,
-    id_origine INT NOT NULL,
-    debit NUMERIC(10,2) NOT NULL DEFAULT 0,
-    credit NUMERIC(10,2) NOT NULL DEFAULT 0,
-    sens VARCHAR(10) NOT NULL CHECK (sens IN ('debit', 'credit')),
-    description TEXT,
+-- CREATE TABLE IF NOT EXISTS journal_financier(
+--     id SERIAL PRIMARY KEY,
+--     reference VARCHAR(50) NOT NULL UNIQUE,
+--     date_operation TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+--     id_type_journal INT NOT NULL,
+--     id_origine INT NOT NULL,
+--     debit NUMERIC(10,2) NOT NULL DEFAULT 0,
+--     credit NUMERIC(10,2) NOT NULL DEFAULT 0,
+--     sens VARCHAR(10) NOT NULL CHECK (sens IN ('debit', 'credit')),
+--     description TEXT,
 
-    CONSTRAINT fk_journal_financier_type_journal
-        FOREIGN KEY (id_type_journal)
-        REFERENCES type_journal(id),
-    CONSTRAINT fk_journal_financier_origine
-        FOREIGN KEY (id_origine)
-        REFERENCES origine(id)
-);
+--     CONSTRAINT fk_journal_financier_type_journal
+--         FOREIGN KEY (id_type_journal)
+--         REFERENCES type_journal(id),
+--     CONSTRAINT fk_journal_financier_origine
+--         FOREIGN KEY (id_origine)
+--         REFERENCES origine(id)
+-- );
