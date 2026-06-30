@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sortie de stock - Charbon Vert</title>
+<link rel="stylesheet" th:href="@{/css/output.css}" href="../../../static/css/output.css" />
+<link rel="stylesheet" th:href="@{/css/fonts.css}" href="../../../static/css/fonts.css" />
+</head>
+<body class="bg-brand-light font-sans text-slate-800 min-h-screen flex">
+<aside th:replace="~{fragments/sidebar :: sidebar('sortie-stock')}"></aside>
+<main class="flex-1 p-8">
+    <header class="flex justify-between items-start mb-10">
+      <div>
+        <h2 class="text-2xl font-bold">Gestionnaire de stock</h2>
+        <p class="text-sm text-gray-500">Approvisionnement, lots &amp; inventaire</p>
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="w-10 h-10 bg-brand text-white rounded-full flex items-center justify-center font-bold">N</div>
+      </div>
+    </header>
+
+    <div class="mb-8">
+      <h1 class="text-4xl font-bold mb-2">Sortie de stock</h1>
+      <p class="text-gray-600">Enregistrer une sortie de charbon. Le stock disponible est vérifié.</p>
+    </div>
+
+    <div th:if="${error}"
+      class="mb-6 p-4 bg-red-100 border border-red-200 text-red-800 rounded-lg text-sm font-medium"
+      th:text="${error}"></div>
+
+    <!-- BEGIN: SortieFormSection -->
+    <section class="bg-white rounded-custom shadow-sm border border-gray-100 p-8 mb-10" data-purpose="form-container">
+
+      <!-- ✅ FORM THYMELEAF -->
+      <form th:action="@{/stock/sortie}" method="post" class="space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+
+          <!-- Quantité -->
+          <div data-purpose="form-field">
+            <label class="block text-sm font-bold mb-2">Quantité (unités)</label>
+            <input name="quantite" type="number" placeholder="50"
+                   class="w-full border-gray-200 rounded-custom focus:ring-brand focus:border-brand"/>
+          </div>
+
+          <!-- Motif -->
+          <div data-purpose="form-field">
+            <label class="block text-sm font-bold mb-2">Motif</label>
+            <select name="idMotif" class="w-full border-gray-200 rounded-custom focus:ring-brand focus:border-brand">
+              <option value="">Sélectionner...</option>
+              <option th:each="motif : ${motifs}"
+                      th:value="${motif.id}"
+                      th:text="${motif.libelle}">
+              </option>
+            </select>
+          </div>
+
+          <!-- Date -->
+          <div data-purpose="form-field">
+            <label class="block text-sm font-bold mb-2">Date</label>
+            <input name="date" type="date"
+                   class="w-full border-gray-200 rounded-custom focus:ring-brand focus:border-brand"/>
+          </div>
+
+        </div>
+
+        <!-- Boutons -->
+        <div class="flex items-center gap-4 pt-4">
+          <button type="submit"
+                  class="bg-brand text-white px-6 py-2.5 rounded-custom font-bold hover:bg-brand-dark transition-colors">
+            Enregistrer la sortie
+          </button>
+          <a th:href="@{/stock/sortie}"
+             class="bg-white border border-gray-200 text-gray-700 px-6 py-2.5 rounded-custom font-bold hover:bg-gray-50 transition-colors">
+            Annuler
+          </a>
+          <span class="text-xs text-gray-400 italic">Vérification automatique : stock suffisant requis.</span>
+        </div>
+      </form>
+
+    </section>
+    <!-- END: SortieFormSection -->
+
+    <!-- BEGIN: TableSection -->
+    <section>
+      <h3 class="text-xl font-bold mb-4">Sorties par référence</h3>
+      <div class="bg-white rounded-custom border border-gray-100 overflow-hidden shadow-sm">
+        <table class="w-full text-left">
+          <thead class="bg-surface-low border-b border-gray-100">
+            <tr>
+              <th class="px-6 py-4 text-sm font-bold text-gray-500 uppercase tracking-wider">Référence</th>
+              <th class="px-6 py-4 text-sm font-bold text-gray-500 uppercase tracking-wider">Produit</th>
+              <th class="px-6 py-4 text-sm font-bold text-gray-500 uppercase tracking-wider text-right">Quantité</th>
+              <th class="px-6 py-4 text-sm font-bold text-gray-500 uppercase tracking-wider">Motif</th>
+              <th class="px-6 py-4 text-sm font-bold text-gray-500 uppercase tracking-wider">Date</th>
+              <th class="px-6 py-4 text-sm font-bold text-gray-500 uppercase tracking-wider">Actions</th>
+            </tr>
+          </thead>
+
+          <!-- ✅ TBODY THYMELEAF -->
+          <tbody class="divide-y divide-gray-100">
+            <tr th:each="m : ${mouvements}"
+                th:if="${m.typeMouvement.libelle == 'Sortie'}"
+                class="hover:bg-gray-50 transition-colors">
+              <td class="px-6 py-4 text-sm font-bold"
+                  th:text="'SOR-' + ${m.id}"></td>
+              <td class="px-6 py-4 text-sm text-gray-700">—</td>
+              <td class="px-6 py-4 text-sm text-gray-700 text-right font-medium"
+                  th:text="${m.quantite} + ' unités'"></td>
+              <td class="px-6 py-4 text-sm text-gray-700"
+                  th:text="${m.motifSortie?.libelle}"></td>
+              <td class="px-6 py-4 text-sm text-gray-700"
+                  th:text="${#temporals.format(m.dateMouvement, 'dd/MM/yyyy')}"></td>
+              <td class="px-6 py-4">
+                <div class="flex items-center gap-2">
+                  <a th:href="@{/stock/mouvement/modifier(id=${m.id})}"
+                     class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
+                    Modifier
+                  </a>
+                  <form th:action="@{/stock/mouvement/supprimer}" method="post" style="display:inline">
+                    <input type="hidden" name="id" th:value="${m.id}"/>
+                    <button type="submit" onclick="return confirm('Supprimer ce mouvement ?')"
+                            class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 hover:bg-red-100 rounded-lg transition-colors">
+                      Supprimer
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+
+        </table>
+      </div>
+    </section>
+    <!-- END: TableSection -->
+
+  </main>
+  <!-- END: MainContent -->
+
+</div>
+</body>
+</html>
