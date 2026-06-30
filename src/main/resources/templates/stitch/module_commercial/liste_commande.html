@@ -498,7 +498,6 @@
 
                     <form action="" method="get" class="flex items-center gap-2">
                         <input type="hidden" name="page" value="1">
-
                         <label for="limit" class="text-xs text-slate-400">Afficher par :</label>
                         <select name="limit" id="limit" onchange="this.form.submit()"
                             class="bg-slate-50 border border-slate-200 text-slate-700 text-xs rounded-lg focus:ring-emerald-500 focus:border-emerald-500 p-1.5 font-medium cursor-pointer transition">
@@ -512,7 +511,7 @@
 
                 <div class="flex items-center gap-1.5" th:if="${page.totalPages > 1}">
 
-                    <a th:href="@{''(page=${page.number}, limit=${page.size})}"
+                    <a th:href="@{''(page=${page.number}, limit=${page.size}, sort=${currentSort}, dir=${currentDir})}"
                         th:classappend="${!page.hasPrevious()} ? 'pointer-events-none opacity-40 bg-slate-50 text-slate-400 border-slate-200' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'"
                         class="inline-flex items-center justify-center w-8 h-8 rounded-lg border transition text-sm">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
@@ -521,19 +520,37 @@
                         </svg>
                     </a>
 
-                    <th:block th:each="i : ${#numbers.sequence(1, page.totalPages)}">
-                        <span th:if="${page.number == i - 1}"
-                            class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-emerald-600 text-white font-semibold text-xs shadow-sm shadow-emerald-100">
-                            <span th:text="${i}">1</span>
-                        </span>
+                    <a th:if="${page.number > 2}"
+                        th:href="@{''(page=1, limit=${page.size}, sort=${currentSort}, dir=${currentDir})}"
+                        class="inline-flex items-center justify-center w-8 h-8 rounded-lg border border-slate-200 bg-white text-slate-600 text-xs font-medium hover:bg-slate-50 transition">1</a>
 
-                        <a th:if="${page.number != i - 1}" th:href="@{''(page=${i}, limit=${page.size})}" th:text="${i}"
-                            class="inline-flex items-center justify-center w-8 h-8 rounded-lg border border-slate-200 bg-white text-slate-600 text-xs font-medium hover:bg-slate-50 hover:text-slate-800 transition">
-                            2
-                        </a>
+                    <span th:if="${page.number > 3}" class="text-slate-400 px-1 text-xs">...</span>
+
+                    <th:block th:each="i : ${#numbers.sequence(1, page.totalPages)}">
+                        <th:block th:if="${i >= page.number - 1 && i <= page.number + 3}">
+
+                            <span th:if="${page.number == i - 1}"
+                                class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-emerald-600 text-white font-semibold text-xs shadow-sm">
+                                <span th:text="${i}">1</span>
+                            </span>
+
+                            <a th:if="${page.number != i - 1}"
+                                th:href="@{''(page=${i}, limit=${page.size}, sort=${currentSort}, dir=${currentDir})}"
+                                th:text="${i}"
+                                class="inline-flex items-center justify-center w-8 h-8 rounded-lg border border-slate-200 bg-white text-slate-600 text-xs font-medium hover:bg-slate-50 transition">
+                                2
+                            </a>
+                        </th:block>
                     </th:block>
 
-                    <a th:href="@{''(page=${page.number + 2}, limit=${page.size})}"
+                    <span th:if="${page.number < page.totalPages - 4}" class="text-slate-400 px-1 text-xs">...</span>
+
+                    <a th:if="${page.number < page.totalPages - 3}"
+                        th:href="@{''(page=${page.totalPages}, limit=${page.size}, sort=${currentSort}, dir=${currentDir})}"
+                        th:text="${page.totalPages}"
+                        class="inline-flex items-center justify-center w-8 h-8 rounded-lg border border-slate-200 bg-white text-slate-600 text-xs font-medium hover:bg-slate-50 transition">2000</a>
+
+                    <a th:href="@{''(page=${page.number + 2}, limit=${page.size}, sort=${currentSort}, dir=${currentDir})}"
                         th:classappend="${!page.hasNext()} ? 'pointer-events-none opacity-40 bg-slate-50 text-slate-400 border-slate-200' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'"
                         class="inline-flex items-center justify-center w-8 h-8 rounded-lg border transition text-sm">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
