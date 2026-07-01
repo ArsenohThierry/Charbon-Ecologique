@@ -17,8 +17,9 @@ import jakarta.persistence.NamedNativeQuery;
 @Repository
 public interface CommandeRepository extends JpaRepository<CommandeModel, Integer> {
     // Maka anle liste par pagination
+
     @Query(value = """
-                           SELECT
+            SELECT
                 c.id,
                 c.reference,
                 c.date_commande,
@@ -27,7 +28,8 @@ public interface CommandeRepository extends JpaRepository<CommandeModel, Integer
                 total_cmd.montant_total,
                 dernier_statut.id_commande_statuts,
                 dernier_statut.libelle AS statut_libelle
-            FROM commandes AS c
+            FROM (SELECT * FROM commandes WHERE deleted_at IS NULL 
+            ) AS c
             JOIN clients AS cli ON cli.id = c.id_client
             JOIN (
                 SELECT id_commande, SUM(p.pu * dc.quantite) AS montant_total
@@ -41,7 +43,26 @@ public interface CommandeRepository extends JpaRepository<CommandeModel, Integer
                 JOIN commande_statuts cs ON cs.id = sc.id_commande_statuts
                 ORDER BY id_commandes, date_statut_commande DESC
             ) dernier_statut ON dernier_statut.id_commandes = c.id
-                        """, countQuery = "SELECT COUNT(*) FROM commandes", 
-                    nativeQuery = true)
-    Page<Object[]> findCustomCommandes(Pageable pageable);
+            WHERE (:kw IS NULL OR c.reference ILIKE CONCAT('%', :kw, '%'))
+              OR (:kw IS NULL OR cli.nom ILIKE CONCAT('%', :kw, '%'))
+              OR (:kw IS NULL OR dernier_statut.libelle = :kw)
+            """, countQuery = """
+            SELECT COUNT(*)
+            FROM commandes c
+            JOIN clients cli ON cli.id = c.id_client
+            JOIN (
+                SELECT DISTINCT ON (id_commandes) id_commandes, cs.libelle
+                FROM statuts_commandes sc
+                JOIN commande_statuts cs ON cs.id = sc.id_commande_statuts
+                ORDER BY id_commandes, date_statut_commande DESC
+            ) dernier_statut ON dernier_statut.id_commandes = c.id
+            WHERE c.deleted_at IS NULL
+              OR (:kw IS NULL OR c.reference ILIKE CONCAT('%', :kw, '%'))
+              OR (:kw IS NULL OR cli.nom ILIKE CONCAT('%', :kw, '%'))
+              OR (:kw IS NULL OR dernier_statut.libelle = :kw)
+            """, nativeQuery = true)
+    Page<Object[]> findCustomCommandes(
+            Pageable pageable,
+        @Param("kw") String keyword);
+
 }

@@ -38,8 +38,8 @@ public class CommandeService {
     }
 
     @Transactional(readOnly = true)
-    public Page<CommandeDto> listCommandes(Pageable pageable) {
-        Page<Object[]> pageBrute = commandeRepository.findCustomCommandes(pageable);
+    public Page<CommandeDto> listCommandes(Pageable pageable, String keyWord) {
+        Page<Object[]> pageBrute = commandeRepository.findCustomCommandes(pageable, keyWord);
 
         Page<CommandeDto> ret = pageBrute.map(ligne -> new CommandeDto(
                 (Integer) ligne[0],

@@ -54,6 +54,8 @@ public class CommandeController {
         this.produitService = produitService;
     }
 
+    
+
     @GetMapping("/new")
     public ModelAndView commandeFormDisplay() {
         ModelAndView mav = new ModelAndView("stitch/module_commercial/nouvelle_commande");
@@ -105,7 +107,8 @@ public class CommandeController {
         @RequestParam(required = false, name = "page", defaultValue = "1") Integer page, 
         @RequestParam(required = false, name = "limit", defaultValue = "10") Integer limit,
         @RequestParam(required = false, name = "sort") String currentSort,
-        @RequestParam(required = false, name = "dir") String currentDir
+        @RequestParam(required = false, name = "dir") String currentDir,
+        @RequestParam(required = false, name = "kw") String keyWord
     ) { 
         Pageable pageable = null;
         if(currentSort != null && currentDir != null) {
@@ -118,7 +121,7 @@ public class CommandeController {
         if(pageable == null) {
                 pageable = PageRequest.of(page - 1, limit);
         }
-        Page<CommandeDto> pageService = commandeService.listCommandes(pageable);
+        Page<CommandeDto> pageService = commandeService.listCommandes(pageable, keyWord);
         ModelAndView mav = new ModelAndView("stitch/module_commercial/liste_commande");
         mav.addObject("commandes", pageService.getContent());
         mav.addObject("currentPage", page);

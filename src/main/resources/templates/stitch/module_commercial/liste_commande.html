@@ -241,43 +241,48 @@
                         <h1 class="font-serif text-4xl text-forest-green mb-2">Liste des commandes</h1>
                         <p class="text-slate-500">Consulter, modifier ou annuler une commande.</p>
                     </div>
-                    <button
-                        class="bg-leaf-green hover:bg-forest-green text-white px-6 py-2 rounded-lg flex items-center gap-2 font-medium transition shadow-sm">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-                            <path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-                            </path>
-                        </svg>
-                        Nouvelle
-                    </button>
+                    <a href="/cmd/new">
+                        <button
+                            class="bg-leaf-green hover:bg-forest-green text-white px-6 py-2 rounded-lg flex items-center gap-2 font-medium transition shadow-sm">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                                <path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2">
+                                </path>
+                            </svg>
+                            Nouvelle
+                        </button>
+                    </a>
                 </div>
                 <!-- BEGIN: Search and Filter Bar -->
-                <div class="flex gap-4 mb-6" data-purpose="filter-bar">
-                    <div class="relative flex-1">
-                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-                                <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round"
-                                    stroke-linejoin="round" stroke-width="2"></path>
-                            </svg>
-                        </span>
-                        <input
-                            class="w-full pl-10 pr-4 py-2 border-slate-200 rounded-lg focus:ring-leaf-green focus:border-leaf-green text-sm bg-white"
-                            placeholder="Rechercher une commande..." type="text" />
-                    </div>
-                    <select
+                <form action="" method="get">
+                    <div class="flex gap-4 mb-6" data-purpose="filter-bar">
+                        <div class="relative flex-1">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                                    <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round"
+                                        stroke-linejoin="round" stroke-width="2"></path>
+                                </svg>
+                            </span>
+                            <input
+                                class="w-full pl-10 pr-4 py-2 border-slate-200 rounded-lg focus:ring-leaf-green focus:border-leaf-green text-sm bg-white"
+                                placeholder="Rechercher une commande..." name="kw" type="text" />
+                        </div>
+                        <!-- <select
                         class="w-32 py-2 border-slate-200 rounded-lg focus:ring-leaf-green focus:border-leaf-green text-sm bg-white">
                         <option>Tous</option>
                         <option>En attente</option>
                         <option>Livrée</option>
-                    </select>
-                    <button
-                        class="bg-leaf-green text-white px-6 py-2 rounded-lg flex items-center gap-2 text-sm font-medium hover:bg-forest-green transition">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-                            <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round"
-                                stroke-linejoin="round" stroke-width="2"></path>
-                        </svg>
-                        Rechercher
-                    </button>
-                </div>
+                    </select> -->
+                        <button
+                            class="bg-leaf-green text-white px-6 py-2 rounded-lg flex items-center gap-2 text-sm font-medium hover:bg-forest-green transition">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                                <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round"
+                                    stroke-linejoin="round" stroke-width="2"></path>
+                            </svg>
+                            Rechercher
+                        </button>
+                    </div>
+                </form>
                 <!-- END: Search and Filter Bar -->
                 <!-- BEGIN: Order Table -->
                 <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm"
