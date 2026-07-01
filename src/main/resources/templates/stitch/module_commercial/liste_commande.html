@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Charbon Vert - Liste des commandes</title>
+    <!-- Tailwind CSS v3 with Plugins -->
+    <link rel="stylesheet" th:href="@{/css/output.css}" />
+    <link rel="stylesheet" th:href="@{/css/fonts.css}" />
+    <style>
+        .badge { padding: 2px 12px; border-radius: 9999px; font-size: 0.75rem; font-weight: 500; }
+        .badge-pending { background-color: #fef3c7; color: #92400e; }
+        .badge-delivered { background-color: #dcfce7; color: #166534; }
+        .badge-shipping { background-color: #ffedd5; color: #9a3412; }
+        .badge-cancelled { background-color: #fee2e2; color: #991b1b; }
+    </style>
+</head>
+
+<body class="bg-brand-light font-sans text-slate-800 min-h-screen flex">
+    <aside th:replace="~{fragments/sidebar :: sidebar('commandes')}"></aside>
+    <!-- Main Content Area -->
+    <main class="flex-1 p-8">
+        <header class="flex justify-between items-start mb-10">
+            <div>
+                <h2 class="text-2xl font-bold text-brand-dark">Commercial &amp; finance</h2>
+                <p class="text-sm text-gray-500">Commandes, livraisons &amp; trésorerie</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="text-xs px-3 py-1 bg-gray-100 rounded-full text-gray-600 font-medium">Liste des commandes</span>
+                <div class="w-10 h-10 bg-brand-success rounded-full flex items-center justify-center text-white font-bold">N</div>
+            </div>
+        </header>
+        <!-- BEGIN: Content Scrollable -->
+        <div class="max-w-8xl mx-auto">
+                <!-- Header Section with Add Button -->
+                <div class="flex justify-between items-start mb-8">
+                    <div>
+                        <h1 class="font-serif text-4xl text-brand-dark mb-2">Liste des commandes</h1>
+                        <p class="text-slate-500">Consulter, modifier ou annuler une commande.</p>
+                    </div>
+                    <button
+                        class="bg-brand-success hover:bg-brand-dark text-white px-6 py-2 rounded-lg flex items-center gap-2 font-medium transition shadow-sm">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                            <path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                            </path>
+                        </svg>
+                        <a href="/cmd/new">
+                            Nouvelle
+                        </a>
+                    </button>
+                </div>
+                <!-- BEGIN: Search and Filter Bar -->
+                <div class="flex gap-4 mb-6" data-purpose="filter-bar">
+                    <div class="relative flex-1">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                                <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round"
+                                    stroke-linejoin="round" stroke-width="2"></path>
+                            </svg>
+                        </span>
+                        <input
+                            class="w-full pl-10 pr-4 py-2 border-slate-200 rounded-lg focus:ring-brand-success focus:border-brand-success text-sm bg-white"
+                            placeholder="Rechercher une commande..." type="text" />
+                    </div>
+                    <select
+                        class="w-32 py-2 border-slate-200 rounded-lg focus:ring-brand-success focus:border-brand-success text-sm bg-white">
+                        <option>Tous</option>
+                        <option>En attente</option>
+                        <option>Livrée</option>
+                    </select>
+                    <button
+                        class="bg-brand-success text-white px-6 py-2 rounded-lg flex items-center gap-2 text-sm font-medium hover:bg-brand-dark transition">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                            <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round"
+                                stroke-linejoin="round" stroke-width="2"></path>
+                        </svg>
+                        Rechercher
+                    </button>
+                </div>
+                <!-- END: Search and Filter Bar -->
+                <!-- BEGIN: Order Table -->
+                <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm"
+                    data-purpose="order-table-container">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr
+                                class="bg-slate-50 border-b border-slate-200 text-xs uppercase tracking-wider text-slate-500">
+                                <th class="px-6 py-4 font-semibold">
+                                    <a th:href="@{''(page=1, limit=${limit}, sort='reference', dir=${currentSort == 'reference' && currentDir == 'asc' ? 'desc' : 'asc'})}"
+                                        class="flex items-center gap-1 hover:text-slate-800">
+                                        Réf.
+                                        <span th:if="${currentSort == 'reference'}"
+                                            th:text="${currentDir == 'asc' ? '▲' : '▼'}"></span>
+                                    </a>
+                                </th>
+
+                                <th class="px-6 py-4 font-semibold">
+                                    <a th:href="@{''(page=1, limit=${limit}, sort='client_nom', dir=${currentSort == 'client_nom' && currentDir == 'asc' ? 'desc' : 'asc'})}"
+                                        class="flex items-center gap-1 hover:text-slate-800">
+                                        Client
+                                        <span th:if="${currentSort == 'client_nom'}"
+                                            th:text="${currentDir == 'asc' ? '▲' : '▼'}"></span>
+                                    </a>
+                                </th>
+
+                                <th class="px-6 py-4 font-semibold">
+                                    <a th:href="@{''(page=1, limit=${limit}, sort='date', dir=${currentSort == 'date' && currentDir == 'asc' ? 'desc' : 'asc'})}"
+                                        class="flex items-center gap-1 hover:text-slate-800">
+                                        Date de commande
+                                        <span th:if="${currentSort == 'date'}"
+                                            th:text="${currentDir == 'asc' ? '▲' : '▼'}"></span>
+                                    </a>
+                                </th>
+
+                                <th class="px-6 py-4 font-semibold">Produit</th>
+                                <th class="px-6 py-4 font-semibold">Qté</th>
+                                <th class="px-6 py-4 font-semibold">PU</th>
+
+                                <th class="px-6 py-4 font-semibold">
+                                    <a th:href="@{''(page=1, limit=${limit}, sort='montant', dir=${currentSort == 'montant' && currentDir == 'asc' ? 'desc' : 'asc'})}"
+                                        class="flex items-center gap-1 hover:text-slate-800">
+                                        Montant
+                                        <span th:if="${currentSort == 'montant'}"
+                                            th:text="${currentDir == 'asc' ? '▲' : '▼'}"></span>
+                                    </a>
+                                </th>
+
+                                <th class="px-6 py-4 font-semibold">Statut</th>
+
+                                <th class="px-6 py-4 font-semibold text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <tr th:each="dto : ${commandes}" class="hover:bg-slate-50 transition text-sm">
+
+                                <td class="px-6 py-4 text-slate-600 align-top" th:text="${dto.reference}">
+                                    CMD-1042
+                                </td>
+
+                                <td class="px-6 py-4 font-medium align-top" th:text="${dto.clientNom}">
+                                    Resto Chez Voahangy
+                                </td>
+                                <td class="px-6 py-4 align-top font-semibold text-slate-700"
+                                    th:text="${#temporals.format(dto.dateCommande.toLocalDate(), 'dd MMM yyyy')}">
+                                </td>
+
+                                <td class="px-6 py-4 align-top">
+                                    <div class="space-y-1">
+                                        <div th:each="detail : ${dto.details}" th:text="${detail.produit.nom}"
+                                            class="text-slate-700 font-normal">
+                                            Briquette standard
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td class="px-6 py-4 align-top">
+                                    <div class="space-y-1">
+                                        <div th:each="detail : ${dto.details}" th:text="${detail.quantite} + ' kg'"
+                                            class="text-slate-500 font-medium">
+                                            50 kg
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td class="px-6 py-4 align-top">
+                                    <div class="space-y-1">
+                                        <div th:each="detail : ${dto.details}"
+                                            th:text="${#numbers.formatDecimal(detail.produit.pu, 1, 'DEFAULT', 2, 'POINT')} + ' Ar'"
+                                            class="text-slate-500 font-medium">
+                                            1 800.00 Ar
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td class="px-6 py-4 align-top font-semibold text-slate-700"
+                                    th:text="${#numbers.formatDecimal(dto.montant, 1, 'DEFAULT', 2, 'POINT')} + ' Ar'">
+                                    90 000.00 Ar
+                                </td>
+
+                                <td class="px-6 py-4 align-top">
+                                    <span th:if="${dto.statutLibelle != null}"
+                                        th:class="'badge badge-' + ${#strings.toLowerCase(dto.statutLibelle) == 'en attente' ? 'pending' : 'success'}"
+                                        th:text="${dto.statutLibelle}">
+                                        En attente
+                                    </span>
+                                    <span th:if="${dto.statutLibelle == null}" class="badge text-slate-400">-</span>
+                                </td>
+
+                                <td class="px-6 py-4 text-right align-top">
+                                    <div class="flex justify-end gap-3">
+                                        <a th:href="@{/commercial/commande/modifier/{id}(id=${dto.id})}"
+                                            class="flex items-center gap-1 text-slate-500 hover:text-brand-success transition border border-slate-200 px-3 py-1.5 rounded text-xs">
+                                            Modifier
+                                        </a>
+                                        <button th:data-id="${dto.id}"
+                                            onclick="annulerCommande(this.getAttribute('data-id'))"
+                                            class="flex items-center gap-1 text-red-400 hover:text-red-600 transition border border-slate-200 px-3 py-1.5 rounded text-xs">
+                                            Annuler
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <!-- Row 2 -->
+                        <!-- <tr class="hover:bg-slate-50 transition text-sm">
+                                <td class="px-6 py-4 text-slate-600">CMD-1041</td>
+                                <td class="px-6 py-4 font-medium">Ménage Rason</td>
+                                <td class="px-6 py-4">Briquette premium</td>
+                                <td class="px-6 py-4">10 kg</td>
+                                <td class="px-6 py-4">25 000 Ar</td>
+                                <td class="px-6 py-4">
+                                    <span class="badge badge-delivered">Livrée</span>
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <div class="flex justify-end gap-3">
+                                        <button
+                                            class="flex items-center gap-1 text-slate-500 hover:text-brand-success transition border border-slate-200 px-3 py-1.5 rounded text-xs">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor"
+                                                viewbox="0 0 24 24">
+                                                <path
+                                                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                                                    stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                                </path>
+                                            </svg>
+                                            Modifier
+                                        </button>
+                                        <button
+                                            class="flex items-center gap-1 text-red-400 hover:text-red-600 transition border border-slate-200 px-3 py-1.5 rounded text-xs">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor"
+                                                viewbox="0 0 24 24">
+                                                <path
+                                                    d="M18.364 18.364A9 9 0 115.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
+                                                    stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                                </path>
+                                            </svg>
+                                            Annuler
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            Row 3 -->
+                        <!-- <tr class="hover:bg-slate-50 transition text-sm">
+                                <td class="px-6 py-4 text-slate-600">CMD-1040</td>
+                                <td class="px-6 py-4 font-medium">École Sainte-Marie</td>
+                                <td class="px-6 py-4">Charbon en vrac</td>
+                                <td class="px-6 py-4">200 kg</td>
+                                <td class="px-6 py-4">300 000 Ar</td>
+                                <td class="px-6 py-4">
+                                    <span class="badge badge-shipping">En livraison</span>
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <div class="flex justify-end gap-3">
+                                        <button
+                                            class="flex items-center gap-1 text-slate-500 hover:text-brand-success transition border border-slate-200 px-3 py-1.5 rounded text-xs">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor"
+                                                viewbox="0 0 24 24">
+                                                <path
+                                                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                                                    stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                                </path>
+                                            </svg>
+                                            Modifier
+                                        </button>
+                                        <button
+                                            class="flex items-center gap-1 text-red-400 hover:text-red-600 transition border border-slate-200 px-3 py-1.5 rounded text-xs">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor"
+                                                viewbox="0 0 24 24">
+                                                <path
+                                                    d="M18.364 18.364A9 9 0 115.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
+                                                    stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                                </path>
+                                            </svg>
+                                            Annuler
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        -->
+                        </tbody>
+                    </table>
+                    <!-- Empty Space to match visual weight of screenshot table -->
+                    <div class="h-12 bg-white"></div>
+                </div>
+                <!-- END: Order Table -->
+            </div>
+            <div
+                class="flex flex-col md:flex-row justify-between items-center gap-4 p-4 border-t border-slate-100 bg-white rounded-b-2xl">
+
+                <div class="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto text-center sm:text-left">
+                    <span class="text-xs text-slate-500">
+                        Affichage de
+                        <strong class="text-slate-700" th:text="${page.number * page.size + 1}">1</strong> à
+                        <strong class="text-slate-700"
+                            th:text="${(page.number * page.size) + page.numberOfElements}">10</strong> sur
+                        <strong class="text-slate-700" th:text="${page.totalElements}">42</strong> commandes
+                    </span>
+
+                    <form action="" method="get" class="flex items-center gap-2">
+                        <input type="hidden" name="page" value="1">
+
+                        <label for="limit" class="text-xs text-slate-400">Afficher par :</label>
+                        <select name="limit" id="limit" onchange="this.form.submit()"
+                            class="bg-slate-50 border border-slate-200 text-slate-700 text-xs rounded-lg focus:ring-emerald-500 focus:border-emerald-500 p-1.5 font-medium cursor-pointer transition">
+                            <option value="5" th:selected="${page.size == 5}">5</option>
+                            <option value="10" th:selected="${page.size == 10}">10</option>
+                            <option value="25" th:selected="${page.size == 25}">25</option>
+                            <option value="50" th:selected="${page.size == 50}">50</option>
+                        </select>
+                    </form>
+                </div>
+
+                <div class="flex items-center gap-1.5" th:if="${page.totalPages > 1}">
+
+                    <a th:href="@{''(page=${page.number}, limit=${page.size})}"
+                        th:classappend="${!page.hasPrevious()} ? 'pointer-events-none opacity-40 bg-slate-50 text-slate-400 border-slate-200' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'"
+                        class="inline-flex items-center justify-center w-8 h-8 rounded-lg border transition text-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                            stroke="currentColor" class="w-4 h-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                        </svg>
+                    </a>
+
+                    <th:block th:each="i : ${#numbers.sequence(1, page.totalPages)}">
+                        <span th:if="${page.number == i - 1}"
+                            class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-emerald-600 text-white font-semibold text-xs shadow-sm shadow-emerald-100">
+                            <span th:text="${i}">1</span>
+                        </span>
+
+                        <a th:if="${page.number != i - 1}" th:href="@{''(page=${i}, limit=${page.size})}" th:text="${i}"
+                            class="inline-flex items-center justify-center w-8 h-8 rounded-lg border border-slate-200 bg-white text-slate-600 text-xs font-medium hover:bg-slate-50 hover:text-slate-800 transition">
+                            2
+                        </a>
+                    </th:block>
+
+                    <a th:href="@{''(page=${page.number + 2}, limit=${page.size})}"
+                        th:classappend="${!page.hasNext()} ? 'pointer-events-none opacity-40 bg-slate-50 text-slate-400 border-slate-200' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'"
+                        class="inline-flex items-center justify-center w-8 h-8 rounded-lg border transition text-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                            stroke="currentColor" class="w-4 h-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                        </svg>
+                    </a>
+
+                </div>
+            </div>
+    </main>
+</body>
+
+</html>

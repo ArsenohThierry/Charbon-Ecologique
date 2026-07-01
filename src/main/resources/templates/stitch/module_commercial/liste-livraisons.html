@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Charbon Vert - Liste des livraisons</title>
+    <link rel="stylesheet" th:href="@{/css/output.css}" />
+    <link rel="stylesheet" th:href="@{/css/fonts.css}" />
+    <style>
+        .badge { padding: 2px 12px; border-radius: 9999px; font-size: 0.75rem; font-weight: 500; }
+        .badge-pending { background-color: #fef3c7; color: #92400e; }
+        .badge-delivered { background-color: #dcfce7; color: #166534; }
+        .badge-shipping { background-color: #ffedd5; color: #9a3412; }
+        .badge-cancelled { background-color: #fee2e2; color: #991b1b; }
+    </style>
+</head>
+
+<body class="bg-brand-light font-sans text-slate-800 min-h-screen flex">
+
+    <aside th:replace="~{fragments/sidebar :: sidebar('livraisons')}"></aside>
+
+    <main class="flex-1 p-8">
+        <header class="flex justify-between items-start mb-10">
+            <div>
+                <h2 class="text-2xl font-bold text-brand-dark">Commercial &amp; finance</h2>
+                <p class="text-sm text-gray-500">Commandes, livraisons &amp; trésorerie</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="text-xs px-3 py-1 bg-gray-100 rounded-full text-gray-600 font-medium">Liste des livraisons</span>
+                <div class="w-10 h-10 bg-brand-success rounded-full flex items-center justify-center text-white font-bold">N</div>
+            </div>
+        </header>
+
+            <div class="max-w-8xl mx-auto">
+
+                <div class="flex justify-between items-start mb-8">
+                    <div>
+                        <h1 class="font-serif text-4xl text-brand-dark mb-2">Liste des livraisons</h1>
+                        <p class="text-slate-500">Consulter, modifier ou supprimer une livraison.</p>
+                    </div>
+                    <a th:href="@{/livraisons/new}"
+                       class="bg-brand-success hover:bg-brand-dark text-white px-6 py-2 rounded-lg flex items-center gap-2 font-medium transition shadow-sm">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg>
+                        Nouvelle
+                    </a>
+                </div>
+
+                <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-200 text-xs uppercase tracking-wider text-slate-500">
+                                <th class="px-6 py-4 font-semibold">Réf.</th>
+                                <th class="px-6 py-4 font-semibold">Date livraison</th>
+                                <th class="px-6 py-4 font-semibold">Lieu</th>
+                                <th class="px-6 py-4 font-semibold">Livreur</th>
+                                <th class="px-6 py-4 font-semibold">Statut</th>
+                                <th class="px-6 py-4 font-semibold text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <tr th:each="livraison : ${livraisons}" class="hover:bg-slate-50 transition text-sm">
+                                <td class="px-6 py-4 text-slate-600" th:text="${livraison.reference}">LIV-001</td>
+                                <td class="px-6 py-4" th:text="${#temporals.format(livraison.dateLivraison, 'dd/MM/yyyy HH:mm')}">01/07/2026</td>
+                                <td class="px-6 py-4 text-slate-600" th:text="${livraison.lieu}">Anosizato</td>
+                                <td class="px-6 py-4 text-slate-600" th:text="${livraison.livreur != null ? livraison.livreur.nom : '-'}">Hery</td>
+                                <td class="px-6 py-4">
+                                    <span class="badge badge-pending">En cours</span>
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <div class="flex justify-end gap-3">
+                                        <a th:href="@{/livraisons/edit/{id}(id=${livraison.id})}"
+                                           class="flex items-center gap-1 text-slate-500 hover:text-brand-success transition border border-slate-200 px-3 py-1.5 rounded text-xs">
+                                            Modifier
+                                        </a>
+                                        <a th:href="@{/livraisons/delete/{id}(id=${livraison.id})}"
+                                           onclick="return confirm('Supprimer cette livraison ?')"
+                                           class="flex items-center gap-1 text-red-400 hover:text-red-600 transition border border-slate-200 px-3 py-1.5 rounded text-xs">
+                                            Supprimer
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(livraisons)}">
+                                <td colspan="6" class="px-6 py-12 text-center text-slate-400 text-sm">
+                                    Aucune livraison enregistrée.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="h-12 bg-white"></div>
+                </div>
+            </div>
+    </main>
+
+</body>
+</html>
