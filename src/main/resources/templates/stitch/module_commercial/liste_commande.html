@@ -12,8 +12,9 @@
     <style>
         .badge { padding: 2px 12px; border-radius: 9999px; font-size: 0.75rem; font-weight: 500; }
         .badge-pending { background-color: #fef3c7; color: #92400e; }
-        .badge-delivered { background-color: #dcfce7; color: #166534; }
+        .badge-commande { background-color: #dbeafe; color: #1e40af; }
         .badge-shipping { background-color: #ffedd5; color: #9a3412; }
+        .badge-delivered { background-color: #dcfce7; color: #166534; }
         .badge-cancelled { background-color: #fee2e2; color: #991b1b; }
     </style>
 </head>
@@ -181,7 +182,7 @@
 
                                 <td class="px-6 py-4 align-top">
                                     <span th:if="${dto.statutLibelle != null}"
-                                        th:class="'badge badge-' + ${#strings.toLowerCase(dto.statutLibelle) == 'en attente' ? 'pending' : 'success'}"
+                                        th:class="'badge badge-' + ${#strings.toLowerCase(dto.statutLibelle) == 'en attente' ? 'pending' : #strings.toLowerCase(dto.statutLibelle) == 'commande' ? 'commande' : #strings.toLowerCase(dto.statutLibelle) == 'en livraison' ? 'shipping' : #strings.toLowerCase(dto.statutLibelle) == 'livre' ? 'delivered' : 'cancelled'}"
                                         th:text="${dto.statutLibelle}">
                                         En attente
                                     </span>
