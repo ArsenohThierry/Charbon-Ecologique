@@ -1,6 +1,9 @@
 package com.example.charbonecolo.controller;
 
+import com.example.charbonecolo.exception.BusinessException;
+import com.example.charbonecolo.model.MouvementSortieDetailModel;
 import com.example.charbonecolo.model.MouvementStockModel;
+import com.example.charbonecolo.model.ProduitModel;
 import com.example.charbonecolo.service.MouvementStockService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -8,8 +11,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Controller for Stock Movement module
@@ -46,26 +53,51 @@ public class MouvementStockController {
         return "redirect:/stock/entree";
     }
 
-    // ── SORTIE ───────────────────────────────────────────────────
+    // ── SORTIE (FIFO) ───────────────────────────────────────────
 
     /**
-     * Affiche la page de sortie stock avec les motifs et l'historique
+     * Affiche la page de sortie stock avec les produits, motifs et l'historique
      */
     @GetMapping("stock/sortie")
     public String sortieStock(Model model) {
+        List<ProduitModel> produits = mouvementStockService.getAllProduits();
+        model.addAttribute("produits", produits);
+
+        Map<Integer, String> produitsMap = new HashMap<>();
+        for (ProduitModel p : produits) {
+            produitsMap.put(p.getId(), p.getNom());
+        }
+        model.addAttribute("produitsMap", produitsMap);
+
         model.addAttribute("motifs", mouvementStockService.getAllMotifsSortie());
-        model.addAttribute("mouvements", mouvementStockService.getAllMouvementsStock());
+        List<MouvementStockModel> mouvements = mouvementStockService.getAllMouvementsStock();
+        model.addAttribute("mouvements", mouvements);
+
+        Map<Integer, List<MouvementSortieDetailModel>> sortieDetailsMap = new HashMap<>();
+        for (MouvementStockModel m : mouvements) {
+            if (m.getTypeMouvement().getId() == 2) {
+                sortieDetailsMap.put(m.getId(), mouvementStockService.getDetailsByMouvement(m));
+            }
+        }
+        model.addAttribute("sortieDetails", sortieDetailsMap);
         return "stitch/module_stock/sortie_stock";
     }
 
     /**
-     * Enregistre une sortie stock et redirige
+     * Enregistre une sortie stock avec déduction FIFO et redirige
      */
     @PostMapping("stock/sortie")
-    public String saveSortieStock(@RequestParam Integer quantite,
+    public String saveSortieStock(@RequestParam Integer idProduit,
+                                  @RequestParam Integer quantite,
                                   @RequestParam Integer idMotif,
-                                  @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
-        mouvementStockService.saveSortieStock(quantite, idMotif, date);
+                                  @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
+                                  RedirectAttributes ra) {
+        try {
+            mouvementStockService.saveSortieStock(idProduit, quantite, idMotif, date);
+        } catch (BusinessException e) {
+            ra.addFlashAttribute("error", e.getMessage());
+            return "redirect:/stock/sortie";
+        }
         return "redirect:/stock/sortie";
     }
 
@@ -91,14 +123,20 @@ public class MouvementStockController {
                                     @RequestParam(required = false) Integer idLot,
                                     @RequestParam Integer quantite,
                                     @RequestParam(required = false) Integer idMotif,
-                                    @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+                                    @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
+                                    RedirectAttributes ra) {
         MouvementStockModel m = mouvementStockService.getMouvementStockById(id).orElseThrow();
         boolean isEntree = m.getTypeMouvement().getId() == 1;
         if (isEntree) {
             mouvementStockService.updateEntreeStock(id, idLot, quantite, date);
             return "redirect:/stock/entree";
         } else {
-            mouvementStockService.updateSortieStock(id, quantite, idMotif, date);
+            try {
+                mouvementStockService.updateSortieStock(id, quantite, idMotif, date);
+            } catch (BusinessException e) {
+                ra.addFlashAttribute("error", e.getMessage());
+                return "redirect:/stock/mouvement/modifier?id=" + id;
+            }
             return "redirect:/stock/sortie";
         }
     }

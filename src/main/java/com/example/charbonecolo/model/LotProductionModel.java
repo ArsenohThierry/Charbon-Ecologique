@@ -44,6 +44,9 @@ public class LotProductionModel {
     @Column(name = "remarques")
     private String remarques;
 
+    @Column(name = "quantite_restante")
+    private Integer quantiteRestante;
+
     @Column(name = "date_entree_lot", nullable = false)
     private LocalDateTime dateEntreeLot;
 
@@ -126,5 +129,13 @@ public class LotProductionModel {
 
     public void setDateEntreeLot(LocalDateTime dateEntreeLot) {
         this.dateEntreeLot = dateEntreeLot;
+    }
+
+    public Integer getQuantiteRestante() {
+        return quantiteRestante;
+    }
+
+    public void setQuantiteRestante(Integer quantiteRestante) {
+        this.quantiteRestante = quantiteRestante;
     }
 }
