@@ -9,3 +9,9 @@ VALUES ('MAT-001', 'Feuille de maïs', 500.00, 1);
 -- Vérifier produit aussi
 INSERT INTO produit (nom, pu) 
 VALUES ('Charbon rond', 200.00);
+
+
+INSERT INTO lot_statuts (libelle) VALUES
+('En preparation'),
+('Termine'),
+('En stock');

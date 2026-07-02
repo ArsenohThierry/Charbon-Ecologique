@@ -1,76 +1,107 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" class="light" lang="fr">
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Tableau de bord | Charbon Écologique</title>
+    <title>Tableau de bord - Charbon Vert</title>
     <link rel="stylesheet" th:href="@{/css/output.css}" href="../static/css/output.css" />
     <link rel="stylesheet" th:href="@{/css/fonts.css}" href="../static/css/fonts.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
     <style>
-        body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; background-color: #faf9f9; }
-        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; display: inline-block; vertical-align: middle; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
     </style>
 </head>
-<body class="bg-background min-h-screen">
-    <div class="max-w-[1280px] mx-auto px-margin-desktop py-8">
-        <!-- En-tête -->
-        <div class="flex items-center justify-between mb-12">
+<body class="bg-brand-light font-sans text-slate-800 min-h-screen flex">
+    <aside th:replace="~{fragments/sidebar :: sidebar('dashboard')}"></aside>
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col min-w-0">
+        <!-- Top Bar -->
+        <header class="h-16 px-8 flex items-center justify-between border-b border-gray-200">
+            <div>
+                <h2 class="text-sm font-bold text-gray-800">Gestionnaire de stock</h2>
+                <p class="text-[10px] text-gray-500 uppercase tracking-wide">Approvisionnement, lots &amp; inventaire</p>
+            </div>
             <div class="flex items-center gap-4">
-                <div class="w-12 h-12 flex items-center justify-center bg-swiss-red">
-                    <span class="material-symbols-outlined text-surface-container-lowest text-[30px]" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+                <span class="text-[11px] bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full font-medium" th:text="${user.role.libelle}">Rôle</span>
+                <div class="w-8 h-8 rounded-full bg-emerald-700 text-white flex items-center justify-center font-bold text-sm"
+                    th:text="${#strings.substring(user.prenom, 0, 1)}">N</div>
+            </div>
+        </header>
+        <!-- Page Body -->
+        <section class="flex-1 p-12 overflow-y-auto">
+            <div class="max-w-6xl mx-auto">
+                <!-- Welcome -->
+                <div class="mb-12">
+                    <h1 class="text-4xl font-serif text-brand-dark mb-2" th:text="|Bienvenue, ${user.prenom} !|">Bienvenue !</h1>
+                    <p class="text-gray-600 text-sm">Tableau de bord du gestionnaire de stock.</p>
                 </div>
-                <div>
-                    <p class="text-body-md text-secondary">Charbon Écologique</p>
-                    <h1 class="text-headline-md text-on-surface">Tableau de bord</h1>
+                <!-- Role content -->
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 mb-8">
+                    <div th:switch="${user.role.libelle}">
+                        <div th:case="'ADMIN'" class="text-gray-600 text-sm">
+                            <p class="mb-2">Vous êtes <strong>administrateur</strong> du système.</p>
+                            <p>Vous avez accès à l'ensemble des fonctionnalités : gestion des utilisateurs, des stocks, des finances et des rapports.</p>
+                        </div>
+                        <div th:case="'STOCK_MANAGER'" class="text-gray-600 text-sm">
+                            <p class="mb-2">Vous êtes <strong>responsable des stocks</strong>.</p>
+                            <p>Vous pouvez gérer les matières premières, suivre les inventaires et les mouvements de stock.</p>
+                        </div>
+                        <div th:case="'FINANCE_MANAGER'" class="text-gray-600 text-sm">
+                            <p class="mb-2">Vous êtes <strong>responsable financier</strong>.</p>
+                            <p>Vous avez accès aux rapports financiers, aux transactions et à la comptabilité.</p>
+                        </div>
+                        <div th:case="*" class="text-gray-600 text-sm">
+                            <p>Votre rôle ne dispose pas de fonctionnalités spécifiques pour le moment.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Quick actions -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <a th:href="@{/cmd}" class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 hover:shadow-md hover:border-brand-accent transition-all block">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-brand-accent/20 rounded-xl flex items-center justify-center">
+                                <svg class="h-6 w-6 text-brand-accent" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                                    <path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-sm font-semibold text-brand-dark">Commandes</p>
+                                <p class="text-xs text-gray-500">Gérer les commandes clients</p>
+                            </div>
+                        </div>
+                    </a>
+                    <a th:href="@{/livraisons}" class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 hover:shadow-md hover:border-brand-accent transition-all block">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-brand-accent/20 rounded-xl flex items-center justify-center">
+                                <svg class="h-6 w-6 text-brand-accent" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                                    <path d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                                    <path d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-sm font-semibold text-brand-dark">Livraisons</p>
+                                <p class="text-xs text-gray-500">Planifier les livraisons</p>
+                            </div>
+                        </div>
+                    </a>
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                        <p class="text-sm text-gray-500 mb-1">Rôle</p>
+                        <p class="text-xl font-serif text-brand-dark" th:text="${user.role.libelle}">Rôle</p>
+                    </div>
+                </div>
+                <!-- User info cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                        <p class="text-sm text-gray-500 mb-1">Téléphone</p>
+                        <p class="text-xl font-serif text-brand-dark" th:text="${user.telephone ?: 'Non renseigné'}">Téléphone</p>
+                    </div>
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                        <p class="text-sm text-gray-500 mb-1">Membre depuis</p>
+                        <p class="text-xl font-serif text-brand-dark" th:text="${#temporals.format(user.dateCreation, 'dd/MM/yyyy')}">Date</p>
+                    </div>
                 </div>
             </div>
-            <div class="flex items-center gap-6">
-                <span class="text-body-md text-secondary" th:text="|${user.prenom} ${user.nom}|">Utilisateur</span>
-                <a href="/logout" class="text-body-md text-swiss-red hover:text-on-surface transition-colors">Déconnexion</a>
-            </div>
-        </div>
-
-        <!-- Message d'accueil personnalisé selon le rôle -->
-        <div class="bg-surface-container-lowest border border-border-gray p-8 mb-8">
-            <p class="text-headline-sm text-on-surface mb-2" th:text="|Bienvenue, ${user.prenom} !|">Bienvenue !</p>
-
-            <!-- Contenu par rôle -->
-            <div th:switch="${user.role.libelle}">
-                <div th:case="'ADMIN'" class="text-body-md text-secondary">
-                    <p class="mb-2">Vous êtes <strong>administrateur</strong> du système.</p>
-                    <p>Vous avez accès à l'ensemble des fonctionnalités : gestion des utilisateurs, des stocks, des finances et des rapports.</p>
-                </div>
-                <div th:case="'STOCK_MANAGER'" class="text-body-md text-secondary">
-                    <p class="mb-2">Vous êtes <strong>responsable des stocks</strong>.</p>
-                    <p>Vous pouvez gérer les matières premières, suivre les inventaires et les mouvements de stock.</p>
-                </div>
-                <div th:case="'FINANCE_MANAGER'" class="text-body-md text-secondary">
-                    <p class="mb-2">Vous êtes <strong>responsable financier</strong>.</p>
-                    <p>Vous avez accès aux rapports financiers, aux transactions et à la comptabilité.</p>
-                </div>
-                <div th:case="*" class="text-body-md text-secondary">
-                    <p>Votre rôle ne dispose pas de fonctionnalités spécifiques pour le moment.</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Informations du compte -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-surface-container-lowest border border-border-gray p-6">
-                <p class="text-body-md text-secondary mb-1">Rôle</p>
-                <p class="text-headline-sm text-on-surface" th:text="${user.role.libelle}">Rôle</p>
-            </div>
-            <div class="bg-surface-container-lowest border border-border-gray p-6">
-                <p class="text-body-md text-secondary mb-1">Téléphone</p>
-                <p class="text-headline-sm text-on-surface" th:text="${user.telephone ?: 'Non renseigné'}">Téléphone</p>
-            </div>
-            <div class="bg-surface-container-lowest border border-border-gray p-6">
-                <p class="text-body-md text-secondary mb-1">Membre depuis</p>
-                <p class="text-headline-sm text-on-surface" th:text="${#temporals.format(user.dateCreation, 'dd/MM/yyyy')}">Date</p>
-            </div>
-        </div>
-    </div>
+        </section>
+    </main>
 </body>
 </html>

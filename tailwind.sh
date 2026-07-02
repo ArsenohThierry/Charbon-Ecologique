@@ -19,7 +19,7 @@ if ! command -v npm &>/dev/null; then
 else
     echo "[0/3] Node.js $(node -v) — déjà installé"
 fi
-    echo "[1/3] Installation des dépendances npm..."
+    # echo "[1/3] Installation des dépendances npm..."
     # npm install
 
 # 2. Build CSS

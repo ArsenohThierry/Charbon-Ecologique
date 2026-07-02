@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Charbon Vert - Modifier Livraison</title>
+    <link rel="stylesheet" th:href="@{/css/output.css}" />
+    <link rel="stylesheet" th:href="@{/css/fonts.css}" />
+    <style>
+        .sidebar-scroll::-webkit-scrollbar { width: 4px; }
+        .sidebar-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
+    </style>
+</head>
+
+<body class="bg-brand-light font-sans text-slate-800 min-h-screen flex">
+<aside th:replace="~{fragments/sidebar :: sidebar('livraisons')}"></aside>
+
+    <main class="flex-1 p-8">
+        <header class="flex justify-between items-start mb-10">
+            <div>
+                <h2 class="text-2xl font-bold text-brand-dark">Commercial &amp; finance</h2>
+                <p class="text-sm text-gray-500">Commandes, livraisons &amp; trésorerie</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="text-xs px-3 py-1 bg-gray-100 rounded-full text-gray-600 font-medium">Modification</span>
+                <div class="w-10 h-10 bg-brand-success rounded-full flex items-center justify-center text-white font-bold">N</div>
+            </div>
+        </header>
+
+        <section class="mb-10">
+            <h1 class="text-3xl font-bold text-brand-dark mb-1">Modifier la livraison</h1>
+            <p class="text-gray-500 text-sm">Mettre à jour les informations de la livraison.</p>
+        </section>
+
+        <section class="bg-white rounded-xl border border-gray-100 shadow-sm p-8 max-w-5xl">
+            <div class="mb-8">
+                <h3 class="text-3xl font-serif text-sidebar mb-1">Modifier la livraison</h3>
+                <p class="text-sm text-gray-500">Mettre à jour les informations de la livraison.</p>
+            </div>
+
+            <section class="bg-white rounded-xl shadow-sm border border-gray-100 p-8 max-w-5xl">
+                <form class="space-y-6" method="post" th:action="@{/livraisons/update/{id}(id=${livraison.id})}">
+                    <div class="mb-6">
+                        <label class="block text-xs font-bold text-gray-700 mb-2">Référence</label>
+                        <input type="text" disabled th:value="${livraison.reference}"
+                               class="w-full border-gray-300 rounded-md shadow-sm text-sm px-4 py-2.5 bg-gray-50 text-gray-500 cursor-not-allowed" />
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-2">Date de livraison</label>
+                            <input type="datetime-local" name="dateLivraison" required th:value="${#temporals.format(livraison.dateLivraison, 'yyyy-MM-dd\'T\'HH:mm')}"
+                                   class="w-full border-gray-300 rounded-md shadow-sm focus:border-primaryGreen focus:ring-primaryGreen text-sm px-4 py-2.5" />
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-2">Lieu</label>
+                            <input type="text" name="lieu" th:value="${livraison.lieu}"
+                                   class="w-full border-gray-300 rounded-md shadow-sm focus:border-primaryGreen focus:ring-primaryGreen text-sm px-4 py-2.5" />
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-2">Livreur</label>
+                            <select name="livreur.id"
+                                    class="w-full border-gray-300 rounded-md shadow-sm focus:border-primaryGreen focus:ring-primaryGreen text-sm px-4 py-2.5">
+                                <option value="">Sélectionner...</option>
+                                <option th:each="livreur : ${livreurs}" th:value="${livreur.id}" th:text="${livreur.nom}"
+                                        th:selected="${livraison.livreur != null and livraison.livreur.id == livreur.id}"></option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-gray-100">
+                        <h4 class="text-sm font-bold text-gray-700 mb-3">Commandes liées</h4>
+                        
+                        <div th:if="${#lists.isEmpty(commandesLiees)}" class="text-sm text-gray-500">
+                            Aucune commande liée.
+                        </div>
+                        <ul th:if="${not #lists.isEmpty(commandesLiees)}" class="space-y-1">
+                            <li th:each="link : ${commandesLiees}" class="text-sm text-gray-700">
+                                Commande #<span th:text="${link.idCommande}"></span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="flex items-center gap-4 pt-4">
+                        <button type="submit"
+                                class="bg-primaryGreen text-white px-6 py-2.5 rounded-md text-sm font-medium hover:bg-opacity-90 transition-all shadow-sm">
+                            Mettre à jour
+                        </button>
+                        <a th:href="@{/livraisons}"
+                           class="bg-white border border-gray-200 text-gray-700 px-6 py-2.5 rounded-md text-sm font-medium hover:bg-gray-50 transition-all">
+                            Annuler
+                        </a>
+                    </div>
+                </form>
+            </section>
+    </main>
+
+</body>
+</html>

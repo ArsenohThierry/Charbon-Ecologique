@@ -13,6 +13,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class MouvementStockService {
@@ -29,6 +30,11 @@ public class MouvementStockService {
     private ProduitRepository produitRepository;
     @Autowired
     private MouvementSortieDetailRepository mouvementSortieDetailRepository;
+    private StatutsLotProductionRepository statutsLotProductionRepository;
+    @Autowired
+    private LotStatutsRepository lotStatutsRepository;
+
+    // ── Méthodes existantes ──────────────────────────────────────
 
     public Optional<MouvementStockModel> getMouvementStockById(Integer id) {
         return mouvementStockRepository.findById(id);
@@ -39,7 +45,15 @@ public class MouvementStockService {
     }
 
     public List<LotProductionModel> getLotsTermines() {
-        return lotProductionRepository.findAll();
+        Optional<LotStatutsModel> termineOpt = lotStatutsRepository.findByLibelle("Termine");
+        if (termineOpt.isEmpty()) return List.of();
+        LotStatutsModel termine = termineOpt.get();
+        return lotProductionRepository.findAll().stream()
+                .filter(lot -> statutsLotProductionRepository
+                        .findTopByLotProductionOrderByDateStatutDesc(lot)
+                        .map(s -> s.getLotStatuts() != null && termine.getId().equals(s.getLotStatuts().getId()))
+                        .orElse(false))
+                .collect(Collectors.toList());
     }
 
     public List<TypeMouvementStockModel> getAllTypesMouvement() {

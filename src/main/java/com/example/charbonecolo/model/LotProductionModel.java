@@ -1,8 +1,17 @@
 package com.example.charbonecolo.model;
 
-import jakarta.persistence.*;
-import java.time.LocalDateTime;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "lot_production")
@@ -16,18 +25,18 @@ public class LotProductionModel {
     private String reference;
 
     // TODO: Replace with proper relationship when TypeMatierePremiereModel is ready
-    // @ManyToOne(fetch = FetchType.EAGER)
-    // @JoinColumn(name = "id_type_matiere_premiere", nullable = false)
-    // private TypeMatierePremiereModel typeMatierePremiere;
-    @Column(name = "id_type_matiere_premiere", nullable = false)
-    private Integer idTypeMatierePremiere;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_type_matiere_premiere", nullable = false)
+    private TypeMatierePremiereModel typeMatierePremiere;
+    // @Column(name = "id_type_matiere_premiere", nullable = false)
+    // private Integer idTypeMatierePremiere;
 
     // TODO: Replace with proper relationship when ProduitModel is ready
-    // @ManyToOne(fetch = FetchType.EAGER)
-    // @JoinColumn(name = "id_produit", nullable = false)
-    // private ProduitModel produit;
-    @Column(name = "id_produit", nullable = false)
-    private Integer idProduit;
+        @ManyToOne(fetch = FetchType.EAGER)
+        @JoinColumn(name = "id_produit", nullable = false)
+        private ProduitModel produit;
+    // @Column(name = "id_produit", nullable = false)
+    // private Integer idProduit;
 
     @Column(name = "quantite_matiere_utilisee", nullable = false, precision = 10, scale = 2)
     private BigDecimal quantiteMatiereUtilisee;
@@ -67,20 +76,20 @@ public class LotProductionModel {
         this.reference = reference;
     }
 
-    public Integer getIdTypeMatierePremiere() {
-        return idTypeMatierePremiere;
+    public TypeMatierePremiereModel getTypeMatierePremiere() {
+        return typeMatierePremiere;
     }
 
-    public void setIdTypeMatierePremiere(Integer idTypeMatierePremiere) {
-        this.idTypeMatierePremiere = idTypeMatierePremiere;
+    public void setTypeMatierePremiere(TypeMatierePremiereModel typeMatierePremiere) {
+        this.typeMatierePremiere = typeMatierePremiere;
     }
 
-    public Integer getIdProduit() {
-        return idProduit;
+    public ProduitModel getProduit() {
+        return produit;
     }
 
-    public void setIdProduit(Integer idProduit) {
-        this.idProduit = idProduit;
+    public void setProduit(ProduitModel produit) {
+        this.produit = produit;
     }
 
     public BigDecimal getQuantiteMatiereUtilisee() {

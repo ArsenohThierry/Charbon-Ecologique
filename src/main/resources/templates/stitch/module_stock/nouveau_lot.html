@@ -4,113 +4,15 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Charbon Vert - Saisir un nouveau lot</title>
-  <!-- Tailwind CSS v3 CDN with Plugins -->
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  <!-- Google Font: Libre Caslon Text -->
-  <link
-    href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:wght@400;700&amp;family=Inter:wght@400;500;600&amp;display=swap"
-    rel="stylesheet">
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            brand: {
-              DEFAULT: '#1b3c2e',
-              dark: '#142d22',
-              light: '#3d5c4d',
-              accent: '#e69a4c' // From the active menu item in the image
-            },
-            surface: {
-              DEFAULT: '#f3fbf6',
-              dim: '#d4dcd6',
-              container: '#ffffff'
-            }
-          },
-          fontFamily: {
-            serif: ['Libre Caslon Text', 'serif'],
-            sans: ['Inter', 'sans-serif'],
-          },
-          borderRadius: {
-            'eight': '8px',
-          }
-        }
-      }
-    }
-  </script>
-  <style data-purpose="layout">
-    body {
-      background-color: #f3fbf6;
-      font-family: 'Inter', sans-serif;
-    }
-
-    h1,
-    h2,
-    .font-serif {
-      font-family: 'Libre Caslon Text', serif;
-    }
-
-    /* Custom scrollbar for sidebar */
-    .sidebar-scroll::-webkit-scrollbar {
-      width: 4px;
-    }
-
-    .sidebar-scroll::-webkit-scrollbar-thumb {
-      background: #3d5c4d;
-      border-radius: 2px;
-    }
-  </style>
-  <style data-purpose="navigation-styling">
-    .nav-item {
-      display: flex;
-      align-items: center;
-      padding: 0.75rem 1rem;
-      color: #d1d5db;
-      font-size: 0.875rem;
-      transition: all 0.2s;
-    }
-
-    .nav-item:hover {
-      background-color: rgba(255, 255, 255, 0.05);
-      color: white;
-    }
-
-    .nav-item.active {
-      background-color: #e69a4c;
-      color: #1b3c2e;
-      font-weight: 600;
-      border-radius: 0.5rem;
-    }
-
-    .nav-group-title {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: #9ca3af;
-      padding: 1.5rem 1rem 0.5rem;
-    }
-
-    .sub-nav-item {
-      padding-left: 2.5rem;
-      padding-right: 1rem;
-      padding-top: 0.5rem;
-      padding-bottom: 0.5rem;
-      display: flex;
-      align-items: center;
-      font-size: 0.8125rem;
-      color: #9ca3af;
-    }
-
-    .sub-nav-item.active {
-      color: #e69a4c;
-    }
-  </style>
+  <title
+    th:text="${lotProduction.id != null} ? 'Modifier le lot - Charbon Vert' : 'Saisir un nouveau lot - Charbon Vert'">
+    Saisir un nouveau lot - Charbon Vert</title>
+  <link rel="stylesheet" th:href="@{/css/output.css}" href="../../../static/css/output.css" />
+  <link rel="stylesheet" th:href="@{/css/fonts.css}" href="../../../static/css/fonts.css" />
 </head>
 
-<body class="flex h-screen overflow-hidden">
-  <!-- BEGIN: LeftSidebar -->
-  <aside class="w-64 bg-brand text-white flex flex-col h-full shrink-0">
+<body class="bg-brand-light font-sans text-slate-800 min-h-screen flex">
+  <aside th:replace="~{fragments/sidebar :: sidebar('lots')}">
     <div class="p-6 flex items-center gap-3" data-purpose="brand-logo">
       <div class="w-10 h-10 bg-brand-accent rounded-full flex items-center justify-center text-brand font-bold">
         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -292,37 +194,50 @@
     <div class="p-12 max-w-5xl mx-auto w-full">
       <!-- BEGIN: ContentTitle -->
       <div class="mb-10" data-purpose="form-intro">
-        <h2 class="text-4xl font-serif text-brand mb-2">Saisir un nouveau lot</h2>
-        <p class="text-gray-500">Créer un lot de production. Le statut initial est « Préparation ».</p>
+        <h2 class="text-4xl font-serif text-brand mb-2"
+          th:text="${lotProduction.id != null} ? 'Modifier le lot : ' + ${lotProduction.reference} : 'Saisir un nouveau lot'">
+          Saisir un nouveau lot
+        </h2>
+        <p class="text-gray-500"
+          th:text="${lotProduction.id != null} ? 'Modifier les informations du lot.' : 'Créer un lot de production. Le statut initial est « Préparation ».'">
+          Créer un lot de production. Le statut initial est « Préparation ».
+        </p>
       </div>
       <!-- END: ContentTitle -->
       <!-- BEGIN: FormCard -->
       <section class="bg-white rounded-eight shadow-sm border border-gray-100 p-8" data-purpose="form-container">
-        <form class="space-y-8" th:action="@{/stock/lot/nouveau}" th:method="post" th:object="${lotProduction}">
+        <form class="space-y-8"
+          th:action="${lotProduction.id != null} ? @{/stock/lot/modifier/{id}(id=${lotProduction.id})} : @{/stock/lot/nouveau}"
+          th:method="post" th:object="${lotProduction}">
 
           <input type="hidden" th:field="*{id}" />
-          <input type="hidden" th:field="*{reference}" /> <!-- garder la référence existante -->
+          <input type="hidden" th:field="*{reference}" />
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
 
             <!-- Matière première -->
             <div class="flex flex-col gap-2">
-              <label class="text-sm font-semibold text-gray-700" for="idTypeMatierePremiere">Matière première</label>
-              <input
-                class="rounded-eight border-gray-300 focus:border-brand focus:ring-brand h-11 px-4 text-gray-600 bg-white"
-                id="idTypeMatierePremiere" type="number" min="1" placeholder="1" th:field="*{idTypeMatierePremiere}">
-              <span class="text-red-500 text-xs" th:if="${#fields.hasErrors('idTypeMatierePremiere')}"
-                th:errors="*{idTypeMatierePremiere}"></span>
+              <label class="text-sm font-semibold text-gray-700" for="quantiteMatiereUtilisee"> Type de matiere
+                premiere</label>
+              <select name="idTypeMatierePremiere"
+                class="rounded-eight border-gray-300 focus:border-brand focus:ring-brand h-11 px-4 text-gray-600 bg-white">
+                <option value="">Sélectionner...</option>
+                <option th:each="matiere : ${matieres}" th:value="${matiere.id}" th:text="${matiere.libelle}"
+                  th:selected="${lotProduction.typeMatierePremiere?.id == matiere.id}">
+                </option>
+              </select>
             </div>
 
             <!-- Produit -->
             <div class="flex flex-col gap-2">
-              <label class="text-sm font-semibold text-gray-700" for="idProduit">Produit</label>
-              <input
-                class="rounded-eight border-gray-300 focus:border-brand focus:ring-brand h-11 px-4 text-gray-600 bg-white"
-                id="idProduit" type="number" min="1" placeholder="1" th:field="*{idProduit}">
-              <span class="text-red-500 text-xs" th:if="${#fields.hasErrors('idProduit')}"
-                th:errors="*{idProduit}"></span>
+              <label class="text-sm font-semibold text-gray-700" for="quantiteMatiereUtilisee"> Produit a faire</label>
+              <select name="idProduit"
+                class="rounded-eight border-gray-300 focus:border-brand focus:ring-brand h-11 px-4 text-gray-600 bg-white">
+                <option value="">Sélectionner...</option>
+                <option th:each="produit : ${produits}" th:value="${produit.id}" th:text="${produit.nom}"
+                  th:selected="${lotProduction.produit?.id == produit.id}">
+                </option>
+              </select>
             </div>
 
             <!-- Quantité matière utilisée -->
@@ -366,15 +281,18 @@
           <!-- Actions -->
           <div class="pt-6 flex flex-wrap items-center gap-4">
             <button
-              class="bg-brand hover:bg-brand-dark text-white px-8 py-2.5 rounded-eight font-medium transition-colors"
-              type="submit">
+              class="hover:bg-brand-dark hover:text-white text-dark px-8 py-2.5 rounded-eight font-medium transition-colors"
+              type="submit" th:text="${lotProduction.id != null} ? 'Enregistrer les modifications' : 'Créer le lot'">
               Créer le lot
             </button>
-            <a href="/stock/lot/liste"
+            <a th:href="@{/stock/lot/liste}"
               class="bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 px-8 py-2.5 rounded-eight font-medium transition-colors">
               Annuler
             </a>
-            <p class="text-xs text-gray-500 ml-2">Une nouvelle production sera ajoutée automatiquement.</p>
+            <p class="text-xs text-gray-500 ml-2"
+              th:text="${lotProduction.id != null} ? 'Les modifications seront appliquées au lot.' : 'Une nouvelle production sera ajoutée automatiquement.'">
+              Une nouvelle production sera ajoutée automatiquement.
+            </p>
           </div>
 
         </form>
