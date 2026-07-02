@@ -15,6 +15,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import jakarta.annotation.PostConstruct;
+import java.time.*;
+import java.util.*;
+import java.util.stream.Collectors;
+
 @Service
 public class MouvementStockService {
 
@@ -34,6 +39,30 @@ public class MouvementStockService {
     private StatutsLotProductionRepository statutsLotProductionRepository;
     @Autowired
     private LotStatutsRepository lotStatutsRepository;
+
+    @Autowired
+    private SeuilRepository seuilRepository;
+    @Autowired
+    private AlerteSeuilRepository alerteSeuilRepository;
+
+    private TypeMouvementStockModel sortieType;
+    private List<MouvementStockModel> sorties;
+    private TypeMouvementStockModel entreeType;
+    private List<MouvementStockModel> entrees;
+    private List<SeuilModel> ruptures;
+    private List<SeuilModel> faibles;
+
+    @PostConstruct
+    private void init() {
+        sortieType = typeMouvementStockRepository.findByLibelle("Sortie").orElse(null);
+        sorties = mouvementStockRepository.findByTypeMouvement(sortieType);
+        entreeType = typeMouvementStockRepository.findByLibelle("Entree").orElse(null);
+        entrees = mouvementStockRepository.findByTypeMouvement(entreeType);
+        AlerteSeuilModel ruptureAlerte = alerteSeuilRepository.findByLibelle("Rupture");
+        ruptures = seuilRepository.findByAlerteSeuil(ruptureAlerte);
+        AlerteSeuilModel faibleAlerte = alerteSeuilRepository.findByLibelle("Faible");
+        faibles = seuilRepository.findByAlerteSeuil(faibleAlerte);
+    }
 
     // ── Méthodes existantes ──────────────────────────────────────
 
@@ -273,4 +302,59 @@ public class MouvementStockService {
     public List<MouvementSortieDetailModel> getDetailsByMouvement(MouvementStockModel mouvement) {
         return mouvementSortieDetailRepository.findByMouvementSortie(mouvement);
     }
+
+
+
+        //calcul total sortie stock
+    public double getTotalSortieStock() {
+        return sorties.stream().mapToDouble(MouvementStockModel::getQuantite).sum();
+    }
+
+    //calcul total entree stock
+    public double getTotalEntreeStock() {
+        return entrees.stream().mapToDouble(MouvementStockModel::getQuantite).sum();
+    }
+
+    //calcul total stock
+    public double getTotalStock() {
+        return getTotalEntreeStock() - getTotalSortieStock();
+    }
+
+    //calcul sortie par lot
+    public double getTotalSortieStockByLot(Integer idLot) {
+        return sorties.stream()
+                .filter(m -> m.getLotProduction() != null && m.getLotProduction().getId().equals(idLot))
+                .mapToDouble(MouvementStockModel::getQuantite)
+                .sum();
+    }
+
+    //calcul entree par lot
+    public double getTotalEntreeStockByLot(Integer idLot) {
+        return entrees.stream()
+                .filter(m -> m.getLotProduction() != null && m.getLotProduction().getId().equals(idLot))
+                .mapToDouble(MouvementStockModel::getQuantite)
+                .sum();
+    }
+
+    //calcul stock par lot
+    public double getTotalStockByLot(Integer idLot) {
+        return getTotalEntreeStockByLot(idLot) - getTotalSortieStockByLot(idLot);
+    }
+
+    //calcul total alerte rupture
+    public Integer getTotalAlertRupture() {
+        return ruptures.size();
+    }
+
+    //calcul total alerte faible
+    public Integer getTotalAlertFaible() {
+        return faibles.size();
+    }
+
+
+
+
+
+
+
 }
