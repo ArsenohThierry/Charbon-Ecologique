@@ -30,6 +30,7 @@ public class MouvementStockService {
     private ProduitRepository produitRepository;
     @Autowired
     private MouvementSortieDetailRepository mouvementSortieDetailRepository;
+    @Autowired
     private StatutsLotProductionRepository statutsLotProductionRepository;
     @Autowired
     private LotStatutsRepository lotStatutsRepository;
@@ -180,7 +181,7 @@ public class MouvementStockService {
 
         mouvementSortieDetailRepository.deleteByMouvementSortie(mouvement);
 
-        Integer idProduit = oldDetails.isEmpty() ? null : oldDetails.get(0).getLotProduction().getIdProduit();
+        Integer idProduit = oldDetails.isEmpty() ? null : oldDetails.get(0).getLotProduction().getProduit().getId();
 
         if (idProduit == null) {
             throw new IllegalStateException("Impossible de déterminer le produit de la sortie");

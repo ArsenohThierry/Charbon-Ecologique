@@ -125,7 +125,7 @@
                   th:text="'SOR-' + ${m.id}"></td>
               <td class="px-6 py-4 text-sm text-gray-700">
                 <span th:if="${sortieDetails.get(m.id) != null and !sortieDetails.get(m.id).isEmpty()}"
-                      th:text="${produitsMap.get(sortieDetails.get(m.id).get(0).lotProduction.idProduit)}">
+                      th:text="${produitsMap.get(sortieDetails.get(m.id).get(0).lotProduction.produit.id)}">
                 </span>
                 <span th:unless="${sortieDetails.get(m.id) != null and !sortieDetails.get(m.id).isEmpty()}">—</span>
               </td>
