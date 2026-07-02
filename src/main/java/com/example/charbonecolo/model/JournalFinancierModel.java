@@ -32,14 +32,12 @@ public class JournalFinancierModel {
     @Column(length = 50)
     private String reference;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(length = 500)
     private String description;
 
     public JournalFinancierModel() {}
 
-    public JournalFinancierModel(LocalDateTime dateOperation, TypeJournalModel typeJournal,
-                                  OrigineModel origine, BigDecimal debit,
-                                  BigDecimal credit, String reference, String description) {
+    public JournalFinancierModel(LocalDateTime dateOperation, TypeJournalModel typeJournal,OrigineModel origine, BigDecimal debit,BigDecimal credit, String reference, String description) {
         this.dateOperation = dateOperation;
         this.typeJournal = typeJournal;
         this.origine = origine;

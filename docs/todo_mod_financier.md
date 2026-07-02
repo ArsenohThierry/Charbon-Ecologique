@@ -7,18 +7,6 @@
 * journal_financier(id, reference, date_operation, id_type_journal, id_origine, debit, credit, description)
 * import_excel(id, nom_fichier, date_import, nb_lignes, statut, message_log)
 
-### Modele recommande
-
-Autres modules :
-
-* commandes
-* paiements
-* fournisseurs
-* factures
-* achats fournisseur
-
-Ces modules generent des ecritures dans `journal_financier`.
-
 ### Services
 
 * `JournalFinancierService`
@@ -65,27 +53,3 @@ Pages:
 * Afficher les indicateurs KPI.
 * Connecter les vues aux services crees.
 
----
-
-## Requetes utiles
-
-Solde actuel :
-
-```sql
-SELECT COALESCE(SUM(debit), 0) - COALESCE(SUM(credit), 0) AS solde
-FROM journal_financier;
-```
-
-Historique de tresorerie :
-
-```sql
-SELECT
-    reference,
-    date_operation,
-    description,
-    debit,
-    credit,
-    SUM(debit - credit) OVER(ORDER BY date_operation, id) AS solde
-FROM journal_financier
-ORDER BY date_operation, id;
-```

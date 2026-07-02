@@ -31,9 +31,7 @@ public class JournalController {
     private final TypeJournalRepository typeJournalRepo;
     private final OrigineRepository origineRepo;
 
-    public JournalController(JournalFinancierService journalService,
-                             TypeJournalRepository typeJournalRepo,
-                             OrigineRepository origineRepo) {
+    public JournalController(JournalFinancierService journalService,TypeJournalRepository typeJournalRepo,OrigineRepository origineRepo) {
         this.journalService = journalService;
         this.typeJournalRepo = typeJournalRepo;
         this.origineRepo = origineRepo;

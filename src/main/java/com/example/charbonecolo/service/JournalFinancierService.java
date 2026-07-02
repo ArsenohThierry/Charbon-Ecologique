@@ -30,6 +30,10 @@ public class JournalFinancierService {
         return journalRepo.save(ecriture);
     }
 
+    private BigDecimal zeroSiNull(BigDecimal v) {
+        return v != null ? v : BigDecimal.ZERO;
+    }
+
     @Transactional(readOnly = true)
     public List<JournalFinancierModel> findAll() {
         return journalRepo.findAllByOrderByDateOperationDesc();
@@ -43,26 +47,30 @@ public class JournalFinancierService {
 
     @Transactional(readOnly = true)
     public BigDecimal calculerBenefice(LocalDateTime debut, LocalDateTime fin) {
-        BigDecimal v = journalRepo.calculerBenefice(debut, fin);
-        return v != null ? v : BigDecimal.ZERO;
+        // BigDecimal v = journalRepo.calculerBenefice(debut, fin);
+        // return v != null ? v : BigDecimal.ZERO;
+        return zeroSiNull(journalRepo.calculerBenefice(debut, fin));
     }
 
     @Transactional(readOnly = true)
     public BigDecimal calculerTotalEntrees(LocalDateTime debut, LocalDateTime fin) {
-        BigDecimal v = journalRepo.calculerTotalEntrees(debut, fin);
-        return v != null ? v : BigDecimal.ZERO;
+        // BigDecimal v = journalRepo.calculerTotalEntrees(debut, fin);
+        // return v != null ? v : BigDecimal.ZERO;
+        return zeroSiNull(journalRepo.calculerTotalEntrees(debut, fin));
     }
 
     @Transactional(readOnly = true)
     public BigDecimal calculerTotalSorties(LocalDateTime debut, LocalDateTime fin) {
-        BigDecimal v = journalRepo.calculerTotalSorties(debut, fin);
-        return v != null ? v : BigDecimal.ZERO;
+        // BigDecimal v = journalRepo.calculerTotalSorties(debut, fin);
+        // return v != null ? v : BigDecimal.ZERO;
+        return zeroSiNull(journalRepo.calculerTotalSorties(debut, fin));
     }
 
     @Transactional(readOnly = true)
     public BigDecimal calculerSolde() {
-        BigDecimal v = journalRepo.calculerSolde();
-        return v != null ? v : BigDecimal.ZERO;
+        // BigDecimal v = journalRepo.calculerSolde();
+        // return v != null ? v : BigDecimal.ZERO;
+        return zeroSiNull(journalRepo.calculerSolde());
     }
 
     @Transactional(readOnly = true)

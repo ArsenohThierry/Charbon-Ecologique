@@ -18,8 +18,7 @@ public interface JournalFinancierRepository extends JpaRepository<JournalFinanci
 
     List<JournalFinancierModel> findAllByOrderByDateOperationAscIdAsc();
 
-    List<JournalFinancierModel> findByDateOperationBetweenOrderByDateOperationDesc(
-            LocalDateTime debut, LocalDateTime fin);
+    List<JournalFinancierModel> findByDateOperationBetweenOrderByDateOperationDesc(LocalDateTime debut, LocalDateTime fin);
 
     List<JournalFinancierModel> findByTypeJournal_IdOrderByDateOperationDesc(Integer typeJournalId);
 

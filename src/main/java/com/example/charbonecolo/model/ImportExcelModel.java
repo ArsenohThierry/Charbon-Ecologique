@@ -28,9 +28,7 @@ public class ImportExcelModel {
 
     public ImportExcelModel() {}
 
-    public ImportExcelModel(String nomFichier, LocalDateTime dateImport,
-                             Integer nbLignes, Integer nbErreurs,
-                             String statut, String messageLog) {
+    public ImportExcelModel(String nomFichier, LocalDateTime dateImport,Integer nbLignes, Integer nbErreurs,String statut, String messageLog) {
         this.nomFichier = nomFichier;
         this.dateImport = dateImport;
         this.nbLignes = nbLignes;
