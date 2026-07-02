@@ -10,7 +10,8 @@ public class SeuilModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-   @Column(name = "id_produit")
+   @ManyToOne(fetch = FetchType.LAZY)
+   @JoinColumn(name = "id_produit")
    private ProduitModel produit;
 
    @Column(name = "valeur", nullable = false)

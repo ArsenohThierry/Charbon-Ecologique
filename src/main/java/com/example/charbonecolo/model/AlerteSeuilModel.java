@@ -2,6 +2,8 @@ package com.example.charbonecolo.model;
 
 import jakarta.persistence.*;
 
+@Entity
+@Table(name = "alerte_seuil")
 public class AlerteSeuilModel {
 
     @Id

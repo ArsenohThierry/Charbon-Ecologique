@@ -15,25 +15,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import jakarta.annotation.PostConstruct;
 import java.time.*;
 import java.util.*;
 import java.util.stream.Collectors;
-
-
-import com.example.charbonecolo.model.LotProductionModel;
-import com.example.charbonecolo.model.LotStatutsModel;
-import com.example.charbonecolo.model.MotifSortieModel;
-import com.example.charbonecolo.model.MouvementStockModel;
-import com.example.charbonecolo.model.SeuilModel;
-import com.example.charbonecolo.model.TypeMouvementStockModel;
-import com.example.charbonecolo.repository.AlerteSeuilRepository;
-import com.example.charbonecolo.repository.LotProductionRepository;
-import com.example.charbonecolo.repository.LotStatutsRepository;
-import com.example.charbonecolo.repository.MotifSortieRepository;
-import com.example.charbonecolo.repository.MouvementStockRepository;
-import com.example.charbonecolo.repository.SeuilRepository;
-import com.example.charbonecolo.repository.StatutsLotProductionRepository;
-import com.example.charbonecolo.repository.TypeMouvementStockRepository;
 
 @Service
 public class MouvementStockService {
@@ -60,13 +45,24 @@ public class MouvementStockService {
     @Autowired
     private AlerteSeuilRepository alerteSeuilRepository;
 
-    private TypeMouvementStockModel sortieType = typeMouvementStockRepository.findByLibelleDirect("Sortie");
-    private List<MouvementStockModel> sorties = mouvementStockRepository.findByTypeMouvement(sortieType);
-    private TypeMouvementStockModel entreeType = typeMouvementStockRepository.findByLibelleDirect("Entree");
-    private List<MouvementStockModel> entrees = mouvementStockRepository.findByTypeMouvement(entreeType);
-    private List<SeuilModel> ruptures = seuilRepository.findByAlerteSeuil(alerteSeuilRepository.findByLibelle("Rupture"));
-    private List<SeuilModel> faibles = seuilRepository.findByAlerteSeuil(alerteSeuilRepository.findByLibelle("Faible"));
+    private TypeMouvementStockModel sortieType;
+    private List<MouvementStockModel> sorties;
+    private TypeMouvementStockModel entreeType;
+    private List<MouvementStockModel> entrees;
+    private List<SeuilModel> ruptures;
+    private List<SeuilModel> faibles;
 
+    @PostConstruct
+    private void init() {
+        sortieType = typeMouvementStockRepository.findByLibelle("Sortie").orElse(null);
+        sorties = mouvementStockRepository.findByTypeMouvement(sortieType);
+        entreeType = typeMouvementStockRepository.findByLibelle("Entree").orElse(null);
+        entrees = mouvementStockRepository.findByTypeMouvement(entreeType);
+        AlerteSeuilModel ruptureAlerte = alerteSeuilRepository.findByLibelle("Rupture");
+        ruptures = seuilRepository.findByAlerteSeuil(ruptureAlerte);
+        AlerteSeuilModel faibleAlerte = alerteSeuilRepository.findByLibelle("Faible");
+        faibles = seuilRepository.findByAlerteSeuil(faibleAlerte);
+    }
 
     // ── Méthodes existantes ──────────────────────────────────────
 
