@@ -21,8 +21,8 @@
   </header>
 
   <section class="mb-10">
-      <h1 class="text-3xl font-bold text-brand-dark mb-1">Enregistrer une entrée de stock</h1>
-    <p class="text-gray-500 text-sm italic">Ajoutez les produits finis issus d'un lot de production.</p>
+      <h3 class="text-3xl font-serif font-bold mb-1">Enregistrer une entrée de stock</h3>
+    <p class="text-gray-500 text-sm italic">Ajoutez les produits finis issus d'un lot de production. Le stock disponible par lot sera suivi pour la méthode FIFO.</p>
   </section>
 
   <div th:if="${error}"
@@ -86,17 +86,18 @@
     </div>
     <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
       <table class="w-full text-left border-collapse">
-        <thead class="bg-gray-50/50">
-          <tr>
-            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Date</th>
-            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Lot</th>
-            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Matière</th>
-            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Quantité</th>
-            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Fournisseur</th>
-            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Statut</th>
-            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Actions</th>
-          </tr>
-        </thead>
+          <thead class="bg-gray-50/50">
+            <tr>
+              <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Date</th>
+              <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Lot</th>
+              <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Matière</th>
+              <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Quantité</th>
+              <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Reste (FIFO)</th>
+              <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Fournisseur</th>
+              <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Statut</th>
+              <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Actions</th>
+            </tr>
+          </thead>
 
         <!-- ✅ TBODY THYMELEAF -->
         <tbody class="divide-y divide-gray-100">
@@ -110,6 +111,9 @@
             <td class="px-6 py-4 text-sm text-gray-600">—</td>
             <td class="px-6 py-4 text-sm text-right font-bold text-brand-dark"
                 th:text="${m.quantite} + ' unités'"></td>
+            <td class="px-6 py-4 text-sm text-right"
+                th:text="${m.lotProduction?.quantiteRestante != null ? m.lotProduction?.quantiteRestante + ' u.' : '—'}">
+            </td>
             <td class="px-6 py-4 text-sm text-gray-600">—</td>
             <td class="px-6 py-4">
               <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">

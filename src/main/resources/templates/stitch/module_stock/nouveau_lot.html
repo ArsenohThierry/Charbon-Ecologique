@@ -4,7 +4,9 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title th:text="${lotProduction.id != null} ? 'Modifier le lot - Charbon Vert' : 'Saisir un nouveau lot - Charbon Vert'">Saisir un nouveau lot - Charbon Vert</title>
+  <title
+    th:text="${lotProduction.id != null} ? 'Modifier le lot - Charbon Vert' : 'Saisir un nouveau lot - Charbon Vert'">
+    Saisir un nouveau lot - Charbon Vert</title>
   <link rel="stylesheet" th:href="@{/css/output.css}" href="../../../static/css/output.css" />
   <link rel="stylesheet" th:href="@{/css/fonts.css}" href="../../../static/css/fonts.css" />
 </head>
@@ -192,10 +194,12 @@
     <div class="p-12 max-w-5xl mx-auto w-full">
       <!-- BEGIN: ContentTitle -->
       <div class="mb-10" data-purpose="form-intro">
-        <h2 class="text-4xl font-serif text-brand mb-2" th:text="${lotProduction.id != null} ? 'Modifier le lot : ' + ${lotProduction.reference} : 'Saisir un nouveau lot'">
+        <h2 class="text-4xl font-serif text-brand mb-2"
+          th:text="${lotProduction.id != null} ? 'Modifier le lot : ' + ${lotProduction.reference} : 'Saisir un nouveau lot'">
           Saisir un nouveau lot
         </h2>
-        <p class="text-gray-500" th:text="${lotProduction.id != null} ? 'Modifier les informations du lot.' : 'Créer un lot de production. Le statut initial est « Préparation ».'">
+        <p class="text-gray-500"
+          th:text="${lotProduction.id != null} ? 'Modifier les informations du lot.' : 'Créer un lot de production. Le statut initial est « Préparation ».'">
           Créer un lot de production. Le statut initial est « Préparation ».
         </p>
       </div>
@@ -203,8 +207,8 @@
       <!-- BEGIN: FormCard -->
       <section class="bg-white rounded-eight shadow-sm border border-gray-100 p-8" data-purpose="form-container">
         <form class="space-y-8"
-              th:action="${lotProduction.id != null} ? @{/stock/lot/modifier/{id}(id=${lotProduction.id})} : @{/stock/lot/nouveau}"
-              th:method="post" th:object="${lotProduction}">
+          th:action="${lotProduction.id != null} ? @{/stock/lot/modifier/{id}(id=${lotProduction.id})} : @{/stock/lot/nouveau}"
+          th:method="post" th:object="${lotProduction}">
 
           <input type="hidden" th:field="*{id}" />
           <input type="hidden" th:field="*{reference}" />
@@ -212,22 +216,29 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
 
             <!-- Matière première -->
-            <select name="idTypeMatierePremiere"
-              class="rounded-eight border-gray-300 focus:border-brand focus:ring-brand h-11 px-4 text-gray-600 bg-white">
-              <option value="">Sélectionner...</option>
-              <option th:each="matiere : ${matieres}" th:value="${matiere.id}" th:text="${matiere.libelle}"
-                      th:selected="${lotProduction.typeMatierePremiere?.id == matiere.id}">
-              </option>
-            </select>
+            <div class="flex flex-col gap-2">
+              <label class="text-sm font-semibold text-gray-700" for="quantiteMatiereUtilisee"> Type de matiere
+                premiere</label>
+              <select name="idTypeMatierePremiere"
+                class="rounded-eight border-gray-300 focus:border-brand focus:ring-brand h-11 px-4 text-gray-600 bg-white">
+                <option value="">Sélectionner...</option>
+                <option th:each="matiere : ${matieres}" th:value="${matiere.id}" th:text="${matiere.libelle}"
+                  th:selected="${lotProduction.typeMatierePremiere?.id == matiere.id}">
+                </option>
+              </select>
+            </div>
 
             <!-- Produit -->
-            <select name="idProduit"
-              class="rounded-eight border-gray-300 focus:border-brand focus:ring-brand h-11 px-4 text-gray-600 bg-white">
-              <option value="">Sélectionner...</option>
-              <option th:each="produit : ${produits}" th:value="${produit.id}" th:text="${produit.nom}"
-                      th:selected="${lotProduction.produit?.id == produit.id}">
-              </option>
-            </select>
+            <div class="flex flex-col gap-2">
+              <label class="text-sm font-semibold text-gray-700" for="quantiteMatiereUtilisee"> Produit a faire</label>
+              <select name="idProduit"
+                class="rounded-eight border-gray-300 focus:border-brand focus:ring-brand h-11 px-4 text-gray-600 bg-white">
+                <option value="">Sélectionner...</option>
+                <option th:each="produit : ${produits}" th:value="${produit.id}" th:text="${produit.nom}"
+                  th:selected="${lotProduction.produit?.id == produit.id}">
+                </option>
+              </select>
+            </div>
 
             <!-- Quantité matière utilisée -->
             <div class="flex flex-col gap-2">
@@ -270,16 +281,16 @@
           <!-- Actions -->
           <div class="pt-6 flex flex-wrap items-center gap-4">
             <button
-              class="bg-brand hover:bg-brand-dark text-dark px-8 py-2.5 rounded-eight font-medium transition-colors"
-              type="submit"
-              th:text="${lotProduction.id != null} ? 'Enregistrer les modifications' : 'Créer le lot'">
+              class="hover:bg-brand-dark hover:text-white text-dark px-8 py-2.5 rounded-eight font-medium transition-colors"
+              type="submit" th:text="${lotProduction.id != null} ? 'Enregistrer les modifications' : 'Créer le lot'">
               Créer le lot
             </button>
             <a th:href="@{/stock/lot/liste}"
               class="bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 px-8 py-2.5 rounded-eight font-medium transition-colors">
               Annuler
             </a>
-            <p class="text-xs text-gray-500 ml-2" th:text="${lotProduction.id != null} ? 'Les modifications seront appliquées au lot.' : 'Une nouvelle production sera ajoutée automatiquement.'">
+            <p class="text-xs text-gray-500 ml-2"
+              th:text="${lotProduction.id != null} ? 'Les modifications seront appliquées au lot.' : 'Une nouvelle production sera ajoutée automatiquement.'">
               Une nouvelle production sera ajoutée automatiquement.
             </p>
           </div>
