@@ -15,6 +15,26 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import java.time.*;
+import java.util.*;
+import java.util.stream.Collectors;
+
+
+import com.example.charbonecolo.model.LotProductionModel;
+import com.example.charbonecolo.model.LotStatutsModel;
+import com.example.charbonecolo.model.MotifSortieModel;
+import com.example.charbonecolo.model.MouvementStockModel;
+import com.example.charbonecolo.model.SeuilModel;
+import com.example.charbonecolo.model.TypeMouvementStockModel;
+import com.example.charbonecolo.repository.AlerteSeuilRepository;
+import com.example.charbonecolo.repository.LotProductionRepository;
+import com.example.charbonecolo.repository.LotStatutsRepository;
+import com.example.charbonecolo.repository.MotifSortieRepository;
+import com.example.charbonecolo.repository.MouvementStockRepository;
+import com.example.charbonecolo.repository.SeuilRepository;
+import com.example.charbonecolo.repository.StatutsLotProductionRepository;
+import com.example.charbonecolo.repository.TypeMouvementStockRepository;
+
 @Service
 public class MouvementStockService {
 
@@ -34,6 +54,19 @@ public class MouvementStockService {
     private StatutsLotProductionRepository statutsLotProductionRepository;
     @Autowired
     private LotStatutsRepository lotStatutsRepository;
+
+    @Autowired
+    private SeuilRepository seuilRepository;
+    @Autowired
+    private AlerteSeuilRepository alerteSeuilRepository;
+
+    private TypeMouvementStockModel sortieType = typeMouvementStockRepository.findByLibelle("Sortie");
+    private List<MouvementStockModel> sorties = mouvementStockRepository.findByTypeMouvement(sortieType);
+    private TypeMouvementStockModel entreeType = typeMouvementStockRepository.findByLibelle("Entree");
+    private List<MouvementStockModel> entrees = mouvementStockRepository.findByTypeMouvement(entreeType);
+    private List<SeuilModel> ruptures = seuilRepository.findByAlerteSeuil(alerteSeuilRepository.findByLibelle("Rupture"));
+    private List<SeuilModel> faibles = seuilRepository.findByAlerteSeuil(alerteSeuilRepository.findByLibelle("Faible"));
+
 
     // ── Méthodes existantes ──────────────────────────────────────
 
@@ -273,4 +306,59 @@ public class MouvementStockService {
     public List<MouvementSortieDetailModel> getDetailsByMouvement(MouvementStockModel mouvement) {
         return mouvementSortieDetailRepository.findByMouvementSortie(mouvement);
     }
+
+
+
+        //calcul total sortie stock
+    public double getTotalSortieStock() {
+        return sorties.stream().mapToDouble(MouvementStockModel::getQuantite).sum();
+    }
+
+    //calcul total entree stock
+    public double getTotalEntreeStock() {
+        return entrees.stream().mapToDouble(MouvementStockModel::getQuantite).sum();
+    }
+
+    //calcul total stock
+    public double getTotalStock() {
+        return getTotalEntreeStock() - getTotalSortieStock();
+    }
+
+    //calcul sortie par lot
+    public double getTotalSortieStockByLot(Integer idLot) {
+        return sorties.stream()
+                .filter(m -> m.getLotProduction() != null && m.getLotProduction().getId().equals(idLot))
+                .mapToDouble(MouvementStockModel::getQuantite)
+                .sum();
+    }
+
+    //calcul entree par lot
+    public double getTotalEntreeStockByLot(Integer idLot) {
+        return entrees.stream()
+                .filter(m -> m.getLotProduction() != null && m.getLotProduction().getId().equals(idLot))
+                .mapToDouble(MouvementStockModel::getQuantite)
+                .sum();
+    }
+
+    //calcul stock par lot
+    public double getTotalStockByLot(Integer idLot) {
+        return getTotalEntreeStockByLot(idLot) - getTotalSortieStockByLot(idLot);
+    }
+
+    //calcul total alerte rupture
+    public Integer getTotalAlertRupture() {
+        return ruptures.size();
+    }
+
+    //calcul total alerte faible
+    public Integer getTotalAlertFaible() {
+        return faibles.size();
+    }
+
+
+
+
+
+
+
 }
