@@ -2,6 +2,9 @@
 -- Initialiser quantite_restante à partir des mouvements existants
 -- ============================================
 
+
+-- a executer si lot_production n a pas de quantite_reelle , a corriger plus tard
+
 UPDATE lot_production lp
 SET quantite_restante = COALESCE((
     SELECT SUM(ms.quantite)
