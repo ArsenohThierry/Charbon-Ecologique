@@ -1,19 +1,19 @@
-2026-07-01T08:06:16.528+03:00  INFO 3970 --- [charbonecolo] [main] c.e.c.CharbonecoloApplication            : Starting CharbonecoloApplication using Java 21.0.11 with PID 3970 (/home/nomena/Documents/S4/Mme Baovola/Charbon-Ecologique/target/classes started by nomena in /home/nomena/Documents/S4/Mme Baovola/Charbon-Ecologique)
-2026-07-01T08:06:16.538+03:00  INFO 3970 --- [charbonecolo] [main] c.e.c.CharbonecoloApplication            : No active profile set, falling back to 1 default profile: "default"
-2026-07-01T08:06:17.224+03:00  INFO 3970 --- [charbonecolo] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2026-07-01T08:06:17.300+03:00  INFO 3970 --- [charbonecolo] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 64 ms. Found 8 JPA repository interfaces.
-2026-07-01T08:06:17.786+03:00  INFO 3970 --- [charbonecolo] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
-2026-07-01T08:06:17.804+03:00  INFO 3970 --- [charbonecolo] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2026-07-01T08:06:17.805+03:00  INFO 3970 --- [charbonecolo] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.22]
-2026-07-01T08:06:17.856+03:00  INFO 3970 --- [charbonecolo] [main] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 1249 ms
-2026-07-01T08:06:18.035+03:00  INFO 3970 --- [charbonecolo] [main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
-2026-07-01T08:06:18.092+03:00  INFO 3970 --- [charbonecolo] [main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.4.1.Final
-2026-07-01T08:06:18.525+03:00  INFO 3970 --- [charbonecolo] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2026-07-01T08:06:18.563+03:00  INFO 3970 --- [charbonecolo] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2026-07-01T08:06:18.917+03:00  INFO 3970 --- [charbonecolo] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@12266084
-2026-07-01T08:06:18.919+03:00  INFO 3970 --- [charbonecolo] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2026-07-01T08:06:18.964+03:00  WARN 3970 --- [charbonecolo] [main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-07-01T08:06:18.994+03:00  INFO 3970 --- [charbonecolo] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+2026-07-02T08:35:07.383+03:00  INFO 9922 --- [charbonecolo] [main] c.e.c.CharbonecoloApplication            : Starting CharbonecoloApplication using Java 21.0.11 with PID 9922 (/home/nomena/Documents/S4/Mme Baovola/Charbon-Ecologique/target/classes started by nomena in /home/nomena/Documents/S4/Mme Baovola/Charbon-Ecologique)
+2026-07-02T08:35:07.388+03:00  INFO 9922 --- [charbonecolo] [main] c.e.c.CharbonecoloApplication            : No active profile set, falling back to 1 default profile: "default"
+2026-07-02T08:35:07.776+03:00  INFO 9922 --- [charbonecolo] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-07-02T08:35:07.816+03:00  INFO 9922 --- [charbonecolo] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 33 ms. Found 8 JPA repository interfaces.
+2026-07-02T08:35:08.091+03:00  INFO 9922 --- [charbonecolo] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-07-02T08:35:08.102+03:00  INFO 9922 --- [charbonecolo] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-07-02T08:35:08.102+03:00  INFO 9922 --- [charbonecolo] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.22]
+2026-07-02T08:35:08.130+03:00  INFO 9922 --- [charbonecolo] [main] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 702 ms
+2026-07-02T08:35:08.237+03:00  INFO 9922 --- [charbonecolo] [main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-07-02T08:35:08.275+03:00  INFO 9922 --- [charbonecolo] [main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.4.1.Final
+2026-07-02T08:35:08.530+03:00  INFO 9922 --- [charbonecolo] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-07-02T08:35:08.552+03:00  INFO 9922 --- [charbonecolo] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-07-02T08:35:08.769+03:00  INFO 9922 --- [charbonecolo] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@45dc7be
+2026-07-02T08:35:08.770+03:00  INFO 9922 --- [charbonecolo] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-07-02T08:35:08.797+03:00  WARN 9922 --- [charbonecolo] [main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-07-02T08:35:08.812+03:00  INFO 9922 --- [charbonecolo] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
 	Database JDBC URL [jdbc:postgresql://localhost:5432/charbon]
 	Database driver: PostgreSQL JDBC Driver
 	Database dialect: PostgreSQLDialect
@@ -25,36 +25,36 @@
 	Pool: DataSourceConnectionProvider
 	Minimum pool size: undefined/unknown
 	Maximum pool size: undefined/unknown
-2026-07-01T08:06:20.083+03:00  INFO 3970 --- [charbonecolo] [main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2026-07-01T08:06:20.167+03:00  INFO 3970 --- [charbonecolo] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2026-07-01T08:06:20.262+03:00  INFO 3970 --- [charbonecolo] [main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
-2026-07-01T08:06:21.126+03:00  WARN 3970 --- [charbonecolo] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2026-07-01T08:06:21.517+03:00  INFO 3970 --- [charbonecolo] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8080 (http) with context path '/'
-2026-07-01T08:06:21.525+03:00  INFO 3970 --- [charbonecolo] [main] c.e.c.CharbonecoloApplication            : Started CharbonecoloApplication in 5.531 seconds (process running for 5.925)
-2026-07-01T08:06:33.370+03:00  INFO 3970 --- [charbonecolo] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
-2026-07-01T08:06:33.371+03:00  INFO 3970 --- [charbonecolo] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
-2026-07-01T08:06:33.374+03:00  INFO 3970 --- [charbonecolo] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 3 ms
-2026-07-01T08:10:01.965+03:00  INFO 3970 --- [charbonecolo] [SpringApplicationShutdownHook] o.s.boot.tomcat.GracefulShutdown         : Commencing graceful shutdown. Waiting for active requests to complete
-2026-07-01T08:10:01.968+03:00  INFO 3970 --- [charbonecolo] [tomcat-shutdown] o.s.boot.tomcat.GracefulShutdown         : Graceful shutdown complete
-2026-07-01T08:10:01.979+03:00  INFO 3970 --- [charbonecolo] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
-2026-07-01T08:10:01.984+03:00  INFO 3970 --- [charbonecolo] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
-2026-07-01T08:10:01.996+03:00  INFO 3970 --- [charbonecolo] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
-2026-07-01T18:53:36.536+03:00  INFO 7391 --- [charbonecolo] [main] c.e.c.CharbonecoloApplication            : Starting CharbonecoloApplication using Java 21.0.11 with PID 7391 (/home/nomena/Documents/S4/Mme Baovola/Charbon-Ecologique/target/classes started by nomena in /home/nomena/Documents/S4/Mme Baovola/Charbon-Ecologique)
-2026-07-01T18:53:36.538+03:00  INFO 7391 --- [charbonecolo] [main] c.e.c.CharbonecoloApplication            : No active profile set, falling back to 1 default profile: "default"
-2026-07-01T18:53:36.902+03:00  INFO 7391 --- [charbonecolo] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2026-07-01T18:53:36.958+03:00  INFO 7391 --- [charbonecolo] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 46 ms. Found 8 JPA repository interfaces.
-2026-07-01T18:53:37.220+03:00  INFO 7391 --- [charbonecolo] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
-2026-07-01T18:53:37.231+03:00  INFO 7391 --- [charbonecolo] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2026-07-01T18:53:37.232+03:00  INFO 7391 --- [charbonecolo] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.22]
-2026-07-01T18:53:37.261+03:00  INFO 7391 --- [charbonecolo] [main] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 693 ms
-2026-07-01T18:53:37.384+03:00  INFO 7391 --- [charbonecolo] [main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
-2026-07-01T18:53:37.423+03:00  INFO 7391 --- [charbonecolo] [main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.4.1.Final
-2026-07-01T18:53:37.678+03:00  INFO 7391 --- [charbonecolo] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2026-07-01T18:53:37.700+03:00  INFO 7391 --- [charbonecolo] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2026-07-01T18:53:37.927+03:00  INFO 7391 --- [charbonecolo] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@3b01897f
-2026-07-01T18:53:37.928+03:00  INFO 7391 --- [charbonecolo] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2026-07-01T18:53:37.955+03:00  WARN 7391 --- [charbonecolo] [main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-07-01T18:53:37.970+03:00  INFO 7391 --- [charbonecolo] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+2026-07-02T08:35:09.419+03:00  INFO 9922 --- [charbonecolo] [main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-07-02T08:35:09.466+03:00  INFO 9922 --- [charbonecolo] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-07-02T08:35:09.520+03:00  INFO 9922 --- [charbonecolo] [main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-07-02T08:35:10.015+03:00  WARN 9922 --- [charbonecolo] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-07-02T08:35:10.261+03:00  INFO 9922 --- [charbonecolo] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8080 (http) with context path '/'
+2026-07-02T08:35:10.266+03:00  INFO 9922 --- [charbonecolo] [main] c.e.c.CharbonecoloApplication            : Started CharbonecoloApplication in 3.161 seconds (process running for 3.357)
+2026-07-02T08:35:13.167+03:00  INFO 9922 --- [charbonecolo] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-07-02T08:35:13.167+03:00  INFO 9922 --- [charbonecolo] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-07-02T08:35:13.168+03:00  INFO 9922 --- [charbonecolo] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2026-07-02T08:47:21.050+03:00  INFO 9922 --- [charbonecolo] [SpringApplicationShutdownHook] o.s.boot.tomcat.GracefulShutdown         : Commencing graceful shutdown. Waiting for active requests to complete
+2026-07-02T08:47:21.052+03:00  INFO 9922 --- [charbonecolo] [tomcat-shutdown] o.s.boot.tomcat.GracefulShutdown         : Graceful shutdown complete
+2026-07-02T08:47:21.056+03:00  INFO 9922 --- [charbonecolo] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-07-02T08:47:21.059+03:00  INFO 9922 --- [charbonecolo] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-07-02T08:47:21.065+03:00  INFO 9922 --- [charbonecolo] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2026-07-02T08:47:24.542+03:00  INFO 13923 --- [charbonecolo] [main] c.e.c.CharbonecoloApplication            : Starting CharbonecoloApplication using Java 21.0.11 with PID 13923 (/home/nomena/Documents/S4/Mme Baovola/Charbon-Ecologique/target/classes started by nomena in /home/nomena/Documents/S4/Mme Baovola/Charbon-Ecologique)
+2026-07-02T08:47:24.544+03:00  INFO 13923 --- [charbonecolo] [main] c.e.c.CharbonecoloApplication            : No active profile set, falling back to 1 default profile: "default"
+2026-07-02T08:47:24.907+03:00  INFO 13923 --- [charbonecolo] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-07-02T08:47:24.949+03:00  INFO 13923 --- [charbonecolo] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 34 ms. Found 8 JPA repository interfaces.
+2026-07-02T08:47:25.226+03:00  INFO 13923 --- [charbonecolo] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-07-02T08:47:25.237+03:00  INFO 13923 --- [charbonecolo] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-07-02T08:47:25.237+03:00  INFO 13923 --- [charbonecolo] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.22]
+2026-07-02T08:47:25.266+03:00  INFO 13923 --- [charbonecolo] [main] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 691 ms
+2026-07-02T08:47:25.375+03:00  INFO 13923 --- [charbonecolo] [main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-07-02T08:47:25.413+03:00  INFO 13923 --- [charbonecolo] [main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.4.1.Final
+2026-07-02T08:47:25.665+03:00  INFO 13923 --- [charbonecolo] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-07-02T08:47:25.686+03:00  INFO 13923 --- [charbonecolo] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-07-02T08:47:25.900+03:00  INFO 13923 --- [charbonecolo] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@72f35a31
+2026-07-02T08:47:25.902+03:00  INFO 13923 --- [charbonecolo] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-07-02T08:47:25.926+03:00  WARN 13923 --- [charbonecolo] [main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-07-02T08:47:25.941+03:00  INFO 13923 --- [charbonecolo] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
 	Database JDBC URL [jdbc:postgresql://localhost:5432/charbon]
 	Database driver: PostgreSQL JDBC Driver
 	Database dialect: PostgreSQLDialect
@@ -66,12 +66,427 @@
 	Pool: DataSourceConnectionProvider
 	Minimum pool size: undefined/unknown
 	Maximum pool size: undefined/unknown
-2026-07-01T18:53:38.567+03:00  INFO 7391 --- [charbonecolo] [main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2026-07-01T18:53:38.625+03:00  INFO 7391 --- [charbonecolo] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2026-07-01T18:53:38.678+03:00  INFO 7391 --- [charbonecolo] [main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
-2026-07-01T18:53:39.223+03:00  WARN 7391 --- [charbonecolo] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2026-07-01T18:53:39.481+03:00  INFO 7391 --- [charbonecolo] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8080 (http) with context path '/'
-2026-07-01T18:53:39.485+03:00  INFO 7391 --- [charbonecolo] [main] c.e.c.CharbonecoloApplication            : Started CharbonecoloApplication in 3.289 seconds (process running for 3.52)
-2026-07-01T18:53:44.211+03:00  INFO 7391 --- [charbonecolo] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
-2026-07-01T18:53:44.211+03:00  INFO 7391 --- [charbonecolo] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
-2026-07-01T18:53:44.212+03:00  INFO 7391 --- [charbonecolo] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2026-07-02T08:47:26.541+03:00  INFO 13923 --- [charbonecolo] [main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-07-02T08:47:26.593+03:00  INFO 13923 --- [charbonecolo] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-07-02T08:47:26.645+03:00  INFO 13923 --- [charbonecolo] [main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-07-02T08:47:27.153+03:00  WARN 13923 --- [charbonecolo] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-07-02T08:47:27.385+03:00  INFO 13923 --- [charbonecolo] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8080 (http) with context path '/'
+2026-07-02T08:47:27.390+03:00  INFO 13923 --- [charbonecolo] [main] c.e.c.CharbonecoloApplication            : Started CharbonecoloApplication in 3.127 seconds (process running for 3.325)
+2026-07-02T08:47:31.324+03:00  INFO 13923 --- [charbonecolo] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-07-02T08:47:31.324+03:00  INFO 13923 --- [charbonecolo] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-07-02T08:47:31.326+03:00  INFO 13923 --- [charbonecolo] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2026-07-02T08:47:31.643+03:00 ERROR 13923 --- [charbonecolo] [http-nio-8080-exec-1] org.thymeleaf.TemplateEngine             : [THYMELEAF][http-nio-8080-exec-1] Exception processing template "stitch/module_commercial/modif_commande": Exception evaluating SpringEL expression: "clientError['client']" (template: "stitch/module_commercial/modif_commande" - line 250, col 50)
+
+org.thymeleaf.exceptions.TemplateProcessingException: Exception evaluating SpringEL expression: "clientError['client']" (template: "stitch/module_commercial/modif_commande" - line 250, col 50)
+	at org.thymeleaf.spring6.expression.SPELVariableExpressionEvaluator.evaluate(SPELVariableExpressionEvaluator.java:302) ~[thymeleaf-spring6-3.1.5.RELEASE.jar:3.1.5.RELEASE]
+	at org.thymeleaf.standard.expression.VariableExpression.executeVariableExpression(VariableExpression.java:166) ~[thymeleaf-3.1.5.RELEASE.jar:3.1.5.RELEASE]
+	at org.thymeleaf.standard.expression.SimpleExpression.executeSimple(SimpleExpression.java:66) ~[thymeleaf-3.1.5.RELEASE.jar:3.1.5.RELEASE]
+	at org.thymeleaf.standard.expression.Expression.execute(Expression.java:109) ~[thymeleaf-3.1.5.RELEASE.jar:3.1.5.RELEASE]
+	at org.thymeleaf.standard.expression.Expression.execute(Expression.java:138) ~[thymeleaf-3.1.5.RELEASE.jar:3.1.5.RELEASE]
+	at org.thymeleaf.standard.processor.AbstractStandardExpressionAttributeTagProcessor.doProcess(AbstractStandardExpressionAttributeTagProcessor.java:144) ~[thymeleaf-3.1.5.RELEASE.jar:3.1.5.RELEASE]
+	at org.thymeleaf.processor.element.AbstractAttributeTagProcessor.doProcess(AbstractAttributeTagProcessor.java:74) ~[thymeleaf-3.1.5.RELEASE.jar:3.1.5.RELEASE]
+	at org.thymeleaf.processor.element.AbstractElementTagProcessor.process(AbstractElementTagProcessor.java:95) ~[thymeleaf-3.1.5.RELEASE.jar:3.1.5.RELEASE]
+	at org.thymeleaf.util.ProcessorConfigurationUtils$ElementTagProcessorWrapper.process(ProcessorConfigurationUtils.java:633) ~[thymeleaf-3.1.5.RELEASE.jar:3.1.5.RELEASE]
+	at org.thymeleaf.engine.ProcessorTemplateHandler.handleOpenElement(ProcessorTemplateHandler.java:1314) ~[thymeleaf-3.1.5.RELEASE.jar:3.1.5.RELEASE]
+	at org.thymeleaf.engine.OpenElementTag.beHandled(OpenElementTag.java:205) ~[thymeleaf-3.1.5.RELEASE.jar:3.1.5.RELEASE]
+	at org.thymeleaf.engine.TemplateModel.process(TemplateModel.java:136) ~[thymeleaf-3.1.5.RELEASE.jar:3.1.5.RELEASE]
+	at org.thymeleaf.engine.TemplateManager.parseAndProcess(TemplateManager.java:661) ~[thymeleaf-3.1.5.RELEASE.jar:3.1.5.RELEASE]
+	at org.thymeleaf.TemplateEngine.process(TemplateEngine.java:1103) ~[thymeleaf-3.1.5.RELEASE.jar:3.1.5.RELEASE]
+	at org.thymeleaf.TemplateEngine.process(TemplateEngine.java:1077) ~[thymeleaf-3.1.5.RELEASE.jar:3.1.5.RELEASE]
+	at org.thymeleaf.spring6.view.ThymeleafView.renderFragment(ThymeleafView.java:374) ~[thymeleaf-spring6-3.1.5.RELEASE.jar:3.1.5.RELEASE]
+	at org.thymeleaf.spring6.view.ThymeleafView.render(ThymeleafView.java:193) ~[thymeleaf-spring6-3.1.5.RELEASE.jar:3.1.5.RELEASE]
+	at org.springframework.web.servlet.DispatcherServlet.render(DispatcherServlet.java:1305) ~[spring-webmvc-7.0.8.jar:7.0.8]
+	at org.springframework.web.servlet.DispatcherServlet.processDispatchResult(DispatcherServlet.java:1042) ~[spring-webmvc-7.0.8.jar:7.0.8]
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:980) ~[spring-webmvc-7.0.8.jar:7.0.8]
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:866) ~[spring-webmvc-7.0.8.jar:7.0.8]
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1000) ~[spring-webmvc-7.0.8.jar:7.0.8]
+	at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:892) ~[spring-webmvc-7.0.8.jar:7.0.8]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:622) ~[tomcat-embed-core-11.0.22.jar:6.1]
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:874) ~[spring-webmvc-7.0.8.jar:7.0.8]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:710) ~[tomcat-embed-core-11.0.22.jar:6.1]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:128) ~[tomcat-embed-core-11.0.22.jar:11.0.22]
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53) ~[tomcat-embed-websocket-11.0.22.jar:11.0.22]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107) ~[tomcat-embed-core-11.0.22.jar:11.0.22]
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) ~[spring-web-7.0.8.jar:7.0.8]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-7.0.8.jar:7.0.8]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107) ~[tomcat-embed-core-11.0.22.jar:11.0.22]
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) ~[spring-web-7.0.8.jar:7.0.8]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-7.0.8.jar:7.0.8]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107) ~[tomcat-embed-core-11.0.22.jar:11.0.22]
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:199) ~[spring-web-7.0.8.jar:7.0.8]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-7.0.8.jar:7.0.8]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107) ~[tomcat-embed-core-11.0.22.jar:11.0.22]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:165) ~[tomcat-embed-core-11.0.22.jar:11.0.22]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:77) ~[tomcat-embed-core-11.0.22.jar:11.0.22]
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:492) ~[tomcat-embed-core-11.0.22.jar:11.0.22]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:113) ~[tomcat-embed-core-11.0.22.jar:11.0.22]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:83) ~[tomcat-embed-core-11.0.22.jar:11.0.22]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:72) ~[tomcat-embed-core-11.0.22.jar:11.0.22]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:341) ~[tomcat-embed-core-11.0.22.jar:11.0.22]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:397) ~[tomcat-embed-core-11.0.22.jar:11.0.22]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-11.0.22.jar:11.0.22]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:1272) ~[tomcat-embed-core-11.0.22.jar:11.0.22]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1801) ~[tomcat-embed-core-11.0.22.jar:11.0.22]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-11.0.22.jar:11.0.22]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:946) ~[tomcat-embed-core-11.0.22.jar:11.0.22]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:480) ~[tomcat-embed-core-11.0.22.jar:11.0.22]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:57) ~[tomcat-embed-core-11.0.22.jar:11.0.22]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+Caused by: org.springframework.expression.spel.SpelEvaluationException: EL1012E: Cannot index into a null value
+	at org.springframework.expression.spel.ast.Indexer.getValueRef(Indexer.java:188) ~[spring-expression-7.0.8.jar:7.0.8]
+	at org.springframework.expression.spel.ast.Indexer.getValueRef(Indexer.java:167) ~[spring-expression-7.0.8.jar:7.0.8]
+	at org.springframework.expression.spel.ast.CompoundExpression.getValueRef(CompoundExpression.java:75) ~[spring-expression-7.0.8.jar:7.0.8]
+	at org.springframework.expression.spel.ast.CompoundExpression.getValueInternal(CompoundExpression.java:96) ~[spring-expression-7.0.8.jar:7.0.8]
+	at org.springframework.expression.spel.ast.SpelNodeImpl.getValue(SpelNodeImpl.java:114) ~[spring-expression-7.0.8.jar:7.0.8]
+	at org.springframework.expression.spel.standard.SpelExpression.getValue(SpelExpression.java:330) ~[spring-expression-7.0.8.jar:7.0.8]
+	at org.thymeleaf.spring6.expression.SPELVariableExpressionEvaluator.evaluate(SPELVariableExpressionEvaluator.java:275) ~[thymeleaf-spring6-3.1.5.RELEASE.jar:3.1.5.RELEASE]
+	... 53 common frames omitted
+
+2026-07-02T08:47:31.647+03:00 ERROR 13923 --- [charbonecolo] [http-nio-8080-exec-1] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed: org.thymeleaf.exceptions.TemplateProcessingException: Exception evaluating SpringEL expression: "clientError['client']" (template: "stitch/module_commercial/modif_commande" - line 250, col 50)] with root cause
+
+org.springframework.expression.spel.SpelEvaluationException: EL1012E: Cannot index into a null value
+	at org.springframework.expression.spel.ast.Indexer.getValueRef(Indexer.java:188) ~[spring-expression-7.0.8.jar:7.0.8]
+	at org.springframework.expression.spel.ast.Indexer.getValueRef(Indexer.java:167) ~[spring-expression-7.0.8.jar:7.0.8]
+	at org.springframework.expression.spel.ast.CompoundExpression.getValueRef(CompoundExpression.java:75) ~[spring-expression-7.0.8.jar:7.0.8]
+	at org.springframework.expression.spel.ast.CompoundExpression.getValueInternal(CompoundExpression.java:96) ~[spring-expression-7.0.8.jar:7.0.8]
+	at org.springframework.expression.spel.ast.SpelNodeImpl.getValue(SpelNodeImpl.java:114) ~[spring-expression-7.0.8.jar:7.0.8]
+	at org.springframework.expression.spel.standard.SpelExpression.getValue(SpelExpression.java:330) ~[spring-expression-7.0.8.jar:7.0.8]
+	at org.thymeleaf.spring6.expression.SPELVariableExpressionEvaluator.evaluate(SPELVariableExpressionEvaluator.java:275) ~[thymeleaf-spring6-3.1.5.RELEASE.jar:3.1.5.RELEASE]
+	at org.thymeleaf.standard.expression.VariableExpression.executeVariableExpression(VariableExpression.java:166) ~[thymeleaf-3.1.5.RELEASE.jar:3.1.5.RELEASE]
+	at org.thymeleaf.standard.expression.SimpleExpression.executeSimple(SimpleExpression.java:66) ~[thymeleaf-3.1.5.RELEASE.jar:3.1.5.RELEASE]
+	at org.thymeleaf.standard.expression.Expression.execute(Expression.java:109) ~[thymeleaf-3.1.5.RELEASE.jar:3.1.5.RELEASE]
+	at org.thymeleaf.standard.expression.Expression.execute(Expression.java:138) ~[thymeleaf-3.1.5.RELEASE.jar:3.1.5.RELEASE]
+	at org.thymeleaf.standard.processor.AbstractStandardExpressionAttributeTagProcessor.doProcess(AbstractStandardExpressionAttributeTagProcessor.java:144) ~[thymeleaf-3.1.5.RELEASE.jar:3.1.5.RELEASE]
+	at org.thymeleaf.processor.element.AbstractAttributeTagProcessor.doProcess(AbstractAttributeTagProcessor.java:74) ~[thymeleaf-3.1.5.RELEASE.jar:3.1.5.RELEASE]
+	at org.thymeleaf.processor.element.AbstractElementTagProcessor.process(AbstractElementTagProcessor.java:95) ~[thymeleaf-3.1.5.RELEASE.jar:3.1.5.RELEASE]
+	at org.thymeleaf.util.ProcessorConfigurationUtils$ElementTagProcessorWrapper.process(ProcessorConfigurationUtils.java:633) ~[thymeleaf-3.1.5.RELEASE.jar:3.1.5.RELEASE]
+	at org.thymeleaf.engine.ProcessorTemplateHandler.handleOpenElement(ProcessorTemplateHandler.java:1314) ~[thymeleaf-3.1.5.RELEASE.jar:3.1.5.RELEASE]
+	at org.thymeleaf.engine.OpenElementTag.beHandled(OpenElementTag.java:205) ~[thymeleaf-3.1.5.RELEASE.jar:3.1.5.RELEASE]
+	at org.thymeleaf.engine.TemplateModel.process(TemplateModel.java:136) ~[thymeleaf-3.1.5.RELEASE.jar:3.1.5.RELEASE]
+	at org.thymeleaf.engine.TemplateManager.parseAndProcess(TemplateManager.java:661) ~[thymeleaf-3.1.5.RELEASE.jar:3.1.5.RELEASE]
+	at org.thymeleaf.TemplateEngine.process(TemplateEngine.java:1103) ~[thymeleaf-3.1.5.RELEASE.jar:3.1.5.RELEASE]
+	at org.thymeleaf.TemplateEngine.process(TemplateEngine.java:1077) ~[thymeleaf-3.1.5.RELEASE.jar:3.1.5.RELEASE]
+	at org.thymeleaf.spring6.view.ThymeleafView.renderFragment(ThymeleafView.java:374) ~[thymeleaf-spring6-3.1.5.RELEASE.jar:3.1.5.RELEASE]
+	at org.thymeleaf.spring6.view.ThymeleafView.render(ThymeleafView.java:193) ~[thymeleaf-spring6-3.1.5.RELEASE.jar:3.1.5.RELEASE]
+	at org.springframework.web.servlet.DispatcherServlet.render(DispatcherServlet.java:1305) ~[spring-webmvc-7.0.8.jar:7.0.8]
+	at org.springframework.web.servlet.DispatcherServlet.processDispatchResult(DispatcherServlet.java:1042) ~[spring-webmvc-7.0.8.jar:7.0.8]
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:980) ~[spring-webmvc-7.0.8.jar:7.0.8]
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:866) ~[spring-webmvc-7.0.8.jar:7.0.8]
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1000) ~[spring-webmvc-7.0.8.jar:7.0.8]
+	at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:892) ~[spring-webmvc-7.0.8.jar:7.0.8]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:622) ~[tomcat-embed-core-11.0.22.jar:6.1]
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:874) ~[spring-webmvc-7.0.8.jar:7.0.8]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:710) ~[tomcat-embed-core-11.0.22.jar:6.1]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:128) ~[tomcat-embed-core-11.0.22.jar:11.0.22]
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53) ~[tomcat-embed-websocket-11.0.22.jar:11.0.22]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107) ~[tomcat-embed-core-11.0.22.jar:11.0.22]
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) ~[spring-web-7.0.8.jar:7.0.8]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-7.0.8.jar:7.0.8]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107) ~[tomcat-embed-core-11.0.22.jar:11.0.22]
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) ~[spring-web-7.0.8.jar:7.0.8]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-7.0.8.jar:7.0.8]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107) ~[tomcat-embed-core-11.0.22.jar:11.0.22]
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:199) ~[spring-web-7.0.8.jar:7.0.8]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-7.0.8.jar:7.0.8]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107) ~[tomcat-embed-core-11.0.22.jar:11.0.22]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:165) ~[tomcat-embed-core-11.0.22.jar:11.0.22]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:77) ~[tomcat-embed-core-11.0.22.jar:11.0.22]
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:492) ~[tomcat-embed-core-11.0.22.jar:11.0.22]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:113) ~[tomcat-embed-core-11.0.22.jar:11.0.22]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:83) ~[tomcat-embed-core-11.0.22.jar:11.0.22]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:72) ~[tomcat-embed-core-11.0.22.jar:11.0.22]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:341) ~[tomcat-embed-core-11.0.22.jar:11.0.22]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:397) ~[tomcat-embed-core-11.0.22.jar:11.0.22]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-11.0.22.jar:11.0.22]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:1272) ~[tomcat-embed-core-11.0.22.jar:11.0.22]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1801) ~[tomcat-embed-core-11.0.22.jar:11.0.22]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-11.0.22.jar:11.0.22]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:946) ~[tomcat-embed-core-11.0.22.jar:11.0.22]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:480) ~[tomcat-embed-core-11.0.22.jar:11.0.22]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:57) ~[tomcat-embed-core-11.0.22.jar:11.0.22]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+
+2026-07-02T08:47:53.130+03:00  INFO 13923 --- [charbonecolo] [SpringApplicationShutdownHook] o.s.boot.tomcat.GracefulShutdown         : Commencing graceful shutdown. Waiting for active requests to complete
+2026-07-02T08:47:53.132+03:00  INFO 13923 --- [charbonecolo] [tomcat-shutdown] o.s.boot.tomcat.GracefulShutdown         : Graceful shutdown complete
+2026-07-02T08:47:53.134+03:00  INFO 13923 --- [charbonecolo] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-07-02T08:47:53.135+03:00  INFO 13923 --- [charbonecolo] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-07-02T08:47:53.140+03:00  INFO 13923 --- [charbonecolo] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2026-07-02T08:47:55.996+03:00  INFO 14293 --- [charbonecolo] [main] c.e.c.CharbonecoloApplication            : Starting CharbonecoloApplication using Java 21.0.11 with PID 14293 (/home/nomena/Documents/S4/Mme Baovola/Charbon-Ecologique/target/classes started by nomena in /home/nomena/Documents/S4/Mme Baovola/Charbon-Ecologique)
+2026-07-02T08:47:55.998+03:00  INFO 14293 --- [charbonecolo] [main] c.e.c.CharbonecoloApplication            : No active profile set, falling back to 1 default profile: "default"
+2026-07-02T08:47:56.351+03:00  INFO 14293 --- [charbonecolo] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-07-02T08:47:56.388+03:00  INFO 14293 --- [charbonecolo] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 32 ms. Found 8 JPA repository interfaces.
+2026-07-02T08:47:56.635+03:00  INFO 14293 --- [charbonecolo] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-07-02T08:47:56.644+03:00  INFO 14293 --- [charbonecolo] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-07-02T08:47:56.645+03:00  INFO 14293 --- [charbonecolo] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.22]
+2026-07-02T08:47:56.669+03:00  INFO 14293 --- [charbonecolo] [main] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 641 ms
+2026-07-02T08:47:56.774+03:00  INFO 14293 --- [charbonecolo] [main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-07-02T08:47:56.801+03:00  INFO 14293 --- [charbonecolo] [main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.4.1.Final
+2026-07-02T08:47:57.011+03:00  INFO 14293 --- [charbonecolo] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-07-02T08:47:57.028+03:00  INFO 14293 --- [charbonecolo] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-07-02T08:47:57.209+03:00  INFO 14293 --- [charbonecolo] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@72f35a31
+2026-07-02T08:47:57.210+03:00  INFO 14293 --- [charbonecolo] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-07-02T08:47:57.237+03:00  WARN 14293 --- [charbonecolo] [main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-07-02T08:47:57.251+03:00  INFO 14293 --- [charbonecolo] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/charbon]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 16.14
+	Default catalog/schema: charbon/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-07-02T08:47:57.822+03:00  INFO 14293 --- [charbonecolo] [main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-07-02T08:47:57.863+03:00  INFO 14293 --- [charbonecolo] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-07-02T08:47:57.911+03:00  INFO 14293 --- [charbonecolo] [main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-07-02T08:47:58.401+03:00  WARN 14293 --- [charbonecolo] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-07-02T08:47:58.629+03:00  INFO 14293 --- [charbonecolo] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8080 (http) with context path '/'
+2026-07-02T08:47:58.633+03:00  INFO 14293 --- [charbonecolo] [main] c.e.c.CharbonecoloApplication            : Started CharbonecoloApplication in 2.909 seconds (process running for 3.091)
+2026-07-02T08:48:01.391+03:00  INFO 14293 --- [charbonecolo] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-07-02T08:48:01.392+03:00  INFO 14293 --- [charbonecolo] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-07-02T08:48:01.393+03:00  INFO 14293 --- [charbonecolo] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2026-07-02T08:49:14.686+03:00  INFO 14293 --- [charbonecolo] [SpringApplicationShutdownHook] o.s.boot.tomcat.GracefulShutdown         : Commencing graceful shutdown. Waiting for active requests to complete
+2026-07-02T08:49:14.688+03:00  INFO 14293 --- [charbonecolo] [tomcat-shutdown] o.s.boot.tomcat.GracefulShutdown         : Graceful shutdown complete
+2026-07-02T08:49:14.690+03:00  INFO 14293 --- [charbonecolo] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-07-02T08:49:14.692+03:00  INFO 14293 --- [charbonecolo] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-07-02T08:49:14.698+03:00  INFO 14293 --- [charbonecolo] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2026-07-02T08:49:17.666+03:00  INFO 14952 --- [charbonecolo] [main] c.e.c.CharbonecoloApplication            : Starting CharbonecoloApplication using Java 21.0.11 with PID 14952 (/home/nomena/Documents/S4/Mme Baovola/Charbon-Ecologique/target/classes started by nomena in /home/nomena/Documents/S4/Mme Baovola/Charbon-Ecologique)
+2026-07-02T08:49:17.668+03:00  INFO 14952 --- [charbonecolo] [main] c.e.c.CharbonecoloApplication            : No active profile set, falling back to 1 default profile: "default"
+2026-07-02T08:49:18.041+03:00  INFO 14952 --- [charbonecolo] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-07-02T08:49:18.084+03:00  INFO 14952 --- [charbonecolo] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 37 ms. Found 8 JPA repository interfaces.
+2026-07-02T08:49:18.363+03:00  INFO 14952 --- [charbonecolo] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-07-02T08:49:18.373+03:00  INFO 14952 --- [charbonecolo] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-07-02T08:49:18.374+03:00  INFO 14952 --- [charbonecolo] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.22]
+2026-07-02T08:49:18.402+03:00  INFO 14952 --- [charbonecolo] [main] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 703 ms
+2026-07-02T08:49:18.510+03:00  INFO 14952 --- [charbonecolo] [main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-07-02T08:49:18.541+03:00  INFO 14952 --- [charbonecolo] [main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.4.1.Final
+2026-07-02T08:49:18.776+03:00  INFO 14952 --- [charbonecolo] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-07-02T08:49:18.795+03:00  INFO 14952 --- [charbonecolo] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-07-02T08:49:19.009+03:00  INFO 14952 --- [charbonecolo] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@72f35a31
+2026-07-02T08:49:19.010+03:00  INFO 14952 --- [charbonecolo] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-07-02T08:49:19.030+03:00  WARN 14952 --- [charbonecolo] [main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-07-02T08:49:19.043+03:00  INFO 14952 --- [charbonecolo] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/charbon]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 16.14
+	Default catalog/schema: charbon/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-07-02T08:49:19.624+03:00  INFO 14952 --- [charbonecolo] [main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-07-02T08:49:19.661+03:00  INFO 14952 --- [charbonecolo] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-07-02T08:49:19.712+03:00  INFO 14952 --- [charbonecolo] [main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-07-02T08:49:20.195+03:00  WARN 14952 --- [charbonecolo] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-07-02T08:49:20.427+03:00  INFO 14952 --- [charbonecolo] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8080 (http) with context path '/'
+2026-07-02T08:49:20.432+03:00  INFO 14952 --- [charbonecolo] [main] c.e.c.CharbonecoloApplication            : Started CharbonecoloApplication in 3.063 seconds (process running for 3.253)
+2026-07-02T08:49:22.382+03:00  INFO 14952 --- [charbonecolo] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-07-02T08:49:22.382+03:00  INFO 14952 --- [charbonecolo] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-07-02T08:49:22.383+03:00  INFO 14952 --- [charbonecolo] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2026-07-02T08:51:53.229+03:00  INFO 14952 --- [charbonecolo] [SpringApplicationShutdownHook] o.s.boot.tomcat.GracefulShutdown         : Commencing graceful shutdown. Waiting for active requests to complete
+2026-07-02T08:51:53.231+03:00  INFO 14952 --- [charbonecolo] [tomcat-shutdown] o.s.boot.tomcat.GracefulShutdown         : Graceful shutdown complete
+2026-07-02T08:51:53.233+03:00  INFO 14952 --- [charbonecolo] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-07-02T08:51:53.234+03:00  INFO 14952 --- [charbonecolo] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-07-02T08:51:53.239+03:00  INFO 14952 --- [charbonecolo] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2026-07-02T08:51:55.977+03:00  INFO 15928 --- [charbonecolo] [main] c.e.c.CharbonecoloApplication            : Starting CharbonecoloApplication using Java 21.0.11 with PID 15928 (/home/nomena/Documents/S4/Mme Baovola/Charbon-Ecologique/target/classes started by nomena in /home/nomena/Documents/S4/Mme Baovola/Charbon-Ecologique)
+2026-07-02T08:51:55.979+03:00  INFO 15928 --- [charbonecolo] [main] c.e.c.CharbonecoloApplication            : No active profile set, falling back to 1 default profile: "default"
+2026-07-02T08:51:56.318+03:00  INFO 15928 --- [charbonecolo] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-07-02T08:51:56.358+03:00  INFO 15928 --- [charbonecolo] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 33 ms. Found 8 JPA repository interfaces.
+2026-07-02T08:51:56.609+03:00  INFO 15928 --- [charbonecolo] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-07-02T08:51:56.619+03:00  INFO 15928 --- [charbonecolo] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-07-02T08:51:56.619+03:00  INFO 15928 --- [charbonecolo] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.22]
+2026-07-02T08:51:56.643+03:00  INFO 15928 --- [charbonecolo] [main] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 630 ms
+2026-07-02T08:51:56.742+03:00  INFO 15928 --- [charbonecolo] [main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-07-02T08:51:56.767+03:00  INFO 15928 --- [charbonecolo] [main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.4.1.Final
+2026-07-02T08:51:56.985+03:00  INFO 15928 --- [charbonecolo] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-07-02T08:51:57.003+03:00  INFO 15928 --- [charbonecolo] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-07-02T08:51:57.182+03:00  INFO 15928 --- [charbonecolo] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@72f35a31
+2026-07-02T08:51:57.183+03:00  INFO 15928 --- [charbonecolo] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-07-02T08:51:57.201+03:00  WARN 15928 --- [charbonecolo] [main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-07-02T08:51:57.214+03:00  INFO 15928 --- [charbonecolo] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/charbon]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 16.14
+	Default catalog/schema: charbon/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-07-02T08:51:57.790+03:00  INFO 15928 --- [charbonecolo] [main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-07-02T08:51:57.826+03:00  INFO 15928 --- [charbonecolo] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-07-02T08:51:57.877+03:00  INFO 15928 --- [charbonecolo] [main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-07-02T08:51:58.356+03:00  WARN 15928 --- [charbonecolo] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-07-02T08:51:58.573+03:00  INFO 15928 --- [charbonecolo] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8080 (http) with context path '/'
+2026-07-02T08:51:58.577+03:00  INFO 15928 --- [charbonecolo] [main] c.e.c.CharbonecoloApplication            : Started CharbonecoloApplication in 2.869 seconds (process running for 3.051)
+2026-07-02T08:52:03.186+03:00  INFO 15928 --- [charbonecolo] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-07-02T08:52:03.186+03:00  INFO 15928 --- [charbonecolo] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-07-02T08:52:03.188+03:00  INFO 15928 --- [charbonecolo] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
+2026-07-02T08:54:10.329+03:00  INFO 15928 --- [charbonecolo] [SpringApplicationShutdownHook] o.s.boot.tomcat.GracefulShutdown         : Commencing graceful shutdown. Waiting for active requests to complete
+2026-07-02T08:54:10.331+03:00  INFO 15928 --- [charbonecolo] [tomcat-shutdown] o.s.boot.tomcat.GracefulShutdown         : Graceful shutdown complete
+2026-07-02T08:54:10.333+03:00  INFO 15928 --- [charbonecolo] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-07-02T08:54:10.334+03:00  INFO 15928 --- [charbonecolo] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-07-02T08:54:10.341+03:00  INFO 15928 --- [charbonecolo] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2026-07-02T08:54:13.150+03:00  INFO 16893 --- [charbonecolo] [main] c.e.c.CharbonecoloApplication            : Starting CharbonecoloApplication using Java 21.0.11 with PID 16893 (/home/nomena/Documents/S4/Mme Baovola/Charbon-Ecologique/target/classes started by nomena in /home/nomena/Documents/S4/Mme Baovola/Charbon-Ecologique)
+2026-07-02T08:54:13.152+03:00  INFO 16893 --- [charbonecolo] [main] c.e.c.CharbonecoloApplication            : No active profile set, falling back to 1 default profile: "default"
+2026-07-02T08:54:13.491+03:00  INFO 16893 --- [charbonecolo] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-07-02T08:54:13.531+03:00  INFO 16893 --- [charbonecolo] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 35 ms. Found 8 JPA repository interfaces.
+2026-07-02T08:54:13.796+03:00  INFO 16893 --- [charbonecolo] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-07-02T08:54:13.806+03:00  INFO 16893 --- [charbonecolo] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-07-02T08:54:13.806+03:00  INFO 16893 --- [charbonecolo] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.22]
+2026-07-02T08:54:13.830+03:00  INFO 16893 --- [charbonecolo] [main] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 646 ms
+2026-07-02T08:54:13.936+03:00  INFO 16893 --- [charbonecolo] [main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-07-02T08:54:13.962+03:00  INFO 16893 --- [charbonecolo] [main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.4.1.Final
+2026-07-02T08:54:14.194+03:00  INFO 16893 --- [charbonecolo] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-07-02T08:54:14.211+03:00  INFO 16893 --- [charbonecolo] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-07-02T08:54:14.396+03:00  INFO 16893 --- [charbonecolo] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@72f35a31
+2026-07-02T08:54:14.397+03:00  INFO 16893 --- [charbonecolo] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-07-02T08:54:14.415+03:00  WARN 16893 --- [charbonecolo] [main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-07-02T08:54:14.428+03:00  INFO 16893 --- [charbonecolo] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/charbon]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 16.14
+	Default catalog/schema: charbon/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-07-02T08:54:14.991+03:00  INFO 16893 --- [charbonecolo] [main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-07-02T08:54:15.028+03:00  INFO 16893 --- [charbonecolo] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-07-02T08:54:15.078+03:00  INFO 16893 --- [charbonecolo] [main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-07-02T08:54:15.551+03:00  WARN 16893 --- [charbonecolo] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-07-02T08:54:15.778+03:00  INFO 16893 --- [charbonecolo] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8080 (http) with context path '/'
+2026-07-02T08:54:15.785+03:00  INFO 16893 --- [charbonecolo] [main] c.e.c.CharbonecoloApplication            : Started CharbonecoloApplication in 2.904 seconds (process running for 3.097)
+2026-07-02T08:54:18.570+03:00  INFO 16893 --- [charbonecolo] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-07-02T08:54:18.570+03:00  INFO 16893 --- [charbonecolo] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-07-02T08:54:18.572+03:00  INFO 16893 --- [charbonecolo] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
+2026-07-02T08:57:08.765+03:00  INFO 16893 --- [charbonecolo] [SpringApplicationShutdownHook] o.s.boot.tomcat.GracefulShutdown         : Commencing graceful shutdown. Waiting for active requests to complete
+2026-07-02T08:57:08.767+03:00  INFO 16893 --- [charbonecolo] [tomcat-shutdown] o.s.boot.tomcat.GracefulShutdown         : Graceful shutdown complete
+2026-07-02T08:57:08.769+03:00  INFO 16893 --- [charbonecolo] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-07-02T08:57:08.770+03:00  INFO 16893 --- [charbonecolo] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-07-02T08:57:08.775+03:00  INFO 16893 --- [charbonecolo] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2026-07-02T08:57:12.801+03:00  INFO 17976 --- [charbonecolo] [main] c.e.c.CharbonecoloApplication            : Starting CharbonecoloApplication using Java 21.0.11 with PID 17976 (/home/nomena/Documents/S4/Mme Baovola/Charbon-Ecologique/target/classes started by nomena in /home/nomena/Documents/S4/Mme Baovola/Charbon-Ecologique)
+2026-07-02T08:57:12.802+03:00  INFO 17976 --- [charbonecolo] [main] c.e.c.CharbonecoloApplication            : No active profile set, falling back to 1 default profile: "default"
+2026-07-02T08:57:13.147+03:00  INFO 17976 --- [charbonecolo] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-07-02T08:57:13.186+03:00  INFO 17976 --- [charbonecolo] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 32 ms. Found 8 JPA repository interfaces.
+2026-07-02T08:57:13.440+03:00  INFO 17976 --- [charbonecolo] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-07-02T08:57:13.450+03:00  INFO 17976 --- [charbonecolo] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-07-02T08:57:13.450+03:00  INFO 17976 --- [charbonecolo] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.22]
+2026-07-02T08:57:13.475+03:00  INFO 17976 --- [charbonecolo] [main] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 645 ms
+2026-07-02T08:57:13.579+03:00  INFO 17976 --- [charbonecolo] [main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-07-02T08:57:13.605+03:00  INFO 17976 --- [charbonecolo] [main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.4.1.Final
+2026-07-02T08:57:13.827+03:00  INFO 17976 --- [charbonecolo] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-07-02T08:57:13.844+03:00  INFO 17976 --- [charbonecolo] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-07-02T08:57:14.029+03:00  INFO 17976 --- [charbonecolo] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@72f35a31
+2026-07-02T08:57:14.030+03:00  INFO 17976 --- [charbonecolo] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-07-02T08:57:14.047+03:00  WARN 17976 --- [charbonecolo] [main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-07-02T08:57:14.060+03:00  INFO 17976 --- [charbonecolo] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/charbon]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 16.14
+	Default catalog/schema: charbon/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-07-02T08:57:14.620+03:00  INFO 17976 --- [charbonecolo] [main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-07-02T08:57:14.657+03:00  INFO 17976 --- [charbonecolo] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-07-02T08:57:14.707+03:00  INFO 17976 --- [charbonecolo] [main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-07-02T08:57:15.188+03:00  WARN 17976 --- [charbonecolo] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-07-02T08:57:15.403+03:00  INFO 17976 --- [charbonecolo] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8080 (http) with context path '/'
+2026-07-02T08:57:15.408+03:00  INFO 17976 --- [charbonecolo] [main] c.e.c.CharbonecoloApplication            : Started CharbonecoloApplication in 2.886 seconds (process running for 3.065)
+2026-07-02T08:57:17.231+03:00  INFO 17976 --- [charbonecolo] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-07-02T08:57:17.231+03:00  INFO 17976 --- [charbonecolo] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-07-02T08:57:17.233+03:00  INFO 17976 --- [charbonecolo] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
+2026-07-02T08:57:35.857+03:00  INFO 17976 --- [charbonecolo] [SpringApplicationShutdownHook] o.s.boot.tomcat.GracefulShutdown         : Commencing graceful shutdown. Waiting for active requests to complete
+2026-07-02T08:57:35.858+03:00  INFO 17976 --- [charbonecolo] [tomcat-shutdown] o.s.boot.tomcat.GracefulShutdown         : Graceful shutdown complete
+2026-07-02T08:57:35.861+03:00  INFO 17976 --- [charbonecolo] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-07-02T08:57:35.862+03:00  INFO 17976 --- [charbonecolo] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-07-02T08:57:35.867+03:00  INFO 17976 --- [charbonecolo] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2026-07-02T08:57:38.939+03:00  INFO 18350 --- [charbonecolo] [main] c.e.c.CharbonecoloApplication            : Starting CharbonecoloApplication using Java 21.0.11 with PID 18350 (/home/nomena/Documents/S4/Mme Baovola/Charbon-Ecologique/target/classes started by nomena in /home/nomena/Documents/S4/Mme Baovola/Charbon-Ecologique)
+2026-07-02T08:57:38.941+03:00  INFO 18350 --- [charbonecolo] [main] c.e.c.CharbonecoloApplication            : No active profile set, falling back to 1 default profile: "default"
+2026-07-02T08:57:39.302+03:00  INFO 18350 --- [charbonecolo] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-07-02T08:57:39.340+03:00  INFO 18350 --- [charbonecolo] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 32 ms. Found 8 JPA repository interfaces.
+2026-07-02T08:57:39.597+03:00  INFO 18350 --- [charbonecolo] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-07-02T08:57:39.607+03:00  INFO 18350 --- [charbonecolo] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-07-02T08:57:39.607+03:00  INFO 18350 --- [charbonecolo] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.22]
+2026-07-02T08:57:39.632+03:00  INFO 18350 --- [charbonecolo] [main] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 654 ms
+2026-07-02T08:57:39.737+03:00  INFO 18350 --- [charbonecolo] [main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-07-02T08:57:39.763+03:00  INFO 18350 --- [charbonecolo] [main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.4.1.Final
+2026-07-02T08:57:39.969+03:00  INFO 18350 --- [charbonecolo] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-07-02T08:57:39.986+03:00  INFO 18350 --- [charbonecolo] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-07-02T08:57:40.182+03:00  INFO 18350 --- [charbonecolo] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@72f35a31
+2026-07-02T08:57:40.183+03:00  INFO 18350 --- [charbonecolo] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-07-02T08:57:40.200+03:00  WARN 18350 --- [charbonecolo] [main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-07-02T08:57:40.212+03:00  INFO 18350 --- [charbonecolo] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/charbon]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 16.14
+	Default catalog/schema: charbon/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-07-02T08:57:40.775+03:00  INFO 18350 --- [charbonecolo] [main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-07-02T08:57:40.812+03:00  INFO 18350 --- [charbonecolo] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-07-02T08:57:40.890+03:00  INFO 18350 --- [charbonecolo] [main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-07-02T08:57:41.395+03:00  WARN 18350 --- [charbonecolo] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-07-02T08:57:41.626+03:00  INFO 18350 --- [charbonecolo] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8080 (http) with context path '/'
+2026-07-02T08:57:41.630+03:00  INFO 18350 --- [charbonecolo] [main] c.e.c.CharbonecoloApplication            : Started CharbonecoloApplication in 2.968 seconds (process running for 3.168)
+2026-07-02T08:57:47.003+03:00  INFO 18350 --- [charbonecolo] [SpringApplicationShutdownHook] o.s.boot.tomcat.GracefulShutdown         : Commencing graceful shutdown. Waiting for active requests to complete
+2026-07-02T08:57:47.005+03:00  INFO 18350 --- [charbonecolo] [tomcat-shutdown] o.s.boot.tomcat.GracefulShutdown         : Graceful shutdown complete
+2026-07-02T08:57:47.007+03:00  INFO 18350 --- [charbonecolo] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-07-02T08:57:47.008+03:00  INFO 18350 --- [charbonecolo] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-07-02T08:57:47.013+03:00  INFO 18350 --- [charbonecolo] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2026-07-02T08:57:49.868+03:00  INFO 18622 --- [charbonecolo] [main] c.e.c.CharbonecoloApplication            : Starting CharbonecoloApplication using Java 21.0.11 with PID 18622 (/home/nomena/Documents/S4/Mme Baovola/Charbon-Ecologique/target/classes started by nomena in /home/nomena/Documents/S4/Mme Baovola/Charbon-Ecologique)
+2026-07-02T08:57:49.870+03:00  INFO 18622 --- [charbonecolo] [main] c.e.c.CharbonecoloApplication            : No active profile set, falling back to 1 default profile: "default"
+2026-07-02T08:57:50.206+03:00  INFO 18622 --- [charbonecolo] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-07-02T08:57:50.247+03:00  INFO 18622 --- [charbonecolo] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 35 ms. Found 8 JPA repository interfaces.
+2026-07-02T08:57:50.503+03:00  INFO 18622 --- [charbonecolo] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-07-02T08:57:50.513+03:00  INFO 18622 --- [charbonecolo] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-07-02T08:57:50.513+03:00  INFO 18622 --- [charbonecolo] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.22]
+2026-07-02T08:57:50.538+03:00  INFO 18622 --- [charbonecolo] [main] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 635 ms
+2026-07-02T08:57:50.641+03:00  INFO 18622 --- [charbonecolo] [main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-07-02T08:57:50.668+03:00  INFO 18622 --- [charbonecolo] [main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.4.1.Final
+2026-07-02T08:57:50.879+03:00  INFO 18622 --- [charbonecolo] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-07-02T08:57:50.896+03:00  INFO 18622 --- [charbonecolo] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-07-02T08:57:51.083+03:00  INFO 18622 --- [charbonecolo] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@72f35a31
+2026-07-02T08:57:51.084+03:00  INFO 18622 --- [charbonecolo] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-07-02T08:57:51.102+03:00  WARN 18622 --- [charbonecolo] [main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-07-02T08:57:51.115+03:00  INFO 18622 --- [charbonecolo] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/charbon]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 16.14
+	Default catalog/schema: charbon/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-07-02T08:57:51.675+03:00  INFO 18622 --- [charbonecolo] [main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-07-02T08:57:51.712+03:00  INFO 18622 --- [charbonecolo] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-07-02T08:57:51.758+03:00  INFO 18622 --- [charbonecolo] [main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-07-02T08:57:52.242+03:00  WARN 18622 --- [charbonecolo] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-07-02T08:57:52.462+03:00  INFO 18622 --- [charbonecolo] [main] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8080 (http) with context path '/'
+2026-07-02T08:57:52.466+03:00  INFO 18622 --- [charbonecolo] [main] c.e.c.CharbonecoloApplication            : Started CharbonecoloApplication in 2.874 seconds (process running for 3.059)
+2026-07-02T08:57:54.531+03:00  INFO 18622 --- [charbonecolo] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-07-02T08:57:54.531+03:00  INFO 18622 --- [charbonecolo] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-07-02T08:57:54.533+03:00  INFO 18622 --- [charbonecolo] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms

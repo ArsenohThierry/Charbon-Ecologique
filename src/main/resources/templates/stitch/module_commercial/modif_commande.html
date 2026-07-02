@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Charbon Vert - Modifier la commande</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:wght@400;700&amp;family=Manrope:wght@400;600;700;800&amp;display=swap"
+        rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet">
+    <!-- Tailwind Configuration -->
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary": "#ffffff",
+                        "surface-variant": "#dce4df",
+                        "surface-dim": "#d4dcd6",
+                        "on-primary-container": "#83a794",
+                        "on-secondary-fixed": "#291800",
+                        "tertiary-container": "#353633",
+                        "tertiary": "#20211e",
+                        "on-background": "#161d1a",
+                        "primary": "#032619",
+                        "inverse-primary": "#aacfbb",
+                        "surface-container-low": "#edf6f0",
+                        "inverse-surface": "#2a322f",
+                        "on-secondary-container": "#785213",
+                        "on-tertiary-container": "#9f9f9a",
+                        "on-error": "#ffffff",
+                        "primary-container": "#1b3c2e",
+                        "on-tertiary-fixed-variant": "#464744",
+                        "secondary-fixed": "#ffddb3",
+                        "error-container": "#ffdad6",
+                        "primary-fixed-dim": "#aacfbb",
+                        "tertiary-fixed": "#e3e3de",
+                        "surface-container": "#e8f0ea",
+                        "secondary-fixed-dim": "#f1be75",
+                        "on-error-container": "#93000a",
+                        "secondary-container": "#fec97f",
+                        "outline": "#727974",
+                        "on-primary-fixed": "#002115",
+                        "on-secondary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-primary-fixed-variant": "#2c4d3e",
+                        "inverse-on-surface": "#ebf3ed",
+                        "surface": "#f3fbf6",
+                        "surface-bright": "#f3fbf6",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed-dim": "#c7c7c2",
+                        "on-surface-variant": "#414844",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed-variant": "#624000",
+                        "surface-tint": "#446555",
+                        "background": "#f3fbf6",
+                        "surface-container-highest": "#dce4df",
+                        "secondary": "#7e5718",
+                        "primary-fixed": "#c6ebd7",
+                        "on-tertiary-fixed": "#1b1c19",
+                        "surface-container-high": "#e2eae5",
+                        "on-surface": "#161d1a",
+                        "outline-variant": "#c1c8c2"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "1.5rem",
+                        "container-padding": "2rem",
+                        "sidebar-width": "260px",
+                        "card-gap": "1rem"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Manrope"],
+                        "display-lg-mobile": ["Libre Caslon Text"],
+                        "body-lg": ["Manrope"],
+                        "display-lg": ["Libre Caslon Text"],
+                        "body-md": ["Manrope"],
+                        "headline-md": ["Libre Caslon Text"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["12px", { "lineHeight": "1", "letterSpacing": "0.02em", "fontWeight": "600" }],
+                        "display-lg-mobile": ["24px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "body-lg": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "display-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "headline-md": ["20px", { "lineHeight": "1.4", "fontWeight": "600" }]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        body {
+            background-color: #f3fbf6;
+            color: #161d1a;
+        }
+
+        .sidebar-active {
+            background-color: #fec97f;
+            color: #785213;
+            font-weight: 700;
+            border-radius: 0.5rem;
+        }
+
+        .heritage-card {
+            background: #ffffff;
+            border: 1px solid #e6e4dd;
+            border-radius: 1rem;
+        }
+
+        .form-input {
+            border: 1px solid #c1c8c2;
+            border-radius: 0.5rem;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-input:focus {
+            border-color: #032619;
+            ring: 0;
+            outline: none;
+        }
+    </style>
+</head>
+
+<body class="font-body-md text-body-md antialiased">
+    <!-- Sidebar -->
+    <aside
+        class="w-sidebar-width h-screen fixed left-0 top-0 overflow-y-auto bg-primary-container text-on-primary flex flex-col py-6 border-r border-outline-variant/20 z-20">
+        <div class="px-6 mb-10">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center">
+                    <span class="text-on-secondary-container font-bold font-headline-md text-headline-md">CV</span>
+                </div>
+                <div>
+                    <h1 class="font-headline-md text-headline-md font-bold leading-tight">Charbon Vert</h1>
+                    <p class="font-label-sm text-label-sm text-on-primary-container">Commercial &amp; finance</p>
+                </div>
+            </div>
+        </div>
+        <nav class="flex-1 px-2 space-y-1">
+            <a class="flex items-center gap-3 text-on-primary-container/70 hover:text-on-primary transition-colors px-4 py-3 mx-2 my-1"
+                href="#">
+                <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                <span class="font-body-md text-body-md">Tableau de bord</span>
+            </a>
+            <div>
+                <div class="flex items-center justify-between sidebar-active px-4 py-3 mx-2 my-1 cursor-pointer">
+                    <div class="flex items-center gap-3">
+                        <span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+                        <span class="font-body-md text-body-md">Gestion des commandes</span>
+                    </div>
+                    <span class="material-symbols-outlined text-sm" data-icon="expand_more">expand_more</span>
+                </div>
+                <div class="ml-12 mt-1 space-y-1">
+                    <a class="block text-on-primary font-bold py-2 text-sm" href="#">Modifier la commande</a>
+                    <a class="block text-on-primary-container/60 hover:text-on-primary py-2 text-sm transition-colors"
+                        href="#">Liste des commandes</a>
+                </div>
+            </div>
+            <a class="flex items-center gap-3 text-on-primary-container/70 hover:text-on-primary transition-colors px-4 py-3 mx-2 my-1"
+                href="#">
+                <span class="material-symbols-outlined" data-icon="local_shipping">local_shipping</span>
+                <span class="font-body-md text-body-md">Gestion de livraison</span>
+            </a>
+            <a class="flex items-center gap-3 text-on-primary-container/70 hover:text-on-primary transition-colors px-4 py-3 mx-2 my-1"
+                href="#">
+                <span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+                <span class="font-body-md text-body-md">Facturation</span>
+            </a>
+            <a class="flex items-center gap-3 text-on-primary-container/70 hover:text-on-primary transition-colors px-4 py-3 mx-2 my-1"
+                href="#">
+                <span class="material-symbols-outlined" data-icon="account_balance_wallet">account_balance_wallet</span>
+                <span class="font-body-md text-body-md">Gestion de finances</span>
+            </a>
+            <a class="flex items-center gap-3 text-on-primary-container/70 hover:text-on-primary transition-colors px-4 py-3 mx-2 my-1"
+                href="#">
+                <span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+                <span class="font-body-md text-body-md">Rapports</span>
+            </a>
+        </nav>
+        <div class="mt-auto px-4">
+            <button
+                class="w-full flex items-center gap-3 text-on-primary-container/70 hover:text-on-primary transition-colors px-4 py-3">
+                <span class="material-symbols-outlined" data-icon="logout">logout</span>
+                <span class="font-body-md text-body-md">Changer de rôle</span>
+            </button>
+        </div>
+    </aside>
+    <!-- Top App Bar -->
+    <header
+        class="ml-sidebar-width h-16 sticky top-0 z-10 bg-surface border-b border-outline-variant/30 flex justify-between items-center px-container-padding">
+        <div>
+            <h2 class="font-headline-md text-headline-md text-primary font-bold">Commercial &amp; finance</h2>
+            <div
+                class="flex items-center gap-1 text-[10px] uppercase tracking-wider text-on-surface-variant/60 font-bold">
+                <span class="">COMMANDES, LIVRAISONS &amp; TRÉSORERIE</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <div
+                class="hidden lg:flex items-center gap-2 bg-surface-container px-3 py-1.5 rounded-full text-label-sm text-on-surface-variant border border-outline-variant/50">
+                <span class="">Maquette · données fictives</span>
+            </div>
+            <button class="p-2 rounded-full hover:bg-surface-container-high transition-colors text-on-surface-variant">
+                <span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+            </button>
+            <div
+                class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary font-bold text-xs cursor-pointer hover:opacity-90">
+                N
+            </div>
+        </div>
+    </header>
+    <!-- Main Content -->
+    <main class="ml-sidebar-width p-container-padding max-w-[1400px]">
+        <div class="mb-8">
+            <h3 class="font-display-lg text-display-lg text-primary mb-2">Modifier la commande <span th:text="${commande.reference}" ></span></h3>
+            <p class="text-on-surface-variant max-w-2xl">Mettez à jour les informations de livraison et les articles du
+                panier pour cette commande client. Les totaux sont recalculés dynamiquement.</p>
+        </div>
+        <div class="heritage-card p-8 shadow-sm">
+            <!-- Order Info Header -->
+            <form action="/cmd/update" method="post">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div>
+                        <label class="block font-label-sm text-label-sm text-on-surface-variant mb-2">Client</label>
+                        <input class="w-full form-input bg-surface-container-lowest px-4 py-2.5 text-on-surface"
+                            placeholder="Nom du client" name="clientNom" id="client" list="client-list" autocomplete="off" type="text"
+                            th:value="${input != null ? input.clientNom : commande.client.nom}">
+                        <datalist id="client-list"></datalist>
+                        <input type="hidden" name="client.id" id="client-id">
+                        <span class="text-error" th:if="${clientError != null}" th:text="${clientError['client']}"></span>
+                    </div>
+                    <div>
+                        <label class="block font-label-sm text-label-sm text-on-surface-variant mb-2">Date
+                            souhaitée</label>
+                        <input class="w-full form-input bg-surface-container-lowest px-4 py-2.5 text-on-surface"
+                            type="date" value="2023-10-25">
+                    </div>
+                    <div>
+                        <label class="block font-label-sm text-label-sm text-on-surface-variant mb-2">Lieu de
+                            livraison</label>
+                        <input class="w-full form-input bg-surface-container-lowest px-4 py-2.5 text-on-surface"
+                            placeholder="Adresse ou quartier" type="text" value="Anosizato">
+                    </div>
+                    <!-- Footer Actions -->
+                </div>
+                <div class="flex items-center gap-4 mb-4">
+                    <button
+                        class="bg-primary-container text-on-primary px-8 py-3 rounded-lg font-bold hover:bg-primary transition-all shadow-md active:scale-95 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-sm" data-icon="save">save</span>
+                        Enregistrer les modifications
+                    </button>
+                    <button
+                        class="border border-outline text-on-surface-variant px-8 py-3 rounded-lg font-bold hover:bg-surface-container transition-all active:scale-95">
+                        Annuler
+                    </button>
+                </div>
+            </form>
+            <!-- Add Item Widget -->
+            <div class="bg-surface-container-low rounded-xl p-6 mb-8 border border-outline-variant/30">
+                <h4 class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-4">AJOUTER
+                    UN ARTICLE AU PANIER</h4>
+                <form action="/cmd/detail/update/add" method="post">
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <div class="flex-1">
+                            <label class="block text-xs font-bold text-on-surface-variant mb-1 ml-1">Produit</label>
+                            <select class="w-full form-input bg-white px-4 py-2.5 appearance-none" name="produit.id">
+                                <option th:each="p : ${produits}" th:value="${p.id}" th:text="${p.nom}">Charbon Éco Rond
+                                    (Sac 5kg) (15.00 Ar)</option>
+                                <!-- <option>Charbon Premium (Sac 10kg) (30.00 Ar)</option>
+                                <option>Bois de chauffe (Lot 5kg) (10.00 Ar)</option> -->
+                            </select>
+                        </div>
+                        <div class="w-full md:w-32">
+                            <label class="block text-xs font-bold text-on-surface-variant mb-1 ml-1">Quantité
+                                (kg)</label>
+                            <input name="quantite" class="w-full form-input bg-white px-4 py-2.5" type="number"
+                                value="1">
+                        </div>
+                        <div class="flex items-end">
+                            <button
+                                class="bg-primary-container text-on-primary px-8 py-2.5 rounded-lg font-bold hover:bg-primary transition-all active:scale-95 shadow-md">
+                                Ajouter
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <!-- Order Table -->
+            <div class="overflow-x-auto mb-8">
+                <table class="w-full border-collapse">
+                    <thead>
+                        <tr class="bg-surface-container-highest/30 text-left">
+                            <th
+                                class="py-3 px-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider rounded-tl-lg">
+                                PRODUIT</th>
+                            <th
+                                class="py-3 px-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">
+                                P.U</th>
+                            <th
+                                class="py-3 px-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider text-center">
+                                QUANTITÉ</th>
+                            <th
+                                class="py-3 px-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider text-right">
+                                TOTAL</th>
+                            <th
+                                class="py-3 px-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider text-center rounded-tr-lg">
+                            </th>
+                            <th
+                                class="py-3 px-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider text-center rounded-tr-lg">
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-outline-variant/20">
+                        <tr th:each="detail, index : ${details}"
+                            class="hover:bg-surface-container-lowest/50 transition-colors">
+                            <form action="/cmd/detail/update" method="post">
+                                <input type="hidden" name="id" th:value="${detail.id}">
+                                <input type="hidden" name="produit.id" th:value="${detail.produit.id}">
+                                <td th:text="${detail.produit.nom}" class="py-4 px-4 font-body-md text-on-surface">
+                                    Charbon
+                                    Éco Rond (Sac 5kg)</td>
+                                <td th:text="${detail.produit.pu}" class="py-4 px-4 font-body-md text-on-surface">15.00
+                                    Ar
+                                </td>
+                                <td class="py-4 px-4 font-body-md text-on-surface text-center font-bold">
+                                    <div class="flex items-center justify-center gap-2">
+                                        <input type="number"
+                                            class="w-20 form-input bg-white px-2 py-1 text-center font-bold"
+                                            th:value="${detail.quantite}" name="quantite">
+                                        <span class="text-sm text-on-surface-variant">kg</span>
+                                    </div>
+                                </td>
+                                <td th:text="${detail.findMontant() + ' Ar'}"
+                                    class="py-4 px-4 font-body-md text-on-surface text-right font-bold">60.0 Ar</td>
+                                <td class="py-4 px-4 text-center">
+                                    <button
+                                        class="bg-slate-50 hover:underline font-bold text-xs uppercase transition-colors">Modifier</button>
+                                </td>
+                            </form>
+                            <form th:if="${details.size() > 1}" action="/cmd/detail/delete" method="post">
+                                <input type="hidden" name="id" th:value="${detail.id}">
+                                <td class="py-4 px-4 text-center">
+                                    <button
+                                        class="text-error hover:underline font-bold text-xs uppercase transition-colors">Supprimer</button>
+                                </td>
+                            </form>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- Total Summary -->
+            <div class="bg-surface-container p-6 rounded-xl flex justify-between items-center mb-10">
+                <span class="font-headline-md text-headline-md text-on-surface-variant">Montant total estimé</span>
+                <span th:text="${total + ' Ar'}" class="font-display-lg text-display-lg text-primary">60 Ar</span>
+            </div>
+        </div>
+        <!-- Order Logs (Bonus/Contextual) -->
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const inputClient = document.getElementById('client');
+            const dataList = document.getElementById('client-list');
+            const clientId = document.getElementById('client-id');
+            let debounceTimeout;
+
+            inputClient.addEventListener('input', (e) => {
+                const valeur = e.target.value.trim();
+                const selected = dataList.querySelector(`option[value="${valeur}"]`);
+                clientId.value = "";
+                if (selected) {
+                    clientId.value = selected.getAttribute("real-value");
+                }
+                clearTimeout(debounceTimeout);
+
+                if (valeur.length >= 3) {
+                    debounceTimeout = setTimeout(() => {
+                        fetchClients(valeur);
+                    }, 300);
+                } else {
+                    dataList.innerHTML = '';
+                }
+            });
+
+            async function fetchClients(motCle) {
+                try {
+                    const url = `http://localhost:8080/cmd/api/cli?kw=${encodeURIComponent(motCle)}`;
+
+                    const response = await fetch(url);
+
+                    if (!response.ok) {
+                        throw new Error(`Erreur HTTP: ${response.status}`);
+                    }
+
+                    const clients = await response.json();
+
+                    dataList.innerHTML = '';
+
+                    clients.forEach(client => {
+                        const option = document.createElement('option');
+
+                        option.value = client.nom || client;
+                        option.setAttribute("real-value", client.id);
+
+                        dataList.appendChild(option);
+                    });
+
+                } catch (error) {
+                    console.error("Erreur lors de la récupération des clients :", error);
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -15,6 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.charbonecolo.dto.CommandeDto;
+import com.example.charbonecolo.dto.DetailErrorWrapper;
+import com.example.charbonecolo.exception.InvalidCommandeException;
+import com.example.charbonecolo.exception.InvalidDetailException;
 import com.example.charbonecolo.model.CommandeModel;
 import com.example.charbonecolo.model.CommandeStatutModel;
 import com.example.charbonecolo.model.DetailCommandeModel;
@@ -76,8 +80,69 @@ public class CommandeService {
         saveAllDetails(details);
     }
 
+    public void checkCommandeEntry(CommandeModel commande) throws InvalidCommandeException {
+        boolean ok = true;
+        Map<String, String> fieldErrors = new HashMap<>();
+        if(commande.getClient() == null || commande.getClient().getId() == null) {
+            ok = false;
+            fieldErrors.put("client", "Client introuvable.");
+        }
+        if(!ok) {
+            InvalidCommandeException ex = new InvalidCommandeException();
+            ex.setFieldErrors(fieldErrors);
+            throw ex;
+        }
+    }
+
+    public void checkDetailEntry(DetailCommandeModel detail) throws InvalidDetailException {
+        boolean ok = false;
+        DetailErrorWrapper wrapper = null;
+        if(detail.getQuantite() <= 0) {
+            wrapper = new DetailErrorWrapper();
+            wrapper.setQuantiteError("La quantite doit etre superieure a 0");
+            ok = false;
+        }
+        if(detail.getProduit() == null || detail.getProduit().getId() == null) {
+            if(wrapper == null) 
+                wrapper = new DetailErrorWrapper();
+            wrapper.setProduitError("Le champ produit est requis.");
+            ok = false;
+        }
+        if(!ok) {
+            InvalidDetailException ex = new InvalidDetailException();
+            wrapper.setId(detail.getId());
+            ex.setFieldErrors(wrapper);
+            throw ex;
+        }
+    }
+
+    @Transactional
+    public void save(CommandeModel commande) {
+        commandeRepository.save(commande);
+    }
+
     @Transactional
     public void saveAllDetails(List<DetailCommandeModel> details) {
         detailCommandeRepository.saveAll(details);
+    }
+
+    @Transactional
+    public void saveDetail(DetailCommandeModel detail) {
+        detailCommandeRepository.save(detail);
+    }
+
+    @Transactional
+    public CommandeModel findById(Integer id) {
+        return commandeRepository.findById(id).orElse(null);
+    }
+
+    @Transactional
+    public List<DetailCommandeModel> findDetails(Integer id) {
+        return  detailCommandeRepository.findByCommandeId(id);
+    }
+
+    @Transactional 
+    public void deleteDetail(Integer id) {
+        detailCommandeRepository.deleteById(id);
     }
 }

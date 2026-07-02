@@ -17,4 +17,8 @@ public class ClientService {
     public List<ClientModel> findAll() {
         return clientRepository.findAll();
     }
+
+    public List<ClientModel> findByName(String nom) {
+        return clientRepository.findByNomContainingIgnoreCase(nom);
+    }
 }
