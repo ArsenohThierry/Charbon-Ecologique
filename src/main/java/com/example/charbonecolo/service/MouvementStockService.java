@@ -11,11 +11,14 @@ import com.example.charbonecolo.model.LotProductionModel;
 import com.example.charbonecolo.model.LotStatutsModel;
 import com.example.charbonecolo.model.MotifSortieModel;
 import com.example.charbonecolo.model.MouvementStockModel;
+import com.example.charbonecolo.model.SeuilModel;
 import com.example.charbonecolo.model.TypeMouvementStockModel;
+import com.example.charbonecolo.repository.AlerteSeuilRepository;
 import com.example.charbonecolo.repository.LotProductionRepository;
 import com.example.charbonecolo.repository.LotStatutsRepository;
 import com.example.charbonecolo.repository.MotifSortieRepository;
 import com.example.charbonecolo.repository.MouvementStockRepository;
+import com.example.charbonecolo.repository.SeuilRepository;
 import com.example.charbonecolo.repository.StatutsLotProductionRepository;
 import com.example.charbonecolo.repository.TypeMouvementStockRepository;
 
@@ -36,6 +39,8 @@ public class MouvementStockService {
     private LotStatutsRepository lotStatutsRepository;
     @Autowired
     private SeuilRepository seuilRepository;
+    @Autowired
+    private AlerteSeuilRepository alerteSeuilRepository;
 
     private TypeMouvementStockModel sortieType = typeMouvementStockRepository.findByLibelle("Sortie");
     private List<MouvementStockModel> sorties = mouvementStockRepository.findByTypeMouvement(sortieType);
