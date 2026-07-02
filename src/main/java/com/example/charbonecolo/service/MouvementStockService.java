@@ -60,9 +60,9 @@ public class MouvementStockService {
     @Autowired
     private AlerteSeuilRepository alerteSeuilRepository;
 
-    private TypeMouvementStockModel sortieType = typeMouvementStockRepository.findByLibelle("Sortie");
+    private TypeMouvementStockModel sortieType = typeMouvementStockRepository.findByLibelleDirect("Sortie");
     private List<MouvementStockModel> sorties = mouvementStockRepository.findByTypeMouvement(sortieType);
-    private TypeMouvementStockModel entreeType = typeMouvementStockRepository.findByLibelle("Entree");
+    private TypeMouvementStockModel entreeType = typeMouvementStockRepository.findByLibelleDirect("Entree");
     private List<MouvementStockModel> entrees = mouvementStockRepository.findByTypeMouvement(entreeType);
     private List<SeuilModel> ruptures = seuilRepository.findByAlerteSeuil(alerteSeuilRepository.findByLibelle("Rupture"));
     private List<SeuilModel> faibles = seuilRepository.findByAlerteSeuil(alerteSeuilRepository.findByLibelle("Faible"));

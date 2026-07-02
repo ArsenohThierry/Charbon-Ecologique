@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface TypeMouvementStockRepository extends JpaRepository<TypeMouvementStockModel, Integer> {
     Optional<TypeMouvementStockModel> findByLibelle(String libelle);
+    TypeMouvementStockModel findByLibelleDirect(String libelle);
 }
