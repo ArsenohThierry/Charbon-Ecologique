@@ -31,7 +31,7 @@ public class MouvementStockController {
         this.mouvementStockService = mouvementStockService;
     }
 
-    // ── ENTRÉE ───────────────────────────────────────────────────
+    //ENTRÉE 
 
     /**
      * Affiche la page d'entrée stock avec les lots et l'historique
@@ -54,7 +54,7 @@ public class MouvementStockController {
         return "redirect:/stock/entree";
     }
 
-    // ── SORTIE (FIFO) ───────────────────────────────────────────
+    //SORTIE (FIFO) 
 
     /**
      * Affiche la page de sortie stock avec les produits, motifs et l'historique
