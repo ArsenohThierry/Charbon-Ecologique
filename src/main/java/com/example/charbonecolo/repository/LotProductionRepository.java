@@ -1,7 +1,9 @@
 package com.example.charbonecolo.repository;
 
 import com.example.charbonecolo.model.LotProductionModel;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -13,6 +15,7 @@ import java.util.Optional;
 public interface LotProductionRepository extends JpaRepository<LotProductionModel, Integer> {
     Optional<LotProductionModel> findByReference(String reference);
 
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT l FROM LotProductionModel l " +
            "WHERE l.idProduit = :idProduit " +
            "AND (l.quantiteRestante IS NOT NULL AND l.quantiteRestante > 0) " +

@@ -226,7 +226,14 @@ public class MouvementStockService {
         if (isEntree) {
             LotProductionModel lot = mouvement.getLotProduction();
             if (lot != null) {
-                lot.setQuantiteRestante(lot.getQuantiteRestante() - mouvement.getQuantite());
+                int nouveauStock = lot.getQuantiteRestante() - mouvement.getQuantite();
+                if (nouveauStock < 0) {
+                    throw new BusinessException(
+                        "Impossible de supprimer cette entrée : le stock du lot " + lot.getReference()
+                        + " a déjà été consommé par des sorties. Supprimez d'abord les sorties concernées."
+                    );
+                }
+                lot.setQuantiteRestante(nouveauStock);
                 lotProductionRepository.save(lot);
             }
         } else {
