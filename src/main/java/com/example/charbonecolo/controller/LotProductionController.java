@@ -54,7 +54,7 @@ public String listLots(Model model) {
             @RequestParam Integer idTypeMatierePremiere,
             @RequestParam Integer idProduit,
             @RequestParam BigDecimal quantiteMatiereUtilisee,
-            @RequestParam Integer quantiteProduitPrevues,
+            @RequestParam Integer quantiteProduitPrevue,
             @RequestParam(required = false) String dateEntreeLot,
             @RequestParam(required = false) String remarques,
             Model model) {      
@@ -67,7 +67,7 @@ public String listLots(Model model) {
             produitService.findById(idProduit)
         );
         lot.setQuantiteMatiereUtilisee(quantiteMatiereUtilisee);
-        lot.setQuantiteProduitPrevue(quantiteProduitPrevues);
+        lot.setQuantiteProduitPrevue(quantiteProduitPrevue);
         lot.setRemarques(remarques);        
         if (dateEntreeLot != null && !dateEntreeLot.isBlank()) {
             lot.setDateEntreeLot(LocalDateTime.parse(dateEntreeLot));

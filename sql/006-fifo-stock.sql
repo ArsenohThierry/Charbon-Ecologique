@@ -2,9 +2,6 @@
 -- FIFO Stock Management
 -- ============================================
 
--- Ajout de la colonne quantite_restante à lot_production
-ALTER TABLE lot_production ADD COLUMN IF NOT EXISTS quantite_restante INT DEFAULT NULL;
-
 -- Table de liaison entre sorties et lots consommés (traçabilité FIFO)
 CREATE TABLE IF NOT EXISTS mouvement_sortie_detail (
     id SERIAL PRIMARY KEY,

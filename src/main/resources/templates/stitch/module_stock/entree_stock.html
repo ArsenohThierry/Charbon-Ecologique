@@ -95,6 +95,7 @@
               <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Lot</th>
               <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Matière</th>
               <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Quantité</th>
+              <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Quantité restante</th>
               <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Fournisseur</th>
               <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Statut</th>
               <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Actions</th>
@@ -111,6 +112,8 @@
               <td class="px-6 py-4 text-sm text-gray-600" th:text="${m.lotProduction?.typeMatierePremiere?.libelle}">
               </td>
               <td class="px-6 py-4 text-sm text-right font-bold text-brand-dark" th:text="${m.quantite} + ' unités'">
+              </td>
+              <td class="px-6 py-4 text-sm text-right font-bold text-brand-dark" th:text="${stockParLot.get(m.lotProduction?.id)} + ' unités'">
               </td>
               <td class="px-6 py-4 text-sm text-gray-600"
                 th:text="${m.lotProduction?.typeMatierePremiere?.fournisseur?.nom}">
