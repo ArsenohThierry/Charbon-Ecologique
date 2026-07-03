@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script th:src="@{/js/kpi-chart.js}"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -18,6 +19,16 @@
                 }
             }
         }
+    </script>
+    <script th:inline="javascript">
+        const rawData = [[${evolutionCA}]];
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof chargerGraphique === 'function') {
+                chargerGraphique(rawData);
+            } else if (typeof renderChart === 'function') {
+                renderChart(rawData);
+            }
+        });
     </script>
     <style>
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
@@ -73,6 +84,36 @@
         <h1 class="text-2xl font-bold text-slate-900">Tableau de Bord KPI</h1>
         <p class="text-sm text-slate-500 mt-1">Indicateurs financiers clés — Mois en cours</p>
     </div>
+    <form th:action="@{/finance/kpi}" method="get"
+        class="flex flex-wrap items-end gap-4 mb-6">
+
+        <div>
+            <label class="block text-sm font-medium mb-1">Du</label>
+            <input type="date"
+                name="dateDebut"
+                th:value="${dateDebut}"
+                class="border rounded-lg px-3 py-2">
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium mb-1">Au</label>
+            <input type="date"
+                name="dateFin"
+                th:value="${dateFin}"
+                class="border rounded-lg px-3 py-2">
+        </div>
+
+        <button type="submit"
+                class="px-4 py-2 bg-blue-600 text-white rounded-lg">
+            Filtrer
+        </button>
+
+        <a th:href="@{/finance/dashboard}"
+        class="px-4 py-2 bg-gray-200 rounded-lg">
+            Réinitialiser
+        </a>
+
+    </form>
 
     <!-- KPI Cards Row -->
     <div class="grid grid-cols-2 xl:grid-cols-3 gap-5 mb-8">
@@ -154,9 +195,9 @@
         <div class="bg-brand-dark rounded-2xl p-6 flex flex-col justify-between">
             <p class="text-sm font-semibold text-white mb-4">Accès rapide</p>
             <div class="space-y-2">
-                <a href="/finance/journal"    class="block px-3 py-2 bg-white/10 text-white text-sm rounded-lg hover:bg-white/20 transition-colors">📋 Journal</a>
-                <a href="/finance/bilan"      class="block px-3 py-2 bg-white/10 text-white text-sm rounded-lg hover:bg-white/20 transition-colors">📊 Bilan</a>
-                <a href="/finance/tresorerie" class="block px-3 py-2 bg-white/10 text-white text-sm rounded-lg hover:bg-white/20 transition-colors">💳 Trésorerie</a>
+                <a href="/finance/journal"    class="block px-3 py-2 bg-white/10 text-white text-sm rounded-lg hover:bg-white/20 transition-colors"> Journal</a>
+                <a href="/finance/bilan"      class="block px-3 py-2 bg-white/10 text-white text-sm rounded-lg hover:bg-white/20 transition-colors"> Bilan</a>
+                <a href="/finance/tresorerie" class="block px-3 py-2 bg-white/10 text-white text-sm rounded-lg hover:bg-white/20 transition-colors"> Trésorerie</a>
             </div>
         </div>
     </div>
@@ -167,51 +208,5 @@
         <canvas id="caChart" height="100"></canvas>
     </div>
 </main>
-
-<!-- Chart.js Script -->
-<script th:inline="javascript">
-    /*<![CDATA[*/
-    const rawData = /*[[${evolutionCA}]]*/ [];
-
-    const labels  = rawData.map(d => d.mois  || d.MOIS  || '');
-    const values  = rawData.map(d => parseFloat(d.total || d.TOTAL || 0));
-
-    const ctx = document.getElementById('caChart').getContext('2d');
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: "CA (MGA)",
-                data: values,
-                backgroundColor: 'rgba(64,123,74,0.75)',
-                borderColor: '#407B4A',
-                borderWidth: 2,
-                borderRadius: 6,
-                hoverBackgroundColor: '#C79E5C'
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    callbacks: {
-                        label: ctx => ctx.formattedValue + ' MGA'
-                    }
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: { color: 'rgba(0,0,0,.05)' },
-                    ticks: { callback: v => v.toLocaleString() + ' MGA' }
-                },
-                x: { grid: { display: false } }
-            }
-        }
-    });
-    /*]]>*/
-</script>
 </body>
 </html>

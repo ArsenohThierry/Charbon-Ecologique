@@ -67,25 +67,7 @@ Pages:
 
 ---
 
-## Requetes utiles
+### Correction:
 
-Solde actuel :
-
-```sql
-SELECT COALESCE(SUM(debit), 0) - COALESCE(SUM(credit), 0) AS solde
-FROM journal_financier;
-```
-
-Historique de tresorerie :
-
-```sql
-SELECT
-    reference,
-    date_operation,
-    description,
-    debit,
-    credit,
-    SUM(debit - credit) OVER(ORDER BY date_operation, id) AS solde
-FROM journal_financier
-ORDER BY date_operation, id;
-```
+* Separer le js du code html(creation de kpi-chart.js)
+* ajouter une filtre par mois pour 
