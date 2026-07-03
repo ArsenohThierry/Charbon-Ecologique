@@ -11,10 +11,12 @@ import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.charbonecolo.dto.CommandeDto;
+import com.example.charbonecolo.dto.CriteriaWrapper;
 import com.example.charbonecolo.model.CommandeModel;
 import com.example.charbonecolo.model.CommandeStatutModel;
 import com.example.charbonecolo.model.DetailCommandeModel;
@@ -40,10 +42,10 @@ public class CommandeService {
     }
 
     @Transactional(readOnly = true)
-    public Page<CommandeDto> listCommandes(Pageable pageable) {
-        Page<Object[]> pageBrute = commandeRepository.findCustomCommandes(pageable);
+    public Slice<CommandeDto> listCommandes(Pageable pageable, CriteriaWrapper wrapper) {
+        Slice<Object[]> sliceBrut = commandeRepository.findCustomCommandes(pageable, wrapper);
 
-        Page<CommandeDto> ret = pageBrute.map(ligne -> new CommandeDto(
+        Slice<CommandeDto> ret = sliceBrut.map(ligne -> new CommandeDto(
                 (Integer) ligne[0],
                 (String) ligne[1],
                 (LocalDateTime) ligne[2],
@@ -51,17 +53,24 @@ public class CommandeService {
                 ((BigDecimal) ligne[5]).doubleValue(),
                 (Integer) ligne[6],
                 (String) ligne[7]));
-        List<CommandeDto> listRet = ret.getContent();
-        List<Integer> commandeIds = listRet.stream().map(CommandeDto::getId).toList();
-        List<DetailCommandeModel> details = detailCommandeRepository.findAllByCommandeIdIn(commandeIds);
-        Map<Integer, List<DetailCommandeModel>> detailsParCommande = details.stream()
-                .collect(Collectors.groupingBy(d -> d.getCommande().getId()));
 
-        listRet.forEach(dto -> {
-            List<DetailCommandeModel> listDetails = detailsParCommande.getOrDefault(dto.getId(), List.of());
-            dto.setDetails(listDetails);
-        });
-        return ret;
+        List<CommandeDto> listRet = ret.getContent();
+
+        List<Integer> commandeIds = listRet.stream().map(CommandeDto::getId).toList();
+
+        if (!commandeIds.isEmpty()) {
+            List<DetailCommandeModel> details = detailCommandeRepository.findAllByCommandeIdIn(commandeIds);
+
+            Map<Integer, List<DetailCommandeModel>> detailsParCommande = details.stream()
+                    .collect(Collectors.groupingBy(d -> d.getCommande().getId()));
+
+            listRet.forEach(dto -> {
+                List<DetailCommandeModel> listDetails = detailsParCommande.getOrDefault(dto.getId(), List.of());
+                dto.setDetails(listDetails);
+            });
+        }
+
+        return ret; 
     }
 
     @Transactional
@@ -84,5 +93,25 @@ public class CommandeService {
     @Transactional
     public void saveAllDetails(List<DetailCommandeModel> details) {
         detailCommandeRepository.saveAll(details);
+    }
+
+        @Transactional
+    public void saveDetail(DetailCommandeModel detail) {
+        detailCommandeRepository.save(detail);
+    }
+
+    @Transactional
+    public CommandeModel findById(Integer id) {
+        return commandeRepository.findById(id).orElse(null);
+    }
+
+    @Transactional
+    public List<DetailCommandeModel> findDetails(Integer id) {
+        return detailCommandeRepository.findByCommandeId(id);
+    }
+
+    @Transactional
+    public void deleteDetail(Integer id) {
+        detailCommandeRepository.deleteById(id);
     }
 }

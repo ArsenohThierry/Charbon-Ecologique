@@ -887,6 +887,10 @@ input:where([type='file']):focus {
   margin-bottom: 2rem;
 }
 
+.ml-1 {
+  margin-left: 0.25rem;
+}
+
 .ml-10 {
   margin-left: 2.5rem;
 }
@@ -1003,10 +1007,6 @@ input:where([type='file']):focus {
   height: 0.75rem;
 }
 
-.h-3\.5 {
-  height: 0.875rem;
-}
-
 .h-4 {
   height: 1rem;
 }
@@ -1067,16 +1067,16 @@ input:where([type='file']):focus {
   width: 0.75rem;
 }
 
-.w-3\.5 {
-  width: 0.875rem;
-}
-
 .w-32 {
   width: 8rem;
 }
 
 .w-4 {
   width: 1rem;
+}
+
+.w-40 {
+  width: 10rem;
 }
 
 .w-44 {
@@ -1244,6 +1244,10 @@ input:where([type='file']):focus {
 
 .items-center {
   align-items: center;
+}
+
+.justify-start {
+  justify-content: flex-start;
 }
 
 .justify-end {
@@ -1775,11 +1779,6 @@ input:where([type='file']):focus {
   background-color: rgb(209 250 229 / var(--tw-bg-opacity, 1));
 }
 
-.bg-emerald-600 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(5 150 105 / var(--tw-bg-opacity, 1));
-}
-
 .bg-emerald-700 {
   --tw-bg-opacity: 1;
   background-color: rgb(4 120 87 / var(--tw-bg-opacity, 1));
@@ -2088,6 +2087,10 @@ input:where([type='file']):focus {
 
 .pr-4 {
   padding-right: 1rem;
+}
+
+.pr-8 {
+  padding-right: 2rem;
 }
 
 .pt-2 {
@@ -2486,10 +2489,6 @@ input:where([type='file']):focus {
   -moz-osx-font-smoothing: grayscale;
 }
 
-.opacity-40 {
-  opacity: 0.4;
-}
-
 .opacity-5 {
   opacity: 0.05;
 }
@@ -2534,11 +2533,6 @@ input:where([type='file']):focus {
   --tw-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-}
-
-.shadow-emerald-100 {
-  --tw-shadow-color: #d1fae5;
-  --tw-shadow: var(--tw-shadow-colored);
 }
 
 .outline-none {
@@ -2946,6 +2940,14 @@ input:where([type='file']):focus {
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
+.disabled\:pointer-events-none:disabled {
+  pointer-events: none;
+}
+
+.disabled\:opacity-40:disabled {
+  opacity: 0.4;
+}
+
 .disabled\:opacity-50:disabled {
   opacity: 0.5;
 }
@@ -2957,6 +2959,10 @@ input:where([type='file']):focus {
 }
 
 @media (min-width: 640px) {
+  .sm\:w-auto {
+    width: auto;
+  }
+
   .sm\:grid-cols-2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -2975,10 +2981,6 @@ input:where([type='file']):focus {
     grid-column: span 2 / span 2;
   }
 
-  .md\:w-auto {
-    width: auto;
-  }
-
   .md\:grid-cols-2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -2987,8 +2989,8 @@ input:where([type='file']):focus {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
-  .md\:flex-row {
-    flex-direction: row;
+  .md\:grid-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 
