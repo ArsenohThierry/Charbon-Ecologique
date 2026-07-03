@@ -238,16 +238,16 @@
         </div>
         <div class="heritage-card p-8 shadow-sm">
             <!-- Order Info Header -->
-            <form action="/cmd/update" method="post">
+            <form action="/cmd/update" th:object="${clientDto}" method="post">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                     <div>
                         <label class="block font-label-sm text-label-sm text-on-surface-variant mb-2">Client</label>
                         <input class="w-full form-input bg-surface-container-lowest px-4 py-2.5 text-on-surface"
-                            placeholder="Nom du client" name="clientNom" id="client" list="client-list" autocomplete="off" type="text"
-                            th:value="${input != null ? input.clientNom : commande.client.nom}">
+                            placeholder="Nom du client" th:field="*{clientNom}" id="client" list="client-list" autocomplete="off" type="text">
                         <datalist id="client-list"></datalist>
-                        <input type="hidden" name="client.id" id="client-id">
-                        <span class="text-error" th:if="${clientError != null}" th:text="${clientError['client']}"></span>
+                        <input type="hidden" name="client.id" th:value="*{id}" id="client-id">
+                        <span class="text-error" th:if="${#fields.hasErrors('clientNom')}" th:errors="*{clientNom}" ></span>
+                        <span class="text-error" th:if="${clientError != null && clientError['client'] != null}" th:text="${clientError['client']}"></span>
                     </div>
                     <div>
                         <label class="block font-label-sm text-label-sm text-on-surface-variant mb-2">Date
