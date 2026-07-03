@@ -31,6 +31,7 @@ build/
 
 ### Node / Tailwind ###
 node_modules/
+node_modules/*
 src/main/resources/static/css/output.css
 
 ### VS Code ###
