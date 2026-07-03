@@ -19,7 +19,7 @@
 
   <section class="mb-6">
     <h3 class="text-3xl font-serif font-bold mb-1">
-      Modifier <span th:text="${mouvement.typeMouvement.libelle == 'Entree' ? 'une entrée' : 'une sortie'}"></span>
+      Modifier <span th:text="${mouvement.typeMouvement.libelle == 'Entrée' ? 'une entrée' : 'une sortie'}"></span>
     </h3>
     <p class="text-gray-500 text-sm italic">Mettez à jour les informations du mouvement.</p>
   </section>
@@ -34,7 +34,7 @@
       <input type="hidden" name="id" th:value="${mouvement.id}"/>
 
       <!-- Lot de production (entree only) -->
-      <div class="space-y-1.5" th:if="${mouvement.typeMouvement.libelle == 'Entree'}">
+      <div class="space-y-1.5" th:if="${mouvement.typeMouvement.libelle == 'Entrée'}">
         <label class="block text-sm font-semibold text-gray-700">Lot de production</label>
         <select name="idLot" class="w-full h-11 px-4 rounded-lg border-gray-200 focus:ring-leaf-green focus:border-leaf-green text-sm">
           <option th:each="lot : ${lots}"
@@ -78,7 +78,7 @@
                 class="bg-leaf-green hover:bg-forest-green text-white px-8 py-2.5 rounded-lg font-medium transition-colors text-sm">
           Enregistrer les modifications
         </button>
-        <a th:if="${mouvement.typeMouvement.libelle == 'Entree'}" th:href="@{/stock/entree}"
+        <a th:if="${mouvement.typeMouvement.libelle == 'Entrée'}" th:href="@{/stock/entree}"
            class="px-8 py-2.5 rounded-lg border border-gray-200 text-gray-600 font-medium hover:bg-gray-50 transition-colors text-sm">
           Annuler
         </a>

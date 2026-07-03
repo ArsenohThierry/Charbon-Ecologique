@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Entrée de stock - Charbon Vert</title>
+<title>Entree de stock - Charbon Vert</title>
 <link rel="stylesheet" th:href="@{/css/output.css}" href="../../../static/css/output.css" />
 <link rel="stylesheet" th:href="@{/css/fonts.css}" href="../../../static/css/fonts.css" />
 </head>
@@ -21,7 +21,7 @@
   </header>
 
   <section class="mb-10">
-      <h3 class="text-3xl font-serif font-bold mb-1">Enregistrer une entrée de stock</h3>
+      <h3 class="text-3xl font-serif font-bold mb-1">Enregistrer une Entree de stock</h3>
     <p class="text-gray-500 text-sm italic">Ajoutez les produits finis issus d'un lot de production. Le stock disponible par lot sera suivi pour la méthode FIFO.</p>
   </section>
 
@@ -65,7 +65,7 @@
       <div class="md:col-span-2 pt-4 flex items-center gap-4">
         <button type="submit"
                 class="bg-brand-success hover:bg-brand-dark text-white px-8 py-2.5 rounded-lg font-medium transition-colors text-sm">
-          Valider l'entrée
+          Valider l'Entree
         </button>
         <a th:href="@{/stock/entree}"
            class="px-8 py-2.5 rounded-lg border border-gray-200 text-gray-600 font-medium hover:bg-gray-50 transition-colors text-sm">
@@ -81,7 +81,7 @@
   <!-- BEGIN: Recent Entries Table -->
   <section>
     <div class="flex justify-between items-end mb-6">
-      <h4 class="text-xl font-bold text-brand-dark">Historique récent des entrées</h4>
+      <h4 class="text-xl font-bold text-brand-dark">Historique récent des Entrees</h4>
       <button class="text-sm font-medium text-brand-success hover:underline">Voir tout l'historique</button>
     </div>
     <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
@@ -90,11 +90,10 @@
             <tr>
               <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Date</th>
               <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Lot</th>
-              <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Matière</th>
+              <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Produit</th>
               <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Quantité</th>
               <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Reste (FIFO)</th>
-              <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Fournisseur</th>
-              <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Statut</th>
+              <!-- <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Statut</th> -->
               <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
@@ -108,18 +107,17 @@
                 th:text="${#temporals.format(m.dateMouvement, 'dd/MM/yyyy')}"></td>
             <td class="px-6 py-4 text-sm font-medium text-brand-dark"
                 th:text="${m.lotProduction?.reference}"></td>
-            <td class="px-6 py-4 text-sm text-gray-600">—</td>
+            <td class="px-6 py-4 text-sm text-gray-600" th:text="${m.lotProduction?.produit?.nom}">—</td>
             <td class="px-6 py-4 text-sm text-right font-bold text-brand-dark"
                 th:text="${m.quantite} + ' unités'"></td>
             <td class="px-6 py-4 text-sm text-right"
                 th:text="${m.lotProduction?.quantiteRestante != null ? m.lotProduction?.quantiteRestante + ' u.' : '—'}">
             </td>
-            <td class="px-6 py-4 text-sm text-gray-600">—</td>
-            <td class="px-6 py-4">
+            <!-- <td class="px-6 py-4">
               <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                 Validé
               </span>
-            </td>
+            </td> -->
             <td class="px-6 py-4">
               <div class="flex items-center gap-2">
                 <a th:href="@{/stock/mouvement/modifier(id=${m.id})}"
