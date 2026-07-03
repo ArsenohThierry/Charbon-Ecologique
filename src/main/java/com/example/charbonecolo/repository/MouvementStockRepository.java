@@ -4,6 +4,7 @@ import com.example.charbonecolo.model.LotProductionModel;
 import com.example.charbonecolo.model.MouvementStockModel;
 import com.example.charbonecolo.model.TypeMouvementStockModel;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -24,4 +25,22 @@ public interface MouvementStockRepository extends JpaRepository<MouvementStockMo
     List<MouvementStockModel> findByLotProduction(LotProductionModel lotProduction);
 
     Optional<MouvementStockModel> findById(Integer id);
+
+    Boolean existsEntreeByLotProduction(LotProductionModel lotProduction);
+
+    @Query("""
+            SELECT COALESCE(SUM(m.quantite),0)
+            FROM MouvementStockModel m
+            WHERE m.lotProduction.id = :idLot
+            AND m.typeMouvement.libelle = 'Entree'
+            """)
+    Integer sumEntreesByLot(Integer idLot);
+
+    @Query("""
+            SELECT COALESCE(SUM(m.quantite), 0)
+            FROM MouvementStockModel m
+            WHERE m.lotProduction.produit.id = :idProduit
+            AND m.typeMouvement.libelle = 'Entree'
+            """)
+    Integer sumEntreesByProduit(Integer idProduit);
 }

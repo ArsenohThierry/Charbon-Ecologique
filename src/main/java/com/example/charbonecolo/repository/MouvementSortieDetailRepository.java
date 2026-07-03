@@ -3,6 +3,7 @@ package com.example.charbonecolo.repository;
 import com.example.charbonecolo.model.MouvementSortieDetailModel;
 import com.example.charbonecolo.model.MouvementStockModel;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -13,4 +14,18 @@ public interface MouvementSortieDetailRepository extends JpaRepository<Mouvement
     List<MouvementSortieDetailModel> findByMouvementSortie(MouvementStockModel mouvementSortie);
 
     void deleteByMouvementSortie(MouvementStockModel mouvementSortie);
+
+    @Query("""
+            SELECT COALESCE(SUM(d.quantite),0)
+            FROM MouvementSortieDetailModel d
+            WHERE d.lotProduction.id = :idLot
+            """)
+    Integer sumSortiesByLot(Integer idLot);
+
+    @Query("""
+            SELECT COALESCE(SUM(d.quantite), 0)
+            FROM MouvementSortieDetailModel d
+            WHERE d.lotProduction.produit.id = :idProduit
+            """)
+    Integer sumSortiesByProduit(Integer idProduit);
 }

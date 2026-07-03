@@ -1,24 +1,26 @@
 package com.example.charbonecolo.dto;
 
+import java.time.LocalDate;
+
 public class EntreeStockDTO {
     private Integer id;
-    private String reference;
-    private String dateEntree;
-    private String fournisseurNom;
-    private Double montant;
-    private Integer idEntreeStockStatuts;
-    private String statutLibelle;
+    private Integer idLot;
+    private LocalDate dateEntree;
+    private Integer quantite;
 
-    // 1. Le constructeur EXACT pour le @SqlResultSetMapping
-    public EntreeStockDTO(Integer id, String reference, String dateEntree, 
-                       String fournisseurNom, Double montant, Integer idEntreeStockStatuts, String statutLibelle) {
-        this.id = id;
-        this.reference = reference;
+    // 1. Le constructeur EXACT pour le @SqlResultSetMapping (without id)
+    public EntreeStockDTO(Integer idLot, LocalDate dateEntree, Integer quantite) {
+        this.idLot = idLot;
         this.dateEntree = dateEntree;
-        this.fournisseurNom = fournisseurNom;
-        this.montant = montant;
-        this.idEntreeStockStatuts = idEntreeStockStatuts;
-        this.statutLibelle = statutLibelle;
+        this.quantite = quantite;
+    }
+
+    // Constructor for update (with id)
+    public EntreeStockDTO(Integer id, Integer idLot, LocalDate dateEntree, Integer quantite) {
+        this.id = id;
+        this.idLot = idLot;
+        this.dateEntree = dateEntree;
+        this.quantite = quantite;
     }
 
     // 2. Constructeur par défaut (recommandé)
@@ -34,11 +36,27 @@ public class EntreeStockDTO {
         this.id = id;
     }
 
-    public String getReference() {
-        return reference;
+    public Integer getIdLot() {
+        return idLot;
     }
 
-    public void setReference(String reference) {
-        this.reference = reference;
+    public void setIdLot(Integer idLot) {
+        this.idLot = idLot;
+    }
+
+    public LocalDate getDateEntree() {
+        return dateEntree;
+    }
+
+    public void setDateEntree(LocalDate dateEntree) {
+        this.dateEntree = dateEntree;
+    }
+
+    public Integer getQuantite() {
+        return quantite;
+    }
+
+    public void setQuantite(Integer quantite) {
+        this.quantite = quantite;
     }
 }

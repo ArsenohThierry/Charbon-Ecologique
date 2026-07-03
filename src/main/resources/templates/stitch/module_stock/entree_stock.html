@@ -1,150 +1,152 @@
 <!DOCTYPE html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Entrée de stock - Charbon Vert</title>
-<link rel="stylesheet" th:href="@{/css/output.css}" href="../../../static/css/output.css" />
-<link rel="stylesheet" th:href="@{/css/fonts.css}" href="../../../static/css/fonts.css" />
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Entrée de stock - Charbon Vert</title>
+  <link rel="stylesheet" th:href="@{/css/output.css}" href="../../../static/css/output.css" />
+  <link rel="stylesheet" th:href="@{/css/fonts.css}" href="../../../static/css/fonts.css" />
 </head>
+
 <body class="bg-brand-light font-sans text-slate-800 min-h-screen flex">
-<aside th:replace="~{fragments/sidebar :: sidebar('entree-stock')}"></aside>
-<main class="flex-1 p-8">
-  <header class="flex justify-between items-start mb-10">
-    <div>
-      <h2 class="text-2xl font-bold text-brand-dark">Gestionnaire de stock</h2>
-      <p class="text-sm text-gray-500">Approvisionnement, lots &amp; inventaire</p>
-    </div>
-    <div class="flex items-center gap-4">
-      <div class="w-10 h-10 bg-brand-success rounded-full flex items-center justify-center text-white font-bold">N</div>
-    </div>
-  </header>
+  <aside th:replace="~{fragments/sidebar :: sidebar('entree-stock')}"></aside>
+  <main class="flex-1 p-8">
+    <header class="flex justify-between items-start mb-10">
+      <div>
+        <h2 class="text-2xl font-bold text-brand-dark">Gestionnaire de stock</h2>
+        <p class="text-sm text-gray-500">Approvisionnement, lots &amp; inventaire</p>
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="w-10 h-10 bg-brand-success rounded-full flex items-center justify-center text-white font-bold">N
+        </div>
+      </div>
+    </header>
 
-  <section class="mb-10">
+    <section class="mb-10">
       <h3 class="text-3xl font-serif font-bold mb-1">Enregistrer une entrée de stock</h3>
-    <p class="text-gray-500 text-sm italic">Ajoutez les produits finis issus d'un lot de production. Le stock disponible par lot sera suivi pour la méthode FIFO.</p>
-  </section>
+      <p class="text-gray-500 text-sm italic">Ajoutez les produits finis issus d'un lot de production. Le stock
+        disponible par lot sera suivi pour la méthode FIFO.</p>
+    </section>
 
-  <div th:if="${error}"
-    class="mb-6 p-4 bg-red-100 border border-red-200 text-red-800 rounded-lg text-sm font-medium"
-    th:text="${error}"></div>
+    <div th:if="${error}" class="mb-6 p-4 bg-red-100 border border-red-200 text-red-800 rounded-lg text-sm font-medium"
+      th:text="${error}"></div>
 
-  <!-- BEGIN: Stock Entry Form -->
-  <section class="bg-white rounded-xl border border-gray-100 shadow-sm p-8 mb-12" data-purpose="stock-entry-card">
+    <!-- BEGIN: Stock Entry Form -->
+    <section class="bg-white rounded-xl border border-gray-100 shadow-sm p-8 mb-12" data-purpose="stock-entry-card">
 
-    <!-- ✅ FORM THYMELEAF -->
-    <form th:action="@{/stock/entree}" method="post" class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
+      <!-- ✅ FORM THYMELEAF -->
+      <form th:action="@{/stock/entree}" method="post" class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
 
-      <!-- Lot de production -->
-      <div class="space-y-1.5">
-        <label class="block text-sm font-semibold text-gray-700">Lot de production</label>
-        <select name="idLot" class="w-full h-11 px-4 rounded-lg border-gray-200 focus:ring-brand-success focus:border-brand-success text-sm">
-          <option value="">Sélectionner un lot...</option>
-          <option th:each="lot : ${lotsTermines}"
-                  th:value="${lot.id}"
-                  th:text="${lot.reference} + ' — ' + ${lot.quantiteMatiereUtilisee} + ' kg'">
-          </option>
-        </select>
+        <!-- Lot de production -->
+        <div class="space-y-1.5">
+          <label class="block text-sm font-semibold text-gray-700">Lot de production</label>
+          <select name="idLot"
+            class="w-full h-11 px-4 rounded-lg border-gray-200 focus:ring-brand-success focus:border-brand-success text-sm">
+            <option value="">Sélectionner un lot...</option>
+            <option th:each="lot : ${lotsTermines}" th:value="${lot.id}"
+              th:text="${lot.reference} + ' — ' + ${lot.quantiteMatiereUtilisee} + ' kg'">
+            </option>
+          </select>
+        </div>
+
+        <!-- Quantité -->
+        <div class="space-y-1.5">
+          <label class="block text-sm font-semibold text-gray-700">Quantité (unités)</label>
+          <input name="quantite" type="number" placeholder="0"
+            class="w-full h-11 px-4 rounded-lg border-gray-200 focus:ring-brand-success focus:border-brand-success text-sm" />
+        </div>
+
+        <!-- Date -->
+        <div class="space-y-1.5">
+          <label class="block text-sm font-semibold text-gray-700">Date</label>
+          <input name="dateEntree" type="date"
+            class="w-full h-11 px-4 rounded-lg border-gray-200 focus:ring-brand-success focus:border-brand-success text-sm" />
+        </div>
+
+        <!-- Boutons -->
+        <div class="md:col-span-2 pt-4 flex items-center gap-4">
+          <button type="submit"
+            class="bg-brand-success hover:bg-brand-dark text-white px-8 py-2.5 rounded-lg font-medium transition-colors text-sm">
+            Valider l'entrée
+          </button>
+          <a th:href="@{/stock/entree}"
+            class="px-8 py-2.5 rounded-lg border border-gray-200 text-gray-600 font-medium hover:bg-gray-50 transition-colors text-sm">
+            Annuler
+          </a>
+          <p class="text-xs text-gray-400 italic">Le stock sera mis à jour dès validation.</p>
+        </div>
+
+      </form>
+    </section>
+    <!-- END: Stock Entry Form -->
+
+    <!-- BEGIN: Recent Entries Table -->
+    <section>
+      <div class="flex justify-between items-end mb-6">
+        <h4 class="text-xl font-bold text-brand-dark">Historique récent des entrées</h4>
+        <button class="text-sm font-medium text-brand-success hover:underline">Voir tout l'historique</button>
       </div>
-
-      <!-- Quantité -->
-      <div class="space-y-1.5">
-        <label class="block text-sm font-semibold text-gray-700">Quantité (unités)</label>
-        <input name="quantite" type="number" placeholder="0"
-               class="w-full h-11 px-4 rounded-lg border-gray-200 focus:ring-brand-success focus:border-brand-success text-sm"/>
-      </div>
-
-      <!-- Date -->
-      <div class="space-y-1.5">
-        <label class="block text-sm font-semibold text-gray-700">Date</label>
-        <input name="date" type="date"
-               class="w-full h-11 px-4 rounded-lg border-gray-200 focus:ring-brand-success focus:border-brand-success text-sm"/>
-      </div>
-
-      <!-- Boutons -->
-      <div class="md:col-span-2 pt-4 flex items-center gap-4">
-        <button type="submit"
-                class="bg-brand-success hover:bg-brand-dark text-white px-8 py-2.5 rounded-lg font-medium transition-colors text-sm">
-          Valider l'entrée
-        </button>
-        <a th:href="@{/stock/entree}"
-           class="px-8 py-2.5 rounded-lg border border-gray-200 text-gray-600 font-medium hover:bg-gray-50 transition-colors text-sm">
-          Annuler
-        </a>
-        <p class="text-xs text-gray-400 italic">Le stock sera mis à jour dès validation.</p>
-      </div>
-
-    </form>
-  </section>
-  <!-- END: Stock Entry Form -->
-
-  <!-- BEGIN: Recent Entries Table -->
-  <section>
-    <div class="flex justify-between items-end mb-6">
-      <h4 class="text-xl font-bold text-brand-dark">Historique récent des entrées</h4>
-      <button class="text-sm font-medium text-brand-success hover:underline">Voir tout l'historique</button>
-    </div>
-    <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-      <table class="w-full text-left border-collapse">
+      <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+        <table class="w-full text-left border-collapse">
           <thead class="bg-gray-50/50">
             <tr>
               <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Date</th>
               <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Lot</th>
               <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Matière</th>
               <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Quantité</th>
-              <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Reste (FIFO)</th>
               <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Fournisseur</th>
               <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Statut</th>
               <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
 
-        <!-- ✅ TBODY THYMELEAF -->
-        <tbody class="divide-y divide-gray-100">
-          <tr th:each="m : ${mouvements}"
-              th:if="${m.typeMouvement.libelle == 'Entree'}"
+          <!-- ✅ TBODY THYMELEAF -->
+          <tbody class="divide-y divide-gray-100">
+            <tr th:each="m : ${mouvements}" th:if="${m.typeMouvement.libelle == 'Entree'}"
               class="hover:bg-brand-light/50 transition-colors">
-            <td class="px-6 py-4 text-sm text-gray-600"
-                th:text="${#temporals.format(m.dateMouvement, 'dd/MM/yyyy')}"></td>
-            <td class="px-6 py-4 text-sm font-medium text-brand-dark"
-                th:text="${m.lotProduction?.reference}"></td>
-            <td class="px-6 py-4 text-sm text-gray-600">—</td>
-            <td class="px-6 py-4 text-sm text-right font-bold text-brand-dark"
-                th:text="${m.quantite} + ' unités'"></td>
-            <td class="px-6 py-4 text-sm text-right"
-                th:text="${m.lotProduction?.quantiteRestante != null ? m.lotProduction?.quantiteRestante + ' u.' : '—'}">
-            </td>
-            <td class="px-6 py-4 text-sm text-gray-600">—</td>
-            <td class="px-6 py-4">
-              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                Validé
-              </span>
-            </td>
-            <td class="px-6 py-4">
-              <div class="flex items-center gap-2">
-                <a th:href="@{/stock/mouvement/modifier(id=${m.id})}"
-                   class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
-                  Modifier
-                </a>
-                <form th:action="@{/stock/mouvement/supprimer}" method="post" style="display:inline">
-                  <input type="hidden" name="id" th:value="${m.id}"/>
-                  <button type="submit" onclick="return confirm('Supprimer ce mouvement ?')"
-                          class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 hover:bg-red-100 rounded-lg transition-colors">
-                    Supprimer
-                  </button>
-                </form>
-              </div>
-            </td>
-          </tr>
-        </tbody>
+              <td class="px-6 py-4 text-sm text-gray-600" th:text="${#temporals.format(m.dateMouvement, 'dd/MM/yyyy')}">
+              </td>
+              <td class="px-6 py-4 text-sm font-medium text-brand-dark" th:text="${m.lotProduction?.reference}"></td>
+              <td class="px-6 py-4 text-sm text-gray-600" th:text="${m.lotProduction?.typeMatierePremiere?.libelle}">
+              </td>
+              <td class="px-6 py-4 text-sm text-right font-bold text-brand-dark" th:text="${m.quantite} + ' unités'">
+              </td>
+              <td class="px-6 py-4 text-sm text-gray-600"
+                th:text="${m.lotProduction?.typeMatierePremiere?.fournisseur?.nom}">
+              </td>
+              <td class="px-6 py-4">
+                <span
+                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  Validé
+                </span>
+              </td>
+              <td class="px-6 py-4">
+                <div class="flex items-center gap-2">
+                  <a th:href="@{/stock/mouvement/modifier(id=${m.id})}"
+                    class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
+                    Modifier
+                  </a>
+                  <form th:action="@{/stock/mouvement/supprimer}" method="post" style="display:inline">
+                    <input type="hidden" name="id" th:value="${m.id}" />
+                    <button type="submit" onclick="return confirm('Supprimer ce mouvement ?')"
+                      class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 hover:bg-red-100 rounded-lg transition-colors">
+                      Supprimer
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          </tbody>
 
-      </table>
-    </div>
-  </section>
-  <!-- END: Recent Entries Table -->
+        </table>
+      </div>
+    </section>
+    <!-- END: Recent Entries Table -->
 
-</main>
-<!-- END: Main Content Area -->
+  </main>
+  <!-- END: Main Content Area -->
 
 </body>
+
 </html>

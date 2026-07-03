@@ -67,7 +67,7 @@ public String listLots(Model model) {
             produitService.findById(idProduit)
         );
         lot.setQuantiteMatiereUtilisee(quantiteMatiereUtilisee);
-        lot.setQuantiteProduitPrevues(quantiteProduitPrevues);
+        lot.setQuantiteProduitPrevue(quantiteProduitPrevues);
         lot.setRemarques(remarques);        
         if (dateEntreeLot != null && !dateEntreeLot.isBlank()) {
             lot.setDateEntreeLot(LocalDateTime.parse(dateEntreeLot));
@@ -100,7 +100,7 @@ public String updateLot(@PathVariable Integer id,
     lot.setTypeMatierePremiere(typeMatierePremiereService.getById(idTypeMatierePremiere));
     lot.setProduit(produitService.findById(idProduit));
     lot.setQuantiteMatiereUtilisee(quantiteMatiereUtilisee);
-    lot.setQuantiteProduitPrevues(quantiteProduitPrevues);
+    lot.setQuantiteProduitPrevue(quantiteProduitPrevues);
     lot.setRemarques(remarques);
     if (dateEntreeLot != null && !dateEntreeLot.isBlank()) {
         lot.setDateEntreeLot(LocalDateTime.parse(dateEntreeLot));

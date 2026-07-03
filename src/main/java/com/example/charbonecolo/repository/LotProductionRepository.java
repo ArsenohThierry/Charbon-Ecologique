@@ -18,7 +18,6 @@ public interface LotProductionRepository extends JpaRepository<LotProductionMode
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT l FROM LotProductionModel l " +
            "WHERE l.produit.id = :idProduit " +
-           "AND (l.quantiteRestante IS NOT NULL AND l.quantiteRestante > 0) " +
            "ORDER BY l.dateEntreeLot ASC")
     List<LotProductionModel> findLotsWithStockByProduitOrderByDateAsc(@Param("idProduit") Integer idProduit);
 }

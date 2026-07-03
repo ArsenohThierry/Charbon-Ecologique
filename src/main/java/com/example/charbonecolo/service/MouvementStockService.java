@@ -6,6 +6,8 @@ import com.example.charbonecolo.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.example.charbonecolo.dto.EntreeStockDTO;
+import com.example.charbonecolo.dto.SortieStockDTO;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -76,7 +78,8 @@ public class MouvementStockService {
 
     public List<LotProductionModel> getLotsTermines() {
         Optional<LotStatutsModel> termineOpt = lotStatutsRepository.findByLibelle("Termine");
-        if (termineOpt.isEmpty()) return List.of();
+        if (termineOpt.isEmpty())
+            return List.of();
         LotStatutsModel termine = termineOpt.get();
         return lotProductionRepository.findAll().stream()
                 .filter(lot -> statutsLotProductionRepository
@@ -101,110 +104,127 @@ public class MouvementStockService {
     // ── ENTRÉE ───────────────────────────────────────────────────
 
     @Transactional
-    public MouvementStockModel saveEntreeStock(Integer idLot, Integer quantite, LocalDate date) {
-        LotProductionModel lot = lotProductionRepository.findById(idLot).orElseThrow();
+    public void saveEntreeStock(EntreeStockDTO entry) {
 
-        lot.setQuantiteRestante(
-            (lot.getQuantiteRestante() != null ? lot.getQuantiteRestante() : 0) + quantite
-        );
+        LotProductionModel lot = lotProductionRepository.findById(entry.getIdLot())
+                .orElseThrow();
+
+        if (mouvementStockRepository.existsEntreeByLotProduction(lot)) {
+            throw new RuntimeException("Ce lot est déjà en stock.");
+        }
+
+        lot.setQuantiteProduitReelle(entry.getQuantite());
+        lot.setDateFinReelle(entry.getDateEntree() != null
+                ? LocalDateTime.of(entry.getDateEntree(), LocalTime.now())
+                : LocalDateTime.now());
         lotProductionRepository.save(lot);
 
         MouvementStockModel mouvement = new MouvementStockModel();
         mouvement.setLotProduction(lot);
-        mouvement.setQuantite(quantite);
-        mouvement.setDateMouvement(date != null ? LocalDateTime.of(date, LocalTime.now()) : LocalDateTime.now());
+        mouvement.setQuantite(entry.getQuantite());
+        mouvement.setDateMouvement(
+                entry.getDateEntree() != null
+                        ? LocalDateTime.of(entry.getDateEntree(), LocalTime.now())
+                        : LocalDateTime.now());
+
         mouvement.setTypeMouvement(typeMouvementStockRepository.findById(1).orElseThrow());
         mouvement.setMotifSortie(null);
-        return mouvementStockRepository.save(mouvement);
+
+        mouvementStockRepository.save(mouvement);
     }
 
     @Transactional
-    public MouvementStockModel updateEntreeStock(Integer id, Integer idLot, Integer quantite, LocalDate date) {
-        MouvementStockModel mouvement = mouvementStockRepository.findById(id).orElseThrow();
-        LotProductionModel oldLot = mouvement.getLotProduction();
-        LotProductionModel newLot = lotProductionRepository.findById(idLot).orElseThrow();
-
-        int oldQte = mouvement.getQuantite();
-
-        if (!oldLot.getId().equals(newLot.getId())) {
-            oldLot.setQuantiteRestante(oldLot.getQuantiteRestante() - oldQte);
-            lotProductionRepository.save(oldLot);
-            newLot.setQuantiteRestante(
-                (newLot.getQuantiteRestante() != null ? newLot.getQuantiteRestante() : 0) + quantite
-            );
-            lotProductionRepository.save(newLot);
-        } else {
-            int diff = quantite - oldQte;
-            newLot.setQuantiteRestante(newLot.getQuantiteRestante() + diff);
-            lotProductionRepository.save(newLot);
+    public void updateEntreeStock(EntreeStockDTO dto) {
+        if (dto.getId() == null) {
+            throw new IllegalArgumentException("L'identifiant du mouvement est requis pour une mise à jour.");
         }
 
-        mouvement.setLotProduction(newLot);
-        mouvement.setQuantite(quantite);
-        mouvement.setDateMouvement(date != null ? LocalDateTime.of(date, LocalTime.now()) : LocalDateTime.now());
-        return mouvementStockRepository.save(mouvement);
+        MouvementStockModel mouvement = mouvementStockRepository.findById(dto.getId()).orElseThrow();
+
+        LotProductionModel lot = mouvement.getLotProduction();
+
+        lot.setQuantiteProduitReelle(dto.getQuantite());
+        lotProductionRepository.save(lot);
+
+        mouvement.setQuantite(dto.getQuantite());
+        mouvement.setDateMouvement(
+                dto.getDateEntree() != null
+                        ? LocalDateTime.of(dto.getDateEntree(), LocalTime.now())
+                        : LocalDateTime.now());
+
+        mouvementStockRepository.save(mouvement);
     }
 
     // ── SORTIE (FIFO) ────────────────────────────────────────────
 
     @Transactional
-    public MouvementStockModel saveSortieStock(Integer idProduit, Integer quantite, Integer idMotif, LocalDate date) {
+    public void saveSortieStock(SortieStockDTO dto) {
+        Integer idProduit = dto.getIdProduit();
+        Integer quantite = dto.getQuantite();
+        Integer idMotif = dto.getIdMotif();
+        LocalDate date = dto.getDateSortie();
+
         List<LotProductionModel> lotsDisponibles = lotProductionRepository
                 .findLotsWithStockByProduitOrderByDateAsc(idProduit);
 
         int totalDisponible = lotsDisponibles.stream()
-                .mapToInt(l -> l.getQuantiteRestante() != null ? l.getQuantiteRestante() : 0)
+                .mapToInt(l -> getStockDisponible(l.getId()))
                 .sum();
 
         if (totalDisponible < quantite) {
-            throw new BusinessException(
-                "Stock insuffisant pour ce produit. Disponible: " + totalDisponible + ", demandé: " + quantite
-            );
+            throw new BusinessException("Stock insuffisant: Disponible: " + totalDisponible + ", demandé: " + quantite);
         }
 
         MouvementStockModel mouvement = new MouvementStockModel();
         mouvement.setLotProduction(null);
         mouvement.setQuantite(quantite);
-        mouvement.setDateMouvement(date != null ? LocalDateTime.of(date, LocalTime.now()) : LocalDateTime.now());
+        mouvement.setDateMouvement(
+                date != null ? LocalDateTime.of(date, LocalTime.now()) : LocalDateTime.now());
+
         mouvement.setTypeMouvement(typeMouvementStockRepository.findById(2).orElseThrow());
         mouvement.setMotifSortie(motifSortieRepository.findById(idMotif).orElseThrow());
+
         mouvement = mouvementStockRepository.save(mouvement);
 
-        int resteASortir = quantite;
+        int reste = quantite;
+
         List<MouvementSortieDetailModel> details = new ArrayList<>();
 
         for (LotProductionModel lot : lotsDisponibles) {
-            if (resteASortir <= 0) break;
 
-            int dispo = lot.getQuantiteRestante();
-            int pris = Math.min(dispo, resteASortir);
+            if (reste <= 0)
+                break;
 
-            lot.setQuantiteRestante(dispo - pris);
-            lotProductionRepository.save(lot);
+            int dispo = getStockDisponible(lot.getId());
+            int pris = Math.min(dispo, reste);
 
-            MouvementSortieDetailModel detail = new MouvementSortieDetailModel();
-            detail.setMouvementSortie(mouvement);
-            detail.setLotProduction(lot);
-            detail.setQuantite(pris);
-            details.add(detail);
+            if (pris <= 0)
+                continue;
 
-            resteASortir -= pris;
+            MouvementSortieDetailModel d = new MouvementSortieDetailModel();
+            d.setMouvementSortie(mouvement);
+            d.setLotProduction(lot);
+            d.setQuantite(pris);
+
+            details.add(d);
+
+            reste -= pris;
         }
 
         mouvementSortieDetailRepository.saveAll(details);
-
-        return mouvement;
     }
 
     @Transactional
-    public MouvementStockModel updateSortieStock(Integer id, Integer quantite, Integer idMotif, LocalDate date) {
-        MouvementStockModel mouvement = mouvementStockRepository.findById(id).orElseThrow();
+    public void updateSortieStock(SortieStockDTO dto) {
+        if (dto.getId() == null) {
+            throw new IllegalArgumentException("L'identifiant du mouvement est requis pour une mise à jour.");
+        }
+        MouvementStockModel mouvement = mouvementStockRepository.findById(dto.getId()).orElseThrow();
 
         List<MouvementSortieDetailModel> oldDetails = mouvementSortieDetailRepository.findByMouvementSortie(mouvement);
 
         for (MouvementSortieDetailModel detail : oldDetails) {
             LotProductionModel lot = detail.getLotProduction();
-            lot.setQuantiteRestante(lot.getQuantiteRestante() + detail.getQuantite());
             lotProductionRepository.save(lot);
         }
 
@@ -216,35 +236,32 @@ public class MouvementStockService {
             throw new IllegalStateException("Impossible de déterminer le produit de la sortie");
         }
 
-        mouvement.setQuantite(quantite);
-        mouvement.setMotifSortie(motifSortieRepository.findById(idMotif).orElseThrow());
-        mouvement.setDateMouvement(date != null ? LocalDateTime.of(date, LocalTime.now()) : LocalDateTime.now());
+        mouvement.setQuantite(dto.getQuantite());
+        mouvement.setMotifSortie(motifSortieRepository.findById(dto.getIdMotif()).orElseThrow());
+        mouvement.setDateMouvement(dto.getDateSortie() != null ? LocalDateTime.of(dto.getDateSortie(), LocalTime.now()) : LocalDateTime.now());
         mouvementStockRepository.save(mouvement);
 
         List<LotProductionModel> lotsDisponibles = lotProductionRepository
                 .findLotsWithStockByProduitOrderByDateAsc(idProduit);
 
         int totalDisponible = lotsDisponibles.stream()
-                .mapToInt(l -> l.getQuantiteRestante() != null ? l.getQuantiteRestante() : 0)
+                .mapToInt(l -> getStockDisponible(l.getId()))
                 .sum();
 
-        if (totalDisponible < quantite) {
+        if (totalDisponible < dto.getQuantite()) {
             throw new BusinessException(
-                "Stock insuffisant après restauration. Disponible: " + totalDisponible + ", demandé: " + quantite
-            );
+                    "Stock insuffisant après restauration. Disponible: " + totalDisponible + ", demandé: " + dto.getQuantite());
         }
 
-        int resteASortir = quantite;
+        int resteASortir = dto.getQuantite();
         List<MouvementSortieDetailModel> newDetails = new ArrayList<>();
 
         for (LotProductionModel lot : lotsDisponibles) {
-            if (resteASortir <= 0) break;
+            if (resteASortir <= 0)
+                break;
 
-            int dispo = lot.getQuantiteRestante();
+            int dispo = getStockDisponible(lot.getId());
             int pris = Math.min(dispo, resteASortir);
-
-            lot.setQuantiteRestante(dispo - pris);
-            lotProductionRepository.save(lot);
 
             MouvementSortieDetailModel detail = new MouvementSortieDetailModel();
             detail.setMouvementSortie(mouvement);
@@ -256,41 +273,43 @@ public class MouvementStockService {
         }
 
         mouvementSortieDetailRepository.saveAll(newDetails);
-
-        return mouvement;
     }
 
     // ── SUPPRESSION ──────────────────────────────────────────────
-
     @Transactional
     public void deleteMouvementStock(Integer id) {
-        MouvementStockModel mouvement = mouvementStockRepository.findById(id).orElseThrow();
+
+        MouvementStockModel mouvement = mouvementStockRepository.findById(id)
+                .orElseThrow();
+
         boolean isEntree = mouvement.getTypeMouvement().getId() == 1;
 
         if (isEntree) {
+
             LotProductionModel lot = mouvement.getLotProduction();
-            if (lot != null) {
-                int nouveauStock = lot.getQuantiteRestante() - mouvement.getQuantite();
-                if (nouveauStock < 0) {
-                    throw new BusinessException(
-                        "Impossible de supprimer cette entrée : le stock du lot " + lot.getReference()
-                        + " a déjà été consommé par des sorties. Supprimez d'abord les sorties concernées."
-                    );
-                }
-                lot.setQuantiteRestante(nouveauStock);
-                lotProductionRepository.save(lot);
+
+            int stock = getStockDisponible(lot.getId()) - mouvement.getQuantite();
+
+            if (stock < 0) {
+                throw new BusinessException("Impossible suppression entrée");
             }
+
         } else {
+
             List<MouvementSortieDetailModel> details = mouvementSortieDetailRepository.findByMouvementSortie(mouvement);
-            for (MouvementSortieDetailModel detail : details) {
-                LotProductionModel lot = detail.getLotProduction();
-                lot.setQuantiteRestante(lot.getQuantiteRestante() + detail.getQuantite());
-                lotProductionRepository.save(lot);
-            }
+
             mouvementSortieDetailRepository.deleteByMouvementSortie(mouvement);
         }
 
-        mouvementStockRepository.deleteById(id);
+        mouvementStockRepository.delete(mouvement);
+    }
+
+    public Integer getStockDisponible(Integer idLot) {
+
+        Integer entree = mouvementStockRepository.sumEntreesByLot(idLot);
+        Integer sortie = mouvementSortieDetailRepository.sumSortiesByLot(idLot);
+
+        return entree - sortie;
     }
 
     // ── ÉTAT DU STOCK ────────────────────────────────────────────
@@ -303,24 +322,22 @@ public class MouvementStockService {
         return mouvementSortieDetailRepository.findByMouvementSortie(mouvement);
     }
 
-
-
-        //calcul total sortie stock
+    // calcul total sortie stock
     public double getTotalSortieStock() {
         return sorties.stream().mapToDouble(MouvementStockModel::getQuantite).sum();
     }
 
-    //calcul total entree stock
+    // calcul total entree stock
     public double getTotalEntreeStock() {
         return entrees.stream().mapToDouble(MouvementStockModel::getQuantite).sum();
     }
 
-    //calcul total stock
+    // calcul total stock
     public double getTotalStock() {
         return getTotalEntreeStock() - getTotalSortieStock();
     }
 
-    //calcul sortie par lot
+    // calcul sortie par lot
     public double getTotalSortieStockByLot(Integer idLot) {
         return sorties.stream()
                 .filter(m -> m.getLotProduction() != null && m.getLotProduction().getId().equals(idLot))
@@ -328,7 +345,7 @@ public class MouvementStockService {
                 .sum();
     }
 
-    //calcul entree par lot
+    // calcul entree par lot
     public double getTotalEntreeStockByLot(Integer idLot) {
         return entrees.stream()
                 .filter(m -> m.getLotProduction() != null && m.getLotProduction().getId().equals(idLot))
@@ -336,25 +353,19 @@ public class MouvementStockService {
                 .sum();
     }
 
-    //calcul stock par lot
+    // calcul stock par lot
     public double getTotalStockByLot(Integer idLot) {
         return getTotalEntreeStockByLot(idLot) - getTotalSortieStockByLot(idLot);
     }
 
-    //calcul total alerte rupture
+    // calcul total alerte rupture
     public Integer getTotalAlertRupture() {
         return ruptures.size();
     }
 
-    //calcul total alerte faible
+    // calcul total alerte faible
     public Integer getTotalAlertFaible() {
         return faibles.size();
     }
-
-
-
-
-
-
 
 }
