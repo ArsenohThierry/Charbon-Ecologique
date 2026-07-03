@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Charbon Vert - État du stock</title>
+    <!-- Tailwind CSS v3 -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <!-- Google Fonts: Libre Caslon Text and Inter for UI -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Libre+Caslon+Text:wght@400;700&amp;display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        forestry: {
+                            sidebar: '#1b3c2e',
+                            sidebarHover: '#254e3d',
+                            accent: '#3d7a5b',
+                            active: '#d9a764',
+                            bg: '#f9f9f5',
+                            border: '#e5e7eb',
+                            text: '#2d3748',
+                            warning: '#fffbeb',
+                            warningBorder: '#fef3c7'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Libre+Caslon+Text"', 'serif'],
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    borderRadius: {
+                        'eight': '8px',
+                    }
+                }
+            }
+        }
+    </script>
+    <style data-purpose="custom-styling">
+        body {
+            background-color: #f9f9f5;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .font-serif {
+            font-family: 'Libre Caslon Text', serif;
+        }
+
+        .sidebar-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .sidebar-scrollbar::-webkit-scrollbar-thumb {
+            background: #254e3d;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body class="flex min-h-screen">
+    <!-- BEGIN: Sidebar -->
+    <aside class="w-64 bg-forestry-sidebar text-white flex flex-col fixed h-full z-20" data-purpose="main-navigation">
+        <div class="p-6 flex items-center gap-3">
+            <div class="w-8 h-8 bg-[#d9a764] rounded-full flex items-center justify-center">
+                <svg class="w-5 h-5 text-forestry-sidebar" fill="currentColor" viewbox="0 0 24 24">
+                    <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"></path>
+                </svg>
+            </div>
+            <div>
+                <h1 class="font-bold text-lg leading-tight">Charbon Vert</h1>
+                <p class="text-xs text-gray-400">Gestionnaire de stock</p>
+            </div>
+        </div>
+        <nav class="flex-1 px-4 py-2 space-y-1 overflow-y-auto sidebar-scrollbar text-sm">
+            <a class="flex items-center px-3 py-2 rounded-eight hover:bg-forestry-sidebarHover transition-colors"
+                th:href="@{/dashboard}">
+                <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                    <path
+                        d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                </svg>
+                Tableau de bord
+            </a>
+            <!-- Menu Approvisionnement -->
+            <div class="pt-2">
+                <button
+                    class="w-full flex items-center justify-between px-3 py-2 rounded-eight hover:bg-forestry-sidebarHover transition-colors">
+                    <span class="flex items-center">
+                        <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                            <path
+                                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                                stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                        </svg>
+                        Approvisionnement &amp; mat...
+                    </span>
+                    <svg class="w-3 h-3 rotate-180" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                        <path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                    </svg>
+                </button>
+                <div class="pl-10 space-y-1 mt-1 text-xs text-gray-300">
+                    <a class="block py-2 hover:text-white transition-colors" th:href="@{/matiere/home}">Nouveaux types de matières</a>
+                    <a class="block py-2 hover:text-white transition-colors" th:href="@{/fournisseur/home}">Ajouter un fournisseur</a>
+                    <a class="block py-2 hover:text-white transition-colors" th:href="@{/fournisseur/home}">Liste des fournisseurs</a>
+                </div>
+            </div>
+            <!-- Menu Lots -->
+            <div class="pt-2">
+                <a th:href="@{/stock/lot/liste}"
+                    class="w-full flex items-center justify-between px-3 py-2 rounded-eight hover:bg-forestry-sidebarHover transition-colors">
+                    <span class="flex items-center">
+                        <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                            <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+                                stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                        </svg>
+                        Lots de production
+                    </span>
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                        <path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                    </svg>
+                </a>
+            </div>
+            <!-- Menu Généralités (Active) -->
+            <div class="pt-2">
+                <button
+                    class="w-full flex items-center justify-between px-3 py-2 rounded-eight hover:bg-forestry-sidebarHover transition-colors">
+                    <span class="flex items-center">
+                        <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                            <path
+                                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                                stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                        </svg>
+                        Généralités stocks
+                    </span>
+                    <svg class="w-3 h-3 rotate-180" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                        <path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                    </svg>
+                </button>
+                <div class="pl-4 mt-1 space-y-1">
+                    <a class="flex items-center px-3 py-2 rounded-eight bg-[#d9a764] text-forestry-sidebar font-medium"
+                        th:href="@{/stock/etat}">
+                        <svg class="w-4 h-4 mr-3" fill="currentColor" viewbox="0 0 20 20">
+                            <path
+                                d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z">
+                            </path>
+                        </svg>
+                        État du stock
+                    </a>
+                    <a class="flex items-center px-3 py-2 rounded-eight hover:bg-forestry-sidebarHover text-gray-300 transition-colors"
+                        th:href="@{/stock/entree}">
+                        <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                            <path d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round"
+                                stroke-linejoin="round" stroke-width="2"></path>
+                        </svg>
+                        Entrée de stock
+                    </a>
+                    <a class="flex items-center px-3 py-2 rounded-eight hover:bg-forestry-sidebarHover text-gray-300 transition-colors"
+                        th:href="@{/stock/sortie}">
+                        <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                            <path d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round"
+                                stroke-linejoin="round" stroke-width="2"></path>
+                        </svg>
+                        Sortie de stock
+                    </a>
+                </div>
+            </div>
+            <a class="flex items-center px-3 py-2 rounded-eight hover:bg-forestry-sidebarHover transition-colors pt-2"
+                th:href="@{/cmd}">
+                <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                    <path
+                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 0a2 2 0 100 4 2 2 0 000-4z"
+                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                </svg>
+                Ventes / Commandes
+            </a>
+            <a class="flex items-center px-3 py-2 rounded-eight hover:bg-forestry-sidebarHover transition-colors pt-2"
+                th:href="@{/finance/kpi}">
+                <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                    <path
+                        d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                </svg>
+                Rapports
+            </a>
+        </nav>
+        <div class="p-4 border-t border-[#254e3d]">
+            <a th:href="@{/logout}" class="flex items-center text-sm text-gray-300 hover:text-white transition-colors">
+                <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                    <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                </svg>
+                Changer de rôle
+            </a>
+        </div>
+    </aside>
+    <!-- END: Sidebar -->
+    <!-- BEGIN: Main Content Container -->
+    <main class="flex-1 ml-64 p-8 flex flex-col gap-8 min-w-0" data-purpose="main-layout">
+        <!-- BEGIN: Top Header Bar -->
+        <header class="flex justify-between items-start" data-purpose="content-header">
+            <div>
+                <h2 class="text-lg font-semibold text-gray-800">Gestionnaire de stock</h2>
+                <p class="text-xs text-gray-500">Approvisionnement, lots &amp; inventaire</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="text-xs bg-gray-100 border border-gray-200 px-3 py-1 rounded-full text-gray-600">
+                    Maquette · données fictives
+                </span>
+                <div
+                    class="w-8 h-8 rounded-full bg-forestry-accent text-white flex items-center justify-center font-bold text-sm">
+                    N
+                </div>
+            </div>
+        </header>
+        <!-- END: Top Header Bar -->
+        <!-- BEGIN: Section Header -->
+        <section data-purpose="page-title">
+            <h3 class="text-4xl font-serif text-[#1b3c2e] font-bold">État du stock</h3>
+            <p class="text-gray-600 mt-2">Lots, entrées et sorties, stock restant par produit.</p>
+        </section>
+        <!-- END: Section Header -->
+        <!-- BEGIN: Summary Cards -->
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-6" data-purpose="summary-stats">
+            <!-- Total entrées -->
+            <div class="bg-white p-6 rounded-eight border border-gray-200 shadow-sm flex items-center gap-4">
+                <div class="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                        <path
+                            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                            stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-xs text-gray-500 font-medium">Total entrées</p>
+                    <p class="text-2xl font-serif font-bold text-gray-900" th:text="${totalEntree} + ' u.'"></p>
+                </div>
+            </div>
+            <!-- Total sorties -->
+            <div class="bg-white p-6 rounded-eight border border-gray-200 shadow-sm flex items-center gap-4">
+                <div class="w-12 h-12 bg-orange-50 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                        <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" stroke-linecap="round"
+                            stroke-linejoin="round" stroke-width="2"></path>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-xs text-gray-500 font-medium">Total sorties</p>
+                    <p class="text-2xl font-serif font-bold text-gray-900" th:text="${totalSortie} + ' u.'"></p>
+                </div>
+            </div>
+            <!-- Stock restant -->
+            <div class="bg-white p-6 rounded-eight border border-gray-200 shadow-sm flex items-center gap-4">
+                <div class="w-12 h-12 bg-emerald-50 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                        <path
+                            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                            stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-xs text-gray-500 font-medium">Stock restant</p>
+                    <p class="text-2xl font-serif font-bold text-gray-900" th:text="${stockRestant} + ' u.'"></p>
+                </div>
+            </div>
+        </section>
+        <!-- END: Summary Cards -->
+        <!-- BEGIN: Search Bar -->
+        <section class="bg-white p-4 rounded-eight border border-gray-200 shadow-sm flex items-end gap-6"
+            data-purpose="search-filters">
+            <div class="flex-1 max-w-xs">
+                <label class="block text-xs font-semibold text-gray-700 mb-1">Date d'entrée</label>
+                <div class="relative">
+                    <input
+                        class="w-full text-sm border-gray-300 rounded-eight focus:ring-forestry-accent focus:border-forestry-accent pr-10"
+                        placeholder="jj / mm / aaaa" type="text" />
+                    <svg class="w-4 h-4 absolute right-3 top-2.5 text-gray-400" fill="none" stroke="currentColor"
+                        viewbox="0 0 24 24">
+                        <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                            stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                    </svg>
+                </div>
+            </div>
+            <div class="flex-1 max-w-xs">
+                <label class="block text-xs font-semibold text-gray-700 mb-1">Date de sortie</label>
+                <div class="relative">
+                    <input
+                        class="w-full text-sm border-gray-300 rounded-eight focus:ring-forestry-accent focus:border-forestry-accent pr-10"
+                        placeholder="jj / mm / aaaa" type="text" />
+                    <svg class="w-4 h-4 absolute right-3 top-2.5 text-gray-400" fill="none" stroke="currentColor"
+                        viewbox="0 0 24 24">
+                        <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                            stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                    </svg>
+                </div>
+            </div>
+            <button
+                class="bg-[#2d5a44] hover:bg-[#1b3c2e] text-white px-6 py-2 rounded-eight text-sm font-medium flex items-center transition-colors">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                    <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="2"></path>
+                </svg>
+                Rechercher
+            </button>
+        </section>
+        <!-- END: Search Bar -->
+        <!-- BEGIN: Stock Table -->
+        <section class="bg-white border border-gray-200 rounded-eight shadow-sm overflow-hidden"
+            data-purpose="stock-data-table">
+            <table class="w-full text-left border-collapse text-sm">
+                <thead class="bg-gray-50 border-b border-gray-200">
+                    <tr>
+                        <th class="px-6 py-3 font-semibold text-gray-600">Produit</th>
+                        <th class="px-6 py-3 font-semibold text-gray-600">Lot</th>
+                        <th class="px-6 py-3 font-semibold text-gray-600 text-right">Entrées</th>
+                        <th class="px-6 py-3 font-semibold text-gray-600 text-right">Sorties</th>
+                        <th class="px-6 py-3 font-semibold text-gray-600 text-right">Restant</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    <tr th:each="l : ${stockParLot}" class="hover:bg-gray-50 transition-colors">
+                        <td class="px-6 py-4" th:text="${l.produitNom}"></td>
+                        <td class="px-6 py-4" th:text="${l.reference}"></td>
+                        <td class="px-6 py-4 text-right" th:text="${l.totalEntree} + ' u.'"></td>
+                        <td class="px-6 py-4 text-right" th:text="${l.totalSortie} + ' u.'"></td>
+                        <td class="px-6 py-4 text-right font-medium" th:text="${l.restant} + ' u.'"></td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(stockParLot)}">
+                        <td colspan="5" class="px-6 py-8 text-center text-gray-400 italic">Aucun lot en stock pour le
+                            moment.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        <!-- END: Stock Table -->
+        <!-- BEGIN: Alerts Section -->
+        <section class="space-y-4" data-purpose="alerts-and-thresholds">
+            <h3 class="text-xl font-serif text-[#1b3c2e] font-bold">Alertes &amp; seuils</h3>
+            <!-- Warning Banner -->
+            <div th:if="${nbAlertesTotal > 0}"
+                class="bg-forestry-warning border border-forestry-warningBorder p-4 rounded-eight flex items-center gap-3 text-orange-800">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                    <path
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                </svg>
+                <span class="text-sm">
+                    <span th:text="${nbAlertesTotal}"></span>
+                    <span th:text="${nbAlertesTotal > 1} ? 'produits nécessitent' : 'produit nécessite'"></span>
+                    un réapprovisionnement,
+                    <span th:if="${nbRuptures > 0}">
+                        dont <span th:text="${nbRuptures}"></span> en rupture<span
+                            th:text="${nbRuptures > 1} ? 's' : ''"></span>.
+                    </span>
+                    <span th:unless="${nbRuptures > 0}">tous en stock faible.</span>
+                </span>
+            </div>
+            <!-- Alerts Table -->
+            <div class="bg-white border border-gray-200 rounded-eight shadow-sm overflow-hidden">
+                <table class="w-full text-left border-collapse text-sm">
+                    <thead class="bg-gray-50 border-b border-gray-200">
+                        <tr>
+                            <th class="px-6 py-3 font-semibold text-gray-600">Produit</th>
+                            <th class="px-6 py-3 font-semibold text-gray-600">Niveau</th>
+                            <th class="px-6 py-3 font-semibold text-gray-600 text-right">Stock actuel</th>
+                            <th class="px-6 py-3 font-semibold text-gray-600 text-right">Seuil</th>
+                            <th class="px-6 py-3 font-semibold text-gray-600 text-right">Vente moy./jour</th>
+                            <th class="px-6 py-3 font-semibold text-gray-600 text-right">Rupture estimée</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        <tr th:each="a : ${alertes}" class="hover:bg-gray-50 transition-colors">
+                            <td class="px-6 py-4" th:text="${a.produitNom}"></td>
+                            <td class="px-6 py-4">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                                    th:classappend="${a.niveauAlerte == 'Rupture'} ? 'bg-red-100 text-red-800' : 'bg-orange-100 text-orange-800'"
+                                    th:text="${a.niveauAlerte}"></span>
+                            </td>
+                            <td class="px-6 py-4 text-right font-medium"
+                                th:classappend="${a.niveauAlerte == 'Rupture'} ? 'text-red-600' : 'text-orange-600'"
+                                th:text="${a.stockActuel} + ' u.'"></td>
+                            <td class="px-6 py-4 text-right" th:text="${a.seuil} + ' u.'"></td>
+                            <td class="px-6 py-4 text-right"
+                                th:text="${a.venteMoyenneJour != null ? #numbers.formatDecimal(a.venteMoyenneJour, 1, 1) + ' u./j' : 'N/A'}">
+                            </td>
+                            <td class="px-6 py-4 text-right font-medium"
+                                th:classappend="${a.niveauAlerte == 'Rupture'} ? 'text-red-600' : 'text-orange-600'"
+                                th:text="${a.ruptureEstimee != null ? #temporals.format(a.ruptureEstimee, 'dd/MM/yyyy') : 'N/A'}">
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(alertes)}">
+                            <td colspan="6" class="px-6 py-8 text-center text-gray-400 italic">Aucune alerte active pour
+                                le moment.</td>
+                        </tr>
+                    </tbody>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <!-- END: Alerts Section -->
+    </main>
+    <!-- END: Main Content Container -->
+</body>
+
+</html>

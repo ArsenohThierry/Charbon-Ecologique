@@ -66,7 +66,7 @@
         </a>
         <!-- Généralités stocks -->
         <div>
-            <button th:classappend="${activePage == 'entree-stock' or activePage == 'sortie-stock'} ? 'text-brand-accent' : 'text-gray-300'"
+            <button th:classappend="${activePage == 'etat-stock' or activePage == 'entree-stock' or activePage == 'sortie-stock'} ? 'text-brand-accent' : 'text-gray-300'"
                     class="w-full flex items-center justify-between px-3 py-2 text-sm hover:bg-white/10 rounded-md transition-colors dropdown-btn">
                 <span class="flex items-center gap-3">
                     <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewbox="0 0 24 24">
@@ -79,6 +79,9 @@
                 </svg>
             </button>
             <div class="mt-1 ml-4 space-y-1 dropdown-content hidden">
+                <a th:classappend="${activePage == 'etat-stock'} ? 'bg-brand-accent text-brand-dark font-medium rounded-md' : 'text-gray-400 hover:text-white'"
+                   class="block px-3 py-2 text-xs transition-colors rounded-md"
+                   th:href="@{/stock/etat}">État stock</a>
                 <a th:classappend="${activePage == 'entree-stock'} ? 'bg-brand-accent text-brand-dark font-medium rounded-md' : 'text-gray-400 hover:text-white'"
                    class="block px-3 py-2 text-xs transition-colors rounded-md"
                    th:href="@{/stock/entree}">Entrée stock</a>
