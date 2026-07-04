@@ -56,3 +56,6 @@ LEFT JOIN LATERAL (
     LIMIT 1
 ) sc_last ON TRUE
 LEFT JOIN commande_statuts cs ON sc_last.id_commande_statuts = cs.id;
+
+INSERT INTO statuts_lot_production (id_lot_production, id_lot_statuts, date_statut) VALUES
+(2,2,CURRENT_TIMESTAMP); 
