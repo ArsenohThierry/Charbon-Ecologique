@@ -3,6 +3,8 @@ package com.example.charbonecolo.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +37,10 @@ public class TypeMatierePremiereService {
         }
 
         typeMatierePremiereRepository.save(model);
+    }
+
+    public Page<TypeMatierePremiereModel> findAllPaginated(Pageable pageable) {
+        return typeMatierePremiereRepository.findAllWithFournisseur(pageable);
     }
 
     public TypeMatierePremiereModel getById(Integer id){
