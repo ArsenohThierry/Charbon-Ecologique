@@ -73,7 +73,50 @@
         <h1 class="text-2xl font-bold text-slate-900">Tableau de Bord KPI</h1>
         <p class="text-sm text-slate-500 mt-1">Indicateurs financiers clés — Mois en cours</p>
     </div>
+    <!--filtre mois annee kpi-->
+    <!-- FILTRE KPI -->
+<div class="mb-8 bg-white rounded-2xl border border-slate-100 shadow-sm p-4 flex flex-wrap gap-3 items-center">
 
+    <!-- Mois -->
+    <div>
+        <label class="text-xs text-slate-500">Mois</label>
+        <select id="moisFilter"
+                class="block w-40 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-accent">
+            <option value="1">Janvier</option>
+            <option value="2">Février</option>
+            <option value="3">Mars</option>
+            <option value="4">Avril</option>
+            <option value="5">Mai</option>
+            <option value="6">Juin</option>
+            <option value="7">Juillet</option>
+            <option value="8">Août</option>
+            <option value="9">Septembre</option>
+            <option value="10">Octobre</option>
+            <option value="11">Novembre</option>
+            <option value="12">Décembre</option>
+        </select>
+    </div>
+
+    <!-- Année -->
+    <div>
+        <label class="text-xs text-slate-500">Année</label>
+        <select id="anneeFilter"
+                class="block w-32 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-accent">
+            <option value="2026">2026</option>
+            <option value="2025">2025</option>
+            <option value="2024">2024</option>
+        </select>
+    </div>
+
+    <!-- Bouton -->
+    <div class="self-end">
+        <button id="applyFilter"
+                class="bg-brand-dark text-white px-5 py-2 rounded-lg text-sm hover:bg-opacity-90 transition">
+            Filtrer
+        </button>
+    </div>
+
+</div>
     <!-- KPI Cards Row -->
     <div class="grid grid-cols-2 xl:grid-cols-3 gap-5 mb-8">
 
@@ -85,7 +128,8 @@
                     <svg class="h-5 w-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
                 </div>
             </div>
-            <p class="text-3xl font-bold text-green-600 leading-tight"
+            <p id="caValue"
+               class="text-3xl font-bold text-green-600 leading-tight"
                th:text="${#numbers.formatDecimal(ca, 1, 'COMMA', 0, 'POINT')}"></p>
             <p class="text-xs text-slate-400 mt-1">MGA</p>
             <!-- Variation vs mois précédent -->
@@ -105,7 +149,8 @@
                     <svg class="h-5 w-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2"/></svg>
                 </div>
             </div>
-            <p class="text-3xl font-bold leading-tight"
+            <p id="beneficeValue"
+               class="text-3xl font-bold leading-tight"
                th:classappend="${benefice >= 0} ? 'text-green-600' : 'text-red-600'"
                th:text="${#numbers.formatDecimal(benefice, 1, 'COMMA', 0, 'POINT')}"></p>
             <p class="text-xs text-slate-400 mt-1">MGA</p>
@@ -119,7 +164,8 @@
                     <svg class="h-5 w-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
                 </div>
             </div>
-            <p class="text-3xl font-bold text-blue-600 leading-tight"
+            <p id="soldeValue"
+               class="text-3xl font-bold text-blue-600 leading-tight"
                th:text="${#numbers.formatDecimal(solde, 1, 'COMMA', 0, 'POINT')}"></p>
             <p class="text-xs text-slate-400 mt-1">MGA</p>
         </div>
@@ -132,9 +178,11 @@
                     <svg class="h-5 w-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                 </div>
             </div>
-            <p class="text-3xl font-bold text-teal-600 leading-tight"
+            <p id="entreesValue"
+               class="text-3xl font-bold text-teal-600 leading-tight"
                th:text="${#numbers.formatDecimal(entrees, 1, 'COMMA', 0, 'POINT')}"></p>
-            <p class="text-xs text-slate-400 mt-1">MGA</p>
+    
+               <p class="text-xs text-slate-400 mt-1">MGA</p>
         </div>
 
         <!-- Sorties -->
@@ -145,7 +193,8 @@
                     <svg class="h-5 w-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/></svg>
                 </div>
             </div>
-            <p class="text-3xl font-bold text-red-600 leading-tight"
+            <p id="sortiesValue"
+               class="text-3xl font-bold text-red-600 leading-tight"
                th:text="${#numbers.formatDecimal(sorties, 1, 'COMMA', 0, 'POINT')}"></p>
             <p class="text-xs text-slate-400 mt-1">MGA</p>
         </div>
@@ -169,49 +218,10 @@
 </main>
 
 <!-- Chart.js Script -->
-<script th:inline="javascript">
-    /*<![CDATA[*/
-    const rawData = /*[[${evolutionCA}]]*/ [];
-
-    const labels  = rawData.map(d => d.mois  || d.MOIS  || '');
-    const values  = rawData.map(d => parseFloat(d.total || d.TOTAL || 0));
-
-    const ctx = document.getElementById('caChart').getContext('2d');
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: "CA (MGA)",
-                data: values,
-                backgroundColor: 'rgba(64,123,74,0.75)',
-                borderColor: '#407B4A',
-                borderWidth: 2,
-                borderRadius: 6,
-                hoverBackgroundColor: '#C79E5C'
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    callbacks: {
-                        label: ctx => ctx.formattedValue + ' MGA'
-                    }
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: { color: 'rgba(0,0,0,.05)' },
-                    ticks: { callback: v => v.toLocaleString() + ' MGA' }
-                },
-                x: { grid: { display: false } }
-            }
-        }
-    });
-    /*]]>*/
+<!--<script th:inline="javascript">
+    window.evolutionCA = /*[[${evolutionCA}]]*/ [];
 </script>
+-->
+<script src="/js/Kpi-chart.js"></script>
 </body>
 </html>

@@ -23,6 +23,10 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
 @Controller
 @RequestMapping("/finance/journal")
 public class JournalController {
@@ -44,19 +48,60 @@ public class JournalController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime debut,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fin,
             @RequestParam(required = false) Integer typeJournalId,
+            @RequestParam(defaultValue = "1")
+            int page,
+
+            @RequestParam(defaultValue = "10")
+            int limit,
+
             Model model) {
 
-        List<JournalFinancierModel> ecritures;
-
+        /*List<JournalFinancierModel> ecritures;
         if (debut != null && fin != null) {
             ecritures = journalService.filtrerJournal(debut, fin);
         } else if (typeJournalId != null) {
             ecritures = journalService.filtrerParType(typeJournalId);
         } else {
             ecritures = journalService.findAll();
+        }*/
+        Pageable pageable =
+        PageRequest.of(page - 1, limit);
+        Page<JournalFinancierModel> ecritures;
+        if (debut != null && fin != null) {
+            ecritures =
+                    journalService.filtrerJournal(
+                            debut,
+                            fin,
+                            pageable);
         }
+        else if (typeJournalId != null) {
+            ecritures =
+                    journalService.filtrerParType(
+                            typeJournalId,
+                            pageable);
+        }
+        else {
+            ecritures =
+                    journalService.findAll(pageable);
+        }
+        
 
-        model.addAttribute("ecritures", ecritures);
+        //model.addAttribute("ecritures", ecritures);
+        model.addAttribute(
+            "ecritures",
+            ecritures.getContent());
+
+        model.addAttribute(
+                "page",
+                ecritures);
+
+        model.addAttribute(
+                "currentPage",
+                page);
+
+        model.addAttribute(
+                "limit",
+                limit);
         model.addAttribute("typesJournal", typeJournalRepo.findAll());
         model.addAttribute("origines", origineRepo.findAll());
         model.addAttribute("debut", debut);

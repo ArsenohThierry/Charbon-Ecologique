@@ -9,6 +9,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Service
 @Transactional
@@ -79,5 +81,38 @@ public class JournalFinancierService {
     public List<Map<String, Object>> evolutionMensuelleCA() {
         LocalDateTime debut = LocalDateTime.now().minusMonths(12).withDayOfMonth(1).withHour(0).withMinute(0);
         return journalRepo.evolutionMensuelleCA(debut);
+    }
+
+    // Méthodes pour la pagination
+    @Transactional(readOnly = true)
+    public Page<JournalFinancierModel> findAll(
+            Pageable pageable) {
+
+        return journalRepo
+                .findAllByOrderByDateOperationDesc(pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<JournalFinancierModel> filtrerJournal(
+            LocalDateTime debut,
+            LocalDateTime fin,
+            Pageable pageable) {
+
+        return journalRepo
+                .findByDateOperationBetweenOrderByDateOperationDesc(
+                        debut,
+                        fin,
+                        pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<JournalFinancierModel> filtrerParType(
+            Integer typeJournalId,
+            Pageable pageable) {
+
+        return journalRepo
+                .findByTypeJournal_IdOrderByDateOperationDesc(
+                        typeJournalId,
+                        pageable);
     }
 }
