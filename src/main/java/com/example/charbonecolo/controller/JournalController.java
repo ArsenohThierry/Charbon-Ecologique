@@ -4,6 +4,7 @@ import com.example.charbonecolo.model.JournalFinancierModel;
 import com.example.charbonecolo.repository.OrigineRepository;
 import com.example.charbonecolo.repository.TypeJournalRepository;
 import com.example.charbonecolo.service.JournalFinancierService;
+import com.example.charbonecolo.service.ExportFinanceService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -34,13 +35,16 @@ public class JournalController {
     private final JournalFinancierService journalService;
     private final TypeJournalRepository typeJournalRepo;
     private final OrigineRepository origineRepo;
-
+    private final ExportFinanceService exportFinanceService;
+    
     public JournalController(JournalFinancierService journalService,
                              TypeJournalRepository typeJournalRepo,
-                             OrigineRepository origineRepo) {
+                             OrigineRepository origineRepo,
+                             ExportFinanceService exportFinanceService) {
         this.journalService = journalService;
         this.typeJournalRepo = typeJournalRepo;
         this.origineRepo = origineRepo;
+        this.exportFinanceService = exportFinanceService;
     }
 
     @GetMapping
@@ -168,5 +172,17 @@ public class JournalController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"journal_financier.csv\"")
                 .contentType(MediaType.parseMediaType("text/csv;charset=UTF-8"))
                 .body(bytes);
+    }
+
+    @GetMapping("/export-excel")
+    public ResponseEntity<byte[]> exportExcel() throws Exception {
+
+        byte[] file = exportFinanceService.exportJournalExcel();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=journal.xlsx")
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(file);
     }
 }
