@@ -20,7 +20,10 @@ import com.example.charbonecolo.repository.LivraisonRepository;
 import com.example.charbonecolo.repository.LivraisonStatutRepository;
 import com.example.charbonecolo.repository.StatutCommandeRepository;
 import com.example.charbonecolo.repository.StatutLivraisonRepository;
-
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import com.example.charbonecolo.dto.LivraisonCriteriaWrapper;
+import com.example.charbonecolo.dto.LivraisonDto;
 @Service
 public class LivraisonService {
 
@@ -116,4 +119,19 @@ public class LivraisonService {
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
         return "LIV-" + timestamp;
     }
+
+    public Slice<LivraisonDto> listLivraisons(Pageable pageable, LivraisonCriteriaWrapper wrapper) {
+        Slice<Object[]> sliceBrut = livraisonRepository.findLivraisonsFiltrees(pageable, wrapper);
+
+        return sliceBrut.map(ligne -> new LivraisonDto(
+                (Integer) ligne[0],
+                (String) ligne[1],
+                (LocalDateTime) ligne[2],
+                (String) ligne[3],
+                (String) ligne[4],
+                (String) ligne[5],
+                ((Long) ligne[6]).intValue()
+        ));
+    }
+
 }
