@@ -54,7 +54,7 @@ public class LotProductionController {
             @RequestParam Integer idTypeMatierePremiere,
             @RequestParam Integer idProduit,
             @RequestParam BigDecimal quantiteMatiereUtilisee,
-            @RequestParam Integer quantiteProduitPrevues,
+            @RequestParam Integer quantiteProduitPrevue,
             @RequestParam(required = false) String dateEntreeLot,
             @RequestParam(required = false) String remarques,
             Model model) {
@@ -65,8 +65,8 @@ public class LotProductionController {
         lot.setProduit(
                 produitService.findById(idProduit));
         lot.setQuantiteMatiereUtilisee(quantiteMatiereUtilisee);
-        lot.setQuantiteProduitPrevues(quantiteProduitPrevues);
-        lot.setRemarques(remarques);
+        lot.setQuantiteProduitPrevue(quantiteProduitPrevue);
+        lot.setRemarques(remarques);        
         if (dateEntreeLot != null && !dateEntreeLot.isBlank()) {
             lot.setDateEntreeLot(LocalDateTime.parse(dateEntreeLot));
         } else {
@@ -88,25 +88,23 @@ public class LotProductionController {
     }
 
     @PostMapping("/modifier/{id}")
-    public String updateLot(@PathVariable Integer id,
-            @RequestParam Integer idTypeMatierePremiere,
-            @RequestParam Integer idProduit,
-            @RequestParam BigDecimal quantiteMatiereUtilisee,
-            @RequestParam Integer quantiteProduitPrevues,
-            @RequestParam(required = false) String dateEntreeLot,
-            @RequestParam(required = false) String remarques) {
-        LotProductionModel lot = lotProductionService.getLotProductionById(id).orElseThrow();
-        lot.setTypeMatierePremiere(typeMatierePremiereService.getById(idTypeMatierePremiere));
-        lot.setProduit(produitService.findById(idProduit));
-        lot.setQuantiteMatiereUtilisee(quantiteMatiereUtilisee);
-        lot.setQuantiteProduitPrevues(quantiteProduitPrevues);
-        lot.setRemarques(remarques);
-        if (dateEntreeLot != null && !dateEntreeLot.isBlank()) {
-            lot.setDateEntreeLot(LocalDateTime.parse(dateEntreeLot));
-        }
-        lotProductionService.saveLotProduction(lot);
-        return "redirect:/stock/lot/liste";
+public String updateLot(@PathVariable Integer id,
+                        @RequestParam Integer idTypeMatierePremiere,
+                        @RequestParam Integer idProduit,
+                        @RequestParam BigDecimal quantiteMatiereUtilisee,
+                        @RequestParam Integer quantiteProduitPrevues,
+                        @RequestParam(required = false) String dateEntreeLot,
+                        @RequestParam(required = false) String remarques) {
+    LotProductionModel lot = lotProductionService.getLotProductionById(id).orElseThrow();
+    lot.setTypeMatierePremiere(typeMatierePremiereService.getById(idTypeMatierePremiere));
+    lot.setProduit(produitService.findById(idProduit));
+    lot.setQuantiteMatiereUtilisee(quantiteMatiereUtilisee);
+    lot.setQuantiteProduitPrevue(quantiteProduitPrevues);
+    lot.setRemarques(remarques);
+    if (dateEntreeLot != null && !dateEntreeLot.isBlank()) {
+        lot.setDateEntreeLot(LocalDateTime.parse(dateEntreeLot));
     }
+
 
     @PostMapping("/supprimer/{id}")
     public String supprimerLot(@PathVariable Integer id, RedirectAttributes ra) {

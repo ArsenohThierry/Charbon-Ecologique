@@ -3,6 +3,10 @@ package com.example.charbonecolo.controller;
 import com.example.charbonecolo.exception.BusinessException;
 import com.example.charbonecolo.model.MouvementSortieDetailModel;
 import com.example.charbonecolo.model.MouvementStockModel;
+import com.example.charbonecolo.dto.AlerteProduitDTO;
+import com.example.charbonecolo.dto.EntreeStockDTO;
+import com.example.charbonecolo.dto.LotStockSummaryDTO;
+import com.example.charbonecolo.dto.SortieStockDTO;
 import com.example.charbonecolo.model.ProduitModel;
 import com.example.charbonecolo.service.MouvementStockService;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -10,6 +14,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -31,15 +36,20 @@ public class MouvementStockController {
         this.mouvementStockService = mouvementStockService;
     }
 
-    // ── ENTRÉE ───────────────────────────────────────────────────
-
-    /**
-     * Affiche la page d'entrée stock avec les lots et l'historique
-     */
+    // ENTRÉE
     @GetMapping("stock/entree")
     public String entreeStock(Model model) {
         model.addAttribute("lotsTermines", mouvementStockService.getLotsTermines());
+        List<MouvementStockModel> mouvements = mouvementStockService.getAllMouvementsStock();
         model.addAttribute("mouvements", mouvementStockService.getAllMouvementsStock());
+        Map<Integer, Integer> stockParLot = new HashMap<>();
+        for (MouvementStockModel m : mouvements) {
+            if (m.getLotProduction() != null) {
+                Integer idLot = m.getLotProduction().getId();
+                stockParLot.putIfAbsent(idLot, mouvementStockService.getStockDisponible(idLot));
+            }
+        }
+        model.addAttribute("stockParLot", stockParLot);
         return "stitch/module_stock/entree_stock";
     }
 
@@ -47,14 +57,18 @@ public class MouvementStockController {
      * Enregistre une entrée stock et redirige
      */
     @PostMapping("stock/entree")
-    public String saveEntreeStock(@RequestParam Integer idLot,
-                                  @RequestParam Integer quantite,
-                                  @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
-        mouvementStockService.saveEntreeStock(idLot, quantite, date);
+    public String saveEntreeStock(@ModelAttribute EntreeStockDTO entry, RedirectAttributes ra) {
+        try {
+            mouvementStockService.saveEntreeStock(entry);
+
+        } catch (RuntimeException e) {
+            ra.addFlashAttribute("error", e.getMessage());
+            return "redirect:/stock/entree";
+        }
         return "redirect:/stock/entree";
     }
 
-    // ── SORTIE (FIFO) ───────────────────────────────────────────
+    // SORTIE (FIFO)
 
     /**
      * Affiche la page de sortie stock avec les produits, motifs et l'historique
@@ -88,13 +102,9 @@ public class MouvementStockController {
      * Enregistre une sortie stock avec déduction FIFO et redirige
      */
     @PostMapping("stock/sortie")
-    public String saveSortieStock(@RequestParam Integer idProduit,
-                                  @RequestParam Integer quantite,
-                                  @RequestParam Integer idMotif,
-                                  @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
-                                  RedirectAttributes ra) {
+    public String saveSortieStock(@ModelAttribute SortieStockDTO sortie, RedirectAttributes ra) {
         try {
-            mouvementStockService.saveSortieStock(idProduit, quantite, idMotif, date);
+            mouvementStockService.saveSortieStock(sortie);
         } catch (BusinessException e) {
             ra.addFlashAttribute("error", e.getMessage());
             return "redirect:/stock/sortie";
@@ -108,7 +118,7 @@ public class MouvementStockController {
      * Affiche le formulaire de modification pré-rempli
      */
     @GetMapping("stock/mouvement/modifier")
-    public String editMouvement(@RequestParam Integer id, Model model) {
+    public String editMouvement(@RequestParam Integer id, Model model, RedirectAttributes ra) {
         MouvementStockModel m = mouvementStockService.getMouvementStockById(id).orElseThrow();
         model.addAttribute("mouvement", m);
         model.addAttribute("lotsTermines", mouvementStockService.getLotsTermines());
@@ -120,39 +130,97 @@ public class MouvementStockController {
      * Sauvegarde les modifications
      */
     @PostMapping("stock/mouvement/modifier")
-    public String saveEditMouvement(@RequestParam Integer id,
-                                    @RequestParam(required = false) Integer idLot,
-                                    @RequestParam Integer quantite,
-                                    @RequestParam(required = false) Integer idMotif,
-                                    @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
-                                    RedirectAttributes ra) {
-        MouvementStockModel m = mouvementStockService.getMouvementStockById(id).orElseThrow();
+    public String saveEditMouvement(
+            @RequestParam Integer id,
+            @RequestParam(required = false) Integer idLot,
+            @RequestParam Integer quantite,
+            @RequestParam(required = false) Integer idMotif,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
+            RedirectAttributes ra) {
+
+        MouvementStockModel m = mouvementStockService
+                .getMouvementStockById(id)
+                .orElseThrow();
         boolean isEntree = m.getTypeMouvement().getId() == 1;
-        if (isEntree) {
-            mouvementStockService.updateEntreeStock(id, idLot, quantite, date);
-            return "redirect:/stock/entree";
-        } else {
-            try {
-                mouvementStockService.updateSortieStock(id, quantite, idMotif, date);
-            } catch (BusinessException e) {
-                ra.addFlashAttribute("error", e.getMessage());
-                return "redirect:/stock/mouvement/modifier?id=" + id;
+
+        try {
+
+            if (isEntree) {
+                EntreeStockDTO dto = new EntreeStockDTO();
+                dto.setId(id);
+                dto.setIdLot(idLot);
+                dto.setQuantite(quantite);
+                dto.setDateEntree(date);
+
+                mouvementStockService.updateEntreeStock(dto);
+            } else {
+                SortieStockDTO dto = new SortieStockDTO();
+                dto.setId(id);
+                dto.setQuantite(quantite);
+                dto.setIdMotif(idMotif);
+                dto.setDateSortie(date);
+
+                mouvementStockService.updateSortieStock(dto);
             }
-            return "redirect:/stock/sortie";
+
+        } catch (BusinessException e) {
+
+            ra.addFlashAttribute("error", e.getMessage());
+            return "redirect:/stock/mouvement/modifier?id=" + id;
         }
+
+        return isEntree ? "redirect:/stock/entree" : "redirect:/stock/sortie";
     }
 
     // ── SUPPRIMER ────────────────────────────────────────────────
 
     @PostMapping("stock/mouvement/supprimer")
     public String deleteMouvement(@RequestParam Integer id, RedirectAttributes ra) {
-        MouvementStockModel m = mouvementStockService.getMouvementStockById(id).orElseThrow();
+
+        MouvementStockModel m = mouvementStockService
+                .getMouvementStockById(id)
+                .orElseThrow();
+
         boolean isEntree = m.getTypeMouvement().getId() == 1;
+
         try {
+
             mouvementStockService.deleteMouvementStock(id);
+
+        } catch (BusinessException e) {
+
+            ra.addFlashAttribute("error", e.getMessage());
+
         } catch (DataIntegrityViolationException e) {
-            ra.addFlashAttribute("error", "Impossible de supprimer ce mouvement : il est référencé par d'autres enregistrements.");
+
+            ra.addFlashAttribute("error",
+                    "Impossible de supprimer ce mouvement : il est référencé par d'autres enregistrements.");
+
         }
+
         return isEntree ? "redirect:/stock/entree" : "redirect:/stock/sortie";
+    }
+
+    @GetMapping("stock/etat")
+    public String etatStock(Model model) {
+        List<LotStockSummaryDTO> stockParLot = mouvementStockService.getStockParLot();
+        model.addAttribute("stockParLot", stockParLot);
+        model.addAttribute("totalEntree", mouvementStockService.getTotalEntreeGlobal(stockParLot));
+        model.addAttribute("totalSortie", mouvementStockService.getTotalSortieGlobal(stockParLot));
+        model.addAttribute("stockRestant", mouvementStockService.getStockRestantGlobal(stockParLot));
+
+        List<AlerteProduitDTO> alertes = mouvementStockService.getAlertesActives();
+        model.addAttribute("alertes", alertes);
+        model.addAttribute("nbAlertesTotal", alertes.size());
+
+        int nbRuptures = 0;
+        for (AlerteProduitDTO a : alertes) {
+            if ("Rupture".equals(a.niveauAlerte())) {
+                nbRuptures++;
+            }
+        }
+        model.addAttribute("nbRuptures", nbRuptures);
+
+        return "stitch/module_stock/etat_stock";
     }
 }

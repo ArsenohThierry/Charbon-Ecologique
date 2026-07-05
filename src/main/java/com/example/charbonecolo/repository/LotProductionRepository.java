@@ -15,10 +15,15 @@ import java.util.Optional;
 public interface LotProductionRepository extends JpaRepository<LotProductionModel, Integer> {
     Optional<LotProductionModel> findByReference(String reference);
 
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("SELECT l FROM LotProductionModel l " +
-           "WHERE l.produit.id = :idProduit " +
-           "AND (l.quantiteRestante IS NOT NULL AND l.quantiteRestante > 0) " +
-           "ORDER BY l.dateEntreeLot ASC")
-    List<LotProductionModel> findLotsWithStockByProduitOrderByDateAsc(@Param("idProduit") Integer idProduit);
+    @Query("""
+            SELECT l
+            FROM LotProductionModel l
+            JOIN MouvementStockModel m
+                ON m.lotProduction = l
+            WHERE l.produit.id = :idProduit
+              AND m.typeMouvement.id = 1
+            ORDER BY m.dateMouvement ASC
+            """)
+    List<LotProductionModel> findLotsWithStockByProduitOrderByDateAsc(
+            @Param("idProduit") Integer idProduit);
 }

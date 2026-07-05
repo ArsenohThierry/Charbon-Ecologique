@@ -4,21 +4,24 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.example.charbonecolo.dto.CommandeDto;
+import com.example.charbonecolo.dto.CriteriaWrapper;
 import com.example.charbonecolo.model.CommandeModel;
 
 import jakarta.persistence.NamedNativeQuery;
 
 @Repository
 public interface CommandeRepository extends JpaRepository<CommandeModel, Integer> {
+    // Maka anle liste par pagination
 
     @Query(value = """
-                           SELECT
+            SELECT
                 c.id,
                 c.reference,
                 c.date_commande,
@@ -41,21 +44,34 @@ public interface CommandeRepository extends JpaRepository<CommandeModel, Integer
                 JOIN commande_statuts cs ON cs.id = sc.id_commande_statuts
                 ORDER BY id_commandes, date_statut_commande DESC
             ) dernier_statut ON dernier_statut.id_commandes = c.id
-                        """, countQuery = "SELECT COUNT(*) FROM commandes", 
-                    nativeQuery = true)
-    Page<Object[]> findCustomCommandes(Pageable pageable);
+            WHERE c.deleted_at IS NULL
+              AND (CAST(:#{#cri.statut} AS integer) IS NULL OR dernier_statut.id_commande_statuts = CAST(:#{#cri.statut} AS integer))
+              AND (CAST(:#{#cri.dateMin} AS date) IS NULL OR CAST(c.date_commande AS date) >= CAST(:#{#cri.dateMin} AS date))
+              AND (CAST(:#{#cri.dateMax} AS date) IS NULL OR CAST(c.date_commande AS date) <= CAST(:#{#cri.dateMax} AS date))
+              AND (CAST(:#{#cri.montantMin} AS numeric) IS NULL OR total_cmd.montant_total >= CAST(:#{#cri.montantMin} AS numeric))
+              AND (CAST(:#{#cri.montantMax} AS numeric) IS NULL OR total_cmd.montant_total <= CAST(:#{#cri.montantMax} AS numeric))
+              AND (
+                CAST(:#{#cri.keyword} AS text) IS NULL
+                OR c.reference ILIKE CONCAT('%', CAST(:#{#cri.keyword} AS text), '%')
+                OR cli.nom ILIKE CONCAT('%', CAST(:#{#cri.keyword} AS text), '%')
+                OR dernier_statut.libelle = CAST(:#{#cri.keyword} AS text)
+              )
+            """, nativeQuery = true)
+    Slice<Object[]> findCustomCommandes(
+            Pageable pageable,
+            @Param("cri") CriteriaWrapper wrapper);
 
     @Query(value = """
-        SELECT c.id, c.reference, cli.nom AS client_nom
-        FROM commandes AS c
-        JOIN clients AS cli ON cli.id = c.id_client
-        JOIN (
-            SELECT DISTINCT ON (id_commandes) id_commandes, id_commande_statuts
-            FROM statuts_commandes
-            ORDER BY id_commandes, date_statut_commande DESC
-        ) dernier_statut ON dernier_statut.id_commandes = c.id
-        WHERE dernier_statut.id_commande_statuts = 2
-        ORDER BY c.date_commande DESC
-    """, nativeQuery = true)
+                SELECT c.id, c.reference, cli.nom AS client_nom
+                FROM commandes AS c
+                JOIN clients AS cli ON cli.id = c.id_client
+                JOIN (
+                    SELECT DISTINCT ON (id_commandes) id_commandes, id_commande_statuts
+                    FROM statuts_commandes
+                    ORDER BY id_commandes, date_statut_commande DESC
+                ) dernier_statut ON dernier_statut.id_commandes = c.id
+                WHERE dernier_statut.id_commande_statuts = 2
+                ORDER BY c.date_commande DESC
+            """, nativeQuery = true)
     List<Object[]> findCommandesDisponibles();
 }
