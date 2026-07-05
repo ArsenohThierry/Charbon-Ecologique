@@ -18,6 +18,11 @@ public class LotStatutsModel {
     @Column(nullable = false)
     private String libelle;
 
+    // Ordre de progression dans le cycle de production (1 = premier statut).
+    // Ajouté en base par sql/012-etapes_production_lot.sql
+    @Column(nullable = false)
+    private Integer ordre;
+
     // getters/setters
     public Integer getId() {
         return id;
@@ -33,5 +38,13 @@ public class LotStatutsModel {
 
     public void setLibelle(String libelle) {
         this.libelle = libelle;
+    }
+
+    public Integer getOrdre() {
+        return ordre;
+    }
+
+    public void setOrdre(Integer ordre) {
+        this.ordre = ordre;
     }
 }

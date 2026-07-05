@@ -818,11 +818,6 @@ input:where([type='file']):focus {
   grid-column: span 2 / span 2;
 }
 
-.mx-1 {
-  margin-left: 0.25rem;
-  margin-right: 0.25rem;
-}
-
 .mx-2 {
   margin-left: 0.5rem;
   margin-right: 0.5rem;
@@ -885,6 +880,10 @@ input:where([type='file']):focus {
 
 .mb-8 {
   margin-bottom: 2rem;
+}
+
+.ml-1 {
+  margin-left: 0.25rem;
 }
 
 .ml-10 {
@@ -1079,6 +1078,10 @@ input:where([type='file']):focus {
   width: 1rem;
 }
 
+.w-40 {
+  width: 10rem;
+}
+
 .w-44 {
   width: 11rem;
 }
@@ -1145,11 +1148,6 @@ input:where([type='file']):focus {
 
 .max-w-\[420px\] {
   max-width: 420px;
-}
-
-.max-w-fit {
-  max-width: -moz-fit-content;
-  max-width: fit-content;
 }
 
 .max-w-md {
@@ -1460,10 +1458,6 @@ input:where([type='file']):focus {
   border-width: 1px;
 }
 
-.border-2 {
-  border-width: 2px;
-}
-
 .border-b {
   border-bottom-width: 1px;
 }
@@ -1499,18 +1493,14 @@ input:where([type='file']):focus {
   border-color: rgb(248 247 240 / var(--tw-border-opacity, 1));
 }
 
-.border-cv-accent {
+.border-brand-success {
   --tw-border-opacity: 1;
-  border-color: rgb(45 90 39 / var(--tw-border-opacity, 1));
+  border-color: rgb(64 123 74 / var(--tw-border-opacity, 1));
 }
 
 .border-cv-accent-orange {
   --tw-border-opacity: 1;
   border-color: rgb(217 154 78 / var(--tw-border-opacity, 1));
-}
-
-.border-cv-accent\/20 {
-  border-color: rgb(45 90 39 / 0.2);
 }
 
 .border-cv-border-cream {
@@ -1529,6 +1519,11 @@ input:where([type='file']):focus {
 
 .border-cv-status-green-text\/20 {
   border-color: rgb(30 126 52 / 0.2);
+}
+
+.border-emerald-200 {
+  --tw-border-opacity: 1;
+  border-color: rgb(167 243 208 / var(--tw-border-opacity, 1));
 }
 
 .border-gray-100 {
@@ -1672,11 +1667,6 @@ input:where([type='file']):focus {
   background-color: rgb(62 123 79 / var(--tw-bg-opacity, 1));
 }
 
-.bg-cv-accent {
-  --tw-bg-opacity: 1;
-  background-color: rgb(45 90 39 / var(--tw-bg-opacity, 1));
-}
-
 .bg-cv-accent-orange {
   --tw-bg-opacity: 1;
   background-color: rgb(217 154 78 / var(--tw-bg-opacity, 1));
@@ -1684,14 +1674,6 @@ input:where([type='file']):focus {
 
 .bg-cv-accent-orange\/10 {
   background-color: rgb(217 154 78 / 0.1);
-}
-
-.bg-cv-accent\/10 {
-  background-color: rgb(45 90 39 / 0.1);
-}
-
-.bg-cv-accent\/5 {
-  background-color: rgb(45 90 39 / 0.05);
 }
 
 .bg-cv-bg-light {
@@ -1722,11 +1704,6 @@ input:where([type='file']):focus {
   background-color: rgb(26 46 26 / 0.1);
 }
 
-.bg-cv-gold {
-  --tw-bg-opacity: 1;
-  background-color: rgb(197 160 89 / var(--tw-bg-opacity, 1));
-}
-
 .bg-cv-gold-light {
   --tw-bg-opacity: 1;
   background-color: rgb(212 180 131 / var(--tw-bg-opacity, 1));
@@ -1734,10 +1711,6 @@ input:where([type='file']):focus {
 
 .bg-cv-gold-light\/10 {
   background-color: rgb(212 180 131 / 0.1);
-}
-
-.bg-cv-gold\/10 {
-  background-color: rgb(197 160 89 / 0.1);
 }
 
 .bg-cv-primary-green {
@@ -1773,6 +1746,11 @@ input:where([type='file']):focus {
 .bg-emerald-100 {
   --tw-bg-opacity: 1;
   background-color: rgb(209 250 229 / var(--tw-bg-opacity, 1));
+}
+
+.bg-emerald-50 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(236 253 245 / var(--tw-bg-opacity, 1));
 }
 
 .bg-emerald-600 {
@@ -1879,10 +1857,6 @@ input:where([type='file']):focus {
 
 .bg-white\/5 {
   background-color: rgb(255 255 255 / 0.05);
-}
-
-.bg-white\/50 {
-  background-color: rgb(255 255 255 / 0.5);
 }
 
 .bg-white\/80 {
@@ -2035,6 +2009,11 @@ input:where([type='file']):focus {
 .py-6 {
   padding-top: 1.5rem;
   padding-bottom: 1.5rem;
+}
+
+.py-8 {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
 }
 
 .pb-2 {
@@ -2269,11 +2248,6 @@ input:where([type='file']):focus {
   color: rgb(62 123 79 / var(--tw-text-opacity, 1));
 }
 
-.text-cv-accent {
-  --tw-text-opacity: 1;
-  color: rgb(45 90 39 / var(--tw-text-opacity, 1));
-}
-
 .text-cv-accent-orange {
   --tw-text-opacity: 1;
   color: rgb(217 154 78 / var(--tw-text-opacity, 1));
@@ -2282,11 +2256,6 @@ input:where([type='file']):focus {
 .text-cv-dark-green {
   --tw-text-opacity: 1;
   color: rgb(26 46 26 / var(--tw-text-opacity, 1));
-}
-
-.text-cv-gold {
-  --tw-text-opacity: 1;
-  color: rgb(197 160 89 / var(--tw-text-opacity, 1));
 }
 
 .text-cv-gold-light {
@@ -2630,19 +2599,13 @@ input:where([type='file']):focus {
   background-color: rgb(248 247 240 / 0.5);
 }
 
+.hover\:bg-brand-success\/10:hover {
+  background-color: rgb(64 123 74 / 0.1);
+}
+
 .hover\:bg-charbon-light-green:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(74 139 93 / var(--tw-bg-opacity, 1));
-}
-
-.hover\:bg-cv-accent:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(45 90 39 / var(--tw-bg-opacity, 1));
-}
-
-.hover\:bg-cv-cream:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(249 248 243 / var(--tw-bg-opacity, 1));
 }
 
 .hover\:bg-cv-cream\/20:hover {
@@ -2677,11 +2640,6 @@ input:where([type='file']):focus {
 .hover\:bg-gray-100:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(243 244 246 / var(--tw-bg-opacity, 1));
-}
-
-.hover\:bg-gray-200:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(229 231 235 / var(--tw-bg-opacity, 1));
 }
 
 .hover\:bg-gray-300:hover {
@@ -2833,11 +2791,6 @@ input:where([type='file']):focus {
   border-color: rgb(62 123 79 / var(--tw-border-opacity, 1));
 }
 
-.focus\:border-cv-accent:focus {
-  --tw-border-opacity: 1;
-  border-color: rgb(45 90 39 / var(--tw-border-opacity, 1));
-}
-
 .focus\:border-cv-button-green:focus {
   --tw-border-opacity: 1;
   border-color: rgb(45 90 60 / var(--tw-border-opacity, 1));
@@ -2898,11 +2851,6 @@ input:where([type='file']):focus {
 .focus\:ring-charbon-green:focus {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgb(62 123 79 / var(--tw-ring-opacity, 1));
-}
-
-.focus\:ring-cv-accent:focus {
-  --tw-ring-opacity: 1;
-  --tw-ring-color: rgb(45 90 39 / var(--tw-ring-opacity, 1));
 }
 
 .focus\:ring-cv-button-green:focus {

@@ -30,6 +30,11 @@ public class StatutsLotProductionModel {
     @Column(name = "date_statut", nullable = false)
     private LocalDateTime dateStatut;
 
+    // Date de fin de CE statut (nullable : NULL = statut encore en cours pour ce lot).
+    // Ajoutée en base par sql/012-etapes_production_lot.sql
+    @Column(name = "date_fin")
+    private LocalDateTime dateFin;
+
     // getters/setters
 
     public Integer getId() {
@@ -64,5 +69,12 @@ public class StatutsLotProductionModel {
         this.dateStatut = dateStatut;
     }
 
-    
+    public LocalDateTime getDateFin() {
+        return dateFin;
+    }
+
+    public void setDateFin(LocalDateTime dateFin) {
+        this.dateFin = dateFin;
+    }
+
 }

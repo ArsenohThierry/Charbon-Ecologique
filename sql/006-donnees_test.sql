@@ -13,4 +13,4 @@ INSERT INTO lot_production (reference, id_type_matiere_premiere, id_produit, qua
 VALUES ('LOT-002', 1, 1, 300.00, 120, 115, NOW());
 
 INSERT INTO lot_production (reference, id_type_matiere_premiere, id_produit, quantite_matiere_utilisee, quantite_produit_prevue, quantite_produit_reelle, date_entree_lot)
-VALUES ('LOT-003', 2, 1, 750.00, 300, NULL, NOW());
+VALUES ('LOT-003', 1, 1, 750.00, 300, NULL, NOW());

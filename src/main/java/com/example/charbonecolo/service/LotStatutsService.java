@@ -14,7 +14,7 @@ public class LotStatutsService {
     private LotStatutsRepository lotStatutsRepository;
 
     public List<LotStatutsModel> getAllLotsStatuts(){
-        return lotStatutsRepository.findAll();
+        return lotStatutsRepository.findAllByOrderByOrdreAsc();
     }
 
 }
