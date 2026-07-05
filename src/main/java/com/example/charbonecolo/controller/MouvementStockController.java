@@ -4,8 +4,14 @@ import com.example.charbonecolo.exception.BusinessException;
 import com.example.charbonecolo.model.MouvementSortieDetailModel;
 import com.example.charbonecolo.model.MouvementStockModel;
 import com.example.charbonecolo.dto.AlerteProduitDTO;
+import com.example.charbonecolo.dto.EntreeCriteriaWrapper;
+import com.example.charbonecolo.dto.EntreeDto;
 import com.example.charbonecolo.dto.EntreeStockDTO;
+import com.example.charbonecolo.dto.EtatStockCriteriaWrapper;
+import com.example.charbonecolo.dto.EtatStockDto;
 import com.example.charbonecolo.dto.LotStockSummaryDTO;
+import com.example.charbonecolo.dto.SortieCriteriaWrapper;
+import com.example.charbonecolo.dto.SortieDto;
 import com.example.charbonecolo.dto.SortieStockDTO;
 import com.example.charbonecolo.model.ProduitModel;
 import com.example.charbonecolo.service.MouvementStockService;
@@ -17,7 +23,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.data.domain.*;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -37,20 +45,46 @@ public class MouvementStockController {
     }
 
     // ENTRÉE
+    private static final Map<String, String> sortReferencesEntrees;
+    static {
+        sortReferencesEntrees = new HashMap<>();
+        sortReferencesEntrees.put("date", "date_mouvement");
+        sortReferencesEntrees.put("lot", "lot_reference");
+        sortReferencesEntrees.put("matiere", "matiere_libelle");
+        sortReferencesEntrees.put("quantite", "quantite");
+        sortReferencesEntrees.put("fournisseur", "fournisseur_nom");
+    }
+
     @GetMapping("stock/entree")
-    public String entreeStock(Model model) {
-        model.addAttribute("lotsTermines", mouvementStockService.getLotsTermines());
-        List<MouvementStockModel> mouvements = mouvementStockService.getAllMouvementsStock();
-        model.addAttribute("mouvements", mouvementStockService.getAllMouvementsStock());
-        Map<Integer, Integer> stockParLot = new HashMap<>();
-        for (MouvementStockModel m : mouvements) {
-            if (m.getLotProduction() != null) {
-                Integer idLot = m.getLotProduction().getId();
-                stockParLot.putIfAbsent(idLot, mouvementStockService.getStockDisponible(idLot));
-            }
+    public ModelAndView entreeStock(@ModelAttribute EntreeCriteriaWrapper wrapper) {
+        if (wrapper.getLimit() == null) {
+            wrapper.setLimit(10);
         }
-        model.addAttribute("stockParLot", stockParLot);
-        return "stitch/module_stock/entree_stock";
+
+        Pageable pageable;
+        if (wrapper.getCurrentSort() != null && wrapper.getCurrentDir() != null
+                && !wrapper.getCurrentSort().isEmpty() && !wrapper.getCurrentDir().isEmpty()) {
+            String sort = sortReferencesEntrees.get(wrapper.getCurrentSort());
+            Sort.Direction direction = wrapper.getCurrentDir().equalsIgnoreCase("desc")
+                    ? Sort.Direction.DESC
+                    : Sort.Direction.ASC;
+            pageable = PageRequest.of(wrapper.getPage() - 1, wrapper.getLimit(), Sort.by(direction, sort));
+        } else {
+            pageable = PageRequest.of(wrapper.getPage() - 1, wrapper.getLimit());
+        }
+
+        Slice<EntreeDto> pageResult = mouvementStockService.listEntrees(pageable, wrapper);
+
+        ModelAndView mav = new ModelAndView("stitch/module_stock/entree_stock");
+        mav.addObject("entrees", pageResult.getContent());
+        mav.addObject("currentPage", wrapper.getPage());
+        mav.addObject("currentDir", wrapper.getCurrentDir());
+        mav.addObject("currentSort", wrapper.getCurrentSort());
+        mav.addObject("page", pageResult);
+        mav.addObject("lotsTermines", mouvementStockService.getLotsTermines());
+        mav.addObject("produits", mouvementStockService.getAllProduits());
+        mav.addObject("dispo", mouvementStockService.getStockDisponible());
+        return mav;
     }
 
     /**
@@ -70,32 +104,45 @@ public class MouvementStockController {
 
     // SORTIE (FIFO)
 
-    /**
-     * Affiche la page de sortie stock avec les produits, motifs et l'historique
-     */
+    private static final Map<String, String> sortReferencesSorties;
+    static {
+        sortReferencesSorties = new HashMap<>();
+        sortReferencesSorties.put("reference", "id");
+        sortReferencesSorties.put("produit", "produit_nom");
+        sortReferencesSorties.put("quantite", "quantite");
+        sortReferencesSorties.put("motif", "motif_libelle");
+        sortReferencesSorties.put("date", "date_mouvement");
+    }
+
     @GetMapping("stock/sortie")
-    public String sortieStock(Model model) {
-        List<ProduitModel> produits = mouvementStockService.getAllProduits();
-        model.addAttribute("produits", produits);
-
-        Map<Integer, String> produitsMap = new HashMap<>();
-        for (ProduitModel p : produits) {
-            produitsMap.put(p.getId(), p.getNom());
+    public ModelAndView sortieStock(@ModelAttribute SortieCriteriaWrapper wrapper) {
+        if (wrapper.getLimit() == null) {
+            wrapper.setLimit(10);
         }
-        model.addAttribute("produitsMap", produitsMap);
 
-        model.addAttribute("motifs", mouvementStockService.getAllMotifsSortie());
-        List<MouvementStockModel> mouvements = mouvementStockService.getAllMouvementsStock();
-        model.addAttribute("mouvements", mouvements);
-
-        Map<Integer, List<MouvementSortieDetailModel>> sortieDetailsMap = new HashMap<>();
-        for (MouvementStockModel m : mouvements) {
-            if (m.getTypeMouvement().getId() == 2) {
-                sortieDetailsMap.put(m.getId(), mouvementStockService.getDetailsByMouvement(m));
-            }
+        Pageable pageable;
+        if (wrapper.getCurrentSort() != null && wrapper.getCurrentDir() != null
+                && !wrapper.getCurrentSort().isEmpty() && !wrapper.getCurrentDir().isEmpty()) {
+            String sort = sortReferencesSorties.get(wrapper.getCurrentSort());
+            Sort.Direction direction = wrapper.getCurrentDir().equalsIgnoreCase("desc")
+                    ? Sort.Direction.DESC
+                    : Sort.Direction.ASC;
+            pageable = PageRequest.of(wrapper.getPage() - 1, wrapper.getLimit(), Sort.by(direction, sort));
+        } else {
+            pageable = PageRequest.of(wrapper.getPage() - 1, wrapper.getLimit());
         }
-        model.addAttribute("sortieDetails", sortieDetailsMap);
-        return "stitch/module_stock/sortie_stock";
+
+        Slice<SortieDto> pageResult = mouvementStockService.listSorties(pageable, wrapper);
+
+        ModelAndView mav = new ModelAndView("stitch/module_stock/sortie_stock");
+        mav.addObject("sorties", pageResult.getContent());
+        mav.addObject("currentPage", wrapper.getPage());
+        mav.addObject("currentDir", wrapper.getCurrentDir());
+        mav.addObject("currentSort", wrapper.getCurrentSort());
+        mav.addObject("page", pageResult);
+        mav.addObject("produits", mouvementStockService.getAllProduits());
+        mav.addObject("motifs", mouvementStockService.getAllMotifsSortie());
+        return mav;
     }
 
     /**
@@ -201,26 +248,55 @@ public class MouvementStockController {
         return isEntree ? "redirect:/stock/entree" : "redirect:/stock/sortie";
     }
 
+    private static final Map<String, String> sortReferencesEtatStock;
+    static {
+        sortReferencesEtatStock = new HashMap<>();
+        sortReferencesEtatStock.put("produit", "nom");
+        sortReferencesEtatStock.put("reference", "reference");
+        sortReferencesEtatStock.put("entree", "total_entree");
+        sortReferencesEtatStock.put("sortie", "total_sortie");
+        sortReferencesEtatStock.put("restant", "restant");
+    }
+
     @GetMapping("stock/etat")
-    public String etatStock(Model model) {
-        List<LotStockSummaryDTO> stockParLot = mouvementStockService.getStockParLot();
-        model.addAttribute("stockParLot", stockParLot);
-        model.addAttribute("totalEntree", mouvementStockService.getTotalEntreeGlobal(stockParLot));
-        model.addAttribute("totalSortie", mouvementStockService.getTotalSortieGlobal(stockParLot));
-        model.addAttribute("stockRestant", mouvementStockService.getStockRestantGlobal(stockParLot));
+    public ModelAndView etatStock(@ModelAttribute EtatStockCriteriaWrapper wrapper) {
+        if (wrapper.getLimit() == null) {
+            wrapper.setLimit(10);
+        }
 
+        Pageable pageable;
+        if (wrapper.getCurrentSort() != null && wrapper.getCurrentDir() != null
+                && !wrapper.getCurrentSort().isEmpty() && !wrapper.getCurrentDir().isEmpty()) {
+            String sort = sortReferencesEtatStock.get(wrapper.getCurrentSort());
+            Sort.Direction direction = wrapper.getCurrentDir().equalsIgnoreCase("desc")
+                    ? Sort.Direction.DESC
+                    : Sort.Direction.ASC;
+            pageable = PageRequest.of(wrapper.getPage() - 1, wrapper.getLimit(), Sort.by(direction, sort));
+        } else {
+            pageable = PageRequest.of(wrapper.getPage() - 1, wrapper.getLimit());
+        }
+
+        Slice<EtatStockDto> pageResult = mouvementStockService.listEtatStock(pageable, wrapper);
+
+        ModelAndView mav = new ModelAndView("stitch/module_stock/etat_stock");
+        mav.addObject("stockParLot", pageResult.getContent());
+        mav.addObject("currentPage", wrapper.getPage());
+        mav.addObject("currentDir", wrapper.getCurrentDir());
+        mav.addObject("currentSort", wrapper.getCurrentSort());
+        mav.addObject("produits", mouvementStockService.getAllProduits());
+        mav.addObject("page", pageResult);
+
+        // Les alertes restent calculées séparément — logique différente (pas paginée)
         List<AlerteProduitDTO> alertes = mouvementStockService.getAlertesActives();
-        model.addAttribute("alertes", alertes);
-        model.addAttribute("nbAlertesTotal", alertes.size());
-
+        mav.addObject("alertes", alertes);
+        mav.addObject("nbAlertesTotal", alertes.size());
         int nbRuptures = 0;
         for (AlerteProduitDTO a : alertes) {
-            if ("Rupture".equals(a.niveauAlerte())) {
+            if ("Rupture".equals(a.niveauAlerte()))
                 nbRuptures++;
-            }
         }
-        model.addAttribute("nbRuptures", nbRuptures);
+        mav.addObject("nbRuptures", nbRuptures);
 
-        return "stitch/module_stock/etat_stock";
+        return mav;
     }
 }

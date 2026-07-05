@@ -4,12 +4,19 @@ import com.example.charbonecolo.exception.BusinessException;
 import com.example.charbonecolo.model.*;
 import com.example.charbonecolo.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.charbonecolo.dto.AlerteProduitDTO;
+import com.example.charbonecolo.dto.EntreeCriteriaWrapper;
+import com.example.charbonecolo.dto.EntreeDto;
 import com.example.charbonecolo.dto.EntreeStockDTO;
+import com.example.charbonecolo.dto.EtatStockCriteriaWrapper;
+import com.example.charbonecolo.dto.EtatStockDto;
 import com.example.charbonecolo.dto.LotStockSummaryDTO;
+import com.example.charbonecolo.dto.SortieCriteriaWrapper;
+import com.example.charbonecolo.dto.SortieDto;
 import com.example.charbonecolo.dto.SortieStockDTO;
 
 import java.time.LocalDate;
@@ -21,8 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import jakarta.annotation.PostConstruct;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 
 @Service
 public class MouvementStockService {
@@ -112,10 +119,14 @@ public class MouvementStockService {
         }
 
         LocalDateTime dateEntree = toDateTimeOuMaintenant(entry.getDateEntree());
-
+        LocalDateTime dateTermine = statutsLotProductionRepository.findDateTermineByLotProductionId(lot.getId())
+                .orElseThrow(() -> new BusinessException("Le lot n'a pas encore été terminé."));
         lot.setQuantiteProduitReelle(entry.getQuantite());
         if (dateEntree.isBefore(lot.getDateEntreeLot())) {
             throw new BusinessException("Le lot n'a pas encore ete produit a la date d'entree en stock.");
+        }
+        if(dateEntree.isBefore(dateTermine)) {
+            throw new BusinessException("Le lot n'a pas encore été terminé à la date d'entrée choisie.");
         }
         lot.setDateFinReelle(dateEntree);
         lotProductionRepository.save(lot);
@@ -472,5 +483,44 @@ public class MouvementStockService {
         }
 
         return stockRestant;
+    }
+
+    @Transactional(readOnly = true)
+    public Slice<SortieDto> listSorties(Pageable pageable, SortieCriteriaWrapper wrapper) {
+        Slice<Object[]> sliceBrut = mouvementStockRepository.findCustomSorties(pageable, wrapper);
+
+        return sliceBrut.map(ligne -> new SortieDto(
+                (Integer) ligne[0],
+                (String) ligne[1],
+                (Integer) ligne[2],
+                (String) ligne[3],
+                (LocalDateTime) ligne[4],
+                (String) ligne[5]));
+    }
+
+    @Transactional(readOnly = true)
+    public Slice<EntreeDto> listEntrees(Pageable pageable, EntreeCriteriaWrapper wrapper) {
+        Slice<Object[]> sliceBrut = mouvementStockRepository.findCustomEntrees(pageable, wrapper);
+
+        return sliceBrut.map(ligne -> new EntreeDto(
+                (Integer) ligne[0],
+                (LocalDateTime) ligne[1],
+                (String) ligne[2],
+                (String) ligne[3],
+                (Integer) ligne[4],
+                (String) ligne[5]));
+    }
+
+    @Transactional(readOnly = true)
+    public Slice<EtatStockDto> listEtatStock(Pageable pageable, EtatStockCriteriaWrapper wrapper) {
+        Slice<Object[]> sliceBrut = mouvementStockRepository.findEtatStock(pageable, wrapper);
+
+        return sliceBrut.map(ligne -> new EtatStockDto(
+                (Integer) ligne[0],
+                (String) ligne[1],
+                (String) ligne[2],
+                ((Number) ligne[3]).intValue(),
+                ((Number) ligne[4]).intValue(),
+                ((Number) ligne[5]).intValue()));
     }
 }

@@ -868,10 +868,6 @@ input:where([type='file']):focus {
   top: 50%;
 }
 
-.top-2\.5 {
-  top: 0.625rem;
-}
-
 .z-10 {
   z-index: 10;
 }
@@ -2299,10 +2295,6 @@ input:where([type='file']):focus {
   padding-left: 1.5rem;
 }
 
-.pr-10 {
-  padding-right: 2.5rem;
-}
-
 .pr-12 {
   padding-right: 3rem;
 }
@@ -3184,11 +3176,6 @@ input:where([type='file']):focus {
   border-color: rgb(16 185 129 / var(--tw-border-opacity, 1));
 }
 
-.focus\:border-forestry-accent:focus {
-  --tw-border-opacity: 1;
-  border-color: rgb(198 149 77 / var(--tw-border-opacity, 1));
-}
-
 .focus\:border-leaf-green:focus {
   --tw-border-opacity: 1;
   border-color: rgb(61 122 77 / var(--tw-border-opacity, 1));
@@ -3270,11 +3257,6 @@ input:where([type='file']):focus {
 .focus\:ring-emerald-500:focus {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgb(16 185 129 / var(--tw-ring-opacity, 1));
-}
-
-.focus\:ring-forestry-accent:focus {
-  --tw-ring-opacity: 1;
-  --tw-ring-color: rgb(198 149 77 / var(--tw-ring-opacity, 1));
 }
 
 .focus\:ring-leaf-green:focus {

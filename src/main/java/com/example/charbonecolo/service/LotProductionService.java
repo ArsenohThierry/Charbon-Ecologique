@@ -23,14 +23,12 @@ public class LotProductionService {
     private final LotStatutsRepository lotStatutsRepository;
 
     public LotProductionService(LotProductionRepository lotProductionRepository,
-                                StatutsLotProductionRepository statutsLotProductionRepository,
-                                LotStatutsRepository lotStatutsRepository) {
+            StatutsLotProductionRepository statutsLotProductionRepository,
+            LotStatutsRepository lotStatutsRepository) {
         this.lotProductionRepository = lotProductionRepository;
         this.statutsLotProductionRepository = statutsLotProductionRepository;
         this.lotStatutsRepository = lotStatutsRepository;
     }
-
-
 
     @Transactional
     public LotProductionModel saveLotProduction(LotProductionModel lotProduction) {
@@ -50,7 +48,6 @@ public class LotProductionService {
 
         return savedLot;
     }
-
 
     public List<LotProductionModel> getAllLotProductions() {
         return lotProductionRepository.findAll();
@@ -84,6 +81,10 @@ public class LotProductionService {
     }
 
     public LotProductionModel updateLotProduction(LotProductionModel lot) {
-    return lotProductionRepository.save(lot);
-}
+        return lotProductionRepository.save(lot);
+    }
+
+    public Optional<java.time.LocalDateTime> getDateTermineByLotProductionId(Integer lotProductionId) {
+        return statutsLotProductionRepository.findDateTermineByLotProductionId(lotProductionId);
+    }
 }

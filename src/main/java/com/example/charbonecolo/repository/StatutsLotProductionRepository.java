@@ -6,8 +6,21 @@ import org.springframework.stereotype.Repository;
 import com.example.charbonecolo.model.LotProductionModel;
 import com.example.charbonecolo.model.StatutsLotProductionModel;
 import java.util.Optional;
+import java.time.LocalDateTime;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 @Repository
 public interface StatutsLotProductionRepository extends JpaRepository<StatutsLotProductionModel, Integer> {
     Optional<StatutsLotProductionModel> findTopByLotProductionOrderByDateStatutDesc(LotProductionModel lotProduction);
+
+    @Query("""
+                SELECT s.dateStatut
+                FROM StatutsLotProductionModel s
+                JOIN s.lotStatuts l
+                WHERE l.libelle = 'Termine'
+                  AND s.lotProduction.id = :lotProductionId
+            """)
+    Optional<LocalDateTime> findDateTermineByLotProductionId(
+            @Param("lotProductionId") Integer lotProductionId);
 }
