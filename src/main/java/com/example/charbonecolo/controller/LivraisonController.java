@@ -45,7 +45,7 @@ public class LivraisonController {
         sortReferences.put("reference", "reference");
         sortReferences.put("date_livraison", "date_livraison");
         sortReferences.put("livreur", "lvr.nom");
-        sortReferences.put("statut", "statut.libelle");
+        sortReferences.put("statut", "statut_libelle");
     }
 
     public LivraisonController(LivraisonService livraisonService, LivreurRepository livreurRepository,
