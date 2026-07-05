@@ -462,4 +462,15 @@ public class MouvementStockService {
 
         return totalSorties / (double) nombreJours;
     }
+
+    public int getStockRestantParProduit(Integer idProduit) {
+        List<LotProductionModel> lots = getLotsWithStockByProduit(idProduit);
+        int stockRestant = 0;
+
+        for (LotProductionModel lot : lots) {
+            stockRestant += getStockDisponible(lot.getId());
+        }
+
+        return stockRestant;
+    }
 }
