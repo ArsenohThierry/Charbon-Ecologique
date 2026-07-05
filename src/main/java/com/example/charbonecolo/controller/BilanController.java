@@ -1,10 +1,15 @@
 package com.example.charbonecolo.controller;
 
 import com.example.charbonecolo.service.JournalFinancierService;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import com.example.charbonecolo.service.ExportBilanService;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
@@ -14,9 +19,11 @@ import java.time.temporal.TemporalAdjusters;
 public class BilanController {
 
     private final JournalFinancierService journalService;
-
-    public BilanController(JournalFinancierService journalService) {
+    private final ExportBilanService exportBilanService;
+    
+    public BilanController(JournalFinancierService journalService, ExportBilanService exportBilanService) {
         this.journalService = journalService;
+        this.exportBilanService = exportBilanService;
     }
 
     /** GET /finance/bilan — Affiche le bilan financier du mois en cours */
@@ -33,5 +40,29 @@ public class BilanController {
         model.addAttribute("fin",      fin);
 
         return "stitch/module_finance/bilan";
+    }
+
+    @GetMapping("/export-excel")
+    public ResponseEntity<byte[]> exportExcel() throws Exception {
+
+        byte[] file = exportBilanService.exportBilanExcel();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=bilan_financier.xlsx")
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(file);
+    }
+
+    @GetMapping("/export-pdf")
+    public ResponseEntity<byte[]> exportPdf() throws Exception {
+
+        byte[] file = exportBilanService.exportBilanPdf();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=bilan_financier.pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(file);
     }
 }
