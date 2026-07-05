@@ -2,11 +2,20 @@ package com.example.charbonecolo.dto;
 
 import java.time.LocalDate;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+
 public class EntreeStockDTO {
     private Integer id;
+
+    @NotNull(message = "Veuillez sélectionner un lot.")
     private Integer idLot;
-    private LocalDate dateEntree;
+
+    @NotNull(message = "La quantité est obligatoire.")
+    @Positive(message = "La quantité doit être supérieure à zéro.")
     private Integer quantite;
+
+    private LocalDate dateEntree;
 
     // 1. Le constructeur EXACT pour le @SqlResultSetMapping (without id)
     public EntreeStockDTO(Integer idLot, LocalDate dateEntree, Integer quantite) {
