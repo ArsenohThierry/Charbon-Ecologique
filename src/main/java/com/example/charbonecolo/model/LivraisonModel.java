@@ -2,6 +2,7 @@ package com.example.charbonecolo.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import com.example.charbonecolo.model.CommandeModel;
 
 @Entity
 @Table(name = "livraison")
@@ -29,6 +30,13 @@ public class LivraisonModel {
     @ManyToOne
     @JoinColumn(name = "id_livreur", referencedColumnName = "id")
     private LivreurModel livreur;
+
+    @ManyToOne
+    @JoinColumn(name = "id_commande", referencedColumnName = "id")
+    private CommandeModel commande;
+
+    public CommandeModel getCommande() { return commande; }
+    public void setCommande(CommandeModel commande) { this.commande = commande; }
 
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }

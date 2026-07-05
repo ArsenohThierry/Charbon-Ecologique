@@ -10,8 +10,8 @@
     <style>
         .badge { padding: 2px 12px; border-radius: 9999px; font-size: 0.75rem; font-weight: 500; }
         .badge-pending { background-color: #fef3c7; color: #92400e; }
-        .badge-delivered { background-color: #dcfce7; color: #166534; }
         .badge-shipping { background-color: #ffedd5; color: #9a3412; }
+        .badge-delivered { background-color: #dcfce7; color: #166534; }
         .badge-cancelled { background-color: #fee2e2; color: #991b1b; }
     </style>
 </head>
@@ -128,7 +128,7 @@
                                         Livreur <span th:text="${currentSort == 'livreur'} ? (${currentDir == 'asc'} ? '▲' : '▼') : ''"></span>
                                     </button>
                                 </th>
-                                <th class="px-6 py-4 font-semibold">Commandes</th>
+                                <th class="px-6 py-4 font-semibold">Commande</th>
                                 <th class="px-6 py-4 font-semibold">
                                     <button type="button" data-sort="statut"
                                             class="sort-btn flex items-center gap-1 hover:text-slate-800 font-semibold uppercase">
@@ -144,15 +144,35 @@
                                 <td class="px-6 py-4" th:text="${#temporals.format(dto.dateLivraison, 'dd/MM/yyyy HH:mm')}">01/07/2026</td>
                                 <td class="px-6 py-4 text-slate-600" th:text="${dto.lieu}">Anosizato</td>
                                 <td class="px-6 py-4 text-slate-600" th:text="${dto.livreurNom}">Hery</td>
-                                <td class="px-6 py-4 text-slate-600" th:text="${dto.nbCommandes}">3</td>
+                                <td class="px-6 py-4 text-slate-600" th:text="${dto.commandeReference}">CMD-001</td>
                                 <td class="px-6 py-4">
                                     <span th:if="${dto.statutLibelle != null}"
-                                          th:class="'badge badge-' + ${#strings.toLowerCase(dto.statutLibelle) == 'en cours' ? 'pending' : (#strings.toLowerCase(dto.statutLibelle) == 'terminé' ? 'delivered' : 'cancelled')}"
+                                          th:class="'badge badge-' + ${#strings.toLowerCase(dto.statutLibelle) == 'en cours' ? 'pending' : 
+                                            (#strings.toLowerCase(dto.statutLibelle) == 'en livraison' ? 'shipping' : 
+                                            (#strings.toLowerCase(dto.statutLibelle) == 'terminé' ? 'delivered' : 'cancelled'))}"
                                           th:text="${dto.statutLibelle}">En cours</span>
                                     <span th:if="${dto.statutLibelle == null}" class="badge text-slate-400">-</span>
                                 </td>
                                 <td class="px-6 py-4 text-right">
-                                    <div class="flex justify-end gap-3">
+                                    <div class="flex justify-end gap-2">
+                                        <!-- Bouton Livrer : visible si statut = "En cours" -->
+                                        <form th:if="${dto.statutLibelle == 'En cours'}"
+                                              method="post" th:action="@{/livraisons/livrer/{id}(id=${dto.id})}"
+                                              style="display:inline">
+                                            <button type="submit"
+                                                    class="flex items-center gap-1 text-amber-600 hover:text-amber-800 transition border border-amber-200 px-3 py-1.5 rounded text-xs font-medium bg-amber-50">
+                                                Livrer
+                                            </button>
+                                        </form>
+                                        <!-- Bouton Terminer : visible si statut = "En livraison" -->
+                                        <form th:if="${dto.statutLibelle == 'En livraison'}"
+                                              method="post" th:action="@{/livraisons/terminer/{id}(id=${dto.id})}"
+                                              style="display:inline">
+                                            <button type="submit"
+                                                    class="flex items-center gap-1 text-green-600 hover:text-green-800 transition border border-green-200 px-3 py-1.5 rounded text-xs font-medium bg-green-50">
+                                                Terminer
+                                            </button>
+                                        </form>
                                         <a th:href="@{/livraisons/edit/{id}(id=${dto.id})}"
                                            class="flex items-center gap-1 text-slate-500 hover:text-brand-success transition border border-slate-200 px-3 py-1.5 rounded text-xs">
                                             Modifier
@@ -175,7 +195,7 @@
                     <div class="h-12 bg-white"></div>
                 </div>
 
-                <!-- Pagination -->
+                <!-- Pagination (inchangée) -->
                 <div class="flex flex-col sm:flex-row justify-between items-center gap-4 p-4 border-t border-slate-100 bg-white rounded-b-2xl">
                     <div class="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto text-center sm:text-left">
                         <span class="text-xs text-slate-500">

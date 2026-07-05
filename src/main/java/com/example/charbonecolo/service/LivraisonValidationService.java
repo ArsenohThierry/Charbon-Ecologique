@@ -1,7 +1,6 @@
 package com.example.charbonecolo.service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import org.springframework.stereotype.Service;
 
@@ -11,7 +10,7 @@ import com.example.charbonecolo.model.LivraisonModel;
 @Service
 public class LivraisonValidationService {
 
-    public LivraisonErrorWrapper valider(LivraisonModel livraison, List<Integer> commandeIds) {
+    public LivraisonErrorWrapper valider(LivraisonModel livraison, Integer commandeId) {
         LivraisonErrorWrapper errors = new LivraisonErrorWrapper();
         boolean hasError = false;
 
@@ -33,8 +32,8 @@ public class LivraisonValidationService {
             hasError = true;
         }
 
-        if (commandeIds == null || commandeIds.isEmpty()) {
-            errors.setCommandeError("Veuillez sélectionner au moins une commande.");
+        if (commandeId == null) {
+            errors.setCommandeError("Veuillez sélectionner une commande.");
             hasError = true;
         }
 
