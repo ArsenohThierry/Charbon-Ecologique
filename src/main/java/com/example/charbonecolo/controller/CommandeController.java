@@ -140,6 +140,13 @@ public class CommandeController {
         return mav;
     }
 
+    @PostMapping("/cancel")
+    public ModelAndView cancelCommande(@RequestParam("id") Integer idCommande) {
+        ModelAndView mav = new ModelAndView("stitch/module_commercial/liste_commande");
+        commandeService.cancelCommande(idCommande);
+        return mav;
+    }
+
     @SuppressWarnings("unchecked")
     @GetMapping("/session/products/delete/{index}")
     public ModelAndView deleteProductFromSession(HttpSession session, @PathVariable Integer index) {
@@ -288,5 +295,13 @@ public class CommandeController {
     public List<ClientModel> listClientsJson(
             @RequestParam(name = "kw", required = false, defaultValue = "") String keyWord) {
         return clientService.findByName(keyWord);
+    }
+
+    @GetMapping("/{id}")
+    public ModelAndView displayCommandeInfo(@PathVariable("id") Integer id) {
+        ModelAndView mav = new ModelAndView("stitch/module_commercial/fiche_commande");
+        CommandeDto info = commandeService.getCommandeInfo(id);
+        mav.addObject("commande", info);
+        return mav;
     }
 }

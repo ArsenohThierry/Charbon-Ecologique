@@ -14,6 +14,8 @@ import java.util.List;
 @Repository
 public interface MouvementSortieDetailRepository extends JpaRepository<MouvementSortieDetailModel, Integer> {
 
+        List<MouvementSortieDetailModel> findByMouvementSortieId(Integer mouvementSortie);
+
         List<MouvementSortieDetailModel> findByMouvementSortie(MouvementStockModel mouvementSortie);
 
         void deleteByMouvementSortie(MouvementStockModel mouvementSortie);
