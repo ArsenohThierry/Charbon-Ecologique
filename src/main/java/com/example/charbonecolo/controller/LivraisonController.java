@@ -16,8 +16,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.example.charbonecolo.dto.LivraisonAnnuleeDto;
 import com.example.charbonecolo.dto.LivraisonCriteriaWrapper;
 import com.example.charbonecolo.dto.LivraisonDto;
 import com.example.charbonecolo.dto.LivraisonErrorWrapper;
@@ -90,17 +92,21 @@ public class LivraisonController {
     }
 
     @GetMapping("/new")
-    public String formulaireAjout(Model model) {
+    public String formulaireAjout(Model model,
+                                   @RequestParam(name = "commandeId", required = false) Integer commandeId) {
         model.addAttribute("livraison", new LivraisonModel());
         model.addAttribute("commandesDisponibles", livraisonService.findAvailableCommandes());
         model.addAttribute("livreurs", livreurRepository.findAll());
+        if (commandeId != null) {
+            model.addAttribute("preselectedCommandeId", commandeId);
+        }
         return "stitch/module_commercial/nouvelle_livraison";
     }
 
     @PostMapping("/save")
     public ModelAndView save(@ModelAttribute LivraisonModel livraison,
-                             @RequestParam(name = "commandeIds", required = false) List<Integer> commandeIds) {
-        LivraisonErrorWrapper errors = validationService.valider(livraison, commandeIds);
+                              @RequestParam(name = "commandeId", required = false) Integer commandeId) {
+        LivraisonErrorWrapper errors = validationService.valider(livraison, commandeId);
         if (errors != null) {
             ModelAndView mav = new ModelAndView("stitch/module_commercial/nouvelle_livraison");
             mav.addObject("livraisonError", errors);
@@ -108,7 +114,7 @@ public class LivraisonController {
             mav.addObject("commandesDisponibles", livraisonService.findAvailableCommandes());
             return mav;
         }
-        livraisonService.createLivraison(livraison, commandeIds);
+        livraisonService.createLivraison(livraison, commandeId);
         return new ModelAndView("redirect:/livraisons?success=created");
     }
 
@@ -117,7 +123,7 @@ public class LivraisonController {
         LivraisonModel livraison = livraisonService.findById(id)
                 .orElseThrow(() -> new RuntimeException("Livraison introuvable : " + id));
         model.addAttribute("livraison", livraison);
-        model.addAttribute("commandesLiees", livraisonService.findCommandesByLivraisonId(id));
+        model.addAttribute("commandeReference", livraisonService.findCommandeReferenceByLivraisonId(id));
         model.addAttribute("statuts", livraisonService.findStatutsByLivraisonId(id));
         model.addAttribute("livreurs", livreurRepository.findAll());
         return "stitch/module_commercial/form-modification-livraison";
@@ -130,7 +136,7 @@ public class LivraisonController {
             ModelAndView mav = new ModelAndView("stitch/module_commercial/form-modification-livraison");
             mav.addObject("livraisonError", errors);
             mav.addObject("livraison", livraisonService.findById(id).orElse(livraison));
-            mav.addObject("commandesLiees", livraisonService.findCommandesByLivraisonId(id));
+            mav.addObject("commandeReference", livraisonService.findCommandeReferenceByLivraisonId(id));
             mav.addObject("statuts", livraisonService.findStatutsByLivraisonId(id));
             mav.addObject("livreurs", livreurRepository.findAll());
             return mav;
@@ -140,9 +146,40 @@ public class LivraisonController {
         return new ModelAndView("redirect:/livraisons?success=updated");
     }
 
+    @PostMapping("/livrer/{id}")
+    public String livrer(@PathVariable Integer id) {
+        livraisonService.livrerLivraison(id);
+        return "redirect:/livraisons?success=livre";
+    }
+
+    @PostMapping("/terminer/{id}")
+    public String terminer(@PathVariable Integer id) {
+        livraisonService.terminerLivraison(id);
+        return "redirect:/livraisons?success=termine";
+    }
+
+    @PostMapping("/reporter/{id}")
+    public String reporter(@PathVariable Integer id,
+                            @RequestParam("dateLivraison") String dateLivraison) {
+        livraisonService.reporterLivraison(id, java.time.LocalDateTime.parse(dateLivraison));
+        return "redirect:/livraisons?success=reporte";
+    }
+
+    @PostMapping("/annuler/{id}")
+    public String annuler(@PathVariable Integer id) {
+        livraisonService.annulerLivraison(id);
+        return "redirect:/livraisons?success=annule";
+    }
+
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable Integer id) {
         livraisonService.deleteById(id);
         return "redirect:/livraisons";
+    }
+
+    @GetMapping("/annulees")
+    @ResponseBody
+    public List<LivraisonAnnuleeDto> getLivraisonsAnnulees() {
+        return livraisonService.getLivraisonsAnnulees();
     }
 }

@@ -10,18 +10,20 @@ public class LivraisonDto {
     private String lieu;
     private String livreurNom;
     private String statutLibelle;
-    private Integer nbCommandes;
+    private String commandeReference;
+    private Integer commandeId;
 
     public LivraisonDto(Integer id, String reference, LocalDateTime dateLivraison,
                         String lieu, String livreurNom, String statutLibelle,
-                        Integer nbCommandes) {
+                        String commandeReference, Integer commandeId) {
         this.id = id;
         this.reference = reference;
         this.dateLivraison = dateLivraison;
         this.lieu = lieu;
         this.livreurNom = livreurNom;
         this.statutLibelle = statutLibelle;
-        this.nbCommandes = nbCommandes;
+        this.commandeReference = commandeReference;
+        this.commandeId = commandeId;
     }
 
     public LivraisonDto() {}
@@ -44,6 +46,9 @@ public class LivraisonDto {
     public String getStatutLibelle() { return statutLibelle; }
     public void setStatutLibelle(String statutLibelle) { this.statutLibelle = statutLibelle; }
 
-    public Integer getNbCommandes() { return nbCommandes; }
-    public void setNbCommandes(Integer nbCommandes) { this.nbCommandes = nbCommandes; }
+     public String getCommandeReference() { return commandeReference; }
+    public void setCommandeReference(String commandeReference) { this.commandeReference = commandeReference; }
+
+    public Integer getCommandeId() { return commandeId; }
+    public void setCommandeId(Integer commandeId) { this.commandeId = commandeId; }
 }
