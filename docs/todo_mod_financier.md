@@ -70,4 +70,7 @@ Pages:
 ### Correction:
 
 * Separer le js du code html(creation de kpi-chart.js)
-* ajouter une filtre par mois pour 
+* ajouter une filtre par mois dans kpi.html
+* pagination pour les ecritures dans journal.hmtl
+* ajouter filtre pour le bilan dans bilan.html
+* pour la tresorerie, on doit ajouter une fitre(date) et recherche multicritere (reference, mot cle) + pagination pour l'historique des mouvements dans tresorerie.html
