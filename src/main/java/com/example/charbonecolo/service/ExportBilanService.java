@@ -26,19 +26,8 @@ public class ExportBilanService {
     /**
      * Export Excel
      */
-    public byte[] exportBilanExcel() throws Exception {
-
-        LocalDateTime debut = LocalDateTime.now()
-                .with(TemporalAdjusters.firstDayOfMonth())
-                .withHour(0)
-                .withMinute(0)
-                .withSecond(0);
-
-        LocalDateTime fin = LocalDateTime.now()
-                .with(TemporalAdjusters.lastDayOfMonth())
-                .withHour(23)
-                .withMinute(59)
-                .withSecond(59);
+    public byte[] exportBilanExcel(LocalDateTime debut,
+        LocalDateTime fin) throws Exception {
 
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Bilan Financier");
@@ -80,19 +69,8 @@ public class ExportBilanService {
     /**
      * Export PDF
      */
-    public byte[] exportBilanPdf() throws Exception {
-
-        LocalDateTime debut = LocalDateTime.now()
-                .with(TemporalAdjusters.firstDayOfMonth())
-                .withHour(0)
-                .withMinute(0)
-                .withSecond(0);
-
-        LocalDateTime fin = LocalDateTime.now()
-                .with(TemporalAdjusters.lastDayOfMonth())
-                .withHour(23)
-                .withMinute(59)
-                .withSecond(59);
+    public byte[] exportBilanPdf(LocalDateTime debut, 
+        LocalDateTime fin) throws Exception {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
