@@ -1757,6 +1757,11 @@ input:where([type='file']):focus {
   border-color: rgb(226 232 240 / var(--tw-border-opacity, 1));
 }
 
+.border-slate-300 {
+  --tw-border-opacity: 1;
+  border-color: rgb(203 213 225 / var(--tw-border-opacity, 1));
+}
+
 .border-white\/10 {
   border-color: rgb(255 255 255 / 0.1);
 }
@@ -1993,6 +1998,11 @@ input:where([type='file']):focus {
 
 .bg-gray-50\/80 {
   background-color: rgb(249 250 251 / 0.8);
+}
+
+.bg-gray-500 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(107 114 128 / var(--tw-bg-opacity, 1));
 }
 
 .bg-green-100 {
@@ -2988,6 +2998,11 @@ input:where([type='file']):focus {
 
 .hover\:bg-gray-50\/50:hover {
   background-color: rgb(249 250 251 / 0.5);
+}
+
+.hover\:bg-gray-600:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(75 85 99 / var(--tw-bg-opacity, 1));
 }
 
 .hover\:bg-green-700:hover {

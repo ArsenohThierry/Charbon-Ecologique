@@ -2,10 +2,14 @@ package com.example.charbonecolo.service;
 
 import com.example.charbonecolo.model.JournalFinancierModel;
 import com.example.charbonecolo.repository.JournalFinancierRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,6 +30,25 @@ public class TresorerieService {
         List<MouvementTresorerie> mouvements = construireHistorique();
         Collections.reverse(mouvements);
         return mouvements;
+    }
+
+    @Transactional(readOnly = true)
+    public Page<MouvementTresorerie> rechercher(LocalDate date, String reference, String keyword, Pageable pageable) {
+        List<MouvementTresorerie> mouvements = findAll().stream()
+                .filter(m -> date == null || m.getDateOperation().toLocalDate().equals(date))
+                .filter(m -> estVide(reference) || contient(m.getReference(), reference))
+                .filter(m -> estVide(keyword)
+                        || contient(m.getReference(), keyword)
+                        || contient(m.getDescription(), keyword))
+                .toList();
+
+        int start = (int) pageable.getOffset();
+        if (start >= mouvements.size()) {
+            return new PageImpl<>(List.of(), pageable, mouvements.size());
+        }
+
+        int end = Math.min(start + pageable.getPageSize(), mouvements.size());
+        return new PageImpl<>(mouvements.subList(start, end), pageable, mouvements.size());
     }
 
     @Transactional(readOnly = true)
@@ -73,6 +96,14 @@ public class TresorerieService {
 
     private BigDecimal valeurOuZero(BigDecimal valeur) {
         return valeur != null ? valeur : BigDecimal.ZERO;
+    }
+
+    private boolean estVide(String valeur) {
+        return valeur == null || valeur.trim().isEmpty();
+    }
+
+    private boolean contient(String champ, String recherche) {
+        return champ != null && champ.toLowerCase().contains(recherche.trim().toLowerCase());
     }
 
     public static class MouvementTresorerie {
