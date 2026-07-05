@@ -80,7 +80,36 @@
       </form>
     </section>
     <!-- END: Stock Entry Form -->
+    <form th:action="@{/stock/entree}" method="get" id="filterForm" class="space-y-4 mb-6">
+      <input type="hidden" name="page" th:value="1">
+      <input type="hidden" name="limit" th:value="${page.size}">
+      <input type="hidden" name="currentSort" th:value="${currentSort}">
+      <input type="hidden" name="currentDir" th:value="${currentDir}">
 
+      <div
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4 bg-white border border-gray-200 rounded-xl shadow-sm">
+        <div class="flex flex-col gap-1">
+          <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Produit</label>
+          <select name="idProduit" class="w-full border-gray-200 rounded-lg text-sm">
+            <option value="">Tous les produits</option>
+            <option th:each="p : ${produits}" th:value="${p.id}" th:text="${p.nom}" th:selected="${p.id == idProduit}">
+            </option>
+          </select>
+        </div>
+        <div class="flex flex-col gap-1">
+          <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Date début</label>
+          <input type="date" name="dateMin" th:value="${dateMin}" class="w-full border-gray-200 rounded-lg text-sm" />
+        </div>
+        <div class="flex flex-col gap-1">
+          <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Date fin</label>
+          <input type="date" name="dateMax" th:value="${dateMax}" class="w-full border-gray-200 rounded-lg text-sm" />
+        </div>
+      </div>
+      <button type="submit"
+        class="bg-brand-success text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-brand-dark transition-all">
+        Filtrer et rechercher
+      </button>
+    </form>
     <!-- BEGIN: Recent Entries Table -->
     <section>
       <div class="flex justify-between items-end mb-6">
@@ -91,47 +120,55 @@
         <table class="w-full text-left border-collapse">
           <thead class="bg-gray-50/50">
             <tr>
-              <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Date</th>
-              <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Lot</th>
-              <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Matière</th>
-              <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Quantité</th>
-              <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Quantité restante</th>
-              <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Fournisseur</th>
-              <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Statut</th>
+              <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">
+                <button type="button" data-sort="date" class="sort-btn flex items-center gap-1">
+                  Date <span th:text="${currentSort == 'date'} ? (${currentDir == 'asc'} ? '▲' : '▼') : ''"></span>
+                </button>
+              </th>
+              <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">
+                <button type="button" data-sort="lot" class="sort-btn flex items-center gap-1">
+                  Lot <span th:text="${currentSort == 'lot'} ? (${currentDir == 'asc'} ? '▲' : '▼') : ''"></span>
+                </button>
+              </th>
+              <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">
+                <button type="button" data-sort="matiere" class="sort-btn flex items-center gap-1">
+                  Matière <span
+                    th:text="${currentSort == 'matiere'} ? (${currentDir == 'asc'} ? '▲' : '▼') : ''"></span>
+                </button>
+              </th>
+              <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">
+                <button type="button" data-sort="quantite" class="sort-btn flex items-center gap-1 justify-end">
+                  Quantité <span
+                    th:text="${currentSort == 'quantite'} ? (${currentDir == 'asc'} ? '▲' : '▼') : ''"></span>
+                </button>
+              </th>
+              <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">
+                <button type="button" data-sort="fournisseur" class="sort-btn flex items-center gap-1">
+                  Fournisseur <span
+                    th:text="${currentSort == 'fournisseur'} ? (${currentDir == 'asc'} ? '▲' : '▼') : ''"></span>
+                </button>
+              </th>
               <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
 
           <!-- ✅ TBODY THYMELEAF -->
           <tbody class="divide-y divide-gray-100">
-            <tr th:each="m : ${mouvements}" th:if="${m.typeMouvement.libelle == 'Entree'}"
-              class="hover:bg-brand-light/50 transition-colors">
-              <td class="px-6 py-4 text-sm text-gray-600" th:text="${#temporals.format(m.dateMouvement, 'dd/MM/yyyy')}">
+            <tr th:each="e : ${entrees}" class="hover:bg-brand-light/50 transition-colors">
+              <td class="px-6 py-4 text-sm text-gray-600" th:text="${#temporals.format(e.dateMouvement, 'dd/MM/yyyy')}">
               </td>
-              <td class="px-6 py-4 text-sm font-medium text-brand-dark" th:text="${m.lotProduction?.reference}"></td>
-              <td class="px-6 py-4 text-sm text-gray-600" th:text="${m.lotProduction?.typeMatierePremiere?.libelle}">
-              </td>
-              <td class="px-6 py-4 text-sm text-right font-bold text-brand-dark" th:text="${m.quantite} + ' unités'">
-              </td>
-              <td class="px-6 py-4 text-sm text-right font-bold text-brand-dark" th:text="${stockParLot.get(m.lotProduction?.id)} + ' unités'">
-              </td>
-              <td class="px-6 py-4 text-sm text-gray-600"
-                th:text="${m.lotProduction?.typeMatierePremiere?.fournisseur?.nom}">
-              </td>
-              <td class="px-6 py-4">
-                <span
-                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                  Validé
-                </span>
-              </td>
+              <td class="px-6 py-4 text-sm font-medium text-brand-dark" th:text="${e.lotReference}"></td>
+              <td class="px-6 py-4 text-sm text-gray-600" th:text="${e.matiereLibelle}"></td>
+              <td class="px-6 py-4 text-sm text-right font-bold text-brand-dark" th:text="${e.quantite} + ' u.'"></td>
+              <td class="px-6 py-4 text-sm text-gray-600" th:text="${e.fournisseurNom}"></td>
               <td class="px-6 py-4">
                 <div class="flex items-center gap-2">
-                  <a th:href="@{/stock/mouvement/modifier(id=${m.id})}"
+                  <a th:href="@{/stock/mouvement/modifier(id=${e.id})}"
                     class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
                     Modifier
                   </a>
                   <form th:action="@{/stock/mouvement/supprimer}" method="post" style="display:inline">
-                    <input type="hidden" name="id" th:value="${m.id}" />
+                    <input type="hidden" name="id" th:value="${e.id}" />
                     <button type="submit" onclick="return confirm('Supprimer ce mouvement ?')"
                       class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 hover:bg-red-100 rounded-lg transition-colors">
                       Supprimer
@@ -140,16 +177,58 @@
                 </div>
               </td>
             </tr>
+            <tr th:if="${#lists.isEmpty(entrees)}">
+              <td colspan="6" class="px-6 py-8 text-center text-gray-400 italic">Aucune entrée trouvée.</td>
+            </tr>
           </tbody>
-
         </table>
+        <div class="flex justify-between items-center p-4 border-t border-gray-100">
+          <span class="text-xs text-gray-500">
+            Page <strong th:text="${page.number + 1}"></strong>
+          </span>
+          <div class="flex items-center gap-3">
+            <button type="button" th:data-page="${page.number}" th:disabled="${!page.hasPrevious()}"
+              class="page-btn px-4 py-2 rounded-lg border text-xs font-medium bg-white hover:bg-gray-50 disabled:opacity-40">
+              Précédent
+            </button>
+            <button type="button" th:data-page="${page.number + 2}" th:disabled="${!page.hasNext()}"
+              class="page-btn px-4 py-2 rounded-lg border text-xs font-medium bg-white hover:bg-gray-50 disabled:opacity-40">
+              Suivant
+            </button>
+          </div>
+        </div>
       </div>
     </section>
     <!-- END: Recent Entries Table -->
 
   </main>
   <!-- END: Main Content Area -->
-
+  <script th:inline="javascript">
+    function updateUrlParam(name, value) {
+      const url = new URL(window.location.href);
+      url.searchParams.set(name, value);
+      window.location.href = url.toString();
+    }
+    document.querySelectorAll('.page-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        const target = this.getAttribute('data-page');
+        if (target) updateUrlParam('page', target);
+      });
+    });
+    document.querySelectorAll('.sort-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        const field = this.getAttribute('data-sort');
+        const url = new URL(window.location.href);
+        let dir = 'asc';
+        if (url.searchParams.get('currentSort') === field) {
+          dir = url.searchParams.get('currentDir') === 'asc' ? 'desc' : 'asc';
+        }
+        url.searchParams.set('currentSort', field);
+        url.searchParams.set('currentDir', dir);
+        window.location.href = url.toString();
+      });
+    });
+  </script>
 </body>
 
 </html>

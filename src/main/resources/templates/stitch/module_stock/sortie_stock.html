@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Sortie de stock - Charbon Vert</title>
-<link rel="stylesheet" th:href="@{/css/output.css}" href="../../../static/css/output.css" />
-<link rel="stylesheet" th:href="@{/css/fonts.css}" href="../../../static/css/fonts.css" />
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Sortie de stock - Charbon Vert</title>
+  <link rel="stylesheet" th:href="@{/css/output.css}" href="../../../static/css/output.css" />
+  <link rel="stylesheet" th:href="@{/css/fonts.css}" href="../../../static/css/fonts.css" />
 </head>
+
 <body class="bg-brand-light font-sans text-slate-800 min-h-screen flex">
-<aside th:replace="~{fragments/sidebar :: sidebar('sortie-stock')}"></aside>
-<main class="flex-1 p-8">
+  <aside th:replace="~{fragments/sidebar :: sidebar('sortie-stock')}"></aside>
+  <main class="flex-1 p-8">
     <header class="flex justify-between items-start mb-10">
       <div>
         <h2 class="text-2xl font-bold">Gestionnaire de stock</h2>
@@ -30,8 +32,7 @@
       <span class="font-bold">Erreur :</span> <span th:text="${error}"></span>
     </div> -->
 
-    <div th:if="${error}"
-      class="mb-6 p-4 bg-red-100 border border-red-200 text-red-800 rounded-lg text-sm font-medium"
+    <div th:if="${error}" class="mb-6 p-4 bg-red-100 border border-red-200 text-red-800 rounded-lg text-sm font-medium"
       th:text="${error}"></div>
 
     <!-- BEGIN: SortieFormSection -->
@@ -45,11 +46,9 @@
           <div data-purpose="form-field">
             <label class="block text-sm font-bold mb-2">Produit</label>
             <select name="idProduit" required="required"
-                    class="w-full border-gray-200 rounded-custom focus:ring-brand focus:border-brand">
+              class="w-full border-gray-200 rounded-custom focus:ring-brand focus:border-brand">
               <option value="">Sélectionner un produit...</option>
-              <option th:each="p : ${produits}"
-                      th:value="${p.id}"
-                      th:text="${p.nom}">
+              <option th:each="p : ${produits}" th:value="${p.id}" th:text="${p.nom}">
               </option>
             </select>
           </div>
@@ -58,17 +57,16 @@
           <div data-purpose="form-field">
             <label class="block text-sm font-bold mb-2">Quantité (unités)</label>
             <input name="quantite" type="number" min="1" required="required" placeholder="50"
-                   class="w-full border-gray-200 rounded-custom focus:ring-brand focus:border-brand"/>
+              class="w-full border-gray-200 rounded-custom focus:ring-brand focus:border-brand" />
           </div>
 
           <!-- Motif -->
           <div data-purpose="form-field">
             <label class="block text-sm font-bold mb-2">Motif</label>
-            <select name="idMotif" required="required" class="w-full border-gray-200 rounded-custom focus:ring-brand focus:border-brand">
+            <select name="idMotif" required="required"
+              class="w-full border-gray-200 rounded-custom focus:ring-brand focus:border-brand">
               <option value="">Sélectionner...</option>
-              <option th:each="motif : ${motifs}"
-                      th:value="${motif.id}"
-                      th:text="${motif.libelle}">
+              <option th:each="motif : ${motifs}" th:value="${motif.id}" th:text="${motif.libelle}">
               </option>
             </select>
           </div>
@@ -77,7 +75,7 @@
           <div data-purpose="form-field">
             <label class="block text-sm font-bold mb-2">Date</label>
             <input name="dateSortie" type="date"
-                   class="w-full border-gray-200 rounded-custom focus:ring-brand focus:border-brand"/>
+              class="w-full border-gray-200 rounded-custom focus:ring-brand focus:border-brand" />
           </div>
 
         </div>
@@ -85,11 +83,11 @@
         <!-- Boutons -->
         <div class="flex items-center gap-4 pt-4">
           <button type="submit"
-                  class="bg-brand text-white px-6 py-2.5 rounded-custom font-bold hover:bg-brand-dark transition-colors">
+            class="bg-brand text-white px-6 py-2.5 rounded-custom font-bold hover:bg-brand-dark transition-colors">
             Enregistrer la sortie
           </button>
           <a th:href="@{/stock/sortie}"
-             class="bg-white border border-gray-200 text-gray-700 px-6 py-2.5 rounded-custom font-bold hover:bg-gray-50 transition-colors">
+            class="bg-white border border-gray-200 text-gray-700 px-6 py-2.5 rounded-custom font-bold hover:bg-gray-50 transition-colors">
             Annuler
           </a>
           <span class="text-xs text-gray-400 italic"></span>
@@ -99,6 +97,42 @@
     </section>
     <!-- END: SortieFormSection -->
 
+    <form th:action="@{/stock/sortie}" method="get" id="filterForm" class="space-y-4 mb-6">
+      <input type="hidden" name="page" th:value="1">
+      <input type="hidden" name="limit" th:value="${page.size}">
+      <input type="hidden" name="currentSort" th:value="${currentSort}">
+      <input type="hidden" name="currentDir" th:value="${currentDir}">
+
+      <div
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-white border border-gray-100 rounded-custom">
+        <div>
+          <label class="block text-sm font-bold mb-2">Produit</label>
+          <select name="idProduit" class="w-full border-gray-200 rounded-custom">
+            <option value="">Tous les produits</option>
+            <option th:each="p : ${produits}" th:value="${p.id}" th:text="${p.nom}"></option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-bold mb-2">Motif</label>
+          <select name="idMotif" class="w-full border-gray-200 rounded-custom">
+            <option value="">Tous les motifs</option>
+            <option th:each="mo : ${motifs}" th:value="${mo.id}" th:text="${mo.libelle}"></option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-bold mb-2">Date début</label>
+          <input type="date" name="dateMin" class="w-full border-gray-200 rounded-custom" />
+        </div>
+        <div>
+          <label class="block text-sm font-bold mb-2">Date fin</label>
+          <input type="date" name="dateMax" class="w-full border-gray-200 rounded-custom" />
+        </div>
+      </div>
+      <button type="submit" class="bg-brand text-white px-6 py-2.5 rounded-custom font-bold hover:bg-brand-dark">
+        Filtrer et rechercher
+      </button>
+    </form>
+
     <!-- BEGIN: TableSection -->
     <section>
       <h3 class="text-xl font-bold mb-4">Sorties par référence</h3>
@@ -106,63 +140,86 @@
         <table class="w-full text-left">
           <thead class="bg-surface-low border-b border-gray-100">
             <tr>
-              <th class="px-6 py-4 text-sm font-bold text-gray-500 uppercase tracking-wider">Référence</th>
-              <th class="px-6 py-4 text-sm font-bold text-gray-500 uppercase tracking-wider">Produit</th>
-              <th class="px-6 py-4 text-sm font-bold text-gray-500 uppercase tracking-wider text-right">Quantité</th>
+              <th class="px-6 py-4 text-sm font-bold text-gray-500 uppercase tracking-wider">
+                <button type="button" data-sort="reference" class="sort-btn flex items-center gap-1">
+                  Référence <span
+                    th:text="${currentSort == 'reference'} ? (${currentDir == 'asc'} ? '▲' : '▼') : ''"></span>
+                </button>
+              </th>
+              <th class="px-6 py-4 text-sm font-bold text-gray-500 uppercase tracking-wider">
+                <button type="button" data-sort="produit" class="sort-btn flex items-center gap-1">
+                  Produit <span
+                    th:text="${currentSort == 'produit'} ? (${currentDir == 'asc'} ? '▲' : '▼') : ''"></span>
+                </button>
+              </th>
+              <th class="px-6 py-4 text-sm font-bold text-gray-500 uppercase tracking-wider text-right">
+                <button type="button" data-sort="quantite" class="sort-btn flex items-center gap-1 justify-end">
+                  Quantité <span
+                    th:text="${currentSort == 'quantite'} ? (${currentDir == 'asc'} ? '▲' : '▼') : ''"></span>
+                </button>
+              </th>
               <th class="px-6 py-4 text-sm font-bold text-gray-500 uppercase tracking-wider">Lots consommés (FIFO)</th>
-              <th class="px-6 py-4 text-sm font-bold text-gray-500 uppercase tracking-wider">Motif</th>
-              <th class="px-6 py-4 text-sm font-bold text-gray-500 uppercase tracking-wider">Date</th>
+              <th class="px-6 py-4 text-sm font-bold text-gray-500 uppercase tracking-wider">
+                <button type="button" data-sort="motif" class="sort-btn flex items-center gap-1">
+                  Motif <span th:text="${currentSort == 'motif'} ? (${currentDir == 'asc'} ? '▲' : '▼') : ''"></span>
+                </button>
+              </th>
+              <th class="px-6 py-4 text-sm font-bold text-gray-500 uppercase tracking-wider">
+                <button type="button" data-sort="date" class="sort-btn flex items-center gap-1">
+                  Date <span th:text="${currentSort == 'date'} ? (${currentDir == 'asc'} ? '▲' : '▼') : ''"></span>
+                </button>
+              </th>
               <th class="px-6 py-4 text-sm font-bold text-gray-500 uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
 
           <!-- ✅ TBODY THYMELEAF -->
           <tbody class="divide-y divide-gray-100">
-            <tr th:each="m : ${mouvements}"
-                th:if="${m.typeMouvement.libelle == 'Sortie'}"
-                class="hover:bg-gray-50 transition-colors">
-              <td class="px-6 py-4 text-sm font-bold"
-                  th:text="'SOR-' + ${m.id}"></td>
-              <td class="px-6 py-4 text-sm text-gray-700">
-                <span th:if="${sortieDetails.get(m.id) != null and !sortieDetails.get(m.id).isEmpty()}"
-                      th:text="${produitsMap.get(sortieDetails.get(m.id).get(0).lotProduction.produit.id)}">
-                </span>
-                <span th:unless="${sortieDetails.get(m.id) != null and !sortieDetails.get(m.id).isEmpty()}">—</span>
+            <tr th:each="s : ${sorties}" class="hover:bg-gray-50 transition-colors">
+              <td class="px-6 py-4 text-sm font-bold" th:text="'SOR-' + ${s.id}"></td>
+              <td class="px-6 py-4 text-sm text-gray-700" th:text="${s.produitNom}"></td>
+              <td class="px-6 py-4 text-sm text-right font-medium" th:text="${s.quantite} + ' u.'"></td>
+              <td class="px-6 py-4 text-sm text-gray-700" th:text="${s.lotsConsommes}"></td>
+              <td class="px-6 py-4 text-sm text-gray-700" th:text="${s.motifLibelle}"></td>
+              <td class="px-6 py-4 text-sm text-gray-700" th:text="${#temporals.format(s.dateMouvement, 'dd/MM/yyyy')}">
               </td>
-              <td class="px-6 py-4 text-sm text-gray-700 text-right font-medium"
-                  th:text="${m.quantite} + ' unités'"></td>
-              <td class="px-6 py-4 text-sm text-gray-700">
-                <div th:if="${sortieDetails.get(m.id) != null}">
-                  <div th:each="d : ${sortieDetails.get(m.id)}"
-                       class="text-xs">
-                    <span th:text="${d.lotProduction.reference} + ': ' + ${d.quantite} + ' u.'"></span>
-                  </div>
-                </div>
-                <span th:unless="${sortieDetails.get(m.id) != null}">—</span>
-              </td>
-              <td class="px-6 py-4 text-sm text-gray-700"
-                  th:text="${m.motifSortie?.libelle}"></td>
-              <td class="px-6 py-4 text-sm text-gray-700"
-                  th:text="${#temporals.format(m.dateMouvement, 'dd/MM/yyyy')}"></td>
               <td class="px-6 py-4">
                 <div class="flex items-center gap-2">
-                  <a th:href="@{/stock/mouvement/modifier(id=${m.id})}"
-                     class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
+                  <a th:href="@{/stock/mouvement/modifier(id=${s.id})}"
+                    class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
                     Modifier
                   </a>
                   <form th:action="@{/stock/mouvement/supprimer}" method="post" style="display:inline">
-                    <input type="hidden" name="id" th:value="${m.id}"/>
+                    <input type="hidden" name="id" th:value="${s.id}" />
                     <button type="submit" onclick="return confirm('Supprimer ce mouvement ?')"
-                            class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 hover:bg-red-100 rounded-lg transition-colors">
+                      class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 hover:bg-red-100 rounded-lg transition-colors">
                       Supprimer
                     </button>
                   </form>
                 </div>
               </td>
             </tr>
+            <tr th:if="${#lists.isEmpty(sorties)}">
+              <td colspan="7" class="px-6 py-8 text-center text-gray-400 italic">Aucune sortie trouvée.</td>
+            </tr>
           </tbody>
 
         </table>
+        <div class="flex justify-between items-center p-4 border-t border-gray-100">
+          <span class="text-xs text-gray-500">
+            Page <strong th:text="${page.number + 1}"></strong>
+          </span>
+          <div class="flex items-center gap-3">
+            <button type="button" th:data-page="${page.number}" th:disabled="${!page.hasPrevious()}"
+              class="page-btn px-4 py-2 rounded-lg border text-xs font-medium bg-white hover:bg-gray-50 disabled:opacity-40">
+              Précédent
+            </button>
+            <button type="button" th:data-page="${page.number + 2}" th:disabled="${!page.hasNext()}"
+              class="page-btn px-4 py-2 rounded-lg border text-xs font-medium bg-white hover:bg-gray-50 disabled:opacity-40">
+              Suivant
+            </button>
+          </div>
+        </div>
       </div>
     </section>
     <!-- END: TableSection -->
@@ -170,6 +227,37 @@
   </main>
   <!-- END: MainContent -->
 
-</div>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const sortButtons = document.querySelectorAll('[data-sort]');
+      const form = document.getElementById('filterForm');
+      if (!form) return;
+
+      sortButtons.forEach(button => {
+        button.addEventListener('click', function () {
+          const sort = this.getAttribute('data-sort');
+          const currentSortInput = form.elements['currentSort'];
+          const currentDirInput = form.elements['currentDir'];
+          const pageInput = form.elements['page'];
+
+          let currentSort = currentSortInput ? currentSortInput.value : '';
+          let currentDir = currentDirInput ? currentDirInput.value : 'asc';
+
+          let newDir = 'asc';
+          if (currentSort === sort) {
+            newDir = currentDir === 'asc' ? 'desc' : 'asc';
+          }
+
+          if (currentSortInput) currentSortInput.value = sort;
+          if (currentDirInput) currentDirInput.value = newDir;
+          if (pageInput) pageInput.value = '1'; // reset to first page
+
+          form.submit();
+        });
+      });
+    });
+  </script>
 </body>
+
 </html>
