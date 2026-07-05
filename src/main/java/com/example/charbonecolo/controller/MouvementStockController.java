@@ -92,6 +92,8 @@ public class MouvementStockController {
                 return "redirect:/stock/entree";
             } catch (FieldBusinessException e) {
                 bindingResult.rejectValue(e.getChamp(), "error.metier", e.getMessage());
+            } catch (BusinessException e) {
+                model.addAttribute("error", e.getMessage());
             }
         }
 
@@ -158,6 +160,8 @@ public class MouvementStockController {
                 return "redirect:/stock/sortie";
             } catch (FieldBusinessException e) {
                 bindingResult.rejectValue(e.getChamp(), "error.metier", e.getMessage());
+            } catch (BusinessException e) {
+                model.addAttribute("error", e.getMessage());
             }
         }
         remplirModeleSortie(model, wrapper);
@@ -246,6 +250,8 @@ public class MouvementStockController {
                 // formulaire unifié
                 String champFormulaire = "dateSortie".equals(e.getChamp()) ? "date" : e.getChamp();
                 bindingResult.rejectValue(champFormulaire, "error.metier", e.getMessage());
+            }catch (BusinessException e) {
+                model.addAttribute("error", e.getMessage());
             }
         }
 

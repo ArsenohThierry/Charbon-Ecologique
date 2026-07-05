@@ -177,10 +177,16 @@ public class MouvementStockService {
                     "Modification impossible : ce lot a déjà été utilisé dans des sorties.");
         }
 
+        if(dto.getQuantite() <= 0) {
+            throw new FieldBusinessException("quantite", "La quantité doit être supérieure à zéro.");
+        }
         lot.setQuantiteProduitReelle(dto.getQuantite());
         lotProductionRepository.save(lot);
 
         mouvement.setQuantite(dto.getQuantite());
+        if(dto.getDateEntree() != null && dto.getDateEntree().isBefore(lot.getDateEntreeLot().toLocalDate())) {
+            throw new FieldBusinessException("dateEntree", "La date d'entrée ne peut pas être antérieure à la date de production du lot.");
+        }
         mouvement.setDateMouvement(toDateTimeOuMaintenant(dto.getDateEntree()));
 
         mouvementStockRepository.save(mouvement);
@@ -212,6 +218,7 @@ public class MouvementStockService {
         mouvement.setQuantite(quantite);
         mouvement.setDateMouvement(toDateTimeOuMaintenant(date));
         mouvement.setTypeMouvement(typeMouvementStockRepository.findById(2).orElseThrow());
+
         mouvement.setMotifSortie(motifSortieRepository.findById(idMotif).orElseThrow());
         mouvement = mouvementStockRepository.save(mouvement);
 
@@ -273,6 +280,9 @@ public class MouvementStockService {
         LocalDate date = dto.getDateSortie() != null ? dto.getDateSortie() : LocalDate.now();
 
         mouvement.setQuantite(dto.getQuantite());
+        if(dto.getIdMotif() == null) {
+            throw new FieldBusinessException("idMotif", "Le motif de sortie est requis.");
+        }
         mouvement.setMotifSortie(motifSortieRepository.findById(dto.getIdMotif()).orElseThrow());
         mouvement.setDateMouvement(toDateTimeOuMaintenant(date));
         mouvementStockRepository.save(mouvement);
@@ -520,7 +530,15 @@ public class MouvementStockService {
                 (LocalDateTime) ligne[4],
                 (String) ligne[5]));
     }
+@Autowired
+    private AlerteSeuilRepository alerteSeuilRepository;
 
+    private TypeMouvementStockModel sortieType;
+    private List<MouvementStockModel> sorties;
+    private TypeMouvementStockModel entreeType;
+    private List<MouvementStockModel> entrees;
+    private List<SeuilModel> ruptures;
+    private List<SeuilModel> faibles;
     @Transactional(readOnly = true)
     public Slice<EntreeDto> listEntrees(Pageable pageable, EntreeCriteriaWrapper wrapper) {
         Slice<Object[]> sliceBrut = mouvementStockRepository.findCustomEntrees(pageable, wrapper);
