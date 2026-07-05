@@ -1540,6 +1540,11 @@ input:where([type='file']):focus {
   border-color: rgb(241 245 249 / var(--tw-divide-opacity, 1));
 }
 
+.divide-slate-50 > :not([hidden]) ~ :not([hidden]) {
+  --tw-divide-opacity: 1;
+  border-color: rgb(248 250 252 / var(--tw-divide-opacity, 1));
+}
+
 .self-end {
   align-self: flex-end;
 }
@@ -1653,6 +1658,11 @@ input:where([type='file']):focus {
 .border-brand-light {
   --tw-border-opacity: 1;
   border-color: rgb(248 247 240 / var(--tw-border-opacity, 1));
+}
+
+.border-brand-success {
+  --tw-border-opacity: 1;
+  border-color: rgb(64 123 74 / var(--tw-border-opacity, 1));
 }
 
 .border-cv-accent {
@@ -2325,6 +2335,10 @@ input:where([type='file']):focus {
 
 .pt-2 {
   padding-top: 0.5rem;
+}
+
+.pt-3 {
+  padding-top: 0.75rem;
 }
 
 .pt-4 {
