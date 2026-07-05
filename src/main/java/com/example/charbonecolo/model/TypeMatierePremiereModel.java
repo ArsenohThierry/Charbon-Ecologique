@@ -1,5 +1,9 @@
-    package com.example.charbonecolo.model;
+package com.example.charbonecolo.model;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
     import jakarta.persistence.Column;
     import jakarta.persistence.Entity;
