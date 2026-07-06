@@ -1,15 +1,15 @@
 package com.example.charbonecolo.repository;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
+import com.example.charbonecolo.model.LotProductionModel;
+import com.example.charbonecolo.model.MouvementSortieDetailModel;
+import com.example.charbonecolo.model.MouvementStockModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.example.charbonecolo.model.MouvementSortieDetailModel;
-import com.example.charbonecolo.model.MouvementStockModel;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Repository
 public interface MouvementSortieDetailRepository extends JpaRepository<MouvementSortieDetailModel, Integer> {
@@ -57,10 +57,4 @@ public interface MouvementSortieDetailRepository extends JpaRepository<Mouvement
                         AND m.dateMouvement >= :depuis
                         """)
         Integer sumSortiesByProduitDepuis(Integer idProduit, LocalDateTime depuis);
-
-        @Query(value = """
-                        SELECT COALESCE(SUM(d.quantite), 0)
-                        FROM mouvement_sortie_detail d
-                        """, nativeQuery = true)
-        Integer sumTotalSorties();
 }

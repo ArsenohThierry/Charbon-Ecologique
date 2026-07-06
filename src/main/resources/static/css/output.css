@@ -2021,6 +2021,11 @@ input:where([type='file']):focus {
   background-color: rgb(240 253 244 / var(--tw-bg-opacity, 1));
 }
 
+.bg-leaf-green {
+  --tw-bg-opacity: 1;
+  background-color: rgb(61 122 77 / var(--tw-bg-opacity, 1));
+}
+
 .bg-orange-100 {
   --tw-bg-opacity: 1;
   background-color: rgb(255 237 213 / var(--tw-bg-opacity, 1));
@@ -2972,6 +2977,11 @@ input:where([type='file']):focus {
   background-color: rgb(6 95 70 / var(--tw-bg-opacity, 1));
 }
 
+.hover\:bg-forest-green:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(26 58 42 / var(--tw-bg-opacity, 1));
+}
+
 .hover\:bg-gray-100:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(243 244 246 / var(--tw-bg-opacity, 1));
@@ -3205,6 +3215,11 @@ input:where([type='file']):focus {
   border-color: rgb(16 185 129 / var(--tw-border-opacity, 1));
 }
 
+.focus\:border-leaf-green:focus {
+  --tw-border-opacity: 1;
+  border-color: rgb(61 122 77 / var(--tw-border-opacity, 1));
+}
+
 .focus\:border-primaryGreen:focus {
   --tw-border-opacity: 1;
   border-color: rgb(62 126 85 / var(--tw-border-opacity, 1));
@@ -3281,6 +3296,11 @@ input:where([type='file']):focus {
 .focus\:ring-emerald-500:focus {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgb(16 185 129 / var(--tw-ring-opacity, 1));
+}
+
+.focus\:ring-leaf-green:focus {
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgb(61 122 77 / var(--tw-ring-opacity, 1));
 }
 
 .focus\:ring-primaryGreen:focus {

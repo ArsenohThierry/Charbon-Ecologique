@@ -36,40 +36,47 @@
     <section class="bg-white rounded-xl border border-gray-100 shadow-sm p-8 mb-12" data-purpose="stock-entry-card">
 
       <!-- ✅ FORM THYMELEAF -->
-      <form th:action="@{/stock/entree}" method="post" th:object="${entry}"
-        class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
+      <form th:action="@{/stock/entree}" method="post" class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
 
+        <!-- Lot de production -->
         <div class="space-y-1.5">
           <label class="block text-sm font-semibold text-gray-700">Lot de production</label>
-          <p th:if="${#fields.hasErrors('idLot')}" th:errors="*{idLot}" class="text-red-600 text-xs font-medium"></p>
-          <select th:field="*{idLot}"
+          <select name="idLot"
             class="w-full h-11 px-4 rounded-lg border-gray-200 focus:ring-brand-success focus:border-brand-success text-sm">
             <option value="">Sélectionner un lot...</option>
             <option th:each="lot : ${lotsTermines}" th:value="${lot.id}"
-              th:text="${lot.reference} + ' — ' + ${lot.quantiteMatiereUtilisee} + ' kg'"></option>
+              th:text="${lot.reference} + ' — ' + ${lot.quantiteMatiereUtilisee} + ' kg'">
+            </option>
           </select>
         </div>
 
+        <!-- Quantité -->
         <div class="space-y-1.5">
           <label class="block text-sm font-semibold text-gray-700">Quantité (unités)</label>
-          <p th:if="${#fields.hasErrors('quantite')}" th:errors="*{quantite}" class="text-red-600 text-xs font-medium">
-          </p>
-          <input th:field="*{quantite}" type="number" placeholder="0"
+          <input name="quantite" type="number" placeholder="0"
             class="w-full h-11 px-4 rounded-lg border-gray-200 focus:ring-brand-success focus:border-brand-success text-sm" />
         </div>
 
+        <!-- Date -->
         <div class="space-y-1.5">
           <label class="block text-sm font-semibold text-gray-700">Date</label>
-          <input th:field="*{dateEntree}" type="date"
+          <input name="dateEntree" type="date"
             class="w-full h-11 px-4 rounded-lg border-gray-200 focus:ring-brand-success focus:border-brand-success text-sm" />
         </div>
 
+        <!-- Boutons -->
         <div class="md:col-span-2 pt-4 flex items-center gap-4">
           <button type="submit"
-            class="bg-brand-success hover:bg-brand-dark text-white px-8 py-2.5 rounded-lg font-medium">
+            class="bg-brand-success hover:bg-brand-dark text-white px-8 py-2.5 rounded-lg font-medium transition-colors text-sm">
             Valider l'entrée
           </button>
+          <a th:href="@{/stock/entree}"
+            class="px-8 py-2.5 rounded-lg border border-gray-200 text-gray-600 font-medium hover:bg-gray-50 transition-colors text-sm">
+            Annuler
+          </a>
+          <p class="text-xs text-gray-400 italic">Le stock sera mis à jour dès validation.</p>
         </div>
+
       </form>
     </section>
     <!-- END: Stock Entry Form -->
@@ -175,47 +182,18 @@
             </tr>
           </tbody>
         </table>
-        <div
-          class="flex flex-col sm:flex-row justify-between items-center gap-4 p-4 border-t border-slate-100 bg-white rounded-b-2xl">
-          <div class="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto text-center sm:text-left">
-            <span class="text-xs text-slate-500">
-              Affichage des éléments de la page <strong class="text-slate-700" th:text="${currentPage}">1</strong>
-            </span>
-
-            <div class="flex items-center gap-2">
-              <label for="limitSelect" class="text-xs text-slate-400">Afficher par :</label>
-              <select id="limitSelect"
-                class="bg-slate-50 border border-slate-200 text-slate-700 text-xs rounded-lg focus:ring-emerald-500 focus:border-emerald-500 p-1.5 font-medium cursor-pointer transition">
-                <option value="5" th:selected="${page.size == 5}">5</option>
-                <option value="10" th:selected="${page.size == 10}">10</option>
-                <option value="25" th:selected="${page.size == 25}">25</option>
-                <option value="50" th:selected="${page.size == 50}">50</option>
-              </select>
-            </div>
-          </div>
-
+        <div class="flex justify-between items-center p-4 border-t border-gray-100">
+          <span class="text-xs text-gray-500">
+            Page <strong th:text="${page.number + 1}"></strong>
+          </span>
           <div class="flex items-center gap-3">
-            <button type="button" th:data-page="${currentPage - 1}" th:disabled="${!page.hasPrevious()}"
-              class="page-btn inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border text-xs font-medium bg-white text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-40 disabled:pointer-events-none">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-                stroke="currentColor" class="w-4 h-4">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-              </svg>
+            <button type="button" th:data-page="${page.number}" th:disabled="${!page.hasPrevious()}"
+              class="page-btn px-4 py-2 rounded-lg border text-xs font-medium bg-white hover:bg-gray-50 disabled:opacity-40">
               Précédent
             </button>
-
-            <span
-              class="inline-flex items-center justify-center px-3 py-1.5 rounded-md bg-slate-100 text-slate-700 font-semibold text-xs">
-              Page <span class="ml-1" th:text="${currentPage}">1</span>
-            </span>
-
-            <button type="button" th:data-page="${currentPage + 1}" th:disabled="${!page.hasNext()}"
-              class="page-btn inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border text-xs font-medium bg-white text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-40 disabled:pointer-events-none">
+            <button type="button" th:data-page="${page.number + 2}" th:disabled="${!page.hasNext()}"
+              class="page-btn px-4 py-2 rounded-lg border text-xs font-medium bg-white hover:bg-gray-50 disabled:opacity-40">
               Suivant
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-                stroke="currentColor" class="w-4 h-4">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-              </svg>
             </button>
           </div>
         </div>
@@ -250,16 +228,6 @@
         window.location.href = url.toString();
       });
     });
-
-    const limitSelect = document.getElementById('limitSelect');
-    if (limitSelect) {
-      limitSelect.addEventListener('change', function () {
-        const currentUrl = new URL(window.location.href);
-        currentUrl.searchParams.set('limit', this.value);
-        currentUrl.searchParams.set('page', '1');
-        window.location.href = currentUrl.toString();
-      });
-    }
   </script>
 </body>
 
