@@ -1,18 +1,9 @@
 package com.example.charbonecolo.service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
+import com.example.charbonecolo.exception.BusinessException;
+import com.example.charbonecolo.model.*;
+import com.example.charbonecolo.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,30 +15,21 @@ import com.example.charbonecolo.dto.EntreeStockDTO;
 import com.example.charbonecolo.dto.EtatStockCriteriaWrapper;
 import com.example.charbonecolo.dto.EtatStockDto;
 import com.example.charbonecolo.dto.LotStockSummaryDTO;
-import com.example.charbonecolo.dto.MouvementMensuelDTO;
 import com.example.charbonecolo.dto.SortieCriteriaWrapper;
 import com.example.charbonecolo.dto.SortieDto;
 import com.example.charbonecolo.dto.SortieStockDTO;
-import com.example.charbonecolo.exception.BusinessException;
-import com.example.charbonecolo.exception.FieldBusinessException;
-import com.example.charbonecolo.model.LotProductionModel;
-import com.example.charbonecolo.model.LotStatutsModel;
-import com.example.charbonecolo.model.MotifSortieModel;
-import com.example.charbonecolo.model.MouvementSortieDetailModel;
-import com.example.charbonecolo.model.MouvementStockModel;
-import com.example.charbonecolo.model.ProduitModel;
-import com.example.charbonecolo.model.SeuilModel;
-import com.example.charbonecolo.model.TypeMouvementStockModel;
-import com.example.charbonecolo.repository.AlerteSeuilRepository;
-import com.example.charbonecolo.repository.LotProductionRepository;
-import com.example.charbonecolo.repository.LotStatutsRepository;
-import com.example.charbonecolo.repository.MotifSortieRepository;
-import com.example.charbonecolo.repository.MouvementSortieDetailRepository;
-import com.example.charbonecolo.repository.MouvementStockRepository;
-import com.example.charbonecolo.repository.ProduitRepository;
-import com.example.charbonecolo.repository.SeuilRepository;
-import com.example.charbonecolo.repository.StatutsLotProductionRepository;
-import com.example.charbonecolo.repository.TypeMouvementStockRepository;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 
 @Service
 public class MouvementStockService {
@@ -124,10 +106,6 @@ public class MouvementStockService {
         return mouvementSortieDetailRepository.isLotUsed(lot.getId());
     }
 
-    public int getNombreLotsFinis() {
-        return getLotsTermines().size();
-    }
-
     // ── ENTRÉE ───────────────────────────────────────────────────
 
     @Transactional
@@ -137,7 +115,7 @@ public class MouvementStockService {
                 .orElseThrow();
 
         if (mouvementStockRepository.existsEntreeByLotProduction(lot)) {
-            throw new FieldBusinessException("idLot", "Ce lot est déjà en stock.");
+            throw new BusinessException("Ce lot est déjà en stock.");
         }
 
         LocalDateTime dateEntree = toDateTimeOuMaintenant(entry.getDateEntree());
@@ -147,7 +125,7 @@ public class MouvementStockService {
         if (dateEntree.isBefore(lot.getDateEntreeLot())) {
             throw new BusinessException("Le lot n'a pas encore ete produit a la date d'entree en stock.");
         }
-        if (dateEntree.isBefore(dateTermine)) {
+        if(dateEntree.isBefore(dateTermine)) {
             throw new BusinessException("Le lot n'a pas encore été terminé à la date d'entrée choisie.");
         }
         lot.setDateFinReelle(dateEntree);
@@ -177,16 +155,10 @@ public class MouvementStockService {
                     "Modification impossible : ce lot a déjà été utilisé dans des sorties.");
         }
 
-        if(dto.getQuantite() <= 0) {
-            throw new FieldBusinessException("quantite", "La quantité doit être supérieure à zéro.");
-        }
         lot.setQuantiteProduitReelle(dto.getQuantite());
         lotProductionRepository.save(lot);
 
         mouvement.setQuantite(dto.getQuantite());
-        if(dto.getDateEntree() != null && dto.getDateEntree().isBefore(lot.getDateEntreeLot().toLocalDate())) {
-            throw new FieldBusinessException("dateEntree", "La date d'entrée ne peut pas être antérieure à la date de production du lot.");
-        }
         mouvement.setDateMouvement(toDateTimeOuMaintenant(dto.getDateEntree()));
 
         mouvementStockRepository.save(mouvement);
@@ -209,8 +181,7 @@ public class MouvementStockService {
                 .sum();
 
         if (totalDisponible < quantite) {
-            throw new FieldBusinessException("quantite",
-                    "Stock insuffisant. Disponible: " + totalDisponible + ", demandé: " + quantite);
+            throw new BusinessException("Stock insuffisant: Disponible: " + totalDisponible + ", demandé: " + quantite);
         }
 
         MouvementStockModel mouvement = new MouvementStockModel();
@@ -218,7 +189,6 @@ public class MouvementStockService {
         mouvement.setQuantite(quantite);
         mouvement.setDateMouvement(toDateTimeOuMaintenant(date));
         mouvement.setTypeMouvement(typeMouvementStockRepository.findById(2).orElseThrow());
-
         mouvement.setMotifSortie(motifSortieRepository.findById(idMotif).orElseThrow());
         mouvement = mouvementStockRepository.save(mouvement);
 
@@ -243,9 +213,9 @@ public class MouvementStockService {
 
             LocalDateTime dateEntreeLot = mouvementStockRepository.getDateEntreeByLotProduction(lot);
             if (dateEntreeLot != null && date.isBefore(dateEntreeLot.toLocalDate())) {
-                throw new FieldBusinessException("dateSortie",
-                        "La date de sortie ne peut pas être antérieure à la date d'entrée du lot " + lot.getReference()
-                                + ".");
+                throw new BusinessException(
+                        "La date de sortie ne peut pas être antérieure à la date d'entrée du lot "
+                                + lot.getReference() + ".");
             }
 
             MouvementSortieDetailModel d = new MouvementSortieDetailModel();
@@ -280,9 +250,6 @@ public class MouvementStockService {
         LocalDate date = dto.getDateSortie() != null ? dto.getDateSortie() : LocalDate.now();
 
         mouvement.setQuantite(dto.getQuantite());
-        if(dto.getIdMotif() == null) {
-            throw new FieldBusinessException("idMotif", "Le motif de sortie est requis.");
-        }
         mouvement.setMotifSortie(motifSortieRepository.findById(dto.getIdMotif()).orElseThrow());
         mouvement.setDateMouvement(toDateTimeOuMaintenant(date));
         mouvementStockRepository.save(mouvement);
@@ -295,7 +262,7 @@ public class MouvementStockService {
                 .sum();
 
         if (totalDisponible < dto.getQuantite()) {
-            throw new FieldBusinessException("quantite",
+            throw new BusinessException(
                     "Stock insuffisant après restauration. Disponible: " + totalDisponible + ", demandé: "
                             + dto.getQuantite());
         }
@@ -315,9 +282,9 @@ public class MouvementStockService {
 
             LocalDateTime dateEntreeLot = mouvementStockRepository.getDateEntreeByLotProduction(lot);
             if (dateEntreeLot != null && date.isBefore(dateEntreeLot.toLocalDate())) {
-                throw new FieldBusinessException("dateSortie",
-                        "La date de sortie ne peut pas être antérieure à la date d'entrée du lot " + lot.getReference()
-                                + ".");
+                throw new BusinessException(
+                        "La date de sortie ne peut pas être antérieure à la date d'entrée du lot "
+                                + lot.getReference() + ".");
             }
 
             MouvementSortieDetailModel detail = new MouvementSortieDetailModel();
@@ -399,16 +366,16 @@ public class MouvementStockService {
         return result;
     }
 
-    public int getTotalEntreeGlobal() {
-        return mouvementStockRepository.sumTotalEntrees();
+    public int getTotalEntreeGlobal(List<LotStockSummaryDTO> stockParLot) {
+        return stockParLot.stream().mapToInt(LotStockSummaryDTO::totalEntree).sum();
     }
 
-    public int getTotalSortieGlobal() {
-        return mouvementSortieDetailRepository.sumTotalSorties();
+    public int getTotalSortieGlobal(List<LotStockSummaryDTO> stockParLot) {
+        return stockParLot.stream().mapToInt(LotStockSummaryDTO::totalSortie).sum();
     }
 
-    public int getStockRestantGlobal() {
-        return getTotalEntreeGlobal() - getTotalSortieGlobal();
+    public int getStockRestantGlobal(List<LotStockSummaryDTO> stockParLot) {
+        return stockParLot.stream().mapToInt(LotStockSummaryDTO::restant).sum();
     }
 
     public List<AlerteProduitDTO> getAlertesActives() {
@@ -530,15 +497,7 @@ public class MouvementStockService {
                 (LocalDateTime) ligne[4],
                 (String) ligne[5]));
     }
-@Autowired
-    private AlerteSeuilRepository alerteSeuilRepository;
 
-    private TypeMouvementStockModel sortieType;
-    private List<MouvementStockModel> sorties;
-    private TypeMouvementStockModel entreeType;
-    private List<MouvementStockModel> entrees;
-    private List<SeuilModel> ruptures;
-    private List<SeuilModel> faibles;
     @Transactional(readOnly = true)
     public Slice<EntreeDto> listEntrees(Pageable pageable, EntreeCriteriaWrapper wrapper) {
         Slice<Object[]> sliceBrut = mouvementStockRepository.findCustomEntrees(pageable, wrapper);
@@ -563,51 +522,5 @@ public class MouvementStockService {
                 ((Number) ligne[3]).intValue(),
                 ((Number) ligne[4]).intValue(),
                 ((Number) ligne[5]).intValue()));
-    }
-
-    public List<SortieDto> listSortiesPourExport(SortieCriteriaWrapper wrapper, Pageable pageable) {
-        Slice<Object[]> sliceBrut = mouvementStockRepository.findCustomSorties(pageable, wrapper);
-
-        List<SortieDto> result = new ArrayList<>();
-        for (Object[] ligne : sliceBrut.getContent()) {
-            result.add(new SortieDto(
-                    (Integer) ligne[0],
-                    (String) ligne[1],
-                    (Integer) ligne[2],
-                    (String) ligne[3],
-                    (LocalDateTime) ligne[4],
-                    (String) ligne[5]));
-        }
-        return result;
-    }
-
-    // Statistiques---------------------
-
-    public List<MouvementMensuelDTO> getMouvementsParMois() {
-        LocalDateTime depuis = LocalDateTime.now().minusMonths(12);
-
-        List<Object[]> entreesBrutes = mouvementStockRepository.sumEntreesParMois(depuis);
-        List<Object[]> sortiesBrutes = mouvementStockRepository.sumSortiesParMois(depuis);
-
-        Map<String, Integer> entreesParMois = new HashMap<>();
-        for (Object[] ligne : entreesBrutes) {
-            entreesParMois.put((String) ligne[0], ((Number) ligne[1]).intValue());
-        }
-
-        Map<String, Integer> sortiesParMois = new HashMap<>();
-        for (Object[] ligne : sortiesBrutes) {
-            sortiesParMois.put((String) ligne[0], ((Number) ligne[1]).intValue());
-        }
-
-        // Génère les 12 derniers mois dans l'ordre, même ceux sans mouvement (affiche
-        // 0)
-        List<MouvementMensuelDTO> result = new ArrayList<>();
-        for (int i = 11; i >= 0; i--) {
-            String mois = LocalDate.now().minusMonths(i).format(DateTimeFormatter.ofPattern("yyyy-MM"));
-            int entree = entreesParMois.getOrDefault(mois, 0);
-            int sortie = sortiesParMois.getOrDefault(mois, 0);
-            result.add(new MouvementMensuelDTO(mois, entree, sortie));
-        }
-        return result;
     }
 }

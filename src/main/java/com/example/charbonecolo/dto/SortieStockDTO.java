@@ -2,22 +2,11 @@ package com.example.charbonecolo.dto;
 
 import java.time.LocalDate;
 
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-
 public class SortieStockDTO {
     private Integer id;
-
-    @NotNull(message = "Veuillez sélectionner un produit.")
     private Integer idProduit;
-
-    @NotNull(message = "La quantité est obligatoire.")
-    @Positive(message = "La quantité doit être supérieure à zéro.")
     private Integer quantite;
-
-    @NotNull(message = "Veuillez sélectionner un motif.")
     private Integer idMotif;
-
     private LocalDate dateSortie;
 
     // Constructor for potential SQL mapping (if needed)
