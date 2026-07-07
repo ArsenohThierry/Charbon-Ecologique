@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -153,6 +154,7 @@ public class FournisseurService {
         fournisseur.setEmail(email);
         fournisseur.setTelephone(telephone);
         fournisseur.setAdresse(adresse);
+        fournisseur.setDate_creation(LocalDateTime.now());
         fournisseur.setActif(actif);
 
         return fournisseur;

@@ -1125,6 +1125,10 @@ input:where([type='file']):focus {
   height: 100vh;
 }
 
+.max-h-48 {
+  max-height: 12rem;
+}
+
 .min-h-screen {
   min-height: 100vh;
 }
@@ -1647,6 +1651,10 @@ input:where([type='file']):focus {
   border-top-width: 2px;
 }
 
+.border-dashed {
+  border-style: dashed;
+}
+
 .border-amber-200 {
   --tw-border-opacity: 1;
   border-color: rgb(253 230 138 / var(--tw-border-opacity, 1));
@@ -1697,6 +1705,11 @@ input:where([type='file']):focus {
 
 .border-cv-status-green-text\/20 {
   border-color: rgb(30 126 52 / 0.2);
+}
+
+.border-emerald-200 {
+  --tw-border-opacity: 1;
+  border-color: rgb(167 243 208 / var(--tw-border-opacity, 1));
 }
 
 .border-gray-100 {
@@ -2507,6 +2520,11 @@ input:where([type='file']):focus {
   color: rgb(217 119 6 / var(--tw-text-opacity, 1));
 }
 
+.text-amber-700 {
+  --tw-text-opacity: 1;
+  color: rgb(180 83 9 / var(--tw-text-opacity, 1));
+}
+
 .text-blue-600 {
   --tw-text-opacity: 1;
   color: rgb(37 99 235 / var(--tw-text-opacity, 1));
@@ -2595,6 +2613,11 @@ input:where([type='file']):focus {
 .text-emerald-600 {
   --tw-text-opacity: 1;
   color: rgb(5 150 105 / var(--tw-text-opacity, 1));
+}
+
+.text-emerald-700 {
+  --tw-text-opacity: 1;
+  color: rgb(4 120 87 / var(--tw-text-opacity, 1));
 }
 
 .text-emerald-800 {
@@ -2905,6 +2928,11 @@ input:where([type='file']):focus {
   border-color: rgb(199 158 92 / var(--tw-border-opacity, 1));
 }
 
+.hover\:border-brand-success:hover {
+  --tw-border-opacity: 1;
+  border-color: rgb(64 123 74 / var(--tw-border-opacity, 1));
+}
+
 .hover\:bg-\[\#1b3c2e\]:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(27 60 46 / var(--tw-bg-opacity, 1));
@@ -2965,6 +2993,11 @@ input:where([type='file']):focus {
 .hover\:bg-cv-sidebar-hover:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(42 74 55 / var(--tw-bg-opacity, 1));
+}
+
+.hover\:bg-emerald-100:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(209 250 229 / var(--tw-bg-opacity, 1));
 }
 
 .hover\:bg-emerald-800:hover {
