@@ -42,7 +42,7 @@ public class LotProductionModel {
     private BigDecimal quantiteMatiereUtilisee;
 
     @Column(name = "quantite_produit_prevue", nullable = false)
-    private Integer quantiteProduitPrevue;
+    private Integer quantiteProduitPrevues;
 
     @Column(name = "quantite_produit_reelle")
     private Integer quantiteProduitReelle;
@@ -97,13 +97,15 @@ public class LotProductionModel {
         this.quantiteMatiereUtilisee = quantiteMatiereUtilisee;
     }
 
-    public Integer getQuantiteProduitPrevue() {
-        return quantiteProduitPrevue;
+
+    public Integer getQuantiteProduitPrevues() {
+        return quantiteProduitPrevues;
     }
 
-    public void setQuantiteProduitPrevue(Integer quantiteProduitPrevue) {
-        this.quantiteProduitPrevue = quantiteProduitPrevue;
+    public void setQuantiteProduitPrevues(Integer quantiteProduitPrevues) {
+    this.quantiteProduitPrevues = quantiteProduitPrevues;
     }
+
 
     public Integer getQuantiteProduitReelle() {
         return quantiteProduitReelle;

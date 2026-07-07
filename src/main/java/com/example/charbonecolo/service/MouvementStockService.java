@@ -37,6 +37,7 @@ import com.example.charbonecolo.model.MouvementSortieDetailModel;
 import com.example.charbonecolo.model.MouvementStockModel;
 import com.example.charbonecolo.model.ProduitModel;
 import com.example.charbonecolo.model.SeuilModel;
+import com.example.charbonecolo.model.StatutsLotProductionModel;
 import com.example.charbonecolo.model.TypeMouvementStockModel;
 import com.example.charbonecolo.repository.AlerteSeuilRepository;
 import com.example.charbonecolo.repository.LotProductionRepository;
@@ -97,8 +98,11 @@ public class MouvementStockService {
             return List.of();
         LotStatutsModel termine = termineOpt.get();
         return lotProductionRepository.findAll().stream()
+                .filter(lot -> !mouvementStockRepository.existsEntreeByLotProduction(lot))
                 .filter(lot -> statutsLotProductionRepository
-                        .findTopByLotProductionOrderByDateStatutDesc(lot)
+                        .findActiveByLotProduction(lot)
+                        .stream().findFirst()
+                        .or(() -> statutsLotProductionRepository.findTopByLotProductionOrderByDateStatutDesc(lot))
                         .map(s -> s.getLotStatuts() != null && termine.getId().equals(s.getLotStatuts().getId()))
                         .orElse(false))
                 .collect(Collectors.toList());
@@ -152,6 +156,21 @@ public class MouvementStockService {
         }
         lot.setDateFinReelle(dateEntree);
         lotProductionRepository.save(lot);
+
+        // Clôturer le statut "Terminé" et créer "En stock"
+        statutsLotProductionRepository.findActiveByLotProduction(lot)
+                .stream().findFirst()
+                .ifPresent(termine -> {
+                    termine.setDateFin(dateEntree);
+                    statutsLotProductionRepository.save(termine);
+                });
+        LotStatutsModel enStock = lotStatutsRepository.findByLibelle("En stock")
+                .orElseThrow(() -> new BusinessException("Statut 'En stock' introuvable."));
+        StatutsLotProductionModel nouveauStatut = new StatutsLotProductionModel();
+        nouveauStatut.setLotProduction(lot);
+        nouveauStatut.setLotStatuts(enStock);
+        nouveauStatut.setDateStatut(dateEntree);
+        statutsLotProductionRepository.save(nouveauStatut);
 
         MouvementStockModel mouvement = new MouvementStockModel();
         mouvement.setLotProduction(lot);
@@ -224,12 +243,6 @@ public class MouvementStockService {
 
         int reste = quantite;
         List<MouvementSortieDetailModel> details = new ArrayList<>();
-        for (LotProductionModel lot : lotsDisponibles) {
-            System.out.println(
-                    lot.getReference()
-                            + " | stock = " + getStockDisponible(lot.getId())
-                            + " | entrée = " + mouvementStockRepository.getDateEntreeByLotProduction(lot));
-        }
 
         for (LotProductionModel lot : lotsDisponibles) {
             if (reste <= 0)
@@ -244,8 +257,8 @@ public class MouvementStockService {
             LocalDateTime dateEntreeLot = mouvementStockRepository.getDateEntreeByLotProduction(lot);
             if (dateEntreeLot != null && date.isBefore(dateEntreeLot.toLocalDate())) {
                 throw new FieldBusinessException("dateSortie",
-                        "La date de sortie ne peut pas être antérieure à la date d'entrée du lot " + lot.getReference()
-                                + ".");
+                        "La date de sortie (" + date + ") ne peut pas être antérieure à la date d'entrée du lot "
+                                + lot.getReference() + " (" + dateEntreeLot.toLocalDate() + ").");
             }
 
             MouvementSortieDetailModel d = new MouvementSortieDetailModel();
@@ -316,8 +329,8 @@ public class MouvementStockService {
             LocalDateTime dateEntreeLot = mouvementStockRepository.getDateEntreeByLotProduction(lot);
             if (dateEntreeLot != null && date.isBefore(dateEntreeLot.toLocalDate())) {
                 throw new FieldBusinessException("dateSortie",
-                        "La date de sortie ne peut pas être antérieure à la date d'entrée du lot " + lot.getReference()
-                                + ".");
+                        "La date de sortie (" + date + ") ne peut pas être antérieure à la date d'entrée du lot "
+                                + lot.getReference() + " (" + dateEntreeLot.toLocalDate() + ").");
             }
 
             MouvementSortieDetailModel detail = new MouvementSortieDetailModel();

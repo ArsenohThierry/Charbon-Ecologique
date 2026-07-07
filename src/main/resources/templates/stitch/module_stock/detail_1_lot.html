@@ -1,237 +1,136 @@
 <!DOCTYPE html>
 
-<html lang="fr">
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Suivi de Production - Charbon Vert</title>
-    <link rel="stylesheet" th:href="@{/css/output.css}" href="../../../static/css/output.css" />
-    <link rel="stylesheet" th:href="@{/css/fonts.css}" href="../../../static/css/fonts.css" />
-    <style data-purpose="custom-layout">
-        body {
-            background-color: #f9f8f3;
-            font-family: 'Inter', sans-serif;
-        }
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title th:text="'Suivi de production - ' + ${lot.reference} + ' - Charbon Vert'">Suivi de Production - Charbon Vert</title>
+  <link rel="stylesheet" th:href="@{/css/output.css}" href="../../../static/css/output.css" />
+  <link rel="stylesheet" th:href="@{/css/fonts.css}" href="../../../static/css/fonts.css" />
+  <style>
+    .step-item.step-done {
+      border-color: #34d399;
+      background-color: #ecfdf5;
+    }
 
-        .sidebar-active-item {
-            background-color: #c5a059;
-            color: #1a2e1a;
-        }
+    .step-item.step-current {
+      border-color: #1e3a1e;
+      background-color: #f5f6ea;
+    }
 
-        /* Custom checkbox styling for the tracker */
-        .step-checkbox:checked {
-            background-color: #2d5a27;
-            border-color: #2d5a27;
-        }
-    </style>
+    .step-item.step-future {
+      opacity: 0.55;
+    }
+
+    .step-badge {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      padding: 0.125rem 0.6rem;
+      border-radius: 9999px;
+    }
+
+    .step-badge-done {
+      background-color: #def7ec;
+      color: #03543f;
+    }
+
+    .step-badge-current {
+      background-color: #fef3c7;
+      color: #92400e;
+    }
+
+    .step-badge-future {
+      background-color: #e5e7eb;
+      color: #6b7280;
+    }
+  </style>
 </head>
 
-<body class="flex min-h-screen">
-    <!-- BEGIN: Left Sidebar -->
-    <aside class="w-64 bg-cv-dark-green text-white flex flex-col fixed h-full" data-purpose="sidebar">
-        <div class="p-6">
-            <div class="flex items-center gap-2 mb-8">
-                <div class="w-8 h-8 bg-cv-gold rounded-full flex items-center justify-center">
-                    <svg class="h-5 w-5 text-cv-dark-green" fill="none" stroke="currentColor" viewbox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round"
-                            stroke-width="2"></path>
-                    </svg>
-                </div>
-                <div>
-                    <h1 class="font-bold text-sm leading-tight">Charbon Vert</h1>
-                    <p class="text-[10px] text-gray-400">Gestionnaire de stock</p>
-                </div>
-            </div>
-            <nav class="space-y-1">
-                <a class="flex items-center gap-3 px-3 py-2 text-sm text-gray-300 hover:bg-cv-accent rounded-md transition-colors"
-                    href="#">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-                        <path d="M4 6h16M4 12h16M4 18h16"></path>
-                    </svg>
-                    Tableau de bord
-                </a>
-                <div class="pt-4">
-                    <button class="w-full flex items-center justify-between px-3 py-2 text-sm text-gray-300">
-                        <span class="flex items-center gap-3">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-                                <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
-                            </svg>
-                            Lots de production
-                        </span>
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-                            <path d="M19 9l-7 7-7-7"></path>
-                        </svg>
-                    </button>
-                    <div class="mt-1 ml-4 space-y-1">
-                        <a class="block px-3 py-2 text-sm text-gray-300 hover:bg-cv-accent rounded-md" href="#">Saisir
-                            un nouveau lot</a>
-                        <a class="block px-3 py-2 text-sm sidebar-active-item rounded-md font-medium" href="#">Suivi de
-                            production</a>
-                        <a class="block px-3 py-2 text-sm text-gray-300 hover:bg-cv-accent rounded-md" href="#">Liste
-                            des lots</a>
-                    </div>
-                </div>
-                <a class="flex items-center gap-3 px-3 py-2 text-sm text-gray-300 hover:bg-cv-accent rounded-md mt-4"
-                    th:href="@{/stock/etat}">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-                        <path d="M9 17v-2a4 4 0 014-4h4m0 0l-4-4m4 4l-4 4"></path>
-                    </svg>
-                    Généralités stocks
-                </a>
-            </nav>
+<body class="bg-brand-light font-sans text-slate-800 min-h-screen flex">
+  <aside th:replace="~{fragments/sidebar :: sidebar('lots')}"></aside>
+  <main class="flex-1 min-h-screen">
+    <!-- BEGIN: Top Bar -->
+    <header class="flex items-center justify-between px-8 py-4 bg-white border-b border-gray-100">
+      <div>
+        <h2 class="text-lg font-bold text-brand-dark">Gestionnaire de stock</h2>
+        <p class="text-xs text-gray-500">Suivi de production &amp; inventaire</p>
+      </div>
+      <a th:href="@{/stock/lot/liste}" class="text-xs text-gray-500 hover:text-brand-dark">&larr; Retour à la liste des lots</a>
+    </header>
+    <!-- END: Top Bar -->
+
+    <section class="p-8 max-w-4xl">
+      <div class="mb-8">
+        <h1 class="text-3xl font-bold text-brand-dark mb-2" th:text="'Suivi du lot ' + ${lot.reference}">Suivi du lot LOT-001</h1>
+        <p class="text-gray-500">Consultez la progression des étapes de production et validez la date de fin de l'étape en cours.</p>
+      </div>
+
+      <div th:if="${error}" class="mb-6 p-4 bg-red-100 border border-red-200 text-red-800 rounded-lg text-sm font-medium" th:text="${error}"></div>
+
+      <!-- Info Card -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10 border-b border-gray-100 pb-8">
+          <div>
+            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Matière utilisée</label>
+            <p class="text-brand-dark font-medium" th:text="${lot.typeMatierePremiere?.libelle} + ' (' + ${lot.quantiteMatiereUtilisee} + ' kg)'"></p>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Produit cible</label>
+            <p class="text-brand-dark font-medium" th:text="${lot.produit?.nom}"></p>
+          </div>
         </div>
-        <div class="mt-auto p-6 border-t border-cv-accent">
-            <button class="flex items-center gap-3 text-sm text-gray-400 hover:text-white">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-                    <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
-                    </path>
-                </svg>
-                Changer de rôle
+
+        <!-- Étapes de production -->
+        <div class="mb-10">
+          <label class="block text-sm font-semibold text-brand-dark mb-6">Étapes de production</label>
+          <div class="space-y-4">
+            <div th:each="statut : ${lotStatuts}"
+                 th:with="estTermine=${statutActuelLibelle == 'Termine' and statut.id == statutActuelId},
+                          estActuel=${statut.id == statutActuelId and statutActuelLibelle != 'Termine'},
+                          estFait=${(statutActuelOrdre != null and statut.ordre < statutActuelOrdre) or estTermine},
+                          ligneHistorique=${historiqueStatuts.get(statut.id)}"
+                 th:classappend="${estActuel} ? 'step-current' : (${estFait} ? 'step-done' : 'step-future')"
+                 class="step-item flex items-center p-4 rounded-lg border">
+              <span class="ml-1 flex-1 font-medium text-brand-dark" th:text="${statut.libelle}"></span>
+              <span th:if="${ligneHistorique != null and ligneHistorique.dateFin != null}"
+                    class="text-xs text-gray-400 mr-3"
+                    th:text="'Terminé le ' + ${#temporals.format(ligneHistorique.dateFin, 'dd/MM/yyyy')}"></span>
+              <span th:if="${estFait}" class="step-badge step-badge-done">Terminé</span>
+              <span th:if="${estActuel}" class="step-badge step-badge-current">En cours</span>
+              <span th:unless="${estFait or estActuel}" class="step-badge step-badge-future">À venir</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Validation du statut en cours -->
+        <div th:if="${statutActuelLibelle == 'Termine'}" class="mb-6 p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-lg text-sm">
+          Ce lot a terminé toutes les étapes de production. Le passage en stock se fait depuis le module « Entrée stock ».
+        </div>
+
+        <form th:unless="${statutActuelLibelle == 'Termine'}" method="post" th:action="@{/stock/lot/statut/{id}/valider(id=${lot.id})}" class="space-y-6">
+          <div class="max-w-xs">
+            <label class="block text-sm font-semibold text-brand-dark mb-2" for="dateFin">
+              Date de fin de l'étape en cours (<span th:text="${statutActuelLibelle}"></span>)
+            </label>
+            <input class="w-full rounded-md border-gray-300 shadow-sm focus:border-brand-success focus:ring-brand-success py-2 px-3 text-sm"
+              id="dateFin" name="dateFin" type="date" required="required" />
+          </div>
+          <div class="flex items-center gap-4">
+            <button type="submit"
+              class="bg-brand-success hover:bg-brand-dark text-white font-semibold py-2.5 px-6 rounded-md transition-all">
+              Valider la fin de l'étape
             </button>
-        </div>
-    </aside>
-    <!-- END: Left Sidebar -->
-    <!-- BEGIN: Main Content Container -->
-    <main class="flex-1 ml-64 p-8 min-h-screen" data-purpose="main-content-area">
-        <!-- BEGIN: Top Header Bar -->
-        <header class="flex justify-between items-center mb-10" data-purpose="content-header">
-            <div>
-                <h2 class="text-xl font-serif text-cv-dark-green font-bold">Gestionnaire de stock</h2>
-                <p class="text-xs text-gray-500">Suivi de production &amp; inventaire</p>
-            </div>
-            <div class="flex items-center gap-4">
-                <span
-                    class="bg-cv-accent/10 text-cv-accent px-3 py-1 rounded-full text-xs font-medium border border-cv-accent/20">
-                    Maquette • données fictives
-                </span>
-                <div class="w-10 h-10 bg-cv-accent text-white rounded-full flex items-center justify-center font-bold">
-                    N
-                </div>
-            </div>
-        </header>
-        <!-- END: Top Header Bar -->
-        <!-- BEGIN: Production Content -->
-        <section class="max-w-4xl">
-            <div class="mb-8">
-                <h3 class="text-3xl font-serif text-cv-dark-green mb-2">Suivi du lot LOT-001</h3>
-                <p class="text-gray-600">Veuillez mettre à jour l'avancement des étapes de production.</p>
-            </div>
-            <!-- BEGIN: Production Card -->
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-8" data-purpose="production-form-card">
-                <!-- Info Summary -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10 border-b border-gray-100 pb-8">
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Matière
-                            utilisée</label>
-                        <p class="text-cv-dark-green font-medium">Bambou compressé (120 kg)</p>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Produit
-                            cible</label>
-                        <p class="text-cv-dark-green font-medium">Briquettes de charbon de bois 5kg</p>
-                    </div>
-                </div>
-                <!-- Tracker Progress Steps -->
-                <div class="mb-10" data-purpose="production-tracker">
-                    <label class="block text-sm font-semibold text-cv-dark-green mb-6">Étapes de production</label>
-                    <div class="space-y-4">
-                        <!-- Step Item -->
-                        <label
-                            class="flex items-center p-4 rounded-lg border border-gray-200 hover:bg-cv-cream transition-colors cursor-pointer group">
-                            <input checked=""
-                                class="step-checkbox h-5 w-5 rounded border-gray-300 text-cv-accent focus:ring-cv-accent"
-                                type="checkbox" />
-                            <span class="ml-4 flex-1 font-medium text-cv-dark-green">Broyage</span>
-                            <span
-                                class="text-xs text-cv-accent font-semibold bg-cv-accent/10 px-2 py-0.5 rounded uppercase">Terminé</span>
-                        </label>
-                        <!-- Step Item -->
-                        <label
-                            class="flex items-center p-4 rounded-lg border border-gray-200 hover:bg-cv-cream transition-colors cursor-pointer group">
-                            <input checked=""
-                                class="step-checkbox h-5 w-5 rounded border-gray-300 text-cv-accent focus:ring-cv-accent"
-                                type="checkbox" />
-                            <span class="ml-4 flex-1 font-medium text-cv-dark-green">Mélange</span>
-                            <span
-                                class="text-xs text-cv-accent font-semibold bg-cv-accent/10 px-2 py-0.5 rounded uppercase">Terminé</span>
-                        </label>
-                        <!-- Step Item -->
-                        <label
-                            class="flex items-center p-4 rounded-lg border-2 border-cv-accent bg-cv-accent/5 transition-colors cursor-pointer group">
-                            <input
-                                class="step-checkbox h-5 w-5 rounded border-gray-300 text-cv-accent focus:ring-cv-accent"
-                                type="checkbox" />
-                            <span class="ml-4 flex-1 font-medium text-cv-dark-green">Pressage</span>
-                            <span
-                                class="text-xs text-cv-gold font-semibold bg-cv-gold/10 px-2 py-0.5 rounded uppercase">En
-                                cours</span>
-                        </label>
-                        <!-- Step Item -->
-                        <label
-                            class="flex items-center p-4 rounded-lg border border-gray-200 hover:bg-cv-cream transition-colors cursor-pointer group">
-                            <input
-                                class="step-checkbox h-5 w-5 rounded border-gray-300 text-cv-accent focus:ring-cv-accent"
-                                type="checkbox" />
-                            <span class="ml-4 flex-1 font-medium text-gray-400">Séchage</span>
-                            <span
-                                class="text-xs text-gray-400 font-semibold bg-gray-100 px-2 py-0.5 rounded uppercase">En
-                                attente</span>
-                        </label>
-                    </div>
-                </div>
-                <!-- Date Input -->
-                <div class="mb-10 max-w-xs">
-                    <label class="block text-sm font-semibold text-cv-dark-green mb-2" for="end-date">Date de fin
-                        réelle</label>
-                    <input
-                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-cv-accent focus:ring-cv-accent py-2 px-3 text-sm"
-                        id="end-date" type="date" />
-                </div>
-                <!-- Action Buttons -->
-                <div class="flex items-center gap-4">
-                    <button
-                        class="bg-cv-accent hover:bg-cv-dark-green text-white font-semibold py-2.5 px-6 rounded-md transition-all flex items-center gap-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-                            <path d="M5 13l4 4L19 7"></path>
-                        </svg>
-                        Valider la production
-                    </button>
-                    <button
-                        class="bg-white border border-gray-300 text-gray-700 font-semibold py-2.5 px-6 rounded-md hover:bg-gray-50 transition-all">
-                        Annuler
-                    </button>
-                </div>
-            </div>
-            <!-- END: Production Card -->
-            <div
-                class="mt-6 flex items-center justify-center gap-1 bg-white/50 py-2 rounded-full border border-gray-200 max-w-fit px-4 mx-auto">
-                <button class="p-1 hover:bg-gray-200 rounded"><svg class="w-4 h-4 text-gray-500" fill="none"
-                        stroke="currentColor" viewbox="0 0 24 24">
-                        <path
-                            d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4">
-                        </path>
-                    </svg></button>
-                <span class="text-gray-300 mx-1">|</span>
-                <button class="p-1 hover:bg-gray-200 rounded text-gray-500 font-bold">T</button>
-                <button class="p-1 hover:bg-gray-200 rounded text-gray-500"><svg class="w-4 h-4" fill="none"
-                        stroke="currentColor" viewbox="0 0 24 24">
-                        <path
-                            d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13">
-                        </path>
-                    </svg></button>
-                <button class="p-1 hover:bg-gray-200 rounded text-gray-500"><svg class="w-4 h-4" fill="none"
-                        stroke="currentColor" viewbox="0 0 24 24">
-                        <path
-                            d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
-                        </path>
-                    </svg></button>
-            </div>
-        </section>
-        <!-- END: Production Content -->
-    </main>
-    <!-- END: Main Content Container -->
+            <a th:href="@{/stock/lot/liste}"
+              class="bg-white border border-gray-300 text-gray-700 font-semibold py-2.5 px-6 rounded-md hover:bg-gray-50 transition-all">
+              Annuler
+            </a>
+          </div>
+        </form>
+      </div>
+    </section>
+  </main>
 </body>
 
 </html>
