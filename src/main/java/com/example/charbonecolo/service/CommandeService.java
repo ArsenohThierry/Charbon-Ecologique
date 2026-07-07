@@ -138,7 +138,7 @@ public class CommandeService {
             modified.setDateFinReelle(original.getDateFinReelle());
             modified.setProduit(original.getProduit());
             modified.setQuantiteMatiereUtilisee(original.getQuantiteMatiereUtilisee());
-            modified.setQuantiteProduitPrevue(original.getQuantiteProduitPrevue());
+            modified.setQuantiteProduitPrevues(original.getQuantiteProduitPrevues());
             modified.setQuantiteProduitReelle(original.getQuantiteProduitReelle());
             modified.setRemarques("Depuis commande annulee");
             modified.setReference("NO_REF");
@@ -173,14 +173,19 @@ public class CommandeService {
         statutCommandeRepository.save(statut);
         details.forEach(d -> d.setCommande(saved));
         details.forEach(d -> d.setMontant(BigDecimal.valueOf(d.getQuantite() * d.getProduit().getPu().doubleValue())));
-        saveAllDetails(details);
+        saveAllDetails(details, commande.getDateCommande() != null ? commande.getDateCommande().toLocalDate() : LocalDate.now());
     }
 
     @Transactional
     public void saveAllDetails(List<DetailCommandeModel> details) {
+        saveAllDetails(details, LocalDate.now());
+    }
+
+    @Transactional
+    public void saveAllDetails(List<DetailCommandeModel> details, LocalDate dateSortie) {
         for(DetailCommandeModel detailCommandeModel : details) {
             SortieStockDTO sortieStockDTO = new SortieStockDTO();
-            sortieStockDTO.setDateSortie(LocalDate.now());
+            sortieStockDTO.setDateSortie(dateSortie);
             sortieStockDTO.setIdMotif(1);
             sortieStockDTO.setIdProduit(detailCommandeModel.getProduit().getId());
             sortieStockDTO.setQuantite(detailCommandeModel.getQuantite());

@@ -1,6 +1,7 @@
 package com.example.charbonecolo.controller;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import com.example.charbonecolo.dto.CommandeDto;
 import com.example.charbonecolo.dto.CommandeInput;
@@ -133,10 +136,15 @@ public class CommandeController {
     }
 
     @PostMapping("/new")
-    public ModelAndView storeSession(HttpSession session, @ModelAttribute CommandeModel commande) {
+    public ModelAndView storeSession(HttpSession session, @ModelAttribute CommandeModel commande,
+            @RequestParam(value = "dateCommandeStr", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateCommande) {
         ModelAndView mav = new ModelAndView("redirect:/cmd/new/products");
+        if (dateCommande != null) {
+            commande.setDateCommande(dateCommande.atStartOfDay());
+        } else {
+            commande.setDateCommande(LocalDateTime.now());
+        }
         session.setAttribute("tmp_cmd", commande);
-        commande.setDateCommande(LocalDateTime.now());
         return mav;
     }
 
