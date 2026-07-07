@@ -18,7 +18,12 @@ public class TresorerieController {
 
     @GetMapping
     public String afficherTresorerie(Model model) {
-        model.addAttribute("mouvements", tresorerieService.findAll());
+        try {
+            model.addAttribute("mouvements", tresorerieService.findAll());
+        } catch (RuntimeException e) {
+            model.addAttribute("error", "Impossible de charger l'historique des mouvements.");
+            model.addAttribute("mouvements", java.util.List.of());
+        }
         model.addAttribute("solde", tresorerieService.calculerSolde());
         model.addAttribute("totalEntrees", tresorerieService.calculerTotalEntrees());
         model.addAttribute("totalSorties", tresorerieService.calculerTotalSorties());

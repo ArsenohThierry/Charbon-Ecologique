@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
@@ -60,18 +61,20 @@ public class JournalController {
 
             Model model) {
 
-        /*List<JournalFinancierModel> ecritures;
-        if (debut != null && fin != null) {
-            ecritures = journalService.filtrerJournal(debut, fin);
-        } else if (typeJournalId != null) {
-            ecritures = journalService.filtrerParType(typeJournalId);
-        } else {
-            ecritures = journalService.findAll();
-        }*/
-        Pageable pageable =
-        PageRequest.of(page - 1, limit);
+        int pageCourante = Math.max(page, 1);
+        int limite = normaliserLimite(limit);
+        Pageable pageable = PageRequest.of(pageCourante - 1, limite);
         Page<JournalFinancierModel> ecritures;
-        if (debut != null && fin != null) {
+
+        if ((debut == null && fin != null) || (debut != null && fin == null)) {
+            model.addAttribute("error", "Veuillez renseigner la date de debut et la date de fin.");
+            ecritures = journalService.findAll(pageable);
+        }
+        else if (debut != null && debut.isAfter(fin)) {
+            model.addAttribute("error", "La date de debut doit etre inferieure ou egale a la date de fin.");
+            ecritures = journalService.findAll(pageable);
+        }
+        else if (debut != null) {
             ecritures =
                     journalService.filtrerJournal(
                             debut,
@@ -79,10 +82,15 @@ public class JournalController {
                             pageable);
         }
         else if (typeJournalId != null) {
-            ecritures =
-                    journalService.filtrerParType(
-                            typeJournalId,
-                            pageable);
+            if (typeJournalRepo.existsById(typeJournalId)) {
+                ecritures =
+                        journalService.filtrerParType(
+                                typeJournalId,
+                                pageable);
+            } else {
+                model.addAttribute("error", "Le type de journal selectionne n'existe pas.");
+                ecritures = journalService.findAll(pageable);
+            }
         }
         else {
             ecritures =
@@ -101,11 +109,11 @@ public class JournalController {
 
         model.addAttribute(
                 "currentPage",
-                page);
+                pageCourante);
 
         model.addAttribute(
                 "limit",
-                limit);
+                limite);
         model.addAttribute("typesJournal", typeJournalRepo.findAll());
         model.addAttribute("origines", origineRepo.findAll());
         model.addAttribute("debut", debut);
@@ -122,7 +130,18 @@ public class JournalController {
             @RequestParam(value = "debit", defaultValue = "0") BigDecimal debit,
             @RequestParam(value = "credit", defaultValue = "0") BigDecimal credit,
             @RequestParam(value = "reference", required = false) String reference,
-            @RequestParam(value = "description", required = false) String description) {
+            @RequestParam(value = "description", required = false) String description,
+            RedirectAttributes redirectAttributes) {
+
+        if (debit == null || credit == null || debit.signum() < 0 || credit.signum() < 0) {
+            redirectAttributes.addFlashAttribute("error", "Les montants debit et credit doivent etre positifs.");
+            return "redirect:/finance/journal";
+        }
+
+        if (debit.compareTo(BigDecimal.ZERO) == 0 && credit.compareTo(BigDecimal.ZERO) == 0) {
+            redirectAttributes.addFlashAttribute("error", "Veuillez renseigner un debit ou un credit.");
+            return "redirect:/finance/journal";
+        }
 
         JournalFinancierModel ecriture = new JournalFinancierModel();
         ecriture.setDateOperation(dateOperation);
@@ -131,12 +150,24 @@ public class JournalController {
         ecriture.setReference(reference);
         ecriture.setDescription(description);
 
-        typeJournalRepo.findById(typeJournalId).ifPresent(ecriture::setTypeJournal);
+        var typeJournal = typeJournalRepo.findById(typeJournalId);
+        if (typeJournal.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "Le type de journal selectionne n'existe pas.");
+            return "redirect:/finance/journal";
+        }
+        ecriture.setTypeJournal(typeJournal.get());
+
         if (origineId != null) {
-            origineRepo.findById(origineId).ifPresent(ecriture::setOrigine);
+            var origine = origineRepo.findById(origineId);
+            if (origine.isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "L'origine selectionnee n'existe pas.");
+                return "redirect:/finance/journal";
+            }
+            ecriture.setOrigine(origine.get());
         }
 
         journalService.enregistrer(ecriture);
+        redirectAttributes.addFlashAttribute("success", "Ecriture enregistree avec succes.");
         return "redirect:/finance/journal";
     }
 
@@ -184,5 +215,12 @@ public class JournalController {
                         "attachment; filename=journal.xlsx")
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(file);
+    }
+
+    private int normaliserLimite(int limit) {
+        return switch (limit) {
+            case 5, 10, 25, 50 -> limit;
+            default -> 10;
+        };
     }
 }

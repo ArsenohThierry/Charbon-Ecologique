@@ -1,6 +1,7 @@
 package com.example.charbonecolo.controller;
 
 import com.example.charbonecolo.service.JournalFinancierService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
-import java.util.HashMap;
+import java.time.DateTimeException;
 import java.util.Map;
 import com.example.charbonecolo.dto.KpiDto;
 
@@ -46,11 +47,24 @@ public class KpiController {
     //API JSON POUR FETCH LES DONNEES DU KPI
     @GetMapping("/data")
     @ResponseBody
-    public KpiDto getKpi(
+    public ResponseEntity<?> getKpi(
             @RequestParam int mois,
             @RequestParam int annee
     ) {
-        LocalDateTime debut = LocalDateTime.of(annee, mois, 1, 0, 0);
+        if (mois < 1 || mois > 12) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Le mois doit etre compris entre 1 et 12."));
+        }
+
+        if (annee < 2000 || annee > 2100) {
+            return ResponseEntity.badRequest().body(Map.of("error", "L'annee selectionnee est invalide."));
+        }
+
+        LocalDateTime debut;
+        try {
+            debut = LocalDateTime.of(annee, mois, 1, 0, 0);
+        } catch (DateTimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", "La periode demandee est invalide."));
+        }
 
         LocalDateTime fin = debut.with(TemporalAdjusters.lastDayOfMonth())
                 .withHour(23).withMinute(59).withSecond(59);
@@ -80,6 +94,6 @@ public class KpiController {
         dto.setSolde(journalService.calculerSolde());
         dto.setEvolutionCA(journalService.evolutionMensuelleCA());
 
-        return dto;
+        return ResponseEntity.ok(dto);
     }
 }

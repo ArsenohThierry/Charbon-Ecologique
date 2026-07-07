@@ -68,16 +68,19 @@
 
 <!-- MAIN -->
 <main class="flex-1 ml-64 p-8">
-    <div class="mb-8">
-        <h1 class="text-2xl font-bold text-slate-900">Bilan Financier</h1>
-        <p class="text-sm text-slate-500 mt-1">
-            Période :
+	    <div class="mb-8">
+	        <h1 class="text-2xl font-bold text-slate-900">Bilan Financier</h1>
+	        <p class="text-sm text-slate-500 mt-1">
+	            Période :
             <span th:text="${#temporals.format(debut,'dd/MM/yyyy')}"></span> —
-            <span th:text="${#temporals.format(fin,'dd/MM/yyyy')}"></span>
-        </p>
-    </div>
+	            <span th:text="${#temporals.format(fin,'dd/MM/yyyy')}"></span>
+	        </p>
+	    </div>
 
-    <!-- KPI Cards -->
+	    <div th:if="${error}" class="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700" th:text="${error}"></div>
+	    <div th:if="${success}" class="mb-6 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700" th:text="${success}"></div>
+
+	    <!-- KPI Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-8">
 
         <!-- CA -->
