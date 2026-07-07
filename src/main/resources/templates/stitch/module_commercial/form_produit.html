@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Charbon Vert - Nouveau Produit</title>
+    <!-- BEGIN: External Scripts -->
+    <link rel="stylesheet" th:href="@{/css/output.css}" />
+    <link rel="stylesheet" th:href="@{/css/fonts.css}" />
+    <!-- END: External Scripts -->
+    <style data-purpose="custom-scrollbar">
+        /* Custom scrollbar for the sidebar */
+        .sidebar-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .sidebar-scroll::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+        }
+    </style>
+</head>
+
+<body class="bg-brand-light font-sans text-slate-800 min-h-screen flex">
+    <aside th:replace="~{fragments/sidebar :: sidebar('commandes')}"></aside>
+    <!-- BEGIN: MainContent -->
+    <main class="flex-1 p-8">
+        <header class="flex justify-between items-start mb-10">
+            <div>
+                <h2 class="text-2xl font-bold text-brand-dark">Commercial &amp; finance</h2>
+                <p class="text-sm text-gray-500">Commandes, livraisons &amp; trésorerie</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="text-xs px-3 py-1 bg-gray-100 rounded-full text-gray-600 font-medium">Commande</span>
+                <div
+                    class="w-10 h-10 bg-brand-success rounded-full flex items-center justify-center text-white font-bold">
+                    N</div>
+            </div>
+        </header>
+        <!-- Form Title Section -->
+        <div class="mb-8">
+            <h3 class="text-3xl font-serif text-brand-dark mb-1">Nouvelle commande</h3>
+            <p class="text-sm text-gray-500">Enregistrer une commande client. Le montant à payer est calculé
+                automatiquement.</p>
+        </div>
+        <!-- Main Form Card -->
+        <section class="bg-white rounded-xl shadow-sm border border-gray-100 p-8 max-w-5xl" data-purpose="order-form">
+            <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 mb-6">
+                <h3 class="text-xs font-bold text-gray-700 uppercase mb-3">Ajouter un article au panier</h3>
+                <form action="" method="POST" class="flex items-end gap-4">
+                    <div class="flex-1">
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Produit</label>
+                        <select name="produit.id" class="w-full border-gray-300 rounded-md text-sm p-2">
+                            <option th:each="p : ${produits}" th:value="${p.id}"
+                                th:text="${p.nom} + ' (' + ${p.pu} + ' Ar)'"></option>
+                        </select>
+                    </div>
+                    <div class="w-32">
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Quantité (Unite)</label>
+                        <input name="quantite" type="number" min="1" value="1"
+                            class="w-full border-gray-300 rounded-md text-sm p-2" />
+                    </div>
+                    <button type="submit"
+                        class="bg-slate-700 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-slate-800">
+                        Ajouter
+                    </button>
+                </form>
+            </div>
+
+            <form th:action="@{/cmd/save}" method="POST" class="space-y-6">
+
+                <div class="mt-4 border border-slate-100 rounded-lg overflow-hidden">
+                    <table class="w-full text-left border-collapse text-sm">
+                        <thead class="bg-slate-100 text-xs text-slate-600 uppercase">
+                            <tr>
+                                <th class="p-3">Produit</th>
+                                <th class="p-3">P.U</th>
+                                <th class="p-3">Quantité</th>
+                                <th class="p-3">Total</th>
+                                <th class="p-3 text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="ligne, iter : ${panier}" class="border-b border-slate-100">
+                                <td class="p-3 align-top">
+                                    <div class="font-medium text-slate-800" th:text="${ligne.produit.nom}">Charbon Rond
+                                    </div>
+
+                                    <div th:if="${errors != null && errors[iter.index] != null}"
+                                        class="mt-1 text-xs font-semibold text-red-600 flex items-center gap-1">
+
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 inline text-red-500"
+                                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                        </svg>
+
+                                        <span th:text="${errors[iter.index].message}">Exemple de message d'erreur</span>
+                                    </div>
+                                </td>
+                                <td class="p-3 text-slate-600" th:text="${ligne.produit.pu} + ' Ar'">15 Ar</td>
+                                <td class="p-3 font-medium" th:text="${ligne.quantite} + ' U'">2 U</td>
+                                <td class="p-3 font-semibold text-slate-700" th:text="${ligne.findMontant()} + ' Ar'">30
+                                    Ar</td>
+                                <td class="p-3 text-center">
+                                    <a th:href="@{|/cmd/session/products/delete/${iter.index}|}"
+                                        class="text-red-500 hover:underline text-xs">Supprimer</a>
+                                </td>
+                            </tr>
+                            <tr th:if="${panier == null || panier.isEmpty()}">
+                                <td colspan="5" class="p-6 text-center text-gray-400 italic">Aucun produit dans la
+                                    commande pour le moment.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="bg-gray-50 rounded-lg p-4 flex items-center justify-between mt-4">
+                    <span class="text-brand-dark font-medium text-sm">Montant total estimé</span>
+                    <span class="text-brand-success font-bold text-2xl"
+                        th:text="${#numbers.formatInteger(montantTotal, 0, 'WHITESPACE')} + ' Ar'">0 Ar</span>
+                </div>
+
+                <div class="flex items-center gap-4 pt-4">
+                    <button
+                        class="bg-brand-success text-white px-6 py-2.5 rounded-md text-sm font-medium hover:bg-opacity-90 shadow-sm"
+                        type="submit" th:disabled="${panier==null || panier.isEmpty() || !isSavable}">
+                        Enregistrer la commande finale
+                    </button>
+                </div>
+            </form>
+        </section>
+    </main>
+    <!-- END: MainContent -->
+</body>
+
+</html>

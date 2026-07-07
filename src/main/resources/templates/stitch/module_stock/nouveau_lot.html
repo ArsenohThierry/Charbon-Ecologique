@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title
+    th:text="${lotProduction.id != null} ? 'Modifier le lot - Charbon Vert' : 'Saisir un nouveau lot - Charbon Vert'">
+    Saisir un nouveau lot - Charbon Vert</title>
+  <link rel="stylesheet" th:href="@{/css/output.css}" href="../../../static/css/output.css" />
+  <link rel="stylesheet" th:href="@{/css/fonts.css}" href="../../../static/css/fonts.css" />
+</head>
+
+<body class="bg-brand-light font-sans text-slate-800 min-h-screen flex">
+  <aside th:replace="~{fragments/sidebar :: sidebar('lots')}">
+    <div class="p-6 flex items-center gap-3" data-purpose="brand-logo">
+      <div class="w-10 h-10 bg-brand-accent rounded-full flex items-center justify-center text-brand font-bold">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z"
+            stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+        </svg>
+      </div>
+      <div>
+        <h2 class="text-lg font-bold leading-tight">Charbon Vert</h2>
+        <p class="text-[10px] text-gray-400">Gestionnaire de stock</p>
+      </div>
+    </div>
+    <nav class="flex-1 overflow-y-auto sidebar-scroll px-3 pb-4 space-y-1">
+      <a class="nav-item" href="#">
+        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+            stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+        </svg>
+        Tableau de bord
+      </a>
+      <div>
+        <div class="nav-item flex justify-between cursor-pointer">
+          <div class="flex items-center"><svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path
+                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+            </svg>Approvisionnement &amp; mat...</div><svg class="w-4 h-4" fill="none" stroke="currentColor"
+            viewBox="0 0 24 24">
+            <path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+          </svg>
+        </div>
+        <div class="pb-2"><a class="sub-nav-item" href="#"><svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+            </svg>Nouvel achat</a><a class="sub-nav-item" href="#"><svg class="w-4 h-4 mr-3" fill="none"
+              stroke="currentColor" viewBox="0 0 24 24">
+              <path d="M4 6h16M4 10h16M4 14h16M4 18h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+              </path>
+            </svg>Liste des achats</a></div>
+      </div>
+      <div class="space-y-1">
+        <div class="nav-item flex justify-between cursor-pointer">
+          <div class="flex items-center">
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" stroke-linecap="round"
+                stroke-linejoin="round" stroke-width="2"></path>
+            </svg>
+            Lots de production
+          </div>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+          </svg>
+        </div>
+        <div class="pb-2">
+          <a class="sub-nav-item active font-semibold bg-brand-accent rounded-md text-brand my-1 py-3" href="#">
+            <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+            </svg>
+            Saisir un nouveau lot
+          </a>
+          <a class="sub-nav-item" href="#">
+            <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path d="M4 6h16M4 10h16M4 14h16M4 18h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+              </path>
+            </svg>
+            Liste des lots
+          </a>
+          <a class="sub-nav-item" href="#">
+            <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round"
+                stroke-width="2"></path>
+            </svg>
+            Historique des statuts
+          </a>
+        </div>
+      </div>
+      <div>
+        <div class="nav-item flex justify-between cursor-pointer">
+          <div class="flex items-center">
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+            </svg>
+            Généralités stocks
+          </div>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+          </svg>
+        </div>
+        <div class="pb-2"><a class="sub-nav-item" th:href="@{/stock/etat}"><svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+            </svg>État stock</a><a class="sub-nav-item" th:href="@{/stock/entree}"><svg class="w-4 h-4 mr-3" fill="none"
+              stroke="currentColor" viewBox="0 0 24 24">
+              <path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+              </path>
+            </svg>Mouvements</a></div>
+      </div>
+      <div>
+        <div class="nav-item flex justify-between cursor-pointer">
+          <div class="flex items-center"><svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path
+                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+                stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+            </svg>Ventes / Commandes</div><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+          </svg>
+        </div>
+        <div class="pb-2"><a class="sub-nav-item" href="#"><svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+            </svg>Nouvelle vente</a><a class="sub-nav-item" href="#"><svg class="w-4 h-4 mr-3" fill="none"
+              stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+            </svg>Liste des ventes</a></div>
+      </div>
+      <div>
+        <div class="nav-item flex justify-between cursor-pointer">
+          <div class="flex items-center"><svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path d="M9 17v-2a4 4 0 10-8 0v2a2 2 0 002 2h4a2 2 0 002-2zm3-9a9 9 0 1118 0 9 9 0 01-18 0z"
+                stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+            </svg>Rapports</div><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+          </svg>
+        </div>
+        <div class="pb-2"><a class="sub-nav-item" href="#"><svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path
+                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2"
+                stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+            </svg>Production</a><a class="sub-nav-item" href="#"><svg class="w-4 h-4 mr-3" fill="none"
+              stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+            </svg>Finances</a></div>
+      </div>
+    </nav>
+    <div class="mt-auto p-4 border-t border-brand-light">
+      <a class="nav-item px-2" href="#">
+        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+            stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+        </svg>
+        Changer de rôle
+      </a>
+    </div>
+  </aside>
+  <!-- END: LeftSidebar -->
+  <!-- BEGIN: MainContent -->
+  <main class="flex-1 overflow-y-auto flex flex-col">
+    <!-- BEGIN: Header -->
+    <header class="h-16 px-8 border-b border-gray-200 bg-white flex items-center justify-between"
+      data-purpose="main-header">
+      <div data-purpose="page-title">
+        <h1 class="text-xl font-bold text-brand">Gestionnaire de stock</h1>
+        <p class="text-xs text-gray-500 uppercase tracking-wide">Approvisionnement, lots &amp; inventaire</p>
+      </div>
+      <div class="flex items-center gap-4" data-purpose="header-actions">
+        <div class="bg-brand/5 px-4 py-1 rounded-full text-xs text-brand font-medium border border-brand/10">
+          Maquette · données fictives
+        </div>
+        <div class="w-8 h-8 rounded-full bg-brand text-white flex items-center justify-center font-bold text-sm">
+          N
+        </div>
+      </div>
+    </header>
+    <!-- END: Header -->
+    <div class="p-12 max-w-5xl mx-auto w-full">
+      <!-- BEGIN: ContentTitle -->
+      <div class="mb-10" data-purpose="form-intro">
+        <h2 class="text-4xl font-serif text-brand mb-2"
+          th:text="${lotProduction.id != null} ? 'Modifier le lot : ' + ${lotProduction.reference} : 'Saisir un nouveau lot'">
+          Saisir un nouveau lot
+        </h2>
+        <p class="text-gray-500"
+          th:text="${lotProduction.id != null} ? 'Modifier les informations du lot.' : 'Créer un lot de production. Le statut initial est « Préparation ».'">
+          Créer un lot de production. Le statut initial est « Préparation ».
+        </p>
+      </div>
+      <!-- END: ContentTitle -->
+      <!-- BEGIN: FormCard -->
+      <section class="bg-white rounded-eight shadow-sm border border-gray-100 p-8" data-purpose="form-container">
+        <form class="space-y-8"
+          th:action="${lotProduction.id != null} ? @{/stock/lot/modifier/{id}(id=${lotProduction.id})} : @{/stock/lot/nouveau}"
+          th:method="post" th:object="${lotProduction}">
+
+          <input type="hidden" th:field="*{id}" />
+          <input type="hidden" th:field="*{reference}" />
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
+
+            <!-- Matière première -->
+            <div class="flex flex-col gap-2">
+              <label class="text-sm font-semibold text-gray-700" for="quantiteMatiereUtilisee"> Type de matiere
+                premiere</label>
+              <select name="idTypeMatierePremiere"
+                class="rounded-eight border-gray-300 focus:border-brand focus:ring-brand h-11 px-4 text-gray-600 bg-white">
+                <option value="">Sélectionner...</option>
+                <option th:each="matiere : ${matieres}" th:value="${matiere.id}" th:text="${matiere.libelle}"
+                  th:selected="${lotProduction.typeMatierePremiere?.id == matiere.id}">
+                </option>
+              </select>
+            </div>
+
+            <!-- Produit -->
+            <div class="flex flex-col gap-2">
+              <label class="text-sm font-semibold text-gray-700" for="quantiteMatiereUtilisee"> Produit a faire</label>
+              <select name="idProduit"
+                class="rounded-eight border-gray-300 focus:border-brand focus:ring-brand h-11 px-4 text-gray-600 bg-white">
+                <option value="">Sélectionner...</option>
+                <option th:each="produit : ${produits}" th:value="${produit.id}" th:text="${produit.nom}"
+                  th:selected="${lotProduction.produit?.id == produit.id}">
+                </option>
+              </select>
+            </div>
+
+            <!-- Quantité matière utilisée -->
+            <div class="flex flex-col gap-2">
+              <label class="text-sm font-semibold text-gray-700" for="quantiteMatiereUtilisee">Quantité matière
+                (kg)</label>
+              <input class="rounded-eight border-gray-300 focus:border-brand focus:ring-brand h-11 px-4 text-gray-800"
+                id="quantiteMatiereUtilisee" type="number" step="0.01" placeholder="120"
+                th:field="*{quantiteMatiereUtilisee}">
+              <span class="text-red-500 text-xs" th:if="${#fields.hasErrors('quantiteMatiereUtilisee')}"
+                th:errors="*{quantiteMatiereUtilisee}"></span>
+            </div>
+
+            <!-- Quantité produit prévue -->
+            <div class="flex flex-col gap-2">
+              <label class="text-sm font-semibold text-gray-700" for="quantiteProduitPrevues">Quantité prévue
+                (unités)</label>
+              <input class="rounded-eight border-gray-300 focus:border-brand focus:ring-brand h-11 px-4 text-gray-800"
+                id="quantiteProduitPrevues" type="number" min="1" placeholder="50" th:field="*{quantiteProduitPrevues}">
+              <span class="text-red-500 text-xs" th:if="${#fields.hasErrors('quantiteProduitPrevues')}"
+                th:errors="*{quantiteProduitPrevues}"></span>
+            </div>
+
+            <!-- Date d'entrée du lot -->
+            <div class="flex flex-col gap-2 relative">
+              <label class="text-sm font-semibold text-gray-700" for="dateEntreeLot">Date de démarrage</label>
+              <input class="rounded-eight border-gray-300 focus:border-brand focus:ring-brand h-11 px-4 text-gray-400"
+                id="dateEntreeLot" type="datetime-local" th:field="*{dateEntreeLot}">
+            </div>
+
+            <!-- Remarques -->
+            <div class="flex flex-col gap-2 col-span-2">
+              <label class="text-sm font-semibold text-gray-700" for="remarques">Remarques</label>
+              <textarea
+                class="rounded-eight border-gray-300 focus:border-brand focus:ring-brand px-4 py-3 text-gray-800"
+                id="remarques" rows="3" placeholder="Observations éventuelles..." th:field="*{remarques}"></textarea>
+            </div>
+
+          </div>
+
+          <!-- Actions -->
+          <div class="pt-6 flex flex-wrap items-center gap-4">
+            <button
+              class="hover:bg-brand-dark hover:text-white text-dark px-8 py-2.5 rounded-eight font-medium transition-colors"
+              type="submit" th:text="${lotProduction.id != null} ? 'Enregistrer les modifications' : 'Créer le lot'">
+              Créer le lot
+            </button>
+            <a th:href="@{/stock/lot/liste}"
+              class="bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 px-8 py-2.5 rounded-eight font-medium transition-colors">
+              Annuler
+            </a>
+            <p class="text-xs text-gray-500 ml-2"
+              th:text="${lotProduction.id != null} ? 'Les modifications seront appliquées au lot.' : 'Une nouvelle production sera ajoutée automatiquement.'">
+              Une nouvelle production sera ajoutée automatiquement.
+            </p>
+          </div>
+
+        </form>
+      </section>
+      <!-- END: FormCard -->
+    </div>
+  </main>
+  <!-- END: MainContent -->
+
+</body>
+
+</html>

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Charbon Vert - Liste des lots de production</title>
+  <link rel="stylesheet" th:href="@{/css/output.css}" href="../../../static/css/output.css" />
+  <link rel="stylesheet" th:href="@{/css/fonts.css}" href="../../../static/css/fonts.css" />
+  <style>
+    .status-badge {
+      font-size: 0.75rem;
+      padding: 0.125rem 0.75rem;
+      border-radius: 9999px;
+      font-weight: 500;
+    }
+
+    .status-termine {
+      background-color: #def7ec;
+      color: #03543f;
+    }
+
+    .status-en-stock {
+      background-color: #fef3c7;
+      color: #92400e;
+    }
+
+    .status-encours {
+      background-color: #fee2e2;
+      color: #991b1b;
+    }
+
+    .status-preparation {
+      background-color: #e5e7eb;
+      color: #374151;
+    }
+
+    .lot-row.hidden-row {
+      display: none;
+    }
+  </style>
+</head>
+
+<body class="bg-brand-light font-sans text-slate-800 min-h-screen flex">
+  <aside th:replace="~{fragments/sidebar :: sidebar('lots')}"></aside>
+  <main class="flex-1 min-h-screen">
+    <!-- BEGIN: Top Bar -->
+    <header class="flex items-center justify-between px-8 py-4 bg-white border-b border-gray-100"
+      data-purpose="top-header">
+      <div>
+        <h2 class="text-lg font-bold text-brand-dark">Gestionnaire de stock</h2>
+        <p class="text-xs text-gray-500">Approvisionnement, lots &amp; inventaire</p>
+      </div>
+      <div class="flex items-center space-x-4">
+        <span class="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full border border-gray-200">Maquette · données
+          fictives</span>
+        <div class="w-8 h-8 bg-brand-dark text-white rounded-full flex items-center justify-center text-sm font-bold">N
+        </div>
+      </div>
+    </header>
+    <!-- END: Top Bar -->
+    <!-- BEGIN: Content Container -->
+    <section class="p-8">
+      <!-- Page Title and CTA -->
+      <div class="flex justify-between items-start mb-8">
+        <div>
+          <h1 class="text-4xl font-bold text-brand-dark mb-2">Liste des lots de production</h1>
+          <p class="text-gray-500">Filtrer par date ou statut, consulter et modifier les lots.</p>
+        </div>
+        <a href="/stock/lot/nouveau"
+          class="bg-brand-success hover:bg-brand-dark text-white px-6 py-2 rounded-lg flex items-center space-x-2 shadow-sm transition-all">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+            <path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+          </svg>
+          <span class="font-medium">Nouveau lot</span>
+        </a>
+      </div>
+      <div th:if="${error}"
+        class="mb-6 p-4 bg-red-100 border border-red-200 text-red-800 rounded-lg text-sm font-medium"
+        th:text="${error}"></div>
+
+      <!-- BEGIN: Filters Section -->
+      <form class="flex flex-wrap gap-4 mb-8 items-end" data-purpose="filter-bar" method="get"
+        th:action="@{/stock/lot/liste}">
+        <!-- Search Input (référence) -->
+        <div class="w-72">
+          <label class="block text-xs font-semibold text-gray-500 mb-1">Référence</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+              <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round"
+                  stroke-width="2"></path>
+              </svg>
+            </span>
+            <input id="filterSearch" name="reference" th:value="${critReference}"
+              class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-brand-success focus:border-brand-success"
+              placeholder="Ex. LOT-001" type="text" />
+          </div>
+        </div>
+        <!-- Produit -->
+        <div>
+          <label class="block text-xs font-semibold text-gray-500 mb-1">Produit</label>
+          <select name="idProduit"
+            class="block w-44 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-brand-success focus:border-brand-success bg-white">
+            <option value="">Tous les produits</option>
+            <option th:each="produit : ${produits}" th:value="${produit.id}" th:text="${produit.nom}"
+              th:selected="${critIdProduit != null and critIdProduit == produit.id}"></option>
+          </select>
+        </div>
+        <!-- Matière première -->
+        <div>
+          <label class="block text-xs font-semibold text-gray-500 mb-1">Matière première</label>
+          <select name="idTypeMatierePremiere"
+            class="block w-44 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-brand-success focus:border-brand-success bg-white">
+            <option value="">Toutes les matières</option>
+            <option th:each="matiere : ${matieres}" th:value="${matiere.id}" th:text="${matiere.libelle}"
+              th:selected="${critIdTypeMatierePremiere != null and critIdTypeMatierePremiere == matiere.id}"></option>
+          </select>
+        </div>
+        <!-- Date Range -->
+        <div>
+          <label class="block text-xs font-semibold text-gray-500 mb-1">Date début</label>
+          <input id="filterDateFrom" name="dateDebut" th:value="${critDateDebut}"
+            class="block w-40 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-brand-success focus:border-brand-success bg-white"
+            type="date" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-500 mb-1">Date fin</label>
+          <input id="filterDateTo" name="dateFin" th:value="${critDateFin}"
+            class="block w-40 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-brand-success focus:border-brand-success bg-white"
+            type="date" />
+        </div>
+        <!-- Status Dropdown -->
+        <div>
+          <label class="block text-xs font-semibold text-gray-500 mb-1">Statut</label>
+          <select id="filterStatus" name="idLotStatut"
+            class="block w-48 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-brand-success focus:border-brand-success bg-white">
+
+            <option value="">Tous les statuts</option>
+
+            <option th:each="statut : ${lotStatuts}" th:value="${statut.id}" th:text="${statut.libelle}"
+              th:selected="${critIdLotStatut != null and critIdLotStatut == statut.id}">
+            </option>
+
+          </select>
+        </div>
+        <!-- Action Buttons -->
+        <button type="submit"
+          class="bg-brand-success hover:bg-brand-dark text-white px-6 py-2 rounded-lg text-sm font-medium transition-colors">
+          Filtrer
+        </button>
+        <a th:href="@{/stock/lot/liste}"
+          class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 py-2 rounded-lg text-sm font-medium transition-colors">
+          Effacer
+        </a>
+      </form>
+      <!-- END: Filters Section -->
+      <!-- BEGIN: Data Table -->
+      <div class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm"
+        data-purpose="lots-table-container">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr
+              class="bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              <th class="px-6 py-4">
+                <a class="flex items-center gap-1 hover:text-brand-dark"
+                   th:href="@{/stock/lot/liste(reference=${critReference}, idProduit=${critIdProduit}, idTypeMatierePremiere=${critIdTypeMatierePremiere}, dateDebut=${critDateDebut}, dateFin=${critDateFin}, idLotStatut=${critIdLotStatut}, tri='reference', direction=${(critTri == 'reference' and critDirection == 'asc') ? 'desc' : 'asc'}, taille=${critTaille})}">
+                  <span>Lot</span>
+                  <span th:if="${critTri == 'reference'}" th:text="${critDirection == 'asc' ? '▲' : '▼'}"></span>
+                </a>
+              </th>
+              <th class="px-6 py-4">
+                <a class="flex items-center gap-1 hover:text-brand-dark"
+                   th:href="@{/stock/lot/liste(reference=${critReference}, idProduit=${critIdProduit}, idTypeMatierePremiere=${critIdTypeMatierePremiere}, dateDebut=${critDateDebut}, dateFin=${critDateFin}, idLotStatut=${critIdLotStatut}, tri='matiere', direction=${(critTri == 'matiere' and critDirection == 'asc') ? 'desc' : 'asc'}, taille=${critTaille})}">
+                  <span>Matière</span>
+                  <span th:if="${critTri == 'matiere'}" th:text="${critDirection == 'asc' ? '▲' : '▼'}"></span>
+                </a>
+              </th>
+              <th class="px-6 py-4">
+                <a class="flex items-center gap-1 hover:text-brand-dark"
+                   th:href="@{/stock/lot/liste(reference=${critReference}, idProduit=${critIdProduit}, idTypeMatierePremiere=${critIdTypeMatierePremiere}, dateDebut=${critDateDebut}, dateFin=${critDateFin}, idLotStatut=${critIdLotStatut}, tri='quantite', direction=${(critTri == 'quantite' and critDirection == 'asc') ? 'desc' : 'asc'}, taille=${critTaille})}">
+                  <span>Quantité</span>
+                  <span th:if="${critTri == 'quantite'}" th:text="${critDirection == 'asc' ? '▲' : '▼'}"></span>
+                </a>
+              </th>
+              <th class="px-6 py-4">
+                <a class="flex items-center gap-1 hover:text-brand-dark"
+                   th:href="@{/stock/lot/liste(reference=${critReference}, idProduit=${critIdProduit}, idTypeMatierePremiere=${critIdTypeMatierePremiere}, dateDebut=${critDateDebut}, dateFin=${critDateFin}, idLotStatut=${critIdLotStatut}, tri='date', direction=${(critTri == 'date' and critDirection == 'asc') ? 'desc' : 'asc'}, taille=${critTaille})}">
+                  <span>Date</span>
+                  <span th:if="${critTri == 'date'}" th:text="${critDirection == 'asc' ? '▲' : '▼'}"></span>
+                </a>
+              </th>
+              <th class="px-6 py-4">
+                <a class="flex items-center gap-1 hover:text-brand-dark"
+                   th:href="@{/stock/lot/liste(reference=${critReference}, idProduit=${critIdProduit}, idTypeMatierePremiere=${critIdTypeMatierePremiere}, dateDebut=${critDateDebut}, dateFin=${critDateFin}, idLotStatut=${critIdLotStatut}, tri='produit', direction=${(critTri == 'produit' and critDirection == 'asc') ? 'desc' : 'asc'}, taille=${critTaille})}">
+                  <span>Produit</span>
+                  <span th:if="${critTri == 'produit'}" th:text="${critDirection == 'asc' ? '▲' : '▼'}"></span>
+                </a>
+              </th>
+              <th class="px-6 py-4">
+                <a class="flex items-center gap-1 hover:text-brand-dark"
+                   th:href="@{/stock/lot/liste(reference=${critReference}, idProduit=${critIdProduit}, idTypeMatierePremiere=${critIdTypeMatierePremiere}, dateDebut=${critDateDebut}, dateFin=${critDateFin}, idLotStatut=${critIdLotStatut}, tri='statut', direction=${(critTri == 'statut' and critDirection == 'asc') ? 'desc' : 'asc'}, taille=${critTaille})}">
+                  <span>Statut</span>
+                  <span th:if="${critTri == 'statut'}" th:text="${critDirection == 'asc' ? '▲' : '▼'}"></span>
+                </a>
+              </th>
+              <th class="px-6 py-4 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="lotTableBody" class="divide-y divide-gray-100 text-sm" th:if="${!lots.isEmpty()}">
+            <tr class="lot-row hover:bg-gray-50 transition-colors" th:each="lot : ${lots}"
+                th:attr="data-search=${lot.reference + ' ' + lot.typeMatierePremiere?.libelle + ' ' + lot.produit?.nom},
+                          data-date=${#temporals.format(lot.dateEntreeLot, 'yyyy-MM-dd')},
+                          data-status=${statusMap[lot.id] != null ? statusMap[lot.id] : 'Inconnu'}">
+              <td class="px-6 py-4 font-medium text-gray-700" th:text="${lot.reference}"></td>
+              <td class="px-6 py-4 text-gray-600" th:text="${lot.typeMatierePremiere?.libelle}"></td>
+              <td class="px-6 py-4 text-gray-600" th:text="${lot.quantiteMatiereUtilisee} + ' kg'"></td>
+              <td class="px-6 py-4 text-gray-600 lot-date" th:text="${#temporals.format(lot.dateEntreeLot, 'dd/MM/yyyy')}"></td>
+              <td class="px-6 py-4 text-gray-600" th:text="${lot.produit?.nom}"></td>
+              <td class="px-6 py-4">
+                <th:block th:switch="${statusMap[lot.id]}">
+                  <span class="status-badge lot-status status-termine" th:case="'Termine'" th:text="${statusMap[lot.id]}"></span>
+                  <span class="status-badge lot-status status-en-stock" th:case="'En stock'" th:text="${statusMap[lot.id]}"></span>
+                  <span class="status-badge lot-status status-encours" th:case="'En preparation'" th:text="${statusMap[lot.id]}"></span>
+                  <span class="status-badge lot-status status-preparation" th:case="*" th:text="${statusMap[lot.id] != null ? statusMap[lot.id] : 'Inconnu'}"></span>
+                </th:block>
+              </td>
+              <td class="px-6 py-4 text-right space-x-2">
+                <a th:href="@{/stock/lot/statut/{id}(id=${lot.id})}"
+                  class="text-xs font-semibold px-3 py-1 border border-brand-success text-brand-success rounded hover:bg-brand-success/10">
+                  Suivi production
+                </a>
+                <a th:href="@{/stock/lot/modifier/{id}(id=${lot.id})}"
+                  class="text-xs font-semibold px-3 py-1 border border-gray-300 rounded hover:bg-gray-100">
+                  Modifier
+                </a>
+                <form th:action="@{/stock/lot/supprimer/{id}(id=${lot.id})}" method="post" class="inline"
+                  onsubmit="return confirm('Supprimer ce lot ?')">
+                  <button type="submit"
+                    class="text-xs font-semibold px-3 py-1 border border-red-300 text-red-500 rounded hover:bg-red-50">
+                    Supprimer
+                  </button>
+                </form>
+              </td>
+            </tr>
+          </tbody>
+          <tbody th:if="${lots.isEmpty()}">
+            <tr>
+              <td colspan="7" class="px-6 py-8 text-center text-gray-400 text-sm">Aucun lot ne correspond à ces critères.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- BEGIN: Pagination -->
+      <div th:if="${totalLots > 0}" class="flex items-center justify-between mt-4 text-sm text-gray-500">
+        <span>
+          <span th:text="${totalLots}"></span> lot(s) &mdash; page <span th:text="${page + 1}"></span> / <span th:text="${totalPages}"></span>
+        </span>
+        <div class="flex items-center gap-2">
+          <a th:if="${page > 0}"
+             th:href="@{/stock/lot/liste(reference=${critReference}, idProduit=${critIdProduit}, idTypeMatierePremiere=${critIdTypeMatierePremiere}, dateDebut=${critDateDebut}, dateFin=${critDateFin}, idLotStatut=${critIdLotStatut}, tri=${critTri}, direction=${critDirection}, taille=${critTaille}, page=${page - 1})}"
+             class="px-3 py-1.5 border border-gray-300 rounded-lg hover:bg-gray-100">&larr; Précédent</a>
+          <span th:unless="${page > 0}" class="px-3 py-1.5 border border-gray-200 rounded-lg text-gray-300">&larr; Précédent</span>
+
+          <a th:if="${page + 1 < totalPages}"
+             th:href="@{/stock/lot/liste(reference=${critReference}, idProduit=${critIdProduit}, idTypeMatierePremiere=${critIdTypeMatierePremiere}, dateDebut=${critDateDebut}, dateFin=${critDateFin}, idLotStatut=${critIdLotStatut}, tri=${critTri}, direction=${critDirection}, taille=${critTaille}, page=${page + 1})}"
+             class="px-3 py-1.5 border border-gray-300 rounded-lg hover:bg-gray-100">Suivant &rarr;</a>
+          <span th:unless="${page + 1 < totalPages}" class="px-3 py-1.5 border border-gray-200 rounded-lg text-gray-300">Suivant &rarr;</span>
+        </div>
+      </div>
+      <!-- END: Pagination -->
+      <!-- END: Data Table -->
+    </section>
+    <!-- END: Content Container -->
+  </main>
+</body>
+
+</html>

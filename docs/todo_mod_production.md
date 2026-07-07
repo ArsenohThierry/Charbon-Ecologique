@@ -11,7 +11,7 @@
 
     3 - Liste des MOUVEMENTS Stock de matieres premieres 
     
-    template : a faire !
+    template : src/main/resources/templates/stitch/module_stock/historique_mouvements_mp.html
 
 - CRUD et liste des Types de charbons a vendre ( ex : Charbon Rond , Charbon 200g , ...)
     template : src/main/resources/templates/stitch/module_stock/produits.html
@@ -31,3 +31,13 @@ A FAIRE :
 - Pull request vers dev 
 - attendre 
 - ...
+
+## SUITE :
+
+- Mouvement des stocks ( entree de charbons produits  ) :
+    1 - Lots de production :
+        - CRUD et Liste des lots :
+            templates :
+                - src/main/resources/templates/stitch/module_stock/liste_lot_production.html
+                - src/main/resources/templates/stitch/module_stock/saisir_nouveau_lot.html
+                - src/main/resources/templates/stitch/module_stock/detail_1_lot.html

@@ -6,32 +6,8 @@
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Approvisionnement en matieres premieres</title>
-    <!-- Tailwind CSS CDN with Plugins -->
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <!-- Google Fonts: Serif for titles, Sans for UI -->
-    <link
-        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&amp;family=Inter:wght@400;500;600&amp;display=swap"
-        rel="stylesheet" />
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'charbon-dark': '#1B3022',
-                        'charbon-green': '#3E7B4F',
-                        'charbon-light-green': '#4A8B5D',
-                        'charbon-beige': '#F8F7F0',
-                        'charbon-gold': '#D4A373',
-                        'charbon-accent': '#E2C28E',
-                    },
-                    fontFamily: {
-                        'serif': ['Playfair Display', 'serif'],
-                        'sans': ['Inter', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
+    <link rel="stylesheet" th:href="@{/css/output.css}" href="../../../static/css/output.css" />
+    <link rel="stylesheet" th:href="@{/css/fonts.css}" href="../../../static/css/fonts.css" />
     <style data-purpose="custom-typography">
         h1,
         h2 {
@@ -125,7 +101,7 @@
                 </div>
             </div>
             <a class="flex items-center justify-between px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/10 rounded-md"
-                href="#">
+                th:href="@{/stock/etat}">
                 <div class="flex items-center">
                     <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
                         <path d="M9 17v-2a4 4 0 10-8 0v2a2 2 0 002 2h4a2 2 0 002-2zm3-2a9 9 0 1118 0s-1 7-9 7-9-7-9-7z"

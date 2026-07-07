@@ -1,8 +1,8 @@
 package com.example.charbonecolo.model;
 
 import jakarta.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import com.example.charbonecolo.model.CommandeModel;
 
 @Entity
 @Table(name = "livraison")
@@ -10,52 +10,52 @@ public class LivraisonModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Column(name = "reference", nullable = false, unique = true)
     private String reference;
 
     @Column(name = "date_livraison", nullable = false)
-    private LocalDate dateLivraison;
+    private LocalDateTime dateLivraison;
 
-    @Column(name = "adresse_livraison", nullable = false)
-    private String adresseLivraison;
+    @Column(name = "date_reportage_livraison")
+    private LocalDateTime dateReportageLivraison;
 
-    @Column(name = "statut", nullable = false)
-    private String statut;
+    @Column(name = "date_livraison_reel")
+    private LocalDateTime dateLivraisonReel;
 
-    @Column(name = "id_commande")
-    private Long idCommande;
+    @Column(name = "lieu")
+    private String lieu;
 
-    @Column(name = "date_creation")
-    private LocalDateTime dateCreation;
+    @ManyToOne
+    @JoinColumn(name = "id_livreur", referencedColumnName = "id")
+    private LivreurModel livreur;
 
-    @Column(name = "actif")
-    private Boolean actif;
+    @ManyToOne
+    @JoinColumn(name = "id_commande", referencedColumnName = "id")
+    private CommandeModel commande;
 
-    // -------- Getters & Setters --------
+    public CommandeModel getCommande() { return commande; }
+    public void setCommande(CommandeModel commande) { this.commande = commande; }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Integer getId() { return id; }
+    public void setId(Integer id) { this.id = id; }
 
     public String getReference() { return reference; }
     public void setReference(String reference) { this.reference = reference; }
 
-    public LocalDate getDateLivraison() { return dateLivraison; }
-    public void setDateLivraison(LocalDate dateLivraison) { this.dateLivraison = dateLivraison; }
+    public LocalDateTime getDateLivraison() { return dateLivraison; }
+    public void setDateLivraison(LocalDateTime dateLivraison) { this.dateLivraison = dateLivraison; }
 
-    public String getAdresseLivraison() { return adresseLivraison; }
-    public void setAdresseLivraison(String adresseLivraison) { this.adresseLivraison = adresseLivraison; }
+    public LocalDateTime getDateReportageLivraison() { return dateReportageLivraison; }
+    public void setDateReportageLivraison(LocalDateTime dateReportageLivraison) { this.dateReportageLivraison = dateReportageLivraison; }
 
-    public String getStatut() { return statut; }
-    public void setStatut(String statut) { this.statut = statut; }
+    public LocalDateTime getDateLivraisonReel() { return dateLivraisonReel; }
+    public void setDateLivraisonReel(LocalDateTime dateLivraisonReel) { this.dateLivraisonReel = dateLivraisonReel; }
 
-    public Long getIdCommande() { return idCommande; }
-    public void setIdCommande(Long idCommande) { this.idCommande = idCommande; }
+    public String getLieu() { return lieu; }
+    public void setLieu(String lieu) { this.lieu = lieu; }
 
-    public LocalDateTime getDateCreation() { return dateCreation; }
-    public void setDateCreation(LocalDateTime dateCreation) { this.dateCreation = dateCreation; }
-
-    public Boolean getActif() { return actif; }
-    public void setActif(Boolean actif) { this.actif = actif; }
+    public LivreurModel getLivreur() { return livreur; }
+    public void setLivreur(LivreurModel livreur) { this.livreur = livreur; }
 }

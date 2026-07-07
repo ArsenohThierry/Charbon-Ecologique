@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Import CSV - Fournisseurs</title>
+    <link rel="stylesheet" th:href="@{/css/output.css}" href="../static/css/output.css" />
+    <link rel="stylesheet" th:href="@{/css/fonts.css}" href="../static/css/fonts.css" />
+</head>
+
+<body class="bg-brand-light font-sans text-slate-800 min-h-screen flex">
+    <aside th:replace="~{fragments/sidebar :: sidebar('fournisseurs')}"></aside>
+
+    <main class="flex-1 flex flex-col min-w-0">
+        <header class="h-16 px-8 flex items-center justify-between border-b border-gray-200">
+            <div>
+                <h2 class="text-sm font-bold text-gray-800">Gestionnaire de stock</h2>
+                <p class="text-[10px] text-gray-500 uppercase tracking-wide">Approvisionnement, lots &amp; inventaire</p>
+            </div>
+        </header>
+
+        <section class="flex-1 p-12 overflow-y-auto">
+            <div class="max-w-2xl mx-auto">
+
+                <!-- Succès -->
+                <div th:if="${success}" class="mb-6 p-4 bg-green-100 border border-green-200 text-green-800 rounded-lg text-sm font-medium" th:text="${success}"></div>
+                
+                <!-- Erreur globale -->
+                <div th:if="${error}" class="mb-6 p-4 bg-red-100 border border-red-200 text-red-800 rounded-lg text-sm font-medium" th:text="${error}"></div>
+
+                <!-- Erreurs de lignes -->
+                <div th:if="${importErrors}" class="mb-6">
+                    <div class="p-4 bg-red-50 border border-red-200 rounded-lg">
+                        <h4 class="text-sm font-semibold text-red-700 mb-2" th:text="|${importErrors.size()} erreur(s) détectée(s)|"></h4>
+                        <ul class="space-y-1 max-h-48 overflow-y-auto">
+                            <li th:each="err : ${importErrors}" th:text="${err}" class="text-xs text-red-600 font-mono"></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Avertissements -->
+                <div th:if="${warnings}" class="mb-6">
+                    <div class="p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                        <h4 class="text-sm font-semibold text-amber-700 mb-2" th:text="|${warnings.size()} avertissement(s)|"></h4>
+                        <ul class="space-y-1 max-h-48 overflow-y-auto">
+                            <li th:each="warn : ${warnings}" th:text="${warn}" class="text-xs text-amber-600"></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="mb-8">
+                    <h1 class="text-4xl font-serif text-brand-dark mb-2">Import CSV</h1>
+                    <p class="text-gray-600 text-sm">Importer des fournisseurs depuis un fichier CSV.</p>
+                </div>
+
+                <!-- Format attendu -->
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 mb-6">
+                    <h3 class="text-sm font-semibold text-gray-700 mb-4 uppercase tracking-wider">Format requis</h3>
+                    
+                    <div class="overflow-x-auto mb-4">
+                        <table class="w-full text-xs">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-3 py-2 text-left font-medium text-gray-600">Colonne</th>
+                                    <th class="px-3 py-2 text-left font-medium text-gray-600">Type</th>
+                                    <th class="px-3 py-2 text-left font-medium text-gray-600">Contraintes</th>
+                                    <th class="px-3 py-2 text-left font-medium text-gray-600">Exemple</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">
+                                <tr>
+                                    <td class="px-3 py-2 font-mono text-green-600">nom</td>
+                                    <td class="px-3 py-2 text-gray-600">Texte</td>
+                                    <td class="px-3 py-2 text-gray-500">Obligatoire, 1-255 car.</td>
+                                    <td class="px-3 py-2 text-gray-500">Coopérative Andry</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-3 py-2 font-mono text-green-600">email</td>
+                                    <td class="px-3 py-2 text-gray-600">Email</td>
+                                    <td class="px-3 py-2 text-gray-500">Unique, format valide</td>
+                                    <td class="px-3 py-2 text-gray-500">contact@andry.mg</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-3 py-2 font-mono text-green-600">telephone</td>
+                                    <td class="px-3 py-2 text-gray-600">Texte</td>
+                                    <td class="px-3 py-2 text-gray-500">7-20 car., chiffres/espaces/+-</td>
+                                    <td class="px-3 py-2 text-gray-500">034 12 345 67</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-3 py-2 font-mono text-green-600">adresse</td>
+                                    <td class="px-3 py-2 text-gray-600">Texte</td>
+                                    <td class="px-3 py-2 text-gray-500">Obligatoire</td>
+                                    <td class="px-3 py-2 text-gray-500">Ambohitrimanjaka</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-3 py-2 font-mono text-green-600">actif</td>
+                                    <td class="px-3 py-2 text-gray-600">Booléen</td>
+                                    <td class="px-3 py-2 text-gray-500">true/false, 1/0, oui/non</td>
+                                    <td class="px-3 py-2 text-gray-500">true</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-lg p-4 font-mono text-xs text-gray-700">
+                        <p class="text-gray-500 mb-1"># Exemple de fichier CSV :</p>
+                        <p class="text-green-600">nom,email,telephone,adresse,actif</p>
+                        <p>Coopérative Andry,contact@andry.mg,034 12 345 67,Ambohitrimanjaka,true</p>
+                        <p>SARL Charbon Vert,info@charbon.mg,033 45 678 90,Antananarivo,false</p>
+                    </div>
+                </div>
+
+                <!-- Upload -->
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
+                    <form th:action="@{/fournisseur/import}" method="post" enctype="multipart/form-data" class="space-y-6">
+                        
+                        <div class="space-y-2">
+                            <label for="fichier" class="block text-sm font-medium text-gray-700">Fichier CSV</label>
+                            <div class="relative border-2 border-dashed border-gray-300 rounded-xl p-8 hover:border-brand-success transition-colors cursor-pointer"
+                                 onclick="document.getElementById('fichier').click()">
+                                <input type="file" 
+                                       id="fichier" 
+                                       name="fichier" 
+                                       accept=".csv,text/csv"
+                                       required
+                                       class="hidden"
+                                       onchange="mettreAJourNomFichier(this)" />
+                                <div class="text-center">
+                                    <svg class="mx-auto h-10 w-10 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                                    </svg>
+                                    <p class="mt-2 text-sm text-gray-600" id="etiquette-fichier">Cliquez pour sélectionner un fichier</p>
+                                    <p class="text-xs text-gray-400">.csv, max 5 Mo, max 10 000 lignes</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-4 pt-2">
+                            <button type="submit" 
+                                    class="bg-brand-success hover:bg-emerald-800 text-white font-semibold py-2.5 px-6 rounded-lg transition-colors text-sm">
+                                Importer
+                            </button>
+                            <a th:href="@{/fournisseur/home}" 
+                               class="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-medium py-2.5 px-6 rounded-lg transition-colors text-sm text-center">
+                                Annuler
+                            </a>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <script>
+        function mettreAJourNomFichier(input) {
+            const etiquette = document.getElementById('etiquette-fichier');
+            if (input.files && input.files[0]) {
+                etiquette.textContent = input.files[0].name;
+                etiquette.classList.add('text-brand-success', 'font-medium');
+            }
+        }
+    </script>
+</body>
+</html>

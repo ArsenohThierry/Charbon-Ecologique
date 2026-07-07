@@ -1,44 +1,280 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Liste des Livraisons</title>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Charbon Vert - Liste des livraisons</title>
+    <link rel="stylesheet" th:href="@{/css/output.css}" />
+    <link rel="stylesheet" th:href="@{/css/fonts.css}" />
+    <style>
+        .badge { padding: 2px 12px; border-radius: 9999px; font-size: 0.75rem; font-weight: 500; }
+        .badge-pending { background-color: #fef3c7; color: #92400e; }
+        .badge-shipping { background-color: #ffedd5; color: #9a3412; }
+        .badge-delivered { background-color: #dcfce7; color: #166534; }
+        .badge-cancelled { background-color: #fee2e2; color: #991b1b; }
+    </style>
 </head>
-<body>
 
-<h1>Liste des Livraisons</h1>
+<body class="bg-brand-light font-sans text-slate-800 min-h-screen flex">
+    <aside th:replace="~{fragments/sidebar :: sidebar('livraisons')}"></aside>
+    <main class="flex-1 min-h-screen">
+        <header class="flex items-center justify-between px-8 py-4 bg-white border-b border-gray-100">
+            <div>
+                <h2 class="text-lg font-bold text-brand-dark">Commercial & finance</h2>
+                <p class="text-xs text-gray-500">Commandes, livraisons & trésorerie</p>
+            </div>
+            <div class="flex items-center space-x-4">
+                <span class="text-xs px-3 py-1 bg-gray-100 rounded-full text-gray-600 font-medium">Liste des livraisons</span>
+                <div class="w-8 h-8 bg-brand-dark text-white rounded-full flex items-center justify-center text-sm font-bold">N</div>
+            </div>
+        </header>
 
-<a th:href="@{/livraisons/new}">+ Nouvelle Livraison</a>
+        <section class="p-8">
+            <div class="max-w-8xl mx-auto">
+                <div class="flex justify-between items-start mb-8">
+                    <div>
+                        <h1 class="font-serif text-4xl text-brand-dark mb-2">Liste des livraisons</h1>
+                        <p class="text-slate-500">Consulter, modifier ou supprimer une livraison.</p>
+                    </div>
+                    <a th:href="@{/livraisons/new}"
+                       class="bg-brand-success hover:bg-brand-dark text-white px-6 py-2 rounded-lg flex items-center gap-2 font-medium transition shadow-sm">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg>
+                        Nouvelle
+                    </a>
+                </div>
 
-<table border="1" cellpadding="8">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Référence</th>
-            <th>Date Livraison</th>
-            <th>Adresse</th>
-            <th>Statut</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr th:each="livraison : ${livraisons}">
-            <td th:text="${livraison.id}"></td>
-            <td th:text="${livraison.reference}"></td>
-            <td th:text="${livraison.dateLivraison}"></td>
-            <td th:text="${livraison.adresseLivraison}"></td>
-            <td th:text="${livraison.statut}"></td>
-            <td>
-                <a th:href="@{/livraisons/edit/{id}(id=${livraison.id})}">Modifier</a>
-                |
-                <a th:href="@{/livraisons/delete/{id}(id=${livraison.id})}"
-                   onclick="return confirm('Supprimer cette livraison ?')">
-                    Supprimer
-                </a>
-            </td>
-        </tr>
-    </tbody>
-</table>
+                <!-- Messages de statut -->
+                <div th:if="${param.success != null}" class="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm">
+                    Opération effectuée avec succès.
+                </div>
+                <div th:if="${param.error != null}" class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+                    Une erreur est survenue lors de l'opération.
+                </div>
 
+                <!-- Filtres -->
+                <form action="" method="get" id="filterForm" class="space-y-4 mb-6">
+                    <input type="hidden" name="page" th:value="1">
+                    <input type="hidden" name="limit" th:value="${page.size}">
+                    <input type="hidden" name="currentSort" th:value="${currentSort}">
+                    <input type="hidden" name="currentDir" th:value="${currentDir}">
+
+                    <div class="flex gap-4">
+                        <div class="relative flex-1">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                                </svg>
+                            </span>
+                            <input class="w-full pl-10 pr-4 py-2 border-slate-200 rounded-lg focus:ring-brand-success focus:border-brand-success text-sm bg-white"
+                                   placeholder="Rechercher par référence..." name="reference" th:value="${reference}" type="text" />
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-white border border-slate-200 rounded-xl shadow-sm">
+                        <div class="flex flex-col gap-1">
+                            <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Date début</label>
+                            <input type="date" name="dateLivMin" th:value="${dateLivMin}"
+                                   class="w-full px-3 py-1.5 border border-slate-200 rounded-lg text-sm text-slate-700 focus:ring-brand-success focus:border-brand-success bg-white" />
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Date fin</label>
+                            <input type="date" name="dateLivMax" th:value="${dateLivMax}"
+                                   class="w-full px-3 py-1.5 border border-slate-200 rounded-lg text-sm text-slate-700 focus:ring-brand-success focus:border-brand-success bg-white" />
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Statut</label>
+                            <select name="statut"
+                                    class="w-full px-3 py-1.5 border border-slate-200 rounded-lg text-sm text-slate-700 focus:ring-brand-success focus:border-brand-success bg-white">
+                                <option value="">Tous les statuts</option>
+                                <option th:each="s : ${statuts}" th:value="${s.id}" th:text="${s.libelle}"
+                                        th:selected="${s.id == statut}">En cours</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4 justify-start items-center">
+                        <button type="submit"
+                                class="bg-brand-success text-white px-6 py-2 rounded-lg flex items-center gap-2 text-sm font-medium hover:bg-brand-dark transition-all active:scale-95">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                            </svg>
+                            Filtrer et Rechercher
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Tableau -->
+                <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-200 text-xs uppercase tracking-wider text-slate-500">
+                                <th class="px-6 py-4 font-semibold">
+                                    <button type="button" data-sort="reference"
+                                            class="sort-btn flex items-center gap-1 hover:text-slate-800 font-semibold uppercase">
+                                        Réf. <span th:text="${currentSort == 'reference'} ? (${currentDir == 'asc'} ? '▲' : '▼') : ''"></span>
+                                    </button>
+                                </th>
+                                <th class="px-6 py-4 font-semibold">
+                                    <button type="button" data-sort="date_livraison"
+                                            class="sort-btn flex items-center gap-1 hover:text-slate-800 font-semibold uppercase">
+                                        Date livraison <span th:text="${currentSort == 'date_livraison'} ? (${currentDir == 'asc'} ? '▲' : '▼') : ''"></span>
+                                    </button>
+                                </th>
+                                <th class="px-6 py-4 font-semibold">Lieu</th>
+                                <th class="px-6 py-4 font-semibold">
+                                    <button type="button" data-sort="livreur"
+                                            class="sort-btn flex items-center gap-1 hover:text-slate-800 font-semibold uppercase">
+                                        Livreur <span th:text="${currentSort == 'livreur'} ? (${currentDir == 'asc'} ? '▲' : '▼') : ''"></span>
+                                    </button>
+                                </th>
+                                <th class="px-6 py-4 font-semibold">Commande</th>
+                                <th class="px-6 py-4 font-semibold">
+                                    <button type="button" data-sort="statut"
+                                            class="sort-btn flex items-center gap-1 hover:text-slate-800 font-semibold uppercase">
+                                        Statut <span th:text="${currentSort == 'statut'} ? (${currentDir == 'asc'} ? '▲' : '▼') : ''"></span>
+                                    </button>
+                                </th>
+                                <th class="px-6 py-4 font-semibold text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <tr th:each="dto : ${livraisons}" class="hover:bg-slate-50 transition text-sm">
+                                <td class="px-6 py-4 text-slate-600" th:text="${dto.reference}">LIV-001</td>
+                                <td class="px-6 py-4" th:text="${#temporals.format(dto.dateLivraison, 'dd/MM/yyyy HH:mm')}">01/07/2026</td>
+                                <td class="px-6 py-4 text-slate-600" th:text="${dto.lieu}">Anosizato</td>
+                                <td class="px-6 py-4 text-slate-600" th:text="${dto.livreurNom}">Hery</td>
+                                <td class="px-6 py-4 text-slate-600" th:text="${dto.commandeReference}">CMD-001</td>
+                                <td class="px-6 py-4">
+                                    <span th:if="${dto.statutLibelle != null}"
+                                          th:class="'badge badge-' + ${#strings.toLowerCase(dto.statutLibelle) == 'en cours' ? 'pending' : 
+                                            (#strings.toLowerCase(dto.statutLibelle) == 'en livraison' ? 'shipping' : 
+                                            (#strings.toLowerCase(dto.statutLibelle) == 'terminé' ? 'delivered' : 'cancelled'))}"
+                                          th:text="${dto.statutLibelle}">En cours</span>
+                                    <span th:if="${dto.statutLibelle == null}" class="badge text-slate-400">-</span>
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <div class="flex justify-end gap-2">
+                                        <!-- Bouton Livrer : visible si statut = "En cours" -->
+                                        <form th:if="${dto.statutLibelle == 'En cours'}"
+                                              method="post" th:action="@{/livraisons/livrer/{id}(id=${dto.id})}"
+                                              style="display:inline">
+                                            <button type="submit"
+                                                    class="flex items-center gap-1 text-amber-600 hover:text-amber-800 transition border border-amber-200 px-3 py-1.5 rounded text-xs font-medium bg-amber-50">
+                                                Livrer
+                                            </button>
+                                        </form>
+                                        <!-- Bouton Terminer : visible si statut = "En livraison" -->
+                                        <form th:if="${dto.statutLibelle == 'En livraison'}"
+                                              method="post" th:action="@{/livraisons/terminer/{id}(id=${dto.id})}"
+                                              style="display:inline">
+                                            <button type="submit"
+                                                    class="flex items-center gap-1 text-green-600 hover:text-green-800 transition border border-green-200 px-3 py-1.5 rounded text-xs font-medium bg-green-50">
+                                                Terminer
+                                            </button>
+                                        </form>
+                                        <a th:href="@{/livraisons/edit/{id}(id=${dto.id})}"
+                                           class="flex items-center gap-1 text-slate-500 hover:text-brand-success transition border border-slate-200 px-3 py-1.5 rounded text-xs">
+                                            Modifier
+                                        </a>
+                                        <a th:href="@{/livraisons/delete/{id}(id=${dto.id})}"
+                                           onclick="return confirm('Supprimer cette livraison ?')"
+                                           class="flex items-center gap-1 text-red-400 hover:text-red-600 transition border border-slate-200 px-3 py-1.5 rounded text-xs">
+                                            Supprimer
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(livraisons)}">
+                                <td colspan="7" class="px-6 py-12 text-center text-slate-400 text-sm">
+                                    Aucune livraison enregistrée.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="h-12 bg-white"></div>
+                </div>
+
+                <!-- Pagination (inchangée) -->
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-4 p-4 border-t border-slate-100 bg-white rounded-b-2xl">
+                    <div class="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto text-center sm:text-left">
+                        <span class="text-xs text-slate-500">
+                            Affichage des éléments de la page <strong class="text-slate-700" th:text="${page.number + 1}">1</strong>
+                        </span>
+                        <div class="flex items-center gap-2">
+                            <label for="limitSelect" class="text-xs text-slate-400">Afficher par :</label>
+                            <select id="limitSelect"
+                                    class="bg-slate-50 border border-slate-200 text-slate-700 text-xs rounded-lg focus:ring-emerald-500 focus:border-emerald-500 p-1.5 font-medium cursor-pointer transition">
+                                <option value="5" th:selected="${page.size == 5}">5</option>
+                                <option value="10" th:selected="${page.size == 10}">10</option>
+                                <option value="25" th:selected="${page.size == 25}">25</option>
+                                <option value="50" th:selected="${page.size == 50}">50</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button type="button" th:data-page="${page.number}" th:disabled="${!page.hasPrevious()}"
+                                class="page-btn inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border text-xs font-medium bg-white text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-40 disabled:pointer-events-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                            </svg>
+                            Précédent
+                        </button>
+                        <span class="inline-flex items-center justify-center px-3 py-1.5 rounded-md bg-slate-100 text-slate-700 font-semibold text-xs">
+                            Page <span class="ml-1" th:text="${page.number + 1}">1</span>
+                        </span>
+                        <button type="button" th:data-page="${page.number + 2}" th:disabled="${!page.hasNext()}"
+                                class="page-btn inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border text-xs font-medium bg-white text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-40 disabled:pointer-events-none">
+                            Suivant
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script th:inline="javascript">
+        function updateUrlParam(paramName, paramValue) {
+            const currentUrl = new URL(window.location.href);
+            currentUrl.searchParams.set(paramName, paramValue);
+            window.location.href = currentUrl.toString();
+        }
+
+        document.querySelectorAll('.page-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                const targetPage = this.getAttribute('data-page');
+                if (targetPage) updateUrlParam('page', targetPage);
+            });
+        });
+
+        const limitSelect = document.getElementById('limitSelect');
+        if (limitSelect) {
+            limitSelect.addEventListener('change', function () {
+                const currentUrl = new URL(window.location.href);
+                currentUrl.searchParams.set('limit', this.value);
+                currentUrl.searchParams.set('page', '1');
+                window.location.href = currentUrl.toString();
+            });
+        }
+
+        document.querySelectorAll('.sort-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                const sortField = this.getAttribute('data-sort');
+                const currentUrl = new URL(window.location.href);
+
+                let nextDir = 'asc';
+                if (currentUrl.searchParams.get('currentSort') === sortField) {
+                    nextDir = currentUrl.searchParams.get('currentDir') === 'asc' ? 'desc' : 'asc';
+                }
+
+                currentUrl.searchParams.set('currentSort', sortField);
+                currentUrl.searchParams.set('currentDir', nextDir);
+                window.location.href = currentUrl.toString();
+            });
+        });
+    </script>
 </body>
 </html>

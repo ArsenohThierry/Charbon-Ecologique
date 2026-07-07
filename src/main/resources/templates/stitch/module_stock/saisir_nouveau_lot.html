@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Charbon Vert - Saisir un nouveau lot</title>
+    <link rel="stylesheet" th:href="@{/css/output.css}" href="../../../static/css/output.css" />
+    <link rel="stylesheet" th:href="@{/css/fonts.css}" href="../../../static/css/fonts.css" />
+    <style data-purpose="custom-layout-styles">
+        body {
+            background-color: #fdfcf7;
+            min-height: 100vh;
+        }
+
+        /* Custom scrollbar for sidebar */
+        .sidebar-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .sidebar-scroll::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+        }
+
+        /* Form shadow mimicking image */
+        .form-container-shadow {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+
+<body class="flex">
+    <!-- BEGIN: Sidebar -->
+    <aside class="w-64 bg-cv-sidebar-green min-h-screen text-white flex flex-col fixed inset-y-0"
+        data-purpose="main-navigation-sidebar">
+        <!-- Brand Logo Section -->
+        <div class="p-6 flex items-center gap-3 border-b border-white/10">
+            <div class="w-10 h-10 bg-cv-gold-light rounded-lg flex items-center justify-center text-cv-sidebar-green">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                </svg>
+            </div>
+            <div>
+                <h1 class="font-bold text-lg leading-tight">Charbon Vert</h1>
+                <p class="text-xs text-white/60">Gestionnaire de stock</p>
+            </div>
+        </div>
+        <!-- Navigation Menu -->
+        <nav class="flex-grow py-4 sidebar-scroll overflow-y-auto text-sm">
+            <!-- Menu Item -->
+            <a class="flex items-center gap-3 px-6 py-3 hover:bg-white/5 transition-colors" href="#">
+                <svg class="w-5 h-5 opacity-70" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                    <path
+                        d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                </svg>
+                Tableau de bord
+            </a>
+            <!-- Collapsible Section: Approvisionnement -->
+            <div>
+                <button class="w-full flex items-center justify-between px-6 py-3 hover:bg-white/5 transition-colors">
+                    <div class="flex items-center gap-3">
+                        <svg class="w-5 h-5 opacity-70" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                            <path
+                                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                                stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                        </svg>
+                        Approvisionnement &amp; mat...
+                    </div>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                        <path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                    </svg>
+                </button>
+            </div>
+            <!-- Active Section: Lots de production -->
+            <div class="mt-2">
+                <button class="w-full flex items-center justify-between px-6 py-3 bg-white/5">
+                    <div class="flex items-center gap-3">
+                        <svg class="w-5 h-5 opacity-70" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                            <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+                                stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                        </svg>
+                        Lots de production
+                    </div>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                        <path d="M5 15l7-7 7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                    </svg>
+                </button>
+                <div class="bg-black/10 py-1">
+                    <a class="flex items-center gap-3 px-12 py-2 text-cv-gold-light bg-cv-gold-light/10 border-r-4 border-cv-gold-light font-medium"
+                        href="#">
+                        Saisir un nouveau lot
+                    </a>
+                    <a class="flex items-center gap-3 px-12 py-2 hover:text-cv-gold-light transition-colors" href="#">
+                        Liste des lots
+                    </a>
+                    <a class="flex items-center gap-3 px-12 py-2 hover:text-cv-gold-light transition-colors" href="#">
+                        Historique des statuts
+                    </a>
+                </div>
+            </div>
+            <!-- Other sections -->
+            <div class="mt-2">
+                <button
+                    class="w-full flex items-center justify-between px-6 py-3 hover:bg-white/5 transition-colors opacity-70">
+                    <div class="flex items-center gap-3">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                            <path
+                                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                                stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                        </svg>
+                        Généralités stocks
+                    </div>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                        <path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                    </svg>
+                </button>
+                <div class="ml-8 mt-1">
+                    <a class="flex items-center gap-3 px-4 py-2 text-sm hover:text-cv-gold-light transition-colors"
+                        th:href="@{/stock/etat}">
+                        État stock
+                    </a>
+                </div>
+            </div>
+            <a class="flex items-center gap-3 px-6 py-3 hover:bg-white/5 transition-colors opacity-70" href="#">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                    <path
+                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                </svg>
+                Ventes / Commandes
+            </a>
+            <a class="flex items-center gap-3 px-6 py-3 hover:bg-white/5 transition-colors opacity-70" href="#">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                    <path
+                        d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                </svg>
+                Rapports
+            </a>
+        </nav>
+        <!-- Footer Sidebar -->
+        <div class="p-4 mt-auto border-t border-white/10">
+            <button class="flex items-center gap-2 text-sm text-white/70 hover:text-white transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                    <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                </svg>
+                Changer de rôle
+            </button>
+        </div>
+    </aside>
+    <!-- END: Sidebar -->
+    <!-- BEGIN: Main Content -->
+    <main class="ml-64 flex-grow p-8 bg-cv-bg-light min-h-screen" data-purpose="main-content-area">
+        <!-- BEGIN: Header Section -->
+        <header class="flex justify-between items-start mb-12">
+            <div>
+                <h2 class="text-xl font-bold font-serif text-cv-dark-green">Gestionnaire de stock</h2>
+                <p class="text-sm text-cv-text-muted">Approvisionnement, lots &amp; inventaire</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <span
+                    class="bg-cv-dark-green/10 text-cv-dark-green px-4 py-1.5 rounded-full text-xs font-medium border border-cv-dark-green/20">
+                    Maquette · données fictives
+                </span>
+                <div
+                    class="w-10 h-10 bg-cv-button-green rounded-full flex items-center justify-center text-white font-bold">
+                    N
+                </div>
+            </div>
+        </header>
+        <!-- END: Header Section -->
+        <!-- BEGIN: Form Section -->
+        <section class="max-w-4xl" data-purpose="new-lot-form-section">
+            <div class="mb-8">
+                <h1 class="text-3xl font-serif font-bold text-cv-dark-green mb-2">Saisir un nouveau lot</h1>
+                <p class="text-cv-text-muted text-sm">Créer un lot de production. Le statut initial est « Préparation ».
+                </p>
+            </div>
+            <div class="bg-white rounded-2xl p-8 form-container-shadow border border-gray-100">
+                <form action="#" class="space-y-6" method="POST">
+                    <!-- Row 1 -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Matière première -->
+                        <div class="space-y-1.5">
+                            <label class="block text-sm font-medium text-gray-700" for="matiere_premiere">Matière
+                                première</label>
+                            <select
+                                class="w-full rounded-lg border-gray-300 shadow-sm focus:ring-cv-button-green focus:border-cv-button-green transition-shadow"
+                                id="matiere_premiere" name="matiere_premiere">
+                                <option disabled="" selected="" value="">Sélectionner...</option>
+                                <option value="charbon-bois">Charbon de bois</option>
+                                <option value="sciure">Sciure de bois</option>
+                            </select>
+                        </div>
+                        <!-- Type de produit -->
+                        <div class="space-y-1.5">
+                            <label class="block text-sm font-medium text-gray-700" for="type_produit">Type de
+                                produit</label>
+                            <select
+                                class="w-full rounded-lg border-gray-300 shadow-sm focus:ring-cv-button-green focus:border-cv-button-green transition-shadow"
+                                id="type_produit" name="type_produit">
+                                <option disabled="" selected="" value="">Sélectionner...</option>
+                                <option value="charbon-rond">Charbon rond</option>
+                                <option value="rectangulaire">Rectangulaire</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- Row 2 -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Quantité matière -->
+                        <div class="space-y-1.5">
+                            <label class="block text-sm font-medium text-gray-700" for="quantite_matiere">Quantité
+                                matière (kg)</label>
+                            <input
+                                class="w-full rounded-lg border-gray-300 shadow-sm focus:ring-cv-button-green focus:border-cv-button-green transition-shadow"
+                                id="quantite_matiere" name="quantite_matiere" placeholder="120" type="number" />
+                        </div>
+                        <!-- Quantité prévue -->
+                        <div class="space-y-1.5">
+                            <label class="block text-sm font-medium text-gray-700" for="quantite_prevue">Quantité prévue
+                                (unités)</label>
+                            <input
+                                class="w-full rounded-lg border-gray-300 shadow-sm focus:ring-cv-button-green focus:border-cv-button-green transition-shadow"
+                                id="quantite_prevue" name="quantite_prevue" placeholder="0" type="number" />
+                        </div>
+                    </div>
+                    <!-- Row 3: Remarques (Full width) -->
+                    <div class="space-y-1.5">
+                        <label class="block text-sm font-medium text-gray-700" for="remarques">Remarques</label>
+                        <textarea
+                            class="w-full rounded-lg border-gray-300 shadow-sm focus:ring-cv-button-green focus:border-cv-button-green transition-shadow"
+                            id="remarques" name="remarques" placeholder="Notes additionnelles..." rows="3"></textarea>
+                    </div>
+                    <!-- Row 4: Buttons and Info -->
+                    <div class="flex flex-wrap items-center gap-4 pt-4">
+                        <button
+                            class="bg-cv-button-green hover:bg-cv-sidebar-green text-white px-8 py-2.5 rounded-lg font-semibold transition-all shadow-md active:scale-95"
+                            type="submit">
+                            Créer le lot
+                        </button>
+                        <button
+                            class="bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 px-8 py-2.5 rounded-lg font-semibold transition-all"
+                            type="button">
+                            Annuler
+                        </button>
+                        <p class="text-cv-text-muted text-xs italic ml-2">
+                            Une nouvelle production sera ajoutée automatiquement.
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </section>
+        <!-- END: Form Section -->
+    </main>
+    <!-- END: Main Content -->
+    <!-- BEGIN: Floating Action Toolbar (from image footer) -->
+    <div class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur-sm shadow-xl border border-gray-200 rounded-full px-6 py-3 flex items-center gap-8 text-gray-500"
+        data-purpose="page-tools">
+        <button class="hover:text-cv-button-green transition-colors" title="Plein écran">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                <path d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 4l-5 5M4 16v4m0 0h4m-4-4l5-5m11 5v4m0 0h-4m4-4l-5 5"
+                    stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+            </svg>
+        </button>
+        <button class="hover:text-cv-button-green transition-colors" title="Édition texte">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                <path
+                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                    stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+            </svg>
+        </button>
+        <button class="hover:text-cv-button-green transition-colors" title="Attachement">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                <path
+                    d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
+                    stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+            </svg>
+        </button>
+        <button class="hover:text-cv-button-green transition-colors" title="Commentaire">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                <path
+                    d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
+                    stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+            </svg>
+        </button>
+    </div>
+    <!-- END: Floating Action Toolbar -->
+</body>
+
+</html>

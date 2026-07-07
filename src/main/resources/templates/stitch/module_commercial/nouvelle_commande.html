@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Charbon Vert - Nouvelle Commande</title>
+    <!-- BEGIN: External Scripts -->
+    <link rel="stylesheet" th:href="@{/css/output.css}" />
+    <link rel="stylesheet" th:href="@{/css/fonts.css}" />
+    <!-- END: External Scripts -->
+    <style data-purpose="custom-scrollbar">
+        /* Custom scrollbar for the sidebar */
+        .sidebar-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .sidebar-scroll::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+        }
+    </style>
+</head>
+
+<body class="bg-brand-light font-sans text-slate-800 min-h-screen flex">
+    <aside th:replace="~{fragments/sidebar :: sidebar('commandes')}"></aside>
+    <!-- BEGIN: MainContent -->
+    <main class="flex-1 p-8">
+        <header class="flex justify-between items-start mb-10">
+            <div>
+                <h2 class="text-2xl font-bold text-brand-dark">Commercial &amp; finance</h2>
+                <p class="text-sm text-gray-500">Commandes, livraisons &amp; trésorerie</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="text-xs px-3 py-1 bg-gray-100 rounded-full text-gray-600 font-medium">Commande</span>
+                <div class="w-10 h-10 bg-brand-success rounded-full flex items-center justify-center text-white font-bold">N</div>
+            </div>
+        </header>
+        <section class="mb-10">
+            <!-- Form Title Section -->
+            <div class="mb-8">
+                <h3 class="text-3xl font-serif text-brand-dark mb-1">Nouvelle commande</h3>
+                <p class="text-sm text-gray-500">Enregistrer une commande client. Le montant à payer est calculé
+                    automatiquement.</p>
+            </div>
+            <!-- Main Form Card -->
+            <section class="bg-white rounded-xl shadow-sm border border-gray-100 p-8 max-w-5xl"
+                data-purpose="order-form">
+                <form class="space-y-6" method="post" action="">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                        <!-- Row 1 -->
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-2">Client</label>
+                            <input
+                                class="w-full border-gray-300 rounded-md shadow-sm focus:border-brand-success focus:ring-brand-success text-sm px-4 py-2.5"
+                                placeholder="Nom du client" type="text" value="" id="input" list="clients" />
+                            <input type="hidden" name="client.id" value="" id="idClient">
+                            <datalist id="clients">
+                                <option th:each="client : ${clients}" th:value="${client.nom}" th:attr="data-real-value=${client.id}"></option>
+                            </datalist>
+                        </div>
+                        <!-- Row 2 -->
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-2">Date souhaitée</label>
+                            <div class="relative">
+                                <input
+                                    class="w-full border-gray-300 rounded-md shadow-sm focus:border-brand-success focus:ring-brand-success text-sm px-4 py-2.5"
+                                    placeholder="jj / mm / aaaa" type="date" name="dateCommandeStr" />
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- Form Actions -->
+                    <div class="flex items-center gap-4 pt-4">
+                        <button
+                            class="bg-brand-success text-white px-6 py-2.5 rounded-md text-sm font-medium hover:bg-opacity-90 transition-all shadow-sm"
+                            type="submit">
+                            Enregistrer la commande
+                        </button>
+                        <a href="/cmd">
+                                                    <button
+                            class="bg-white border border-gray-200 text-gray-700 px-6 py-2.5 rounded-md text-sm font-medium hover:bg-gray-50 transition-all"
+                            type="button">
+                            Annuler
+                        </button>
+                        </a>
+                        <p class="text-[11px] text-gray-400 italic ml-2">Si le stock est insuffisant, la commande passe
+                            en attente.</p>
+                    </div>
+                </form>
+            </section>
+        </section>
+    </main>
+    <!-- END: MainContent -->
+     <script>
+        const input = document.getElementById("input");
+        const list = document.getElementById("clients");
+        input.addEventListener("input", function(e) {
+            const selected = list.querySelector(`option[value="${e.target.value}"]`);
+            if(selected) {
+                const realValue = selected.getAttribute("data-real-value");
+                document.getElementById("idClient").value = realValue;
+            }
+        });
+     </script>
+</body>
+
+</html>

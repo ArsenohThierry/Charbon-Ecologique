@@ -6,33 +6,8 @@
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Charbon Vert - Gestionnaire de stock</title>
-    <!-- Tailwind CSS CDN with plugins -->
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <!-- Google Fonts: Serif for headings, Sans for body -->
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Playfair+Display:wght@700&amp;display=swap"
-        rel="stylesheet" />
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            dark: '#1b3221',    /* Deep green sidebar */
-                            accent: '#d4a358',  /* Gold/Yellow accent */
-                            light: '#fbfbf4',   /* Off-white background */
-                            button: '#3a724b',  /* Green primary button */
-                            active: '#e0b571'   /* Highlighted menu item */
-                        }
-                    },
-                    fontFamily: {
-                        serif: ['Playfair Display', 'serif'],
-                        sans: ['Inter', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
+    <link rel="stylesheet" th:href="@{/css/output.css}" href="../../../static/css/output.css" />
+    <link rel="stylesheet" th:href="@{/css/fonts.css}" href="../../../static/css/fonts.css" />
     <style data-purpose="custom-layout">
         body {
             font-family: 'Inter', sans-serif;
@@ -130,7 +105,7 @@
                     </a>
                 </div>
             </div>
-            <a class="flex items-center justify-between px-3 py-2 text-sm text-white/60 hover:text-white" href="#">
+            <a class="flex items-center justify-between px-3 py-2 text-sm text-white/60 hover:text-white" th:href="@{/stock/etat}">
                 <div class="flex items-center gap-3">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
                         <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>

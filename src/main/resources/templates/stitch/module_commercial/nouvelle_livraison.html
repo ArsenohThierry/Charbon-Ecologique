@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Charbon Vert - Nouvelle Livraison</title>
+    <link rel="stylesheet" th:href="@{/css/output.css}" />
+    <link rel="stylesheet" th:href="@{/css/fonts.css}" />
+    <style>
+        .sidebar-scroll::-webkit-scrollbar { width: 4px; }
+        .sidebar-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
+    </style>
+</head>
+
+<body class="bg-brand-light font-sans text-slate-800 min-h-screen flex">
+<aside th:replace="~{fragments/sidebar :: sidebar('livraisons')}"></aside>
+
+    <main class="flex-1 p-8">
+        <header class="flex justify-between items-start mb-10">
+            <div>
+                <h2 class="text-2xl font-bold text-brand-dark">Commercial &amp; finance</h2>
+                <p class="text-sm text-gray-500">Commandes, livraisons &amp; trésorerie</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="text-xs px-3 py-1 bg-gray-100 rounded-full text-gray-600 font-medium">Livraison</span>
+                <div class="w-10 h-10 bg-brand-success rounded-full flex items-center justify-center text-white font-bold">N</div>
+            </div>
+        </header>
+
+        <section class="mb-10">
+            <h1 class="text-3xl font-bold text-brand-dark mb-1">Nouvelle livraison</h1>
+            <p class="text-gray-500 text-sm">Planifier une livraison pour une commande.</p>
+        </section>
+
+        <div th:if="${param.error != null}" class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+            Une erreur est survenue.
+        </div>
+
+        <div th:if="${livraisonError != null}" class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <p class="text-red-700 text-sm font-medium">Veuillez corriger les erreurs ci-dessous.</p>
+        </div>
+
+        <section class="bg-white rounded-xl border border-gray-100 shadow-sm p-8 max-w-5xl">
+            <form class="space-y-6" method="post" th:action="@{/livraisons/save}">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-2">Date de livraison</label>
+                        <input type="datetime-local" name="dateLivraison"
+                               class="w-full border-gray-300 rounded-md shadow-sm focus:border-brand-success focus:ring-brand-success text-sm px-4 py-2.5" />
+                        <p th:if="${livraisonError != null and livraisonError.dateLivraisonError != null}"
+                           class="text-red-500 text-xs mt-1" th:text="${livraisonError.dateLivraisonError}">Erreur date</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-2">Lieu</label>
+                        <input type="text" name="lieu" placeholder="Adresse de livraison"
+                               class="w-full border-gray-300 rounded-md shadow-sm focus:border-brand-success focus:ring-brand-success text-sm px-4 py-2.5" />
+                        <p th:if="${livraisonError != null and livraisonError.lieuError != null}"
+                           class="text-red-500 text-xs mt-1" th:text="${livraisonError.lieuError}">Erreur lieu</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-2">Livreur</label>
+                        <select name="livreur.id"
+                                class="w-full border-gray-300 rounded-md shadow-sm focus:border-brand-success focus:ring-brand-success text-sm px-4 py-2.5">
+                            <option value="">Sélectionner...</option>
+                            <option th:each="livreur : ${livreurs}" th:value="${livreur.id}" th:text="${livreur.nom}"></option>
+                        </select>
+                        <p th:if="${livraisonError != null and livraisonError.livreurError != null}"
+                           class="text-red-500 text-xs mt-1" th:text="${livraisonError.livreurError}">Erreur livreur</p>
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t border-gray-100">
+                    <label class="block text-xs font-bold text-gray-700 mb-3">Commande à livrer</label>
+                    <div th:if="${#lists.isEmpty(commandesDisponibles)}" class="text-sm text-amber-600 bg-amber-50 border border-amber-200 rounded-lg p-4">
+                        Aucune commande disponible pour la livraison. Créez d'abord une commande.
+                    </div>
+                    <select th:if="${not #lists.isEmpty(commandesDisponibles)}"
+                            name="commandeId"
+                            class="w-full border-gray-300 rounded-md shadow-sm focus:border-brand-success focus:ring-brand-success text-sm px-4 py-2.5">
+                        <option value="">-- Sélectionner une commande --</option>
+                        <option th:each="cmd : ${commandesDisponibles}"
+                                th:value="${cmd[0]}"
+                                th:selected="${preselectedCommandeId == cmd[0]}"
+                                th:text="|${cmd[1]} - ${cmd[2]}|">CMD-001 - Client</option>
+                    </select>
+                    <p th:if="${livraisonError != null and livraisonError.commandeError != null}"
+                       class="text-red-500 text-xs mt-1" th:text="${livraisonError.commandeError}">Erreur commande</p>
+                </div>
+
+                <div class="flex items-center gap-4 pt-4">
+                    <button type="submit"
+                            class="bg-brand-success text-white px-6 py-2.5 rounded-md text-sm font-medium hover:opacity-90 transition-all shadow-sm">
+                        Créer la livraison
+                    </button>
+                    <a th:href="@{/livraisons}"
+                       class="bg-white border border-gray-200 text-gray-700 px-6 py-2.5 rounded-md text-sm font-medium hover:bg-gray-50 transition-all">
+                        Annuler
+                    </a>
+                </div>
+            </form>
+        </section>
+    </main>
+
+</body>
+</html>

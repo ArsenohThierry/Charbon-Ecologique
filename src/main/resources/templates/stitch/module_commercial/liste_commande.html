@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Charbon Vert - Liste des commandes</title>
+    <link rel="stylesheet" th:href="@{/css/output.css}" href="../../../static/css/output.css" />
+    <link rel="stylesheet" th:href="@{/css/fonts.css}" href="../../../static/css/fonts.css" />
+    <style>
+        .badge {
+            padding: 2px 12px;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge-pending {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-delivered {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-shipping {
+            background-color: #ffedd5;
+            color: #9a3412;
+        }
+
+        .badge-cancelled {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+    </style>
+</head>
+
+<body class="bg-brand-light font-sans text-slate-800 min-h-screen flex">
+    <aside th:replace="~{fragments/sidebar :: sidebar('commandes')}"></aside>
+    <main class="flex-1 min-h-screen">
+        <header class="flex items-center justify-between px-8 py-4 bg-white border-b border-gray-100"
+            data-purpose="top-header">
+            <div>
+                <h2 class="text-lg font-bold text-brand-dark">Commercial & finance</h2>
+                <p class="text-xs text-gray-500">Commandes, livraisons & trésorerie</p>
+            </div>
+            <div class="flex items-center space-x-4">
+                <span
+                    class="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full border border-gray-200">Maquette
+                    · données fictives</span>
+                <div
+                    class="w-8 h-8 bg-brand-dark text-white rounded-full flex items-center justify-center text-sm font-bold">
+                    N</div>
+            </div>
+        </header>
+
+        <section class="p-8">
+            <div class="max-w-8xl mx-auto">
+                <div class="flex justify-between items-start mb-8">
+                    <div>
+                        <h1 class="font-serif text-4xl text-brand-dark mb-2">Liste des commandes</h1>
+                        <p class="text-gray-500">Consulter, modifier ou annuler une commande.</p>
+                    </div>
+                    <a href="/cmd/new">
+                        <button
+                            class="bg-brand-success hover:bg-brand-dark text-white px-6 py-2 rounded-lg flex items-center gap-2 font-medium transition shadow-sm">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                                <path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2"></path>
+                            </svg>
+                            Nouvelle
+                        </button>
+                    </a>
+                </div>
+
+                <form action="" method="get" id="filterForm" class="space-y-4 mb-6">
+                    <input type="hidden" name="page" th:value="1">
+                    <input type="hidden" name="limit" th:value="${page.size}">
+                    <input type="hidden" name="currentSort" th:value="${currentSort}">
+                    <input type="hidden" name="currentDir" th:value="${currentDir}">
+
+                    <div class="flex gap-4">
+                        <div class="relative flex-1">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                                    <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round"
+                                        stroke-linejoin="round" stroke-width="2"></path>
+                                </svg>
+                            </span>
+                            <input
+                                class="w-full pl-10 pr-4 py-2 border-slate-200 rounded-lg focus:ring-brand-success focus:border-brand-success text-sm bg-white"
+                                placeholder="Rechercher par mot clé..." name="keyword" th:value="${keyword}"
+                                type="text" />
+                        </div>
+                    </div>
+
+                    <div
+                        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-white border border-slate-200 rounded-xl shadow-sm">
+                        <div class="flex flex-col gap-1">
+                            <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Date
+                                début</label>
+                            <input type="date" name="dateMin" th:value="${dateMin}"
+                                class="w-full px-3 py-1.5 border border-slate-200 rounded-lg text-sm text-slate-700 focus:ring-brand-success focus:border-brand-success bg-white" />
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Date
+                                fin</label>
+                            <input type="date" name="dateMax" th:value="${dateMax}"
+                                class="w-full px-3 py-1.5 border border-slate-200 rounded-lg text-sm text-slate-700 focus:ring-brand-success focus:border-brand-success bg-white" />
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Montant
+                                Min</label>
+                            <div class="relative">
+                                <input type="number" name="montantMin" th:value="${montantMin}" placeholder="0.00"
+                                    min="0" step="any"
+                                    class="w-full pl-3 pr-8 py-1.5 border border-slate-200 rounded-lg text-sm text-slate-700 focus:ring-brand-success focus:border-brand-success bg-white" />
+                                <span
+                                    class="absolute inset-y-0 right-3 flex items-center text-xs text-slate-400 font-medium">Ar</span>
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Montant
+                                Max</label>
+                            <div class="relative">
+                                <input type="number" name="montantMax" th:value="${montantMax}" placeholder="Max"
+                                    min="0" step="any"
+                                    class="w-full pl-3 pr-8 py-1.5 border border-slate-200 rounded-lg text-sm text-slate-700 focus:ring-brand-success focus:border-brand-success bg-white" />
+                                <span
+                                    class="absolute inset-y-0 right-3 flex items-center text-xs text-slate-400 font-medium">Ar</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4 justify-start items-center">
+                        <select name="statut"
+                            class="w-40 py-2 border-slate-200 rounded-lg focus:ring-brand-success focus:border-brand-success text-sm bg-white">
+                            <option value="">Tous les statuts</option>
+                            <option th:each="s : ${statuts}" th:value="${s.id}" th:text="${s.libelle}"
+                                th:selected="${s.id == statut}">Livrée</option>
+                        </select>
+                        <button type="submit"
+                            class="bg-brand-success text-white px-6 py-2 rounded-lg flex items-center gap-2 text-sm font-medium hover:bg-brand-dark transition-all active:scale-95">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                                <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round"
+                                    stroke-linejoin="round" stroke-width="2"></path>
+                            </svg>
+                            Filtrer et Rechercher
+                        </button>
+                    </div>
+                </form>
+
+                <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm"
+                    data-purpose="order-table-container">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr
+                                class="bg-slate-50 border-b border-slate-200 text-xs uppercase tracking-wider text-slate-500">
+                                <th class="px-6 py-4 font-semibold">
+                                    <button type="button" data-sort="reference"
+                                        class="sort-btn flex items-center gap-1 hover:text-slate-800 font-semibold uppercase">
+                                        Réf. <span
+                                            th:text="${currentSort == 'reference'} ? (${currentDir == 'asc'} ? '▲' : '▼') : ''"></span>
+                                    </button>
+                                </th>
+                                <th class="px-6 py-4 font-semibold">
+                                    <button type="button" data-sort="client_nom"
+                                        class="sort-btn flex items-center gap-1 hover:text-slate-800 font-semibold uppercase">
+                                        Client <span
+                                            th:text="${currentSort == 'client_nom'} ? (${currentDir == 'asc'} ? '▲' : '▼') : ''"></span>
+                                    </button>
+                                </th>
+                                <th class="px-6 py-4 font-semibold">
+                                    <button type="button" data-sort="date"
+                                        class="sort-btn flex items-center gap-1 hover:text-slate-800 font-semibold uppercase">
+                                        Date de commande <span
+                                            th:text="${currentSort == 'date'} ? (${currentDir == 'asc'} ? '▲' : '▼') : ''"></span>
+                                    </button>
+                                </th>
+                                <th class="px-6 py-4 font-semibold">Produit</th>
+                                <th class="px-6 py-4 font-semibold">Qté</th>
+                                <th class="px-6 py-4 font-semibold">PU</th>
+                                <th class="px-6 py-4 font-semibold">
+                                    <button type="button" data-sort="montant"
+                                        class="sort-btn flex items-center gap-1 hover:text-slate-800 font-semibold uppercase">
+                                        Montant <span
+                                            th:text="${currentSort == 'montant'} ? (${currentDir == 'asc'} ? '▲' : '▼') : ''"></span>
+                                    </button>
+                                </th>
+                                <th class="px-6 py-4 font-semibold">Statut</th>
+                                <th class="px-6 py-4 font-semibold text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <tr th:each="dto : ${commandes}" class="hover:bg-slate-50 transition text-sm">
+                                <td class="px-6 py-4 text-slate-600 align-top" th:text="${dto.reference}">CMD-1042</td>
+                                <td class="px-6 py-4 font-medium align-top" th:text="${dto.clientNom}">Resto Chez
+                                    Voahangy</td>
+                                <td class="px-6 py-4 align-top font-semibold text-slate-700"
+                                    th:text="${#temporals.format(dto.dateCommande.toLocalDate(), 'dd MMM yyyy')}"></td>
+                                <td class="px-6 py-4 align-top">
+                                    <div class="space-y-1">
+                                        <div th:each="detail : ${dto.details}" th:text="${detail.produit.nom}"
+                                            class="text-slate-700 font-normal">Briquette standard</div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 align-top">
+                                    <div class="space-y-1">
+                                        <div th:each="detail : ${dto.details}" th:text="${detail.quantite} + ' kg'"
+                                            class="text-slate-500 font-medium">50 kg</div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 align-top">
+                                    <div class="space-y-1">
+                                        <div th:each="detail : ${dto.details}"
+                                            th:text="${#numbers.formatDecimal(detail.produit.pu, 1, 'DEFAULT', 2, 'POINT')} + ' Ar'"
+                                            class="text-slate-500 font-medium">1 800.00 Ar</div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 align-top font-semibold text-slate-700"
+                                    th:text="${#numbers.formatDecimal(dto.montant, 1, 'DEFAULT', 2, 'POINT')} + ' Ar'">
+                                    90 000.00 Ar</td>
+                                <td class="px-6 py-4 align-top">
+                                    <span th:if="${dto.statutLibelle != null}"
+                                        th:class="'badge badge-' + ${#strings.toLowerCase(dto.statutLibelle) == 'en attente' ? 'pending' : 'delivered'}"
+                                        th:text="${dto.statutLibelle}">En attente</span>
+                                    <span th:if="${dto.statutLibelle == null}" class="badge text-slate-400">-</span>
+                                </td>
+                                <td class="px-6 py-4 text-right align-top">
+                                    <div class="flex justify-end gap-3">
+                                        <a th:href="@{/cmd/update/{id}(id=${dto.id})}"
+                                            class="flex items-center gap-1 text-slate-500 hover:text-brand-success transition border border-slate-200 px-3 py-1.5 rounded text-xs">Modifier</a>
+                                        <a th:href="@{/cmd/{id}(id=${dto.id})}"
+                                            class="flex items-center gap-1 text-slate-900 hover:text-brand-success transition border border-slate-200 px-3 py-1.5 rounded text-xs">Voir</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="h-12 bg-white"></div>
+                </div>
+            </div>
+
+            <div
+                class="flex flex-col sm:flex-row justify-between items-center gap-4 p-4 border-t border-slate-100 bg-white rounded-b-2xl">
+                <div class="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto text-center sm:text-left">
+                    <span class="text-xs text-slate-500">
+                        Affichage des éléments de la page <strong class="text-slate-700"
+                            th:text="${page.number + 1}">1</strong>
+                    </span>
+
+                    <div class="flex items-center gap-2">
+                        <label for="limitSelect" class="text-xs text-slate-400">Afficher par :</label>
+                        <select id="limitSelect"
+                            class="bg-slate-50 border border-slate-200 text-slate-700 text-xs rounded-lg focus:ring-emerald-500 focus:border-emerald-500 p-1.5 font-medium cursor-pointer transition">
+                            <option value="5" th:selected="${page.size == 5}">5</option>
+                            <option value="10" th:selected="${page.size == 10}">10</option>
+                            <option value="25" th:selected="${page.size == 25}">25</option>
+                            <option value="50" th:selected="${page.size == 50}">50</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <button type="button" th:data-page="${page.number}" th:disabled="${!page.hasPrevious()}"
+                        class="page-btn inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border text-xs font-medium bg-white text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-40 disabled:pointer-events-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                            stroke="currentColor" class="w-4 h-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                        </svg>
+                        Précédent
+                    </button>
+
+                    <span
+                        class="inline-flex items-center justify-center px-3 py-1.5 rounded-md bg-slate-100 text-slate-700 font-semibold text-xs">
+                        Page <span class="ml-1" th:text="${page.number + 1}">1</span>
+                    </span>
+
+                    <button type="button" th:data-page="${page.number + 2}" th:disabled="${!page.hasNext()}"
+                        class="page-btn inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border text-xs font-medium bg-white text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-40 disabled:pointer-events-none">
+                        Suivant
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                            stroke="currentColor" class="w-4 h-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script th:inline="javascript">
+        function updateUrlParam(paramName, paramValue) {
+            const currentUrl = new URL(window.location.href);
+            currentUrl.searchParams.set(paramName, paramValue);
+            window.location.href = currentUrl.toString();
+        }
+
+        document.querySelectorAll('.page-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                const targetPage = this.getAttribute('data-page');
+                if (targetPage) updateUrlParam('page', targetPage);
+            });
+        });
+
+        const limitSelect = document.getElementById('limitSelect');
+        if (limitSelect) {
+            limitSelect.addEventListener('change', function () {
+                // Quand la taille change, on repasse souvent à la page 1 par sécurité
+                const currentUrl = new URL(window.location.href);
+                currentUrl.searchParams.set('limit', this.value);
+                currentUrl.searchParams.set('page', '1');
+                window.location.href = currentUrl.toString();
+            });
+        }
+
+        document.querySelectorAll('.sort-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                const sortField = this.getAttribute('data-sort');
+                const currentUrl = new URL(window.location.href);
+
+                let nextDir = 'asc';
+                if (currentUrl.searchParams.get('currentSort') === sortField) {
+                    nextDir = currentUrl.searchParams.get('currentDir') === 'asc' ? 'desc' : 'asc';
+                }
+
+                currentUrl.searchParams.set('currentSort', sortField);
+                currentUrl.searchParams.set('currentDir', nextDir);
+                window.location.href = currentUrl.toString();
+            });
+        });
+
+        function annulerCommande(id) {
+            if (confirm("Voulez-vous vraiment annuler cette commande ?")) {
+                console.log("Annulation de la commande ID : " + id);
+            }
+        }
+    </script>
+</body>
+
+</html>
