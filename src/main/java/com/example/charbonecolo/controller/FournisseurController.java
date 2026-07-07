@@ -1,5 +1,6 @@
 package com.example.charbonecolo.controller;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import jakarta.validation.Valid;
 
@@ -11,23 +12,22 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Set;
-
 import com.example.charbonecolo.model.FournisseurModel;
 import com.example.charbonecolo.service.FournisseurService;
+import com.example.charbonecolo.util.ImportResult;
 
 @Controller
 @RequestMapping("/fournisseur")
 public class FournisseurController {
 
-    private static final List<String> ALLOWED_SORT_FIELDS = 
-            List.of("id", "nom", "email", "telephone", "adresse", "actif");
+    private static final List<String> ALLOWED_SORT_FIELDS = List.of("id", "nom", "email", "telephone", "adresse",
+            "actif");
     private static final String DEFAULT_SORT_FIELD = "nom";
     private static final int DEFAULT_PAGE_SIZE = 10;
 
@@ -42,7 +42,8 @@ public class FournisseurController {
         return ALLOWED_SORT_FIELDS;
     }
 
-    public record PageLink(int index, int number, boolean current, boolean ellipsis) {}
+    public record PageLink(int index, int number, boolean current, boolean ellipsis) {
+    }
 
     /**
      * Tri simple : String unique.
@@ -62,13 +63,50 @@ public class FournisseurController {
     private List<PageLink> buildPagination(int currentPage, int totalPages) {
         List<PageLink> links = new ArrayList<>();
         links.add(new PageLink(0, 1, currentPage == 0, false));
-        if (currentPage > 2) links.add(new PageLink(-1, 0, false, true));
+        if (currentPage > 2)
+            links.add(new PageLink(-1, 0, false, true));
         for (int i = Math.max(1, currentPage - 1); i <= Math.min(totalPages - 2, currentPage + 1); i++) {
             links.add(new PageLink(i, i + 1, i == currentPage, false));
         }
-        if (currentPage < totalPages - 3) links.add(new PageLink(-1, 0, false, true));
-        if (totalPages > 1) links.add(new PageLink(totalPages - 1, totalPages, currentPage == totalPages - 1, false));
+        if (currentPage < totalPages - 3)
+            links.add(new PageLink(-1, 0, false, true));
+        if (totalPages > 1)
+            links.add(new PageLink(totalPages - 1, totalPages, currentPage == totalPages - 1, false));
         return links;
+    }
+
+    @GetMapping("/import")
+    public String afficherFormulaireImport() {
+        return "fournisseur/import";
+    }
+
+    @PostMapping("/import")
+    public String traiterImportCsv(@RequestParam("fichier") MultipartFile fichier,
+            RedirectAttributes attributsRedirect) {
+        try {
+            ImportResult resultat = fournisseurService.importerFournisseursCsv(fichier);
+
+            if (resultat.getSuccessCount() > 0) {
+                attributsRedirect.addFlashAttribute("success",
+                        resultat.getSuccessCount() + " fournisseur(s) importé(s).");
+            }
+            if (resultat.hasWarnings()) {
+                attributsRedirect.addFlashAttribute("warnings", resultat.getWarnings());
+            }
+            if (resultat.hasErrors()) {
+                attributsRedirect.addFlashAttribute("importErrors", resultat.getErrors());
+                return "redirect:/fournisseur/import";
+            }
+
+            return "redirect:/fournisseur/home";
+
+        } catch (IllegalArgumentException e) {
+            attributsRedirect.addFlashAttribute("error", e.getMessage());
+            return "redirect:/fournisseur/import";
+        } catch (IOException e) {
+            attributsRedirect.addFlashAttribute("error", "Erreur lecture fichier : " + e.getMessage());
+            return "redirect:/fournisseur/import";
+        }
     }
 
     @GetMapping("/home")
@@ -105,13 +143,11 @@ public class FournisseurController {
             sortParam = DEFAULT_SORT_FIELD + ",asc";
         }
 
-        // ─── Pagination BDD ───
         int pageSize = Math.min(Math.max(size, 1), DEFAULT_PAGE_SIZE);
         Pageable pageable = PageRequest.of(Math.max(page, 0), pageSize, sortObj);
         Page<FournisseurModel> result = fournisseurService.searchFournisseurs(
                 nom, email, telephone, adresse, actifBool, pageable);
 
-        // ─── Modèle ───
         if (!model.containsAttribute("fournisseurModel")) {
             model.addAttribute("fournisseurModel", new FournisseurModel());
         }
@@ -165,6 +201,7 @@ public class FournisseurController {
         }
         try {
             fournisseurModel.setDate_creation(LocalDateTime.now());
+
             fournisseurService.persistFournisseur(fournisseurModel);
             rad.addFlashAttribute("success", "Le fournisseur a été ajouté avec succès !");
         } catch (Exception e) {

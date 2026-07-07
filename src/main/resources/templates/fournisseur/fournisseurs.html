@@ -115,9 +115,12 @@
                                         <option value="false" th:selected="${actif == 'false'}">Inactif</option>
                                     </select>
                                 </div>
-                                <div class="md:col-span-5 lg:col-span-2 flex items-end space-x-3 mt-3">
+                                <div class="md:col-span-5 lg:col-span-3 flex items-end space-x-4 mt-3">
                                     <button type="submit" class="px-5 py-2.5 text-sm font-semibold bg-slate-800 hover:bg-slate-900 text-white rounded-xl transition-colors shadow-sm">Rechercher</button>
                                     <a th:href="@{/fournisseur/home(size=${pageSize})}" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">Réinitialiser</a>
+                                    <a th:href="@{/fournisseur/import}" class="px-5 py-2.5 text-sm font-medium text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-xl transition-colors">
+                                        Importer CSV
+                                    </a>
                                 </div>
                             </div>
                             <input type="hidden" name="sort" th:value="${sortParam}" th:if="${sortParam != null}" />
