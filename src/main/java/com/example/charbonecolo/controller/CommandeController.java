@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.boot.web.server.autoconfigure.ServerProperties.Reactive.Session;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -31,8 +32,10 @@ import org.springframework.format.annotation.DateTimeFormat;
 import com.example.charbonecolo.dto.CommandeDto;
 import com.example.charbonecolo.dto.CommandeInput;
 import com.example.charbonecolo.dto.CriteriaWrapper;
+import com.example.charbonecolo.dto.DetailErrorWrapper;
 import com.example.charbonecolo.dto.SessionDetailErrorWrapper;
 import com.example.charbonecolo.exception.InvalidCommandeException;
+import com.example.charbonecolo.exception.InvalidDetailException;
 import com.example.charbonecolo.exception.StockUnavailableException;
 import com.example.charbonecolo.model.ClientModel;
 import com.example.charbonecolo.model.CommandeModel;
@@ -88,7 +91,8 @@ public class CommandeController {
     public ModelAndView inputProducts(HttpSession session) {
         ModelAndView mav = new ModelAndView("stitch/module_commercial/form_produit");
         List<DetailCommandeModel> details = (List<DetailCommandeModel>) session.getAttribute("tmp_details");
-        Map<Integer, SessionDetailErrorWrapper> errors = (Map<Integer, SessionDetailErrorWrapper>) session.getAttribute("tmp_errors");
+        Map<Integer, SessionDetailErrorWrapper> errors = (Map<Integer, SessionDetailErrorWrapper>) session
+                .getAttribute("tmp_errors");
         Double montantTotal = 0.0;
         if (details != null) {
             montantTotal = details.parallelStream().mapToDouble(e -> e.findMontant()).sum();
@@ -105,13 +109,14 @@ public class CommandeController {
     @SuppressWarnings("unchecked")
     public ModelAndView storeProductInSession(HttpSession session, @ModelAttribute DetailCommandeModel detail) {
         List<DetailCommandeModel> details = (List<DetailCommandeModel>) session.getAttribute("tmp_details");
-        Map<Integer, SessionDetailErrorWrapper> errors = (Map<Integer, SessionDetailErrorWrapper>) session.getAttribute("tmp_errors");
+        Map<Integer, SessionDetailErrorWrapper> errors = (Map<Integer, SessionDetailErrorWrapper>) session
+                .getAttribute("tmp_errors");
         ModelAndView mav = new ModelAndView("redirect:/cmd/new/products");
         if (details == null) {
             details = new ArrayList<>();
             session.setAttribute("tmp_details", details);
         }
-        if(errors == null) {
+        if (errors == null) {
             errors = new HashMap<>();
             session.setAttribute("tmp_errors", errors);
         }
@@ -150,7 +155,7 @@ public class CommandeController {
 
     @PostMapping("/cancel")
     public ModelAndView cancelCommande(@RequestParam("id") Integer idCommande) {
-        ModelAndView mav = new ModelAndView("stitch/module_commercial/liste_commande");
+        ModelAndView mav = new ModelAndView("redirect:/cmd");
         commandeService.cancelCommande(idCommande);
         return mav;
     }
@@ -159,11 +164,12 @@ public class CommandeController {
     @GetMapping("/session/products/delete/{index}")
     public ModelAndView deleteProductFromSession(HttpSession session, @PathVariable Integer index) {
         List<DetailCommandeModel> details = (List<DetailCommandeModel>) session.getAttribute("tmp_details");
-        Map<Integer, SessionDetailErrorWrapper> errors = (Map<Integer, SessionDetailErrorWrapper>) session.getAttribute("tmp_errors");
+        Map<Integer, SessionDetailErrorWrapper> errors = (Map<Integer, SessionDetailErrorWrapper>) session
+                .getAttribute("tmp_errors");
         if (details != null && index >= 0 && index < details.size()) {
             details.remove((int) index);
         }
-        if(errors != null) {
+        if (errors != null) {
             errors.remove(index);
         }
         return new ModelAndView("redirect:/cmd/new/products");
@@ -218,6 +224,8 @@ public class CommandeController {
         CommandeModel commande = commandeService.findById(id);
         List<ProduitModel> produits = produitService.findAll();
         session.setAttribute("tmp_cmd_update", commande);
+        session.setAttribute("update_errors", new HashMap<>());
+        session.setAttribute("entry_errors", new HashMap<>());
         System.out.println("----------------");
         System.out.println(model.getAttribute("clientDto"));
         System.out.println("----------------");
@@ -242,11 +250,23 @@ public class CommandeController {
     }
 
     @PostMapping("/detail/update/add")
-    public ModelAndView addDetailUpdateMode(HttpSession session, @ModelAttribute DetailCommandeModel detail) {
+    public ModelAndView addDetailUpdateMode(HttpSession session, @ModelAttribute DetailCommandeModel detail,
+            RedirectAttributes ra) {
         CommandeModel tmp = (CommandeModel) session.getAttribute("tmp_cmd_update");
         detail.setCommande(tmp);
         detail.setMontant(new BigDecimal(0));
-        commandeService.saveDetail(detail);
+        try {
+            commandeService.checkDetailEntry(detail);
+            commandeService.saveDetail(detail);
+        } catch (InvalidDetailException ex) {
+            ra.addFlashAttribute("entryError", ex.getFieldErrors());
+        } catch (StockUnavailableException ex) {
+            SessionDetailErrorWrapper wrapper = new SessionDetailErrorWrapper();
+            wrapper.setIndex(detail.getId());
+            wrapper.setMessage("Stock insuffisant");
+            wrapper.setLevel("DANGER");
+            ra.addFlashAttribute("saveError", wrapper);
+        }
         ModelAndView mav = new ModelAndView("redirect:/cmd/update/" + tmp.getId());
         return mav;
     }
@@ -265,7 +285,26 @@ public class CommandeController {
         CommandeModel tmp = (CommandeModel) session.getAttribute("tmp_cmd_update");
         detail.setCommande(tmp);
         detail.setMontant(new BigDecimal(0));
-        commandeService.saveDetail(detail);
+
+        Map<Integer, SessionDetailErrorWrapper> errors = (Map<Integer, SessionDetailErrorWrapper>) session
+                .getAttribute("update_errors");
+        Map<Integer, DetailErrorWrapper> entryErrors = (Map<Integer, DetailErrorWrapper>) session
+                .getAttribute("entry_errors");
+
+        try {
+            commandeService.checkDetailEntry(detail);
+            commandeService.update(detail);
+        } catch (InvalidDetailException ex) {
+            entryErrors.put(detail.getId(), ex.getFieldErrors());
+            ra.addFlashAttribute("entryErrors", entryErrors);
+        } catch (StockUnavailableException ex) {
+            SessionDetailErrorWrapper wrapper = new SessionDetailErrorWrapper();
+            wrapper.setIndex(detail.getId());
+            wrapper.setMessage("Stock insuffisant");
+            wrapper.setLevel("DANGER");
+            errors.put(detail.getId(), wrapper);
+            ra.addFlashAttribute("errors", errors);
+        }
         ModelAndView mav = new ModelAndView("redirect:/cmd/update/" + tmp.getId());
         return mav;
     }
@@ -298,7 +337,7 @@ public class CommandeController {
         return mav;
     }
 
-     @ResponseBody
+    @ResponseBody
     @GetMapping("/api/cli")
     public List<ClientModel> listClientsJson(
             @RequestParam(name = "kw", required = false, defaultValue = "") String keyWord) {
