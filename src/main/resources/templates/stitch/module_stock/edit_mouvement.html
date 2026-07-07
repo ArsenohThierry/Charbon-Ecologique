@@ -1,96 +1,85 @@
 <!DOCTYPE html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Modifier mouvement - Charbon Vert</title>
-<link rel="stylesheet" th:href="@{/css/output.css}" href="../../../static/css/output.css" />
-<link rel="stylesheet" th:href="@{/css/fonts.css}" href="../../../static/css/fonts.css" />
+  <meta charset="utf-8" />
+  <title>Modifier un mouvement - Charbon Vert</title>
+  <link rel="stylesheet" th:href="@{/css/output.css}" />
+  <link rel="stylesheet" th:href="@{/css/fonts.css}" />
 </head>
+
 <body class="bg-brand-light font-sans text-slate-800 min-h-screen flex">
-<aside th:replace="~{fragments/sidebar :: sidebar('entree-stock')}"></aside>
-<main class="flex-1 p-8">
-  <header class="flex justify-between items-start mb-10">
-    <div>
-      <h2 class="text-2xl font-serif font-bold text-forest-green">Gestionnaire de stock</h2>
-      <p class="text-sm text-gray-500">Modification d'un mouvement</p>
-    </div>
-  </header>
+  <aside th:replace="~{fragments/sidebar :: sidebar('etat-stock')}"></aside>
+  <main class="flex-1 p-8">
 
-  <section class="mb-6">
-    <h3 class="text-3xl font-serif font-bold mb-1">
-      Modifier <span th:text="${mouvement.typeMouvement.libelle == 'Entree' ? 'une entrée' : 'une sortie'}"></span>
-    </h3>
-    <p class="text-gray-500 text-sm italic">Mettez à jour les informations du mouvement.</p>
-  </section>
+    <h2 class="text-2xl font-bold text-brand-dark mb-6">Modifier le mouvement</h2>
 
-  <div th:if="${error}" class="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
-    <span class="font-bold">Erreur :</span> <span th:text="${error}"></span>
-  </div>
+     <div th:if="${error}" class="mb-6 p-4 bg-red-100 border border-red-200 text-red-800 rounded-lg text-sm font-medium"
+      th:text="${error}"></div>
 
-  <section class="bg-white rounded-xl border border-gray-100 shadow-sm p-8 mb-12">
-    <form th:action="@{/stock/mouvement/modifier}" method="post" class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
+    <section class="bg-white rounded-xl border border-gray-100 shadow-sm p-8 max-w-2xl">
+      <form th:action="@{/stock/mouvement/modifier}" method="post" th:object="${mouvementEdit}" class="space-y-6">
 
-      <input type="hidden" name="id" th:value="${mouvement.id}"/>
+        <input type="hidden" th:field="*{id}" />
 
-      <!-- Lot de production (entree only) -->
-      <div class="space-y-1.5" th:if="${mouvement.typeMouvement.libelle == 'Entree'}">
-        <label class="block text-sm font-semibold text-gray-700">Lot de production</label>
-        <select name="idLot" class="w-full h-11 px-4 rounded-lg border-gray-200 focus:ring-leaf-green focus:border-leaf-green text-sm">
-          <option th:each="lot : ${lots}"
-                  th:value="${lot.id}"
-                  th:text="${lot.reference} + ' — ' + ${lot.quantiteMatiereUtilisee} + ' kg'"
-                  th:selected="${lot.id == mouvement.lotProduction?.id}">
-          </option>
-        </select>
-      </div>
+        <!-- Lot (uniquement pour une entrée) -->
+        <div th:if="${mouvement.typeMouvement.id == 1}">
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Lot de production</label>
+          <p th:if="${#fields.hasErrors('idLot')}" th:errors="*{idLot}" class="text-red-600 text-xs font-medium mb-1">
+          </p>
+          <select th:field="*{idLot}" class="w-full h-11 px-4 rounded-lg border-gray-200 text-sm">
+            <option value="">Sélectionner un lot...</option>
+            <option th:each="lot : ${lotsTermines}" th:value="${lot.id}"
+              th:text="${lot.reference} + ' — ' + ${lot.quantiteMatiereUtilisee} + ' kg'"></option>
+          </select>
+        </div>
 
-      <!-- Quantité -->
-      <div class="space-y-1.5">
-        <label class="block text-sm font-semibold text-gray-700">Quantité (unités)</label>
-        <input name="quantite" type="number" th:value="${mouvement.quantite}"
-               class="w-full h-11 px-4 rounded-lg border-gray-200 focus:ring-leaf-green focus:border-leaf-green text-sm"/>
-      </div>
+        <!-- Quantité (toujours affiché) -->
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Quantité (unités)</label>
+          <p th:if="${#fields.hasErrors('quantite')}" th:errors="*{quantite}"
+            class="text-red-600 text-xs font-medium mb-1"></p>
+          <input th:field="*{quantite}" type="number"
+            class="w-full h-11 px-4 rounded-lg border-gray-200 text-sm" />
+        </div>
 
-      <!-- Motif (sortie only) -->
-      <div class="space-y-1.5" th:if="${mouvement.typeMouvement.libelle == 'Sortie'}">
-        <label class="block text-sm font-semibold text-gray-700">Motif</label>
-        <select name="idMotif" class="w-full h-11 px-4 rounded-lg border-gray-200 focus:ring-leaf-green focus:border-leaf-green text-sm">
-          <option th:each="motif : ${motifs}"
-                  th:value="${motif.id}"
-                  th:text="${motif.libelle}"
-                  th:selected="${motif.id == mouvement.motifSortie?.id}">
-          </option>
-        </select>
-      </div>
+        <!-- Motif (uniquement pour une sortie) -->
+        <div th:if="${mouvement.typeMouvement.id == 2}">
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Motif</label>
+          <p th:if="${#fields.hasErrors('idMotif')}" th:errors="*{idMotif}"
+            class="text-red-600 text-xs font-medium mb-1"></p>
+          <select th:field="*{idMotif}" class="w-full h-11 px-4 rounded-lg border-gray-200 text-sm">
+            <option value="">Sélectionner...</option>
+            <option th:each="motif : ${motifs}" th:value="${motif.id}" th:text="${motif.libelle}"></option>
+          </select>
+        </div>
 
-      <!-- Date -->
-      <div class="space-y-1.5">
-        <label class="block text-sm font-semibold text-gray-700">Date</label>
-        <input name="date" type="date"
-               th:value="${#temporals.format(mouvement.dateMouvement, 'yyyy-MM-dd')}"
-               class="w-full h-11 px-4 rounded-lg border-gray-200 focus:ring-leaf-green focus:border-leaf-green text-sm"/>
-      </div>
+        <!-- Date (toujours affiché) -->
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Date</label>
+          <p th:if="${#fields.hasErrors('date')}" th:errors="*{date}" class="text-red-600 text-xs font-medium mb-1"></p>
+          <input th:field="*{date}" type="date" class="w-full h-11 px-4 rounded-lg border-gray-200 text-sm" />
+        </div>
 
-      <!-- Boutons -->
-      <div class="md:col-span-2 pt-4 flex items-center gap-4">
-        <button type="submit"
-                class="bg-leaf-green hover:bg-forest-green text-white px-8 py-2.5 rounded-lg font-medium transition-colors text-sm">
-          Enregistrer les modifications
-        </button>
-        <a th:if="${mouvement.typeMouvement.libelle == 'Entree'}" th:href="@{/stock/entree}"
-           class="px-8 py-2.5 rounded-lg border border-gray-200 text-gray-600 font-medium hover:bg-gray-50 transition-colors text-sm">
-          Annuler
-        </a>
-        <a th:if="${mouvement.typeMouvement.libelle == 'Sortie'}" th:href="@{/stock/sortie}"
-           class="px-8 py-2.5 rounded-lg border border-gray-200 text-gray-600 font-medium hover:bg-gray-50 transition-colors text-sm">
-          Annuler
-        </a>
-      </div>
+        <div class="flex items-center gap-4 pt-4">
+          <button type="submit"
+            class="bg-brand-success hover:bg-brand-dark text-white px-8 py-2.5 rounded-lg font-medium">
+            Enregistrer les modifications
+          </button>
+          <a th:href="@{/stock/entree}" th:if="${mouvement.typeMouvement.id == 1}"
+            class="px-8 py-2.5 rounded-lg border border-gray-200 text-gray-600 font-medium hover:bg-gray-50">
+            Annuler
+          </a>
+          <a th:href="@{/stock/sortie}" th:if="${mouvement.typeMouvement.id == 2}"
+            class="px-8 py-2.5 rounded-lg border border-gray-200 text-gray-600 font-medium hover:bg-gray-50">
+            Annuler
+          </a>
+        </div>
 
-    </form>
-  </section>
-</main>
+      </form>
+    </section>
 
+  </main>
 </body>
+
 </html>

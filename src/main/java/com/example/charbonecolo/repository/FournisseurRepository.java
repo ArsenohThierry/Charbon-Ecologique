@@ -31,4 +31,6 @@ public interface FournisseurRepository extends JpaRepository<FournisseurModel, I
             @Param("adresse") String adresse,
             @Param("actif") Boolean actif,
             Pageable pageable);
+
+       long countByActifTrue();
 }

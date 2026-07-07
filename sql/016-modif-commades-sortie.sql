@@ -1,0 +1,1 @@
+ALTER TABLE commandes ADD id_mouvement_sortie INTEGER; 

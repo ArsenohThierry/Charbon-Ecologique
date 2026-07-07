@@ -16,6 +16,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.SqlResultSetMapping;
 import jakarta.persistence.Table;
 
@@ -55,6 +56,18 @@ public class CommandeModel {
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
+
+    @OneToOne
+    @JoinColumn(name = "id_mouvement_sortie", referencedColumnName = "id")
+    private MouvementStockModel mouvementSortie;
+
+    public MouvementStockModel getMouvementSortie() {
+        return mouvementSortie;
+    }
+
+    public void setMouvementSortie(MouvementStockModel mouvementSortie) {
+        this.mouvementSortie = mouvementSortie;
+    }
 
     public Integer getId() {
         return id;

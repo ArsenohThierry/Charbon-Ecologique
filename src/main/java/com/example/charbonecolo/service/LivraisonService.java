@@ -2,14 +2,19 @@ package com.example.charbonecolo.service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.charbonecolo.dto.LivraisonAnnuleeDto;
+import com.example.charbonecolo.dto.LivraisonCriteriaWrapper;
+import com.example.charbonecolo.dto.LivraisonDto;
 import com.example.charbonecolo.model.CommandeModel;
 import com.example.charbonecolo.model.CommandeStatutModel;
-import com.example.charbonecolo.model.LivraisonCommandeModel;
 import com.example.charbonecolo.model.LivraisonModel;
 import com.example.charbonecolo.model.LivraisonStatutModel;
 import com.example.charbonecolo.model.StatutCommandeModel;
@@ -53,8 +58,20 @@ public class LivraisonService {
         return livraisonRepository.findById(id);
     }
 
-    public List<LivraisonCommandeModel> findCommandesByLivraisonId(Integer livraisonId) {
-        return livraisonCommandeRepository.findByIdLivraison(livraisonId);
+    public String findCommandeReferenceByLivraisonId(Integer livraisonId) {
+        LivraisonModel livraison = livraisonRepository.findById(livraisonId).orElse(null);
+        if (livraison != null && livraison.getCommande() != null) {
+            return livraison.getCommande().getReference();
+        }
+        return null;
+    }
+
+    public Integer findCommandeIdByLivraisonId(Integer livraisonId) {
+        LivraisonModel livraison = livraisonRepository.findById(livraisonId).orElse(null);
+        if (livraison != null && livraison.getCommande() != null) {
+            return livraison.getCommande().getId();
+        }
+        return null;
     }
 
     public List<StatutLivraisonModel> findStatutsByLivraisonId(Integer livraisonId) {
@@ -62,31 +79,26 @@ public class LivraisonService {
     }
 
     @Transactional
-    public LivraisonModel createLivraison(LivraisonModel livraison, List<Integer> commandeIds) {
+    public LivraisonModel createLivraison(LivraisonModel livraison, Integer commandeId) {
         livraison.setReference(generateReference());
+
+        CommandeModel commande = commandeRepository.findById(commandeId)
+                .orElseThrow(() -> new RuntimeException("Commande introuvable : " + commandeId));
+        livraison.setCommande(commande);
+
         LivraisonModel saved = livraisonRepository.save(livraison);
 
-        for (Integer commandeId : commandeIds) {
-            LivraisonCommandeModel link = new LivraisonCommandeModel();
-            link.setIdLivraison(saved.getId());
-            link.setIdCommande(commandeId);
-            livraisonCommandeRepository.save(link);
+        // Statut commande → "en livraison" (3)
+        CommandeStatutModel statutEnLivraison = new CommandeStatutModel();
+        statutEnLivraison.setId(3);
+        StatutCommandeModel sc = new StatutCommandeModel();
+        sc.setCommande(commande);
+        sc.setStatut(statutEnLivraison);
+        statutCommandeRepository.save(sc);
 
-            CommandeModel commande = commandeRepository.findById(commandeId)
-                    .orElseThrow(() -> new RuntimeException("Commande introuvable : " + commandeId));
-
-            CommandeStatutModel statutEnLivraison = new CommandeStatutModel();
-            statutEnLivraison.setId(3);
-
-            StatutCommandeModel sc = new StatutCommandeModel();
-            sc.setCommande(commande);
-            sc.setStatut(statutEnLivraison);
-            statutCommandeRepository.save(sc);
-        }
-
+        // Statut livraison → "En cours" (1)
         LivraisonStatutModel statutEnCours = new LivraisonStatutModel();
         statutEnCours.setId(1);
-
         StatutLivraisonModel sl = new StatutLivraisonModel();
         sl.setLivraison(saved);
         sl.setStatut(statutEnCours);
@@ -97,7 +109,82 @@ public class LivraisonService {
 
     @Transactional
     public LivraisonModel updateLivraison(LivraisonModel livraison) {
+        // Conserver la commande existante
+        LivraisonModel existante = livraisonRepository.findById(livraison.getId())
+                .orElseThrow(() -> new RuntimeException("Livraison introuvable : " + livraison.getId()));
+        livraison.setCommande(existante.getCommande());
+        livraison.setReference(existante.getReference());
         return livraisonRepository.save(livraison);
+    }
+
+    @Transactional
+    public void livrerLivraison(Integer id) {
+        LivraisonModel livraison = livraisonRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Livraison introuvable : " + id));
+
+        LivraisonStatutModel statutEnLivraison = new LivraisonStatutModel();
+        statutEnLivraison.setId(4); // "En livraison"
+
+        StatutLivraisonModel sl = new StatutLivraisonModel();
+        sl.setLivraison(livraison);
+        sl.setStatut(statutEnLivraison);
+        statutLivraisonRepository.save(sl);
+    }
+
+    @Transactional
+    public void terminerLivraison(Integer id) {
+        LivraisonModel livraison = livraisonRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Livraison introuvable : " + id));
+
+        LivraisonStatutModel statutTermine = new LivraisonStatutModel();
+        statutTermine.setId(2); // "Terminé"
+
+        StatutLivraisonModel sl = new StatutLivraisonModel();
+        sl.setLivraison(livraison);
+        sl.setStatut(statutTermine);
+        statutLivraisonRepository.save(sl);
+
+        // Statut commande → "livre" (4)
+        if (livraison.getCommande() != null) {
+            CommandeStatutModel statutLivre = new CommandeStatutModel();
+            statutLivre.setId(4);
+            StatutCommandeModel sc = new StatutCommandeModel();
+            sc.setCommande(livraison.getCommande());
+            sc.setStatut(statutLivre);
+            statutCommandeRepository.save(sc);
+        }
+    }
+
+    @Transactional
+    public void reporterLivraison(Integer id, LocalDateTime nouvelleDate) {
+        LivraisonModel livraison = livraisonRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Livraison introuvable : " + id));
+        livraison.setDateLivraison(nouvelleDate);
+        livraisonRepository.save(livraison);
+    }
+
+    @Transactional
+    public void annulerLivraison(Integer id) {
+        LivraisonModel livraison = livraisonRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Livraison introuvable : " + id));
+
+        LivraisonStatutModel statutAnnule = new LivraisonStatutModel();
+        statutAnnule.setId(3); // "Annulé"
+
+        StatutLivraisonModel sl = new StatutLivraisonModel();
+        sl.setLivraison(livraison);
+        sl.setStatut(statutAnnule);
+        statutLivraisonRepository.save(sl);
+
+        // Remettre la commande en statut "commande" (2) pour qu'elle soit re-sélectionnable
+        if (livraison.getCommande() != null) {
+            CommandeStatutModel statutCommande = new CommandeStatutModel();
+            statutCommande.setId(2);
+            StatutCommandeModel sc = new StatutCommandeModel();
+            sc.setCommande(livraison.getCommande());
+            sc.setStatut(statutCommande);
+            statutCommandeRepository.save(sc);
+        }
     }
 
     @Transactional
@@ -110,6 +197,35 @@ public class LivraisonService {
 
     public List<Object[]> findAvailableCommandes() {
         return commandeRepository.findCommandesDisponibles();
+    }
+
+    public Slice<LivraisonDto> listLivraisons(Pageable pageable, LivraisonCriteriaWrapper wrapper) {
+        Slice<Object[]> sliceBrut = livraisonRepository.findLivraisonsFiltrees(pageable, wrapper);
+
+        return sliceBrut.map(ligne -> new LivraisonDto(
+                (Integer) ligne[0],
+                (String) ligne[1],
+                (LocalDateTime) ligne[2],
+                (String) ligne[3],
+                (String) ligne[4],
+                (String) ligne[5],
+                (String) ligne[6],
+                (Integer) ligne[7]
+        ));
+    }
+
+    public List<LivraisonAnnuleeDto> getLivraisonsAnnulees() {
+        List<Object[]> resultats = livraisonRepository.findLivraisonsAnnulees();
+        List<LivraisonAnnuleeDto> dtos = new ArrayList<>();
+        for (Object[] ligne : resultats) {
+            dtos.add(new LivraisonAnnuleeDto(
+                    (Integer) ligne[0],
+                    (String) ligne[1],
+                    (Integer) ligne[2],
+                    (String) ligne[3]
+            ));
+        }
+        return dtos;
     }
 
     private String generateReference() {

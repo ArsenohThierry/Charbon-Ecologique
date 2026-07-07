@@ -26,4 +26,10 @@ public interface StatutCommandeRepository extends JpaRepository<StatutCommandeMo
 
     List<StatutCommandeModel> findAllByCommandeIdInOrderByDateStatutCommandeDesc(List<Integer> ids);
 
+    @Query("""
+            SELECT s FROM StatutCommandeModel s WHERE s.commande.id = :idCommande 
+            ORDER BY s.dateStatutCommande DESC LIMIT 1
+            """)
+    StatutCommandeModel getLastStatutOf(@Param("idCommande") Integer idCommande);
+
 }

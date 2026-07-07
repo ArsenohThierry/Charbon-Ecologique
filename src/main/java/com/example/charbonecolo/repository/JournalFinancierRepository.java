@@ -10,6 +10,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Repository
 public interface JournalFinancierRepository extends JpaRepository<JournalFinancierModel, Long> {
@@ -24,6 +26,11 @@ public interface JournalFinancierRepository extends JpaRepository<JournalFinanci
     List<JournalFinancierModel> findByTypeJournal_IdOrderByDateOperationDesc(Integer typeJournalId);
 
     List<JournalFinancierModel> findByOrigine_IdOrderByDateOperationDesc(Integer origineId);
+
+    // Méthode pour la pagination
+    Page<JournalFinancierModel> findAllByOrderByDateOperationDesc(Pageable pageable);
+    Page<JournalFinancierModel> findByDateOperationBetweenOrderByDateOperationDesc(LocalDateTime debut, LocalDateTime   fin, Pageable pageable);
+    Page<JournalFinancierModel> findByTypeJournal_IdOrderByDateOperationDesc(Integer typeJournalId, Pageable pageable);
 
     @Query("SELECT COALESCE(SUM(j.debit), 0) FROM JournalFinancierModel j " +
            "WHERE j.typeJournal.code IN ('VTE', 'VENTE') AND j.dateOperation BETWEEN :debut AND :fin")

@@ -21,4 +21,8 @@ public class ClientService {
     public ClientModel findById(Integer id) {
         return clientRepository.findById(id).orElse(null);
     }
+
+    public List<ClientModel> findByName(String nom) {
+        return clientRepository.findByNomContainingIgnoreCase(nom);
+    }
 }

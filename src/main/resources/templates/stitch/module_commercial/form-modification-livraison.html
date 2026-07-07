@@ -11,6 +11,11 @@
     <style>
         .sidebar-scroll::-webkit-scrollbar { width: 4px; }
         .sidebar-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
+        .badge { padding: 2px 12px; border-radius: 9999px; font-size: 0.75rem; font-weight: 500; }
+        .badge-pending { background-color: #fef3c7; color: #92400e; }
+        .badge-shipping { background-color: #ffedd5; color: #9a3412; }
+        .badge-delivered { background-color: #dcfce7; color: #166534; }
+        .badge-cancelled { background-color: #fee2e2; color: #991b1b; }
     </style>
 </head>
 
@@ -40,6 +45,21 @@
                 <p class="text-sm text-gray-500">Mettre à jour les informations de la livraison.</p>
             </div>
 
+            <!-- Erreur globale -->
+            <div th:if="${livraisonError != null}" class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <p class="text-red-700 text-sm font-medium">Veuillez corriger les erreurs ci-dessous.</p>
+            </div>
+
+            <!-- Statut actuel -->
+            <div th:if="${not #lists.isEmpty(statuts)}" class="mb-6">
+                <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Statut actuel :</span>
+                <span th:text="${statuts[#lists.size(statuts)-1].statut.libelle}"
+                      th:class="'badge badge-' + ${#strings.toLowerCase(statuts[#lists.size(statuts)-1].statut.libelle) == 'en cours' ? 'pending' : 
+                        (#strings.toLowerCase(statuts[#lists.size(statuts)-1].statut.libelle) == 'en livraison' ? 'shipping' : 
+                        (#strings.toLowerCase(statuts[#lists.size(statuts)-1].statut.libelle) == 'terminé' ? 'delivered' : 'cancelled'))}"
+                      class="ml-2">En cours</span>
+            </div>
+
             <section class="bg-white rounded-xl shadow-sm border border-gray-100 p-8 max-w-5xl">
                 <form class="space-y-6" method="post" th:action="@{/livraisons/update/{id}(id=${livraison.id})}">
                     <div class="mb-6">
@@ -50,13 +70,17 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                         <div>
                             <label class="block text-xs font-bold text-gray-700 mb-2">Date de livraison</label>
-                            <input type="datetime-local" name="dateLivraison" required th:value="${#temporals.format(livraison.dateLivraison, 'yyyy-MM-dd\'T\'HH:mm')}"
+                            <input type="datetime-local" name="dateLivraison" th:value="${#temporals.format(livraison.dateLivraison, 'yyyy-MM-dd') + 'T' + #temporals.format(livraison.dateLivraison, 'HH:mm')}"
                                    class="w-full border-gray-300 rounded-md shadow-sm focus:border-primaryGreen focus:ring-primaryGreen text-sm px-4 py-2.5" />
+                            <p th:if="${livraisonError != null and livraisonError.dateLivraisonError != null}"
+                               class="text-red-500 text-xs mt-1" th:text="${livraisonError.dateLivraisonError}">Erreur date</p>
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-gray-700 mb-2">Lieu</label>
                             <input type="text" name="lieu" th:value="${livraison.lieu}"
                                    class="w-full border-gray-300 rounded-md shadow-sm focus:border-primaryGreen focus:ring-primaryGreen text-sm px-4 py-2.5" />
+                            <p th:if="${livraisonError != null and livraisonError.lieuError != null}"
+                               class="text-red-500 text-xs mt-1" th:text="${livraisonError.lieuError}">Erreur lieu</p>
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-gray-700 mb-2">Livreur</label>
@@ -66,18 +90,29 @@
                                 <option th:each="livreur : ${livreurs}" th:value="${livreur.id}" th:text="${livreur.nom}"
                                         th:selected="${livraison.livreur != null and livraison.livreur.id == livreur.id}"></option>
                             </select>
+                            <p th:if="${livraisonError != null and livraisonError.livreurError != null}"
+                               class="text-red-500 text-xs mt-1" th:text="${livraisonError.livreurError}">Erreur livreur</p>
                         </div>
                     </div>
 
+                    <!-- Commande liée -->
                     <div class="pt-4 border-t border-gray-100">
-                        <h4 class="text-sm font-bold text-gray-700 mb-3">Commandes liées</h4>
-                        
-                        <div th:if="${#lists.isEmpty(commandesLiees)}" class="text-sm text-gray-500">
+                        <h4 class="text-sm font-bold text-gray-700 mb-3">Commande liée</h4>
+                        <p th:if="${commandeReference != null}" class="text-sm text-gray-700 bg-gray-50 border border-gray-200 rounded-md px-4 py-2.5">
+                            <span th:text="${commandeReference}">CMD-001</span>
+                        </p>
+                        <p th:if="${commandeReference == null}" class="text-sm text-gray-500">
                             Aucune commande liée.
-                        </div>
-                        <ul th:if="${not #lists.isEmpty(commandesLiees)}" class="space-y-1">
-                            <li th:each="link : ${commandesLiees}" class="text-sm text-gray-700">
-                                Commande #<span th:text="${link.idCommande}"></span>
+                        </p>
+                    </div>
+
+                    <!-- Historique des statuts -->
+                    <div th:if="${not #lists.isEmpty(statuts)}" class="pt-4 border-t border-gray-100">
+                        <h4 class="text-sm font-bold text-gray-700 mb-3">Historique des statuts</h4>
+                        <ul class="space-y-1">
+                            <li th:each="s : ${statuts}" class="text-sm text-gray-600">
+                                <span th:text="${s.statut.libelle}">En cours</span>
+                                <span class="text-xs text-gray-400" th:text="' - ' + ${#temporals.format(s.dateStatutsLivraison, 'dd/MM/yyyy HH:mm')}">01/07/2026</span>
                             </li>
                         </ul>
                     </div>
@@ -93,6 +128,38 @@
                         </a>
                     </div>
                 </form>
+
+                <!-- Boutons Reporter et Annuler (sous le formulaire, visibles si pas Terminé) -->
+                <div th:if="${not #lists.isEmpty(statuts)}"
+                     th:with="currentStatut=${statuts[#lists.size(statuts)-1].statut.libelle}"
+                     class="mt-8 pt-6 border-t border-gray-200">
+                    <h4 class="text-sm font-bold text-gray-700 mb-3">Actions sur la livraison</h4>
+                    <div class="flex gap-4">
+                        <!-- Reporter : visible si statut = "En cours" ou "En livraison" -->
+                        <form th:if="${currentStatut == 'En cours' or currentStatut == 'En livraison'}"
+                              method="post" th:action="@{/livraisons/reporter/{id}(id=${livraison.id})}"
+                              onsubmit="return confirm('Reporter (postposer) cette livraison ? La date sera mise à jour.')"
+                              class="inline-flex items-center gap-2">
+                            <input type="datetime-local" name="dateLivraison"
+                                   th:value="${#temporals.format(livraison.dateLivraison, 'yyyy-MM-dd') + 'T' + #temporals.format(livraison.dateLivraison, 'HH:mm')}"
+                                   class="border-gray-300 rounded-md shadow-sm text-sm px-3 py-1.5" />
+                            <button type="submit"
+                                    class="bg-amber-500 text-white px-4 py-1.5 rounded-md text-xs font-medium hover:bg-amber-600 transition-all shadow-sm">
+                                Reporter
+                            </button>
+                        </form>
+
+                        <!-- Annuler : visible si statut = "En cours" ou "En livraison" -->
+                        <form th:if="${currentStatut == 'En cours' or currentStatut == 'En livraison'}"
+                              method="post" th:action="@{/livraisons/annuler/{id}(id=${livraison.id})}"
+                              onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette livraison ?')">
+                            <button type="submit"
+                                    class="bg-red-500 text-white px-4 py-1.5 rounded-md text-xs font-medium hover:bg-red-600 transition-all shadow-sm">
+                                Annuler la livraison
+                            </button>
+                        </form>
+                    </div>
+                </div>
             </section>
     </main>
 

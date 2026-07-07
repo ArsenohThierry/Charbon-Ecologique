@@ -1,24 +1,53 @@
 package com.example.charbonecolo.service;
 
-import com.example.charbonecolo.exception.BusinessException;
-import com.example.charbonecolo.model.*;
-import com.example.charbonecolo.repository.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import jakarta.annotation.PostConstruct;
-import java.time.*;
-import java.util.*;
-import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.example.charbonecolo.dto.AlerteProduitDTO;
+import com.example.charbonecolo.dto.EntreeCriteriaWrapper;
+import com.example.charbonecolo.dto.EntreeDto;
+import com.example.charbonecolo.dto.EntreeStockDTO;
+import com.example.charbonecolo.dto.EtatStockCriteriaWrapper;
+import com.example.charbonecolo.dto.EtatStockDto;
+import com.example.charbonecolo.dto.LotStockSummaryDTO;
+import com.example.charbonecolo.dto.MouvementMensuelDTO;
+import com.example.charbonecolo.dto.SortieCriteriaWrapper;
+import com.example.charbonecolo.dto.SortieDto;
+import com.example.charbonecolo.dto.SortieStockDTO;
+import com.example.charbonecolo.exception.BusinessException;
+import com.example.charbonecolo.exception.FieldBusinessException;
+import com.example.charbonecolo.model.LotProductionModel;
+import com.example.charbonecolo.model.LotStatutsModel;
+import com.example.charbonecolo.model.MotifSortieModel;
+import com.example.charbonecolo.model.MouvementSortieDetailModel;
+import com.example.charbonecolo.model.MouvementStockModel;
+import com.example.charbonecolo.model.ProduitModel;
+import com.example.charbonecolo.model.SeuilModel;
+import com.example.charbonecolo.model.TypeMouvementStockModel;
+import com.example.charbonecolo.repository.AlerteSeuilRepository;
+import com.example.charbonecolo.repository.LotProductionRepository;
+import com.example.charbonecolo.repository.LotStatutsRepository;
+import com.example.charbonecolo.repository.MotifSortieRepository;
+import com.example.charbonecolo.repository.MouvementSortieDetailRepository;
+import com.example.charbonecolo.repository.MouvementStockRepository;
+import com.example.charbonecolo.repository.ProduitRepository;
+import com.example.charbonecolo.repository.SeuilRepository;
+import com.example.charbonecolo.repository.StatutsLotProductionRepository;
+import com.example.charbonecolo.repository.TypeMouvementStockRepository;
 
 @Service
 public class MouvementStockService {
@@ -52,18 +81,6 @@ public class MouvementStockService {
     private List<SeuilModel> ruptures;
     private List<SeuilModel> faibles;
 
-    @PostConstruct
-    private void init() {
-        sortieType = typeMouvementStockRepository.findByLibelle("Sortie").orElse(null);
-        sorties = mouvementStockRepository.findByTypeMouvement(sortieType);
-        entreeType = typeMouvementStockRepository.findByLibelle("Entree").orElse(null);
-        entrees = mouvementStockRepository.findByTypeMouvement(entreeType);
-        AlerteSeuilModel ruptureAlerte = alerteSeuilRepository.findByLibelle("Rupture");
-        ruptures = seuilRepository.findByAlerteSeuil(ruptureAlerte);
-        AlerteSeuilModel faibleAlerte = alerteSeuilRepository.findByLibelle("Faible");
-        faibles = seuilRepository.findByAlerteSeuil(faibleAlerte);
-    }
-
     // ── Méthodes existantes ──────────────────────────────────────
 
     public Optional<MouvementStockModel> getMouvementStockById(Integer id) {
@@ -76,7 +93,8 @@ public class MouvementStockService {
 
     public List<LotProductionModel> getLotsTermines() {
         Optional<LotStatutsModel> termineOpt = lotStatutsRepository.findByLibelle("Termine");
-        if (termineOpt.isEmpty()) return List.of();
+        if (termineOpt.isEmpty())
+            return List.of();
         LotStatutsModel termine = termineOpt.get();
         return lotProductionRepository.findAll().stream()
                 .filter(lot -> statutsLotProductionRepository
@@ -98,117 +116,158 @@ public class MouvementStockService {
         return produitRepository.findAll();
     }
 
+    private LocalDateTime toDateTimeOuMaintenant(LocalDate date) {
+        return date != null ? LocalDateTime.of(date, LocalTime.now()) : LocalDateTime.now();
+    }
+
+    public boolean lotEstDejaConsomme(LotProductionModel lot) {
+        return mouvementSortieDetailRepository.isLotUsed(lot.getId());
+    }
+
+    public int getNombreLotsFinis() {
+        return getLotsTermines().size();
+    }
+
     // ── ENTRÉE ───────────────────────────────────────────────────
 
     @Transactional
-    public MouvementStockModel saveEntreeStock(Integer idLot, Integer quantite, LocalDate date) {
-        LotProductionModel lot = lotProductionRepository.findById(idLot).orElseThrow();
+    public void saveEntreeStock(EntreeStockDTO entry) {
 
-        lot.setQuantiteRestante(
-            (lot.getQuantiteRestante() != null ? lot.getQuantiteRestante() : 0) + quantite
-        );
+        LotProductionModel lot = lotProductionRepository.findById(entry.getIdLot())
+                .orElseThrow();
+
+        if (mouvementStockRepository.existsEntreeByLotProduction(lot)) {
+            throw new FieldBusinessException("idLot", "Ce lot est déjà en stock.");
+        }
+
+        LocalDateTime dateEntree = toDateTimeOuMaintenant(entry.getDateEntree());
+        LocalDateTime dateTermine = statutsLotProductionRepository.findDateTermineByLotProductionId(lot.getId())
+                .orElseThrow(() -> new BusinessException("Le lot n'a pas encore été terminé."));
+        lot.setQuantiteProduitReelle(entry.getQuantite());
+        if (dateEntree.isBefore(lot.getDateEntreeLot())) {
+            throw new BusinessException("Le lot n'a pas encore ete produit a la date d'entree en stock.");
+        }
+        if (dateEntree.isBefore(dateTermine)) {
+            throw new BusinessException("Le lot n'a pas encore été terminé à la date d'entrée choisie.");
+        }
+        lot.setDateFinReelle(dateEntree);
         lotProductionRepository.save(lot);
 
         MouvementStockModel mouvement = new MouvementStockModel();
         mouvement.setLotProduction(lot);
-        mouvement.setQuantite(quantite);
-        mouvement.setDateMouvement(date != null ? LocalDateTime.of(date, LocalTime.now()) : LocalDateTime.now());
+        mouvement.setQuantite(entry.getQuantite());
+        mouvement.setDateMouvement(dateEntree);
         mouvement.setTypeMouvement(typeMouvementStockRepository.findById(1).orElseThrow());
         mouvement.setMotifSortie(null);
-        return mouvementStockRepository.save(mouvement);
+
+        mouvementStockRepository.save(mouvement);
     }
 
     @Transactional
-    public MouvementStockModel updateEntreeStock(Integer id, Integer idLot, Integer quantite, LocalDate date) {
-        MouvementStockModel mouvement = mouvementStockRepository.findById(id).orElseThrow();
-        LotProductionModel oldLot = mouvement.getLotProduction();
-        LotProductionModel newLot = lotProductionRepository.findById(idLot).orElseThrow();
-
-        int oldQte = mouvement.getQuantite();
-
-        if (!oldLot.getId().equals(newLot.getId())) {
-            oldLot.setQuantiteRestante(oldLot.getQuantiteRestante() - oldQte);
-            lotProductionRepository.save(oldLot);
-            newLot.setQuantiteRestante(
-                (newLot.getQuantiteRestante() != null ? newLot.getQuantiteRestante() : 0) + quantite
-            );
-            lotProductionRepository.save(newLot);
-        } else {
-            int diff = quantite - oldQte;
-            newLot.setQuantiteRestante(newLot.getQuantiteRestante() + diff);
-            lotProductionRepository.save(newLot);
+    public void updateEntreeStock(EntreeStockDTO dto) {
+        if (dto.getId() == null) {
+            throw new IllegalArgumentException("L'identifiant du mouvement est requis pour une mise à jour.");
         }
 
-        mouvement.setLotProduction(newLot);
-        mouvement.setQuantite(quantite);
-        mouvement.setDateMouvement(date != null ? LocalDateTime.of(date, LocalTime.now()) : LocalDateTime.now());
-        return mouvementStockRepository.save(mouvement);
+        MouvementStockModel mouvement = mouvementStockRepository.findById(dto.getId()).orElseThrow();
+
+        LotProductionModel lot = mouvement.getLotProduction();
+        if (lotEstDejaConsomme(lot)) {
+            throw new BusinessException(
+                    "Modification impossible : ce lot a déjà été utilisé dans des sorties.");
+        }
+
+        if(dto.getQuantite() <= 0) {
+            throw new FieldBusinessException("quantite", "La quantité doit être supérieure à zéro.");
+        }
+        lot.setQuantiteProduitReelle(dto.getQuantite());
+        lotProductionRepository.save(lot);
+
+        mouvement.setQuantite(dto.getQuantite());
+        if(dto.getDateEntree() != null && dto.getDateEntree().isBefore(lot.getDateEntreeLot().toLocalDate())) {
+            throw new FieldBusinessException("dateEntree", "La date d'entrée ne peut pas être antérieure à la date de production du lot.");
+        }
+        mouvement.setDateMouvement(toDateTimeOuMaintenant(dto.getDateEntree()));
+
+        mouvementStockRepository.save(mouvement);
     }
 
     // ── SORTIE (FIFO) ────────────────────────────────────────────
 
     @Transactional
-    public MouvementStockModel saveSortieStock(Integer idProduit, Integer quantite, Integer idMotif, LocalDate date) {
+    public void saveSortieStock(SortieStockDTO dto) {
+        Integer idProduit = dto.getIdProduit();
+        Integer quantite = dto.getQuantite();
+        Integer idMotif = dto.getIdMotif();
+        LocalDate date = dto.getDateSortie() != null ? dto.getDateSortie() : LocalDate.now();
+
         List<LotProductionModel> lotsDisponibles = lotProductionRepository
                 .findLotsWithStockByProduitOrderByDateAsc(idProduit);
 
         int totalDisponible = lotsDisponibles.stream()
-                .mapToInt(l -> l.getQuantiteRestante() != null ? l.getQuantiteRestante() : 0)
+                .mapToInt(l -> getStockDisponible(l.getId()))
                 .sum();
 
         if (totalDisponible < quantite) {
-            throw new BusinessException(
-                "Stock insuffisant pour ce produit. Disponible: " + totalDisponible + ", demandé: " + quantite
-            );
+            throw new FieldBusinessException("quantite",
+                    "Stock insuffisant. Disponible: " + totalDisponible + ", demandé: " + quantite);
         }
 
         MouvementStockModel mouvement = new MouvementStockModel();
         mouvement.setLotProduction(null);
         mouvement.setQuantite(quantite);
-        mouvement.setDateMouvement(date != null ? LocalDateTime.of(date, LocalTime.now()) : LocalDateTime.now());
+        mouvement.setDateMouvement(toDateTimeOuMaintenant(date));
         mouvement.setTypeMouvement(typeMouvementStockRepository.findById(2).orElseThrow());
+
         mouvement.setMotifSortie(motifSortieRepository.findById(idMotif).orElseThrow());
         mouvement = mouvementStockRepository.save(mouvement);
 
-        int resteASortir = quantite;
+        int reste = quantite;
         List<MouvementSortieDetailModel> details = new ArrayList<>();
+        for (LotProductionModel lot : lotsDisponibles) {
+            System.out.println(
+                    lot.getReference()
+                            + " | stock = " + getStockDisponible(lot.getId())
+                            + " | entrée = " + mouvementStockRepository.getDateEntreeByLotProduction(lot));
+        }
 
         for (LotProductionModel lot : lotsDisponibles) {
-            if (resteASortir <= 0) break;
+            if (reste <= 0)
+                break;
 
-            int dispo = lot.getQuantiteRestante();
-            int pris = Math.min(dispo, resteASortir);
+            int dispo = getStockDisponible(lot.getId());
+            int pris = Math.min(dispo, reste);
 
-            lot.setQuantiteRestante(dispo - pris);
-            lotProductionRepository.save(lot);
+            if (pris <= 0)
+                continue;
 
-            MouvementSortieDetailModel detail = new MouvementSortieDetailModel();
-            detail.setMouvementSortie(mouvement);
-            detail.setLotProduction(lot);
-            detail.setQuantite(pris);
-            details.add(detail);
+            LocalDateTime dateEntreeLot = mouvementStockRepository.getDateEntreeByLotProduction(lot);
+            if (dateEntreeLot != null && date.isBefore(dateEntreeLot.toLocalDate())) {
+                throw new FieldBusinessException("dateSortie",
+                        "La date de sortie ne peut pas être antérieure à la date d'entrée du lot " + lot.getReference()
+                                + ".");
+            }
 
-            resteASortir -= pris;
+            MouvementSortieDetailModel d = new MouvementSortieDetailModel();
+            d.setMouvementSortie(mouvement);
+            d.setLotProduction(lot);
+            d.setQuantite(pris);
+            details.add(d);
+
+            reste -= pris;
         }
 
         mouvementSortieDetailRepository.saveAll(details);
-
-        return mouvement;
     }
 
     @Transactional
-    public MouvementStockModel updateSortieStock(Integer id, Integer quantite, Integer idMotif, LocalDate date) {
-        MouvementStockModel mouvement = mouvementStockRepository.findById(id).orElseThrow();
+    public void updateSortieStock(SortieStockDTO dto) {
+        if (dto.getId() == null) {
+            throw new IllegalArgumentException("L'identifiant du mouvement est requis pour une mise à jour.");
+        }
+        MouvementStockModel mouvement = mouvementStockRepository.findById(dto.getId()).orElseThrow();
 
         List<MouvementSortieDetailModel> oldDetails = mouvementSortieDetailRepository.findByMouvementSortie(mouvement);
-
-        for (MouvementSortieDetailModel detail : oldDetails) {
-            LotProductionModel lot = detail.getLotProduction();
-            lot.setQuantiteRestante(lot.getQuantiteRestante() + detail.getQuantite());
-            lotProductionRepository.save(lot);
-        }
-
-        mouvementSortieDetailRepository.deleteByMouvementSortie(mouvement);
 
         Integer idProduit = oldDetails.isEmpty() ? null : oldDetails.get(0).getLotProduction().getProduit().getId();
 
@@ -216,35 +275,50 @@ public class MouvementStockService {
             throw new IllegalStateException("Impossible de déterminer le produit de la sortie");
         }
 
-        mouvement.setQuantite(quantite);
-        mouvement.setMotifSortie(motifSortieRepository.findById(idMotif).orElseThrow());
-        mouvement.setDateMouvement(date != null ? LocalDateTime.of(date, LocalTime.now()) : LocalDateTime.now());
+        mouvementSortieDetailRepository.deleteByMouvementSortie(mouvement);
+
+        LocalDate date = dto.getDateSortie() != null ? dto.getDateSortie() : LocalDate.now();
+
+        mouvement.setQuantite(dto.getQuantite());
+        if(dto.getIdMotif() == null) {
+            throw new FieldBusinessException("idMotif", "Le motif de sortie est requis.");
+        }
+        mouvement.setMotifSortie(motifSortieRepository.findById(dto.getIdMotif()).orElseThrow());
+        mouvement.setDateMouvement(toDateTimeOuMaintenant(date));
         mouvementStockRepository.save(mouvement);
 
         List<LotProductionModel> lotsDisponibles = lotProductionRepository
                 .findLotsWithStockByProduitOrderByDateAsc(idProduit);
 
         int totalDisponible = lotsDisponibles.stream()
-                .mapToInt(l -> l.getQuantiteRestante() != null ? l.getQuantiteRestante() : 0)
+                .mapToInt(l -> getStockDisponible(l.getId()))
                 .sum();
 
-        if (totalDisponible < quantite) {
-            throw new BusinessException(
-                "Stock insuffisant après restauration. Disponible: " + totalDisponible + ", demandé: " + quantite
-            );
+        if (totalDisponible < dto.getQuantite()) {
+            throw new FieldBusinessException("quantite",
+                    "Stock insuffisant après restauration. Disponible: " + totalDisponible + ", demandé: "
+                            + dto.getQuantite());
         }
 
-        int resteASortir = quantite;
+        int resteASortir = dto.getQuantite();
         List<MouvementSortieDetailModel> newDetails = new ArrayList<>();
 
         for (LotProductionModel lot : lotsDisponibles) {
-            if (resteASortir <= 0) break;
+            if (resteASortir <= 0)
+                break;
 
-            int dispo = lot.getQuantiteRestante();
+            int dispo = getStockDisponible(lot.getId());
             int pris = Math.min(dispo, resteASortir);
 
-            lot.setQuantiteRestante(dispo - pris);
-            lotProductionRepository.save(lot);
+            if (pris <= 0)
+                continue;
+
+            LocalDateTime dateEntreeLot = mouvementStockRepository.getDateEntreeByLotProduction(lot);
+            if (dateEntreeLot != null && date.isBefore(dateEntreeLot.toLocalDate())) {
+                throw new FieldBusinessException("dateSortie",
+                        "La date de sortie ne peut pas être antérieure à la date d'entrée du lot " + lot.getReference()
+                                + ".");
+            }
 
             MouvementSortieDetailModel detail = new MouvementSortieDetailModel();
             detail.setMouvementSortie(mouvement);
@@ -256,41 +330,41 @@ public class MouvementStockService {
         }
 
         mouvementSortieDetailRepository.saveAll(newDetails);
-
-        return mouvement;
     }
 
     // ── SUPPRESSION ──────────────────────────────────────────────
-
     @Transactional
     public void deleteMouvementStock(Integer id) {
-        MouvementStockModel mouvement = mouvementStockRepository.findById(id).orElseThrow();
+
+        MouvementStockModel mouvement = mouvementStockRepository.findById(id)
+                .orElseThrow();
+
         boolean isEntree = mouvement.getTypeMouvement().getId() == 1;
 
         if (isEntree) {
+
             LotProductionModel lot = mouvement.getLotProduction();
-            if (lot != null) {
-                int nouveauStock = lot.getQuantiteRestante() - mouvement.getQuantite();
-                if (nouveauStock < 0) {
-                    throw new BusinessException(
-                        "Impossible de supprimer cette entrée : le stock du lot " + lot.getReference()
-                        + " a déjà été consommé par des sorties. Supprimez d'abord les sorties concernées."
-                    );
-                }
-                lot.setQuantiteRestante(nouveauStock);
-                lotProductionRepository.save(lot);
+
+            int stock = getStockDisponible(lot.getId()) - mouvement.getQuantite();
+
+            if (stock < 0) {
+                throw new BusinessException(
+                        "Impossible de supprimer cette entrée : une partie du stock a déjà été utilisée.");
             }
+
         } else {
-            List<MouvementSortieDetailModel> details = mouvementSortieDetailRepository.findByMouvementSortie(mouvement);
-            for (MouvementSortieDetailModel detail : details) {
-                LotProductionModel lot = detail.getLotProduction();
-                lot.setQuantiteRestante(lot.getQuantiteRestante() + detail.getQuantite());
-                lotProductionRepository.save(lot);
-            }
             mouvementSortieDetailRepository.deleteByMouvementSortie(mouvement);
         }
 
-        mouvementStockRepository.deleteById(id);
+        mouvementStockRepository.delete(mouvement);
+    }
+
+    public Integer getStockDisponible(Integer idLot) {
+
+        Integer entree = mouvementStockRepository.sumEntreesByLot(idLot);
+        Integer sortie = mouvementSortieDetailRepository.sumSortiesByLot(idLot);
+
+        return entree - sortie;
     }
 
     // ── ÉTAT DU STOCK ────────────────────────────────────────────
@@ -303,58 +377,237 @@ public class MouvementStockService {
         return mouvementSortieDetailRepository.findByMouvementSortie(mouvement);
     }
 
+    public List<LotStockSummaryDTO> getStockParLot() {
+        List<LotProductionModel> lots = lotProductionRepository.findAll();
+        List<LotStockSummaryDTO> result = new ArrayList<>();
 
+        for (LotProductionModel lot : lots) {
+            int totalEntree = mouvementStockRepository.sumEntreesByLot(lot.getId());
+            if (totalEntree == 0)
+                continue;
 
-        //calcul total sortie stock
-    public double getTotalSortieStock() {
-        return sorties.stream().mapToDouble(MouvementStockModel::getQuantite).sum();
+            int totalSortie = mouvementSortieDetailRepository.sumSortiesByLot(lot.getId());
+
+            result.add(new LotStockSummaryDTO(
+                    lot.getProduit().getId(),
+                    lot.getProduit().getNom(),
+                    lot.getReference(),
+                    totalEntree,
+                    totalSortie,
+                    totalEntree - totalSortie));
+        }
+        return result;
     }
 
-    //calcul total entree stock
-    public double getTotalEntreeStock() {
-        return entrees.stream().mapToDouble(MouvementStockModel::getQuantite).sum();
+    public int getTotalEntreeGlobal() {
+        return mouvementStockRepository.sumTotalEntrees();
     }
 
-    //calcul total stock
-    public double getTotalStock() {
-        return getTotalEntreeStock() - getTotalSortieStock();
+    public int getTotalSortieGlobal() {
+        return mouvementSortieDetailRepository.sumTotalSorties();
     }
 
-    //calcul sortie par lot
-    public double getTotalSortieStockByLot(Integer idLot) {
-        return sorties.stream()
-                .filter(m -> m.getLotProduction() != null && m.getLotProduction().getId().equals(idLot))
-                .mapToDouble(MouvementStockModel::getQuantite)
-                .sum();
+    public int getStockRestantGlobal() {
+        return getTotalEntreeGlobal() - getTotalSortieGlobal();
     }
 
-    //calcul entree par lot
-    public double getTotalEntreeStockByLot(Integer idLot) {
-        return entrees.stream()
-                .filter(m -> m.getLotProduction() != null && m.getLotProduction().getId().equals(idLot))
-                .mapToDouble(MouvementStockModel::getQuantite)
-                .sum();
+    public List<AlerteProduitDTO> getAlertesActives() {
+        List<LotStockSummaryDTO> stockParLot = getStockParLot();
+
+        // Étape 1 : additionner le restant de tous les lots, par produit
+        Map<Integer, Integer> stockParProduit = new HashMap<>();
+        Map<Integer, String> nomParProduit = new HashMap<>();
+
+        for (LotStockSummaryDTO l : stockParLot) {
+            Integer idProduit = l.produitId();
+
+            int stockActuel = stockParProduit.getOrDefault(idProduit, 0);
+            stockParProduit.put(idProduit, stockActuel + l.restant());
+
+            nomParProduit.put(idProduit, l.produitNom());
+        }
+
+        // Étape 2 : pour chaque produit, vérifier s'il y a une alerte
+        List<AlerteProduitDTO> alertes = new ArrayList<>();
+
+        for (Integer idProduit : stockParProduit.keySet()) {
+            double stockActuel = stockParProduit.get(idProduit);
+            String nomProduit = nomParProduit.get(idProduit);
+
+            double seuilValeur;
+            String niveau;
+
+            if (stockActuel <= 0) {
+                seuilValeur = 0;
+                niveau = "Rupture";
+            } else {
+                SeuilModel seuilDepasse = trouverSeuilLePlusSevere(idProduit, stockActuel);
+                if (seuilDepasse == null) {
+                    continue; // aucun seuil dépassé, pas d'alerte pour ce produit
+                }
+                seuilValeur = seuilDepasse.getValeur();
+                niveau = seuilDepasse.getAlerteSeuil().getLibelle();
+            }
+            // Calcul de la vente moyenne et de la date de rupture estimée
+            Double venteMoyenne = calculerVenteMoyenneJour(idProduit);
+
+            Double joursAvantRupture = (venteMoyenne != null && venteMoyenne > 0)
+                    ? stockActuel / venteMoyenne
+                    : null;
+
+            LocalDate ruptureEstimee = (joursAvantRupture != null)
+                    ? LocalDate.now().plusDays(Math.round(joursAvantRupture))
+                    : null;
+
+            alertes.add(new AlerteProduitDTO(
+                    nomProduit, stockActuel, seuilValeur, niveau,
+                    venteMoyenne, joursAvantRupture, ruptureEstimee));
+        }
+
+        return alertes;
     }
 
-    //calcul stock par lot
-    public double getTotalStockByLot(Integer idLot) {
-        return getTotalEntreeStockByLot(idLot) - getTotalSortieStockByLot(idLot);
+    // Cherche, parmi tous les seuils dépassés pour ce produit, celui qui a la
+    // valeur la plus basse (le plus sévère)
+    private SeuilModel trouverSeuilLePlusSevere(Integer idProduit, double stockActuel) {
+        List<SeuilModel> tousLesSeuils = seuilRepository.findAll();
+        SeuilModel seuilLePlusSevere = null;
+
+        for (SeuilModel seuil : tousLesSeuils) {
+            boolean memeProduit = seuil.getProduit().getId().equals(idProduit);
+            boolean estDepasse = stockActuel <= seuil.getValeur();
+
+            if (memeProduit && estDepasse) {
+                if (seuilLePlusSevere == null || seuil.getValeur() < seuilLePlusSevere.getValeur()) {
+                    seuilLePlusSevere = seuil;
+                }
+            }
+        }
+        return seuilLePlusSevere;
     }
 
-    //calcul total alerte rupture
-    public Integer getTotalAlertRupture() {
-        return ruptures.size();
+    public int countAlertStock() {
+        return getAlertesActives().size();
     }
 
-    //calcul total alerte faible
-    public Integer getTotalAlertFaible() {
-        return faibles.size();
+    private static final int PERIODE_MAX_JOURS = 30;
+
+    private Double calculerVenteMoyenneJour(Integer idProduit) {
+        LocalDateTime premiereSorte = mouvementSortieDetailRepository.findFirstSortieDateByProduit(idProduit);
+        if (premiereSorte == null) {
+            return null; // aucune sortie enregistrée, impossible de calculer
+        }
+
+        long joursEcoules = java.time.temporal.ChronoUnit.DAYS.between(premiereSorte, LocalDateTime.now());
+        long nombreJours = Math.max(1, Math.min(PERIODE_MAX_JOURS, joursEcoules));
+
+        LocalDateTime depuis = LocalDateTime.now().minusDays(nombreJours);
+        int totalSorties = mouvementSortieDetailRepository.sumSortiesByProduitDepuis(idProduit, depuis);
+
+        return totalSorties / (double) nombreJours;
     }
 
+    public int getStockRestantParProduit(Integer idProduit) {
+        List<LotProductionModel> lots = getLotsWithStockByProduit(idProduit);
+        int stockRestant = 0;
 
+        for (LotProductionModel lot : lots) {
+            stockRestant += getStockDisponible(lot.getId());
+        }
 
+        return stockRestant;
+    }
 
+    @Transactional(readOnly = true)
+    public Slice<SortieDto> listSorties(Pageable pageable, SortieCriteriaWrapper wrapper) {
+        Slice<Object[]> sliceBrut = mouvementStockRepository.findCustomSorties(pageable, wrapper);
 
+        return sliceBrut.map(ligne -> new SortieDto(
+                (Integer) ligne[0],
+                (String) ligne[1],
+                (Integer) ligne[2],
+                (String) ligne[3],
+                (LocalDateTime) ligne[4],
+                (String) ligne[5]));
+    }
+// @Autowired
+//     private AlerteSeuilRepository alerteSeuilRepository;
 
+//     private TypeMouvementStockModel sortieType;
+//     private List<MouvementStockModel> sorties;
+//     private TypeMouvementStockModel entreeType;
+//     private List<MouvementStockModel> entrees;
+//     private List<SeuilModel> ruptures;
+//     private List<SeuilModel> faibles;
+    @Transactional(readOnly = true)
+    public Slice<EntreeDto> listEntrees(Pageable pageable, EntreeCriteriaWrapper wrapper) {
+        Slice<Object[]> sliceBrut = mouvementStockRepository.findCustomEntrees(pageable, wrapper);
 
+        return sliceBrut.map(ligne -> new EntreeDto(
+                (Integer) ligne[0],
+                (LocalDateTime) ligne[1],
+                (String) ligne[2],
+                (String) ligne[3],
+                (Integer) ligne[4],
+                (String) ligne[5]));
+    }
+
+    @Transactional(readOnly = true)
+    public Slice<EtatStockDto> listEtatStock(Pageable pageable, EtatStockCriteriaWrapper wrapper) {
+        Slice<Object[]> sliceBrut = mouvementStockRepository.findEtatStock(pageable, wrapper);
+
+        return sliceBrut.map(ligne -> new EtatStockDto(
+                (Integer) ligne[0],
+                (String) ligne[1],
+                (String) ligne[2],
+                ((Number) ligne[3]).intValue(),
+                ((Number) ligne[4]).intValue(),
+                ((Number) ligne[5]).intValue()));
+    }
+
+    public List<SortieDto> listSortiesPourExport(SortieCriteriaWrapper wrapper, Pageable pageable) {
+        Slice<Object[]> sliceBrut = mouvementStockRepository.findCustomSorties(pageable, wrapper);
+
+        List<SortieDto> result = new ArrayList<>();
+        for (Object[] ligne : sliceBrut.getContent()) {
+            result.add(new SortieDto(
+                    (Integer) ligne[0],
+                    (String) ligne[1],
+                    (Integer) ligne[2],
+                    (String) ligne[3],
+                    (LocalDateTime) ligne[4],
+                    (String) ligne[5]));
+        }
+        return result;
+    }
+
+    // Statistiques---------------------
+
+    public List<MouvementMensuelDTO> getMouvementsParMois() {
+        LocalDateTime depuis = LocalDateTime.now().minusMonths(12);
+
+        List<Object[]> entreesBrutes = mouvementStockRepository.sumEntreesParMois(depuis);
+        List<Object[]> sortiesBrutes = mouvementStockRepository.sumSortiesParMois(depuis);
+
+        Map<String, Integer> entreesParMois = new HashMap<>();
+        for (Object[] ligne : entreesBrutes) {
+            entreesParMois.put((String) ligne[0], ((Number) ligne[1]).intValue());
+        }
+
+        Map<String, Integer> sortiesParMois = new HashMap<>();
+        for (Object[] ligne : sortiesBrutes) {
+            sortiesParMois.put((String) ligne[0], ((Number) ligne[1]).intValue());
+        }
+
+        // Génère les 12 derniers mois dans l'ordre, même ceux sans mouvement (affiche
+        // 0)
+        List<MouvementMensuelDTO> result = new ArrayList<>();
+        for (int i = 11; i >= 0; i--) {
+            String mois = LocalDate.now().minusMonths(i).format(DateTimeFormatter.ofPattern("yyyy-MM"));
+            int entree = entreesParMois.getOrDefault(mois, 0);
+            int sortie = sortiesParMois.getOrDefault(mois, 0);
+            result.add(new MouvementMensuelDTO(mois, entree, sortie));
+        }
+        return result;
+    }
 }

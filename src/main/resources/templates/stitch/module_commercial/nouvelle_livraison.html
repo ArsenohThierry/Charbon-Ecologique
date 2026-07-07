@@ -31,26 +31,37 @@
 
         <section class="mb-10">
             <h1 class="text-3xl font-bold text-brand-dark mb-1">Nouvelle livraison</h1>
-            <p class="text-gray-500 text-sm">Sélectionner les commandes à livrer et planifier la livraison.</p>
+            <p class="text-gray-500 text-sm">Planifier une livraison pour une commande.</p>
         </section>
 
         <div th:if="${param.error != null}" class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
-            Veuillez sélectionner au moins une commande.
+            Une erreur est survenue.
+        </div>
+
+        <div th:if="${livraisonError != null}" class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <p class="text-red-700 text-sm font-medium">Veuillez corriger les erreurs ci-dessous.</p>
         </div>
 
         <section class="bg-white rounded-xl border border-gray-100 shadow-sm p-8 max-w-5xl">
             <form class="space-y-6" method="post" th:action="@{/livraisons/save}">
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                     <div>
                         <label class="block text-xs font-bold text-gray-700 mb-2">Date de livraison</label>
-                        <input type="datetime-local" name="dateLivraison" required
+                        <input type="datetime-local" name="dateLivraison"
                                class="w-full border-gray-300 rounded-md shadow-sm focus:border-brand-success focus:ring-brand-success text-sm px-4 py-2.5" />
+                        <p th:if="${livraisonError != null and livraisonError.dateLivraisonError != null}"
+                           class="text-red-500 text-xs mt-1" th:text="${livraisonError.dateLivraisonError}">Erreur date</p>
                     </div>
+
                     <div>
                         <label class="block text-xs font-bold text-gray-700 mb-2">Lieu</label>
                         <input type="text" name="lieu" placeholder="Adresse de livraison"
                                class="w-full border-gray-300 rounded-md shadow-sm focus:border-brand-success focus:ring-brand-success text-sm px-4 py-2.5" />
+                        <p th:if="${livraisonError != null and livraisonError.lieuError != null}"
+                           class="text-red-500 text-xs mt-1" th:text="${livraisonError.lieuError}">Erreur lieu</p>
                     </div>
+
                     <div>
                         <label class="block text-xs font-bold text-gray-700 mb-2">Livreur</label>
                         <select name="livreur.id"
@@ -58,21 +69,27 @@
                             <option value="">Sélectionner...</option>
                             <option th:each="livreur : ${livreurs}" th:value="${livreur.id}" th:text="${livreur.nom}"></option>
                         </select>
+                        <p th:if="${livraisonError != null and livraisonError.livreurError != null}"
+                           class="text-red-500 text-xs mt-1" th:text="${livraisonError.livreurError}">Erreur livreur</p>
                     </div>
                 </div>
 
                 <div class="pt-4 border-t border-gray-100">
-                    <label class="block text-xs font-bold text-gray-700 mb-3">Commandes à livrer</label>
+                    <label class="block text-xs font-bold text-gray-700 mb-3">Commande à livrer</label>
                     <div th:if="${#lists.isEmpty(commandesDisponibles)}" class="text-sm text-amber-600 bg-amber-50 border border-amber-200 rounded-lg p-4">
                         Aucune commande disponible pour la livraison. Créez d'abord une commande.
                     </div>
-                    <div th:if="${not #lists.isEmpty(commandesDisponibles)}" class="space-y-2 max-h-64 overflow-y-auto border border-gray-200 rounded-lg p-4">
-                        <div th:each="cmd : ${commandesDisponibles}" class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-md">
-                            <input type="checkbox" name="commandeIds" th:value="${cmd[0]}"
-                                   class="rounded border-gray-300 text-brand-success focus:ring-brand-success" />
-                            <span class="text-sm text-gray-700" th:text="|#${cmd[1]} - ${cmd[2]}|"></span>
-                        </div>
-                    </div>
+                    <select th:if="${not #lists.isEmpty(commandesDisponibles)}"
+                            name="commandeId"
+                            class="w-full border-gray-300 rounded-md shadow-sm focus:border-brand-success focus:ring-brand-success text-sm px-4 py-2.5">
+                        <option value="">-- Sélectionner une commande --</option>
+                        <option th:each="cmd : ${commandesDisponibles}"
+                                th:value="${cmd[0]}"
+                                th:selected="${preselectedCommandeId == cmd[0]}"
+                                th:text="|${cmd[1]} - ${cmd[2]}|">CMD-001 - Client</option>
+                    </select>
+                    <p th:if="${livraisonError != null and livraisonError.commandeError != null}"
+                       class="text-red-500 text-xs mt-1" th:text="${livraisonError.commandeError}">Erreur commande</p>
                 </div>
 
                 <div class="flex items-center gap-4 pt-4">
