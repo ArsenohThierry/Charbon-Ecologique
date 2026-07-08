@@ -129,6 +129,13 @@ public class LivraisonService {
         sl.setLivraison(livraison);
         sl.setStatut(statutEnLivraison);
         statutLivraisonRepository.save(sl);
+        CommandeStatutModel commandeStatutModel = new CommandeStatutModel();
+        commandeStatutModel.setId(3);
+        StatutCommandeModel statutCommande = new StatutCommandeModel();
+        statutCommande.setStatut(commandeStatutModel);
+        statutCommande.setCommande(livraison.getCommande());
+        statutCommande.setDateStatutCommande(LocalDateTime.now());
+        statutCommandeRepository.save(statutCommande);
     }
 
     @Transactional

@@ -123,15 +123,24 @@ public class CommandeController {
         try {
             commandeService.stockAvailable(detail);
         } catch (StockUnavailableException e) {
-            SessionDetailErrorWrapper wrapper = new SessionDetailErrorWrapper();
-            wrapper.setIndex(details.size());
-            wrapper.setMessage("Le stock est insuffisant.");
-            wrapper.setLevel("DANGER");
-            System.out.println("EXCEPTIONNNNNNNNNNNNN");
-            System.out.println(wrapper.getIndex());
-            System.out.println("EXCEPTIONNNNNNNNNNNNN");
-            System.out.println("EXCEPTIONNNNNNNNNNNNN");
-            errors.put(wrapper.getIndex(), wrapper);
+            if (commandeService.canPassToEnAttente(detail)) {
+                session.setAttribute("immediate_status", "En attente");
+                SessionDetailErrorWrapper wrapper = new SessionDetailErrorWrapper();
+                wrapper.setIndex(details.size());
+                wrapper.setMessage("La commande peut etre passee en attente.");
+                wrapper.setLevel("WARNING");
+                errors.put(wrapper.getIndex(), wrapper);
+            } else {
+                SessionDetailErrorWrapper wrapper = new SessionDetailErrorWrapper();
+                wrapper.setIndex(details.size());
+                wrapper.setMessage("Le stock est insuffisant.");
+                wrapper.setLevel("DANGER");
+                System.out.println("EXCEPTIONNNNNNNNNNNNN");
+                System.out.println(wrapper.getIndex());
+                System.out.println("EXCEPTIONNNNNNNNNNNNN");
+                System.out.println("EXCEPTIONNNNNNNNNNNNN");
+                errors.put(wrapper.getIndex(), wrapper);
+            }
         } finally {
             ProduitModel found = produitService.findById(detail.getProduit().getId());
             detail.setProduit(found);
@@ -212,9 +221,14 @@ public class CommandeController {
         ModelAndView mav = new ModelAndView("redirect:/cmd/new");
         List<DetailCommandeModel> details = (List<DetailCommandeModel>) session.getAttribute("tmp_details");
         CommandeModel commande = (CommandeModel) session.getAttribute("tmp_cmd");
-        commandeService.save(commande, details);
+        if (session.getAttribute("immdetiate_status") == null) {
+            commandeService.save(commande, details);
+        } else {
+            commandeService.saveEnAttente(commande, details);
+        }
         session.removeAttribute("tmp_details");
         session.removeAttribute("tmp_cmd");
+        session.removeAttribute("immediate_status");
         return mav;
     }
 

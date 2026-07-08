@@ -32,4 +32,11 @@ public interface StatutCommandeRepository extends JpaRepository<StatutCommandeMo
             """)
     StatutCommandeModel getLastStatutOf(@Param("idCommande") Integer idCommande);
 
+    @Query("SELECT COUNT(sc1) > 0 FROM StatutCommandeModel sc1 " +
+           "LEFT JOIN StatutCommandeModel sc2 ON sc1.commande.id = sc2.commande.id " +
+           "AND sc1.dateStatutCommande < sc2.dateStatutCommande " +
+           "WHERE sc2.id IS NULL " + 
+           "AND sc1.statut.id = 1")
+    boolean existsAnyCommandeWithCurrentEnAttente();
+
 }
