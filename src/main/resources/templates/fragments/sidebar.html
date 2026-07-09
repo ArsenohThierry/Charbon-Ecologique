@@ -118,6 +118,35 @@
             </svg>
             Factures
         </a>
+        <!-- Finances -->
+        <div>
+            <button th:classappend="${activePage == 'tresorerie' or activePage == 'bilan' or activePage == 'kpi' or activePage == 'journal'} ? 'text-brand-accent' : 'text-gray-300'"
+                    class="w-full flex items-center justify-between px-3 py-2 text-sm hover:bg-white/10 rounded-md transition-colors dropdown-btn">
+                <span class="flex items-center gap-3">
+                    <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                        <path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                    </svg>
+                    Finances
+                </span>
+                <svg class="h-4 w-4 transition-transform dropdown-chevron" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                    <path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                </svg>
+            </button>
+            <div class="mt-1 ml-4 space-y-1 dropdown-content hidden">
+                <a th:classappend="${activePage == 'tresorerie'} ? 'bg-brand-accent text-brand-dark font-medium rounded-md' : 'text-gray-400 hover:text-white'"
+                   class="block px-3 py-2 text-xs transition-colors rounded-md"
+                   th:href="@{/finance/tresorerie}">Trésorerie</a>
+                <a th:classappend="${activePage == 'bilan'} ? 'bg-brand-accent text-brand-dark font-medium rounded-md' : 'text-gray-400 hover:text-white'"
+                   class="block px-3 py-2 text-xs transition-colors rounded-md"
+                   th:href="@{/finance/bilan}">Bilan</a>
+                <a th:classappend="${activePage == 'kpi'} ? 'bg-brand-accent text-brand-dark font-medium rounded-md' : 'text-gray-400 hover:text-white'"
+                   class="block px-3 py-2 text-xs transition-colors rounded-md"
+                   th:href="@{/finance/kpi}">Indicateurs</a>
+                <a th:classappend="${activePage == 'journal'} ? 'bg-brand-accent text-brand-dark font-medium rounded-md' : 'text-gray-400 hover:text-white'"
+                   class="block px-3 py-2 text-xs transition-colors rounded-md"
+                   th:href="@{/finance/journal}">Journal</a>
+            </div>
+        </div>
         <!-- Rapports -->
         <a class="flex items-center gap-3 px-3 py-2 text-sm text-gray-300 hover:bg-white/10 rounded-md transition-colors" href="#">
             <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewbox="0 0 24 24">
