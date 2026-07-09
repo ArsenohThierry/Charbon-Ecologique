@@ -182,4 +182,11 @@ public class LivraisonController {
     public List<LivraisonAnnuleeDto> getLivraisonsAnnulees() {
         return livraisonService.getLivraisonsAnnulees();
     }
+
+    @PostMapping("/fermer/{id}")
+    public ModelAndView close(@PathVariable Integer id) {
+        livraisonService.closeLivraison(id);
+        ModelAndView mav = new ModelAndView("redirect:/livraisons?success=ferme");
+        return mav;
+    }
 }

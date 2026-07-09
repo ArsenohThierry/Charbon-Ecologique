@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
@@ -7,6 +8,7 @@
     <link rel="stylesheet" th:href="@{/css/output.css}" href="../../../static/css/output.css" />
     <link rel="stylesheet" th:href="@{/css/fonts.css}" href="../../../static/css/fonts.css" />
 </head>
+
 <body class="bg-brand-light font-sans text-slate-800 min-h-screen flex">
     <aside th:replace="~{fragments/sidebar :: sidebar('factures')}"></aside>
     <main class="flex-1 min-h-screen">
@@ -16,8 +18,11 @@
                 <p class="text-xs text-gray-500">Commandes, livraisons & trésorerie</p>
             </div>
             <div class="flex items-center space-x-4">
-                <span class="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full border border-gray-200">Maquette · données fictives</span>
-                <div class="w-8 h-8 bg-brand-dark text-white rounded-full flex items-center justify-center text-sm font-bold">N</div>
+                <span class="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full border border-gray-200">Maquette ·
+                    données fictives</span>
+                <div
+                    class="w-8 h-8 bg-brand-dark text-white rounded-full flex items-center justify-center text-sm font-bold">
+                    N</div>
             </div>
         </header>
 
@@ -28,58 +33,101 @@
                         <h1 class="font-serif text-4xl text-brand-dark mb-2">Nouvelle facture</h1>
                         <p class="text-gray-500">Créer une facture pour une commande livrée.</p>
                     </div>
-                    <a href="/factures" class="text-sm text-slate-500 hover:text-brand-success transition flex items-center gap-1">
+                    <a href="/factures"
+                        class="text-sm text-slate-500 hover:text-brand-success transition flex items-center gap-1">
                         ← Retour
                     </a>
                 </div>
 
-                <form action="/factures/save" method="post" class="bg-white rounded-xl border border-slate-200 p-8 space-y-6 shadow-sm">
+                <form action="/factures/save" method="post"
+                    class="bg-white rounded-xl border border-slate-200 p-8 space-y-6 shadow-sm">
 
                     <input type="hidden" name="commandeId" th:value="${commande.id}" />
 
                     <div class="grid grid-cols-2 gap-6">
                         <div>
-                            <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Commande</label>
-                            <p class="text-lg font-bold text-brand-dark mt-1" th:text="${commande.reference}">CMD-001</p>
+                            <label
+                                class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Commande</label>
+                            <p class="text-lg font-bold text-brand-dark mt-1" th:text="${commande.reference}">CMD-001
+                            </p>
                         </div>
                         <div>
                             <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Client</label>
-                            <p class="text-lg font-bold text-brand-dark mt-1" th:text="${commande.client.nom}">Client</p>
+                            <p class="text-lg font-bold text-brand-dark mt-1" th:text="${commande.client.nom}">Client
+                            </p>
                         </div>
                     </div>
 
                     <div class="border-t border-slate-200 pt-6">
-                        <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 block">Montant commande (calculé automatiquement)</label>
+                        <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 block">Articles
+                            commandés</label>
+                        <div class="overflow-x-auto border border-slate-100 rounded-lg">
+                            <table class="w-full text-left border-collapse text-sm">
+                                <thead>
+                                    <tr class="bg-slate-50 border-b border-slate-100 text-slate-600 font-medium">
+                                        <th class="py-2.5 px-4">Produit</th>
+                                        <th class="py-2.5 px-4 text-right">P.U (Ar)</th>
+                                        <th class="py-2.5 px-4 text-center">Quantité</th>
+                                        <th class="py-2.5 px-4 text-right">Total (Ar)</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100 text-slate-700">
+                                    <tr th:each="detail : ${details}" class="hover:bg-slate-50/50 transition-colors">
+                                        <td class="py-3 px-4 font-medium" th:text="${detail.produit.nom}">Nom du produit
+                                        </td>
+                                        <td class="py-3 px-4 text-right"
+                                            th:text="${#numbers.formatDecimal(detail.produit.pu, 1, 'DEFAULT', 2, 'POINT')}">
+                                            0.00</td>
+                                        <td class="py-3 px-4 text-center" th:text="${detail.quantite}">1</td>
+                                        <td class="py-3 px-4 text-right font-semibold text-brand-dark"
+                                            th:text="${#numbers.formatDecimal(detail.findMontant(), 1, 'DEFAULT', 2, 'POINT')}">
+                                            0.00</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-200 pt-6 flex justify-between items-center">
+                        <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Montant total
+                            des articles</label>
                         <p class="text-2xl font-bold text-brand-dark">
-                            <span th:text="${#numbers.formatDecimal(montantCommande, 1, 'DEFAULT', 2, 'POINT')}">0.00</span> Ar
+                            <span
+                                th:text="${#numbers.formatDecimal(montantCommande, 1, 'DEFAULT', 2, 'POINT')}">0.00</span>
+                            Ar
                         </p>
                     </div>
 
                     <div>
-                        <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 block">Frais de livraison</label>
+                        <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 block">Frais de
+                            livraison</label>
                         <div class="relative w-64">
                             <input type="number" name="fraisLivraison" step="0.01" min="0" value="0.00"
-                                   class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-brand-success focus:border-brand-success bg-white" />
-                            <span class="absolute inset-y-0 right-3 flex items-center text-xs text-slate-400 font-medium">Ar</span>
+                                class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-brand-success focus:border-brand-success bg-white" />
+                            <span
+                                class="absolute inset-y-0 right-3 flex items-center text-xs text-slate-400 font-medium">Ar</span>
                         </div>
                         <p th:if="${factureError != null && factureError.fraisLivraisonError != null}"
-                           class="mt-1 text-xs text-red-500" th:text="${factureError.fraisLivraisonError}">Erreur</p>
+                            class="mt-1 text-xs text-red-500" th:text="${factureError.fraisLivraisonError}">Erreur</p>
                     </div>
 
                     <div>
-                        <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 block">Méthode de paiement</label>
+                        <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 block">Méthode
+                            de paiement</label>
                         <select name="methodePaiementId"
-                                class="w-64 py-2 border-slate-200 rounded-lg focus:ring-brand-success focus:border-brand-success text-sm bg-white">
+                            class="w-64 py-2 border-slate-200 rounded-lg focus:ring-brand-success focus:border-brand-success text-sm bg-white">
                             <option value="">Sélectionner...</option>
                             <option th:each="m : ${methodes}" th:value="${m.id}" th:text="${m.libelle}">Espèces</option>
                         </select>
                         <p th:if="${factureError != null && factureError.methodePaiementError != null}"
-                           class="mt-1 text-xs text-red-500" th:text="${factureError.methodePaiementError}">Erreur</p>
+                            class="mt-1 text-xs text-red-500" th:text="${factureError.methodePaiementError}">Erreur</p>
                     </div>
 
                     <div class="border-t border-slate-200 pt-6">
-                        <p class="text-xs text-slate-500 mb-4">En créant cette facture, un paiement sera enregistré et le statut de la commande passera à "Payée".</p>
-                        <button type="submit" class="bg-brand-success hover:bg-brand-dark text-white px-8 py-3 rounded-lg font-medium transition shadow-sm">
+                        <p class="text-xs text-slate-500 mb-4">En créant cette facture, un paiement sera enregistré et
+                            le statut de la commande passera à "Payée".</p>
+                        <button type="submit"
+                            class="bg-brand-success hover:bg-brand-dark text-white px-8 py-3 rounded-lg font-medium transition shadow-sm">
                             Créer la facture
                         </button>
                     </div>
@@ -88,4 +136,5 @@
         </section>
     </main>
 </body>
+
 </html>

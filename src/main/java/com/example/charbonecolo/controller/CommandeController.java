@@ -41,8 +41,10 @@ import com.example.charbonecolo.model.ClientModel;
 import com.example.charbonecolo.model.CommandeModel;
 import com.example.charbonecolo.model.DetailCommandeModel;
 import com.example.charbonecolo.model.ProduitModel;
+import com.example.charbonecolo.model.StatutCommandeModel;
 import com.example.charbonecolo.repository.CommandeRepository;
 import com.example.charbonecolo.repository.CommandeStatutRepository;
+import com.example.charbonecolo.repository.StatutCommandeRepository;
 import com.example.charbonecolo.service.ClientService;
 import com.example.charbonecolo.service.CommandeService;
 import com.example.charbonecolo.service.ProduitService;
@@ -61,6 +63,7 @@ public class CommandeController {
     private final ClientService clientService;
     private final ProduitService produitService;
     private final CommandeStatutRepository commandeStatutRepository;
+    private final StatutCommandeRepository statutCommandeRepository;
     static {
         sortReferences = new HashMap<>();
         sortReferences.put("reference", "reference");
@@ -71,12 +74,13 @@ public class CommandeController {
 
     public CommandeController(CommandeRepository commandeRepository, CommandeService commandeService,
             ClientService clientService, ProduitService produitService,
-            CommandeStatutRepository commandeStatutRepository) {
+            CommandeStatutRepository commandeStatutRepository, StatutCommandeRepository statutCommandeRepository) {
         this.commandeRepository = commandeRepository;
         this.commandeService = commandeService;
         this.clientService = clientService;
         this.produitService = produitService;
         this.commandeStatutRepository = commandeStatutRepository;
+        this.statutCommandeRepository = statutCommandeRepository;
     }
 
     @GetMapping("/new")
@@ -102,12 +106,15 @@ public class CommandeController {
         mav.addObject("montantTotal", montantTotal);
         mav.addObject("errors", errors);
         mav.addObject("isSavable", commandeService.isSavable(errors));
+        mav.addObject("isBlocked", session.getAttribute("blockedCommande"));
+        session.removeAttribute("blockedCommande");
         return mav;
     }
 
     @PostMapping("/new/products")
     @SuppressWarnings("unchecked")
-    public ModelAndView storeProductInSession(HttpSession session, @ModelAttribute DetailCommandeModel detail) {
+    public ModelAndView storeProductInSession(HttpSession session, @ModelAttribute DetailCommandeModel detail,
+            RedirectAttributes ra) {
         List<DetailCommandeModel> details = (List<DetailCommandeModel>) session.getAttribute("tmp_details");
         Map<Integer, SessionDetailErrorWrapper> errors = (Map<Integer, SessionDetailErrorWrapper>) session
                 .getAttribute("tmp_errors");
@@ -130,16 +137,15 @@ public class CommandeController {
                 wrapper.setMessage("La commande peut etre passee en attente.");
                 wrapper.setLevel("WARNING");
                 errors.put(wrapper.getIndex(), wrapper);
+                ra.addFlashAttribute("message", "Le stock est insuffisant ; la commande pourra être mise en attente.");
             } else {
                 SessionDetailErrorWrapper wrapper = new SessionDetailErrorWrapper();
                 wrapper.setIndex(details.size());
                 wrapper.setMessage("Le stock est insuffisant.");
                 wrapper.setLevel("DANGER");
-                System.out.println("EXCEPTIONNNNNNNNNNNNN");
-                System.out.println(wrapper.getIndex());
-                System.out.println("EXCEPTIONNNNNNNNNNNNN");
-                System.out.println("EXCEPTIONNNNNNNNNNNNN");
                 errors.put(wrapper.getIndex(), wrapper);
+                session.setAttribute("blockedCommande", true);
+                ra.addFlashAttribute("errorMessage", "Le stock est insuffisant pour ce produit.");
             }
         } finally {
             ProduitModel found = produitService.findById(detail.getProduit().getId());
@@ -151,7 +157,8 @@ public class CommandeController {
 
     @PostMapping("/new")
     public ModelAndView storeSession(HttpSession session, @ModelAttribute CommandeModel commande,
-            @RequestParam(value = "dateCommandeStr", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateCommande) {
+            @RequestParam(value = "dateCommandeStr", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateCommande,
+            RedirectAttributes ra) {
         ModelAndView mav = new ModelAndView("redirect:/cmd/new/products");
         if (dateCommande != null) {
             commande.setDateCommande(dateCommande.atStartOfDay());
@@ -159,19 +166,22 @@ public class CommandeController {
             commande.setDateCommande(LocalDateTime.now());
         }
         session.setAttribute("tmp_cmd", commande);
+        ra.addFlashAttribute("message", "Informations de commande enregistrées. Ajoutez maintenant les produits.");
         return mav;
     }
 
     @PostMapping("/cancel")
-    public ModelAndView cancelCommande(@RequestParam("id") Integer idCommande) {
+    public ModelAndView cancelCommande(@RequestParam("id") Integer idCommande, RedirectAttributes ra) {
         ModelAndView mav = new ModelAndView("redirect:/cmd");
         commandeService.cancelCommande(idCommande);
+        ra.addFlashAttribute("successMessage", "La commande a été annulée avec succès.");
         return mav;
     }
 
     @SuppressWarnings("unchecked")
     @GetMapping("/session/products/delete/{index}")
-    public ModelAndView deleteProductFromSession(HttpSession session, @PathVariable Integer index) {
+    public ModelAndView deleteProductFromSession(HttpSession session, @PathVariable Integer index,
+            RedirectAttributes ra) {
         List<DetailCommandeModel> details = (List<DetailCommandeModel>) session.getAttribute("tmp_details");
         Map<Integer, SessionDetailErrorWrapper> errors = (Map<Integer, SessionDetailErrorWrapper>) session
                 .getAttribute("tmp_errors");
@@ -181,7 +191,17 @@ public class CommandeController {
         if (errors != null) {
             errors.remove(index);
         }
+        ra.addFlashAttribute("message", "Produit supprimé du panier.");
         return new ModelAndView("redirect:/cmd/new/products");
+    }
+
+    @PostMapping("/convert")
+    public ModelAndView convertToCommande(@RequestParam("id") Integer id, RedirectAttributes ra) {
+        ModelAndView mav = new ModelAndView("redirect:/cmd/" + id);
+        CommandeModel found = commandeRepository.findById(id).get();
+        commandeService.convertEnAttenteToCommande(found);
+        ra.addFlashAttribute("successMessage", "Commande confirmée avec succès.");
+        return mav;
     }
 
     @GetMapping
@@ -217,14 +237,16 @@ public class CommandeController {
 
     @PostMapping("/save")
     @SuppressWarnings("unchecked")
-    public ModelAndView saveCommande(HttpSession session) {
+    public ModelAndView saveCommande(HttpSession session, RedirectAttributes ra) {
         ModelAndView mav = new ModelAndView("redirect:/cmd/new");
         List<DetailCommandeModel> details = (List<DetailCommandeModel>) session.getAttribute("tmp_details");
         CommandeModel commande = (CommandeModel) session.getAttribute("tmp_cmd");
-        if (session.getAttribute("immdetiate_status") == null) {
+        if (session.getAttribute("immediate_status") == null) {
             commandeService.save(commande, details);
+            ra.addFlashAttribute("successMessage", "Commande enregistrée avec succès.");
         } else {
             commandeService.saveEnAttente(commande, details);
+            ra.addFlashAttribute("successMessage", "Commande enregistrée en attente.");
         }
         session.removeAttribute("tmp_details");
         session.removeAttribute("tmp_cmd");
@@ -236,6 +258,7 @@ public class CommandeController {
     public ModelAndView updateFormDisplay(@PathVariable("id") Integer id, HttpSession session, Model model) {
         ModelAndView mav = new ModelAndView("stitch/module_commercial/modif_commande");
         CommandeModel commande = commandeService.findById(id);
+        StatutCommandeModel lastStatut = statutCommandeRepository.getLastStatutOf(id);
         List<ProduitModel> produits = produitService.findAll();
         session.setAttribute("tmp_cmd_update", commande);
         session.setAttribute("update_errors", new HashMap<>());
@@ -260,6 +283,7 @@ public class CommandeController {
         mav.addObject("commande", commande);
         mav.addObject("total", montant);
         mav.addObject("produits", produits);
+        mav.addObject("statutLibelle", lastStatut.getStatut().getLibelle());
         return mav;
     }
 
@@ -272,24 +296,29 @@ public class CommandeController {
         try {
             commandeService.checkDetailEntry(detail);
             commandeService.saveDetail(detail);
+            ra.addFlashAttribute("successMessage", "Produit ajouté à la commande.");
         } catch (InvalidDetailException ex) {
             ra.addFlashAttribute("entryError", ex.getFieldErrors());
+            ra.addFlashAttribute("errorMessage", "Veuillez vérifier les informations du produit.");
         } catch (StockUnavailableException ex) {
             SessionDetailErrorWrapper wrapper = new SessionDetailErrorWrapper();
             wrapper.setIndex(detail.getId());
             wrapper.setMessage("Stock insuffisant");
             wrapper.setLevel("DANGER");
             ra.addFlashAttribute("saveError", wrapper);
+            ra.addFlashAttribute("errorMessage", "Stock insuffisant pour ce produit.");
         }
         ModelAndView mav = new ModelAndView("redirect:/cmd/update/" + tmp.getId());
         return mav;
     }
 
     @PostMapping("/detail/delete")
-    public ModelAndView deleteDetail(@RequestParam("id") Integer idDetail, HttpSession session) {
+    public ModelAndView deleteDetail(@RequestParam("id") Integer idDetail, HttpSession session,
+            RedirectAttributes ra) {
         CommandeModel tmp = (CommandeModel) session.getAttribute("tmp_cmd_update");
         ModelAndView mav = new ModelAndView("redirect:/cmd/update/" + tmp.getId());
         commandeService.deleteDetail(idDetail);
+        ra.addFlashAttribute("successMessage", "Ligne supprimée avec succès.");
         return mav;
     }
 
@@ -308,9 +337,11 @@ public class CommandeController {
         try {
             commandeService.checkDetailEntry(detail);
             commandeService.update(detail);
+            ra.addFlashAttribute("successMessage", "Ligne de commande mise à jour.");
         } catch (InvalidDetailException ex) {
             entryErrors.put(detail.getId(), ex.getFieldErrors());
             ra.addFlashAttribute("entryErrors", entryErrors);
+            ra.addFlashAttribute("errorMessage", "Veuillez vérifier les informations de la ligne.");
         } catch (StockUnavailableException ex) {
             SessionDetailErrorWrapper wrapper = new SessionDetailErrorWrapper();
             wrapper.setIndex(detail.getId());
@@ -318,6 +349,7 @@ public class CommandeController {
             wrapper.setLevel("DANGER");
             errors.put(detail.getId(), wrapper);
             ra.addFlashAttribute("errors", errors);
+            ra.addFlashAttribute("errorMessage", "Stock insuffisant pour cette ligne.");
         }
         ModelAndView mav = new ModelAndView("redirect:/cmd/update/" + tmp.getId());
         return mav;
@@ -334,6 +366,7 @@ public class CommandeController {
         if (inputResult.hasErrors()) {
             ra.addFlashAttribute("org.springframework.validation.BindingResult.clientDto", inputResult);
             ra.addFlashAttribute("clientDto", input);
+            ra.addFlashAttribute("errorMessage", "Veuillez corriger les erreurs du client.");
             return mav;
         }
         try {
@@ -341,6 +374,7 @@ public class CommandeController {
         } catch (InvalidCommandeException e) {
             ra.addFlashAttribute("clientError", e.getFieldErrors());
             ra.addFlashAttribute("clientDto", input);
+            ra.addFlashAttribute("errorMessage", "Veuillez vérifier les informations de la commande.");
             return mav;
         }
         commande.setId(tmp.getId());
@@ -348,6 +382,7 @@ public class CommandeController {
         commande.setReference(tmp.getReference());
         commande.setDateCommande(tmp.getDateCommande());
         commandeService.save(commande);
+        ra.addFlashAttribute("successMessage", "Commande mise à jour avec succès.");
         return mav;
     }
 
@@ -362,7 +397,10 @@ public class CommandeController {
     public ModelAndView displayCommandeInfo(@PathVariable("id") Integer id) {
         ModelAndView mav = new ModelAndView("stitch/module_commercial/fiche_commande");
         CommandeDto info = commandeService.getCommandeInfo(id);
+        CommandeModel commandeObject = commandeRepository.findById(info.getId()).orElse(null);
         mav.addObject("commande", info);
+        mav.addObject("canConvert", commandeService.canConvertToCommande(commandeObject));
+        mav.addObject("idFacture", commandeService.getIdFactureOf(id));
         return mav;
     }
 }
