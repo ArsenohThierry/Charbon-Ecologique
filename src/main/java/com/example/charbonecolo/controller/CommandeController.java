@@ -263,6 +263,7 @@ public class CommandeController {
         session.setAttribute("tmp_cmd_update", commande);
         session.setAttribute("update_errors", new HashMap<>());
         session.setAttribute("entry_errors", new HashMap<>());
+        session.setAttribute("cannotUpdateLabels", List.of("en attente", "annule", "payee", "livre"));
         System.out.println("----------------");
         System.out.println(model.getAttribute("clientDto"));
         System.out.println("----------------");
