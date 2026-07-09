@@ -102,6 +102,7 @@ public class CommandeController {
         mav.addObject("montantTotal", montantTotal);
         mav.addObject("errors", errors);
         mav.addObject("isSavable", commandeService.isSavable(errors));
+        mav.addObject(session.getAttribute("blockedCommande"));
         return mav;
     }
 
@@ -140,6 +141,7 @@ public class CommandeController {
                 System.out.println("EXCEPTIONNNNNNNNNNNNN");
                 System.out.println("EXCEPTIONNNNNNNNNNNNN");
                 errors.put(wrapper.getIndex(), wrapper);
+                session.setAttribute("blockedCommande", true);
             }
         } finally {
             ProduitModel found = produitService.findById(detail.getProduit().getId());
