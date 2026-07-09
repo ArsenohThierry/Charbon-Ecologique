@@ -1,5 +1,7 @@
 package com.example.charbonecolo.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -43,4 +45,6 @@ public interface PaiementRepository extends JpaRepository<PaiementModel, Integer
     Slice<Object[]> findCommandesFiltrees(
             Pageable pageable,
             @Param("cri") FactureCriteriaWrapper cri);
+
+    public Optional<PaiementModel> findByCommandeId(Integer idCommande);
 }
