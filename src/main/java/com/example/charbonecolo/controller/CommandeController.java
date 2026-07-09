@@ -263,7 +263,6 @@ public class CommandeController {
         session.setAttribute("tmp_cmd_update", commande);
         session.setAttribute("update_errors", new HashMap<>());
         session.setAttribute("entry_errors", new HashMap<>());
-        session.setAttribute("cannotUpdateLabels", List.of("en attente", "annule", "payee", "livre"));
         System.out.println("----------------");
         System.out.println(model.getAttribute("clientDto"));
         System.out.println("----------------");
@@ -272,10 +271,10 @@ public class CommandeController {
             input.setClientNom(commande.getClient().getNom());
             input.setId(commande.getClient().getId());
             mav.addObject("clientDto", input);
-
+            
         } else {
             mav.addObject("org.springframework.validation.BindingResult.clientDto",
-                    model.getAttribute("org.springframework.validation.BindingResult.clientDto"));
+            model.getAttribute("org.springframework.validation.BindingResult.clientDto"));
             mav.addObject("clientDto", model.getAttribute("clientDto"));
         }
         List<DetailCommandeModel> details = commandeService.findDetails(id);
@@ -285,6 +284,7 @@ public class CommandeController {
         mav.addObject("total", montant);
         mav.addObject("produits", produits);
         mav.addObject("statutLibelle", lastStatut.getStatut().getLibelle());
+        mav.addObject("cannotUpdateLabels", List.of("en attente", "annule", "payee", "livre"));
         return mav;
     }
 

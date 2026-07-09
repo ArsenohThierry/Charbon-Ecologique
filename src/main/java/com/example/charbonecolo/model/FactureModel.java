@@ -1,5 +1,7 @@
 package com.example.charbonecolo.model;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -22,6 +24,17 @@ public class FactureModel {
     @ManyToOne
     @JoinColumn(name = "id_paiement", referencedColumnName = "id")
     private PaiementModel paiement;
+
+    @Column(name = "date_facture")
+    private LocalDateTime dateFacture;
+
+    public LocalDateTime getDateFacture() {
+        return dateFacture;
+    }
+
+    public void setDateFacture(LocalDateTime dateFacture) {
+        this.dateFacture = dateFacture;
+    }
 
     public Integer getId() {
         return id;
