@@ -224,7 +224,7 @@
                                     90 000.00 Ar</td>
                                 <td class="px-6 py-4 align-top">
                                     <span th:if="${dto.statutLibelle != null}"
-                                        th:class="'badge badge-' + ${#strings.toLowerCase(dto.statutLibelle) == 'en attente' ? 'pending' : 'delivered'}"
+                                        th:class="'badge badge-' + (${#strings.toLowerCase(dto.statutLibelle) == 'en attente'} ? 'pending' : (${#strings.toLowerCase(dto.statutLibelle) == 'annule'} ? 'cancelled' : 'delivered'))"
                                         th:text="${dto.statutLibelle}">En attente</span>
                                     <span th:if="${dto.statutLibelle == null}" class="badge text-slate-400">-</span>
                                 </td>

@@ -232,7 +232,8 @@
     <!-- Main Content -->
     <main class="ml-sidebar-width p-container-padding max-w-[1400px]">
         <div class="mb-8">
-            <h3 class="font-display-lg text-display-lg text-primary mb-2">Modifier la commande <span th:text="${commande.reference}" ></span></h3>
+            <h3 class="font-display-lg text-display-lg text-primary mb-2">Modifier la commande <span
+                    th:text="${commande.reference}"></span></h3>
             <p class="text-on-surface-variant max-w-2xl">Mettez à jour les informations de livraison et les articles du
                 panier pour cette commande client. Les totaux sont recalculés dynamiquement.</p>
         </div>
@@ -243,11 +244,14 @@
                     <div>
                         <label class="block font-label-sm text-label-sm text-on-surface-variant mb-2">Client</label>
                         <input class="w-full form-input bg-surface-container-lowest px-4 py-2.5 text-on-surface"
-                            placeholder="Nom du client" th:field="*{clientNom}" id="client" list="client-list" autocomplete="off" type="text">
+                            placeholder="Nom du client" th:field="*{clientNom}" id="client" list="client-list"
+                            autocomplete="off" type="text">
                         <datalist id="client-list"></datalist>
                         <input type="hidden" name="client.id" th:value="*{id}" id="client-id">
-                        <span class="text-error" th:if="${#fields.hasErrors('clientNom')}" th:errors="*{clientNom}" ></span>
-                        <span class="text-error" th:if="${clientError != null && clientError['client'] != null}" th:text="${clientError['client']}"></span>
+                        <span class="text-error" th:if="${#fields.hasErrors('clientNom')}"
+                            th:errors="*{clientNom}"></span>
+                        <span class="text-error" th:if="${clientError != null && clientError['client'] != null}"
+                            th:text="${clientError['client']}"></span>
                     </div>
                     <div>
                         <label class="block font-label-sm text-label-sm text-on-surface-variant mb-2">Date
@@ -289,12 +293,17 @@
                                 <!-- <option>Charbon Premium (Sac 10kg) (30.00 Ar)</option>
                                 <option>Bois de chauffe (Lot 5kg) (10.00 Ar)</option> -->
                             </select>
+                            <span th:if="${entryError != null}" th:text="${entryError.produitError}"
+                                class="text-error"></span>
                         </div>
                         <div class="w-full md:w-32">
                             <label class="block text-xs font-bold text-on-surface-variant mb-1 ml-1">Quantité
                                 (kg)</label>
                             <input name="quantite" class="w-full form-input bg-white px-4 py-2.5" type="number"
                                 value="1">
+                            <span th:if="${entryError != null}" th:text="${entryError.quantiteError}"
+                                class="text-error"></span>
+                            <span th:if="${saveError != null}" th:text="${saveError.message}" class="text-error"></span>
                         </div>
                         <div class="flex items-end">
                             <button
@@ -349,6 +358,10 @@
                                             th:value="${detail.quantite}" name="quantite">
                                         <span class="text-sm text-on-surface-variant">kg</span>
                                     </div>
+                                    <span th:if="${errors != null && errors.get(detail.id) != null}"
+                                        th:text="${errors.get(detail.id).message}" class="text-error"></span>
+                                    <span th:if="${entryErrors != null && entryErrors.get(detail.id) != null}"
+                                        th:text="${entryErrors.get(detail.id).quantiteError}" class="text-error"></span>
                                 </td>
                                 <td th:text="${detail.findMontant() + ' Ar'}"
                                     class="py-4 px-4 font-body-md text-on-surface text-right font-bold">60.0 Ar</td>

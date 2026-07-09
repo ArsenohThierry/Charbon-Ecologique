@@ -20,23 +20,32 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.charbonecolo.dto.CommandeDto;
 import com.example.charbonecolo.dto.CriteriaWrapper;
+import com.example.charbonecolo.dto.DetailErrorWrapper;
 import com.example.charbonecolo.dto.EntreeStockDTO;
+import com.example.charbonecolo.dto.LivraisonAnnuleeDto;
 import com.example.charbonecolo.dto.SessionDetailErrorWrapper;
 import com.example.charbonecolo.dto.SortieStockDTO;
 import com.example.charbonecolo.exception.InvalidCommandeException;
+import com.example.charbonecolo.exception.InvalidDetailException;
 import com.example.charbonecolo.exception.StockUnavailableException;
 import com.example.charbonecolo.model.CommandeModel;
 import com.example.charbonecolo.model.CommandeStatutModel;
 import com.example.charbonecolo.model.DetailCommandeModel;
+import com.example.charbonecolo.model.FournisseurModel;
+import com.example.charbonecolo.model.LivraisonModel;
+import com.example.charbonecolo.model.LivraisonResteModel;
 import com.example.charbonecolo.model.LotProductionModel;
 import com.example.charbonecolo.model.LotStatutsModel;
 import com.example.charbonecolo.model.MouvementSortieDetailModel;
 import com.example.charbonecolo.model.MouvementStockModel;
 import com.example.charbonecolo.model.StatutCommandeModel;
 import com.example.charbonecolo.model.StatutsLotProductionModel;
+import com.example.charbonecolo.model.TypeMatierePremiereModel;
 import com.example.charbonecolo.model.TypeMouvementStockModel;
 import com.example.charbonecolo.repository.CommandeRepository;
 import com.example.charbonecolo.repository.DetailCommandeRepository;
+import com.example.charbonecolo.repository.LivraisonRepository;
+import com.example.charbonecolo.repository.LivraisonResteRepository;
 import com.example.charbonecolo.repository.LotProductionRepository;
 import com.example.charbonecolo.repository.MouvementSortieDetailRepository;
 import com.example.charbonecolo.repository.StatutCommandeRepository;
@@ -53,9 +62,17 @@ public class CommandeService {
     private final MouvementSortieDetailRepository mouvementSortieDetailRepository;
     private final LotProductionRepository lotProductionRepository;
     private final StatutsLotProductionRepository statutsLotProductionRepository;
+    private final LivraisonService livraisonService;
+    private final LivraisonResteRepository livraisonResteRepository;
+    private final LivraisonRepository livraisonRepository;
 
     public CommandeService(CommandeRepository commandeRepository, StatutCommandeRepository statutCommandeRepository,
-            DetailCommandeRepository detailCommandeRepository, ClientService clientService, MouvementStockService mouvementStockService, MouvementSortieDetailRepository mouvementSortieDetailRepository, LotProductionRepository lotProductionRepository, StatutsLotProductionRepository statutsLotProductionRepository) {
+            DetailCommandeRepository detailCommandeRepository, ClientService clientService,
+            MouvementStockService mouvementStockService,
+            MouvementSortieDetailRepository mouvementSortieDetailRepository,
+            LotProductionRepository lotProductionRepository,
+            StatutsLotProductionRepository statutsLotProductionRepository, LivraisonService livraisonService,
+            LivraisonResteRepository livraisonResteRepository, LivraisonRepository livraisonRepository) {
         this.commandeRepository = commandeRepository;
         this.statutCommandeRepository = statutCommandeRepository;
         this.detailCommandeRepository = detailCommandeRepository;
@@ -64,6 +81,9 @@ public class CommandeService {
         this.mouvementSortieDetailRepository = mouvementSortieDetailRepository;
         this.lotProductionRepository = lotProductionRepository;
         this.statutsLotProductionRepository = statutsLotProductionRepository;
+        this.livraisonService = livraisonService;
+        this.livraisonResteRepository = livraisonResteRepository;
+        this.livraisonRepository = livraisonRepository;
     }
 
     public void stockAvailable(DetailCommandeModel detail) throws StockUnavailableException {
@@ -71,7 +91,7 @@ public class CommandeService {
         System.out.println("-------------------------");
         System.out.println(reste);
         System.out.println("-------------------------");
-        if(detail.getQuantite() > reste) {
+        if (detail.getQuantite() > reste) {
             throw new StockUnavailableException();
         }
     }
@@ -105,15 +125,34 @@ public class CommandeService {
             });
         }
 
-        return ret; 
+        return ret;
+    }
+
+    public void checkDetailEntry(DetailCommandeModel detail) throws InvalidDetailException {
+        DetailErrorWrapper wrapper = null;
+        if (detail.getProduit() == null || detail.getProduit().getId() == null) {
+            wrapper = new DetailErrorWrapper();
+            wrapper.setProduitError("Le champ produit est requis");
+        }
+        if (detail.getQuantite() == null) {
+            if (wrapper == null) {
+                wrapper = new DetailErrorWrapper();
+            }
+            wrapper.setQuantiteError("Le champ quantite est requis");
+        }
+        if (wrapper != null) {
+            InvalidDetailException ex = new InvalidDetailException();
+            ex.setFieldErrors(wrapper);
+            throw ex;
+        }
     }
 
     public boolean isSavable(Map<Integer, SessionDetailErrorWrapper> wrapper) {
-        if(wrapper == null) {
+        if (wrapper == null) {
             return true;
         }
-        for(Map.Entry<Integer, SessionDetailErrorWrapper> entry : wrapper.entrySet()) {
-            if(entry.getValue().getLevel().equals("DANGER")) {
+        for (Map.Entry<Integer, SessionDetailErrorWrapper> entry : wrapper.entrySet()) {
+            if (entry.getValue().getLevel().equals("DANGER")) {
                 return false;
             }
         }
@@ -125,24 +164,29 @@ public class CommandeService {
         StatutCommandeModel statutCommandeModel = new StatutCommandeModel();
         CommandeModel commandeModel = commandeRepository.findById(idCommande).orElse(null);
         statutCommandeModel.setCommande(commandeModel);
+        List<DetailCommandeModel> details = detailCommandeRepository.findByCommandeId(idCommande);
         CommandeStatutModel commandeStatutModel = new CommandeStatutModel();
         commandeStatutModel.setId(5);
         statutCommandeModel.setStatut(commandeStatutModel);
         statutCommandeModel.setDateStatutCommande(LocalDateTime.now());
         statutCommandeRepository.save(statutCommandeModel);
-        List<MouvementSortieDetailModel> sortieDetails = mouvementSortieDetailRepository.findByMouvementSortie(commandeModel.getMouvementSortie());
-        for(MouvementSortieDetailModel detail : sortieDetails) {
-            LotProductionModel original = detail.getLotProduction();
+        List<MouvementSortieDetailModel> sortieDetails = mouvementSortieDetailRepository
+                .findByMouvementSortie(commandeModel.getMouvementSortie());
+        for (DetailCommandeModel detail : details) {
             LotProductionModel modified = new LotProductionModel();
-            modified.setDateEntreeLot(original.getDateEntreeLot());
-            modified.setDateFinReelle(original.getDateFinReelle());
-            modified.setProduit(original.getProduit());
-            modified.setQuantiteMatiereUtilisee(original.getQuantiteMatiereUtilisee());
-            modified.setQuantiteProduitPrevues(original.getQuantiteProduitPrevues());
-            modified.setQuantiteProduitReelle(original.getQuantiteProduitReelle());
+            modified.setDateEntreeLot(LocalDateTime.now());
+            modified.setDateFinReelle(LocalDateTime.now());
+            modified.setProduit(detail.getProduit());
+            modified.setQuantiteMatiereUtilisee(new BigDecimal(0));
+            modified.setQuantiteProduitPrevues(0);
+            modified.setQuantiteProduitReelle(0);
             modified.setRemarques("Depuis commande annulee");
-            modified.setReference("NO_REF");
-            modified.setTypeMatierePremiere(original.getTypeMatierePremiere());
+            modified.setReference(genererReferenceLot() + "-ANN");
+            TypeMatierePremiereModel typeMatierePremiereModel = new TypeMatierePremiereModel();
+            typeMatierePremiereModel.setId(999);
+            typeMatierePremiereModel.setFournisseur(new FournisseurModel());
+            typeMatierePremiereModel.getFournisseur().setId(999);
+            modified.setTypeMatierePremiere(typeMatierePremiereModel);
             LotProductionModel lotSaved = lotProductionRepository.save(modified);
             StatutsLotProductionModel statutsLotProductionModel = new StatutsLotProductionModel();
             LotStatutsModel lotStatutsModel = new LotStatutsModel();
@@ -159,6 +203,53 @@ public class CommandeService {
         }
     }
 
+    private boolean livraisonsAnnuleesCovering(DetailCommandeModel detail) {
+        List<LivraisonAnnuleeDto> canceled = livraisonService.getLivraisonsAnnulees();
+        Integer quantityInStock = mouvementStockService.getStockRestantParProduit(detail.getProduit().getId());
+        Integer quantity = quantityInStock;
+        for (LivraisonAnnuleeDto livraisonAnnulee : canceled) {
+            LivraisonResteModel model = livraisonResteRepository
+                    .findByProduitIdAndLivraisonId(detail.getProduit().getId(), livraisonAnnulee.getIdLivraison())
+                    .orElse(null);
+            if (model != null) {
+                quantity += model.getReste();
+            }
+        }
+        return quantity >= detail.getQuantite();
+    }
+
+    public boolean canPassToEnAttente(DetailCommandeModel detail) {
+        if (enAttenteExisting()) {
+            return false;
+        }
+        if (!livraisonsAnnuleesCovering(detail)) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean enAttenteExisting() {
+        return statutCommandeRepository.existsAnyCommandeWithCurrentEnAttente();
+    }
+
+    @Transactional
+    public void saveEnAttente(CommandeModel commande, List<DetailCommandeModel> details) {
+        if (commande.getClient() != null && commande.getClient().getId() != null) {
+            commande.setClient(clientService.findById(commande.getClient().getId()));
+        }
+        CommandeModel saved = commandeRepository.save(commande);
+        StatutCommandeModel statut = new StatutCommandeModel();
+        statut.setCommande(saved);
+        CommandeStatutModel commandeStatutModel = new CommandeStatutModel();
+        commandeStatutModel.setId(1);
+        statut.setStatut(commandeStatutModel);
+        statutCommandeRepository.save(statut);
+        details.forEach(d -> d.setCommande(saved));
+        details.forEach(d -> d.setMontant(BigDecimal.valueOf(d.getQuantite() * d.getProduit().getPu().doubleValue())));
+        saveAllDetails(details,
+                commande.getDateCommande() != null ? commande.getDateCommande().toLocalDate() : LocalDate.now());
+    }
+
     @Transactional
     public void save(CommandeModel commande, List<DetailCommandeModel> details) {
         if (commande.getClient() != null && commande.getClient().getId() != null) {
@@ -173,7 +264,8 @@ public class CommandeService {
         statutCommandeRepository.save(statut);
         details.forEach(d -> d.setCommande(saved));
         details.forEach(d -> d.setMontant(BigDecimal.valueOf(d.getQuantite() * d.getProduit().getPu().doubleValue())));
-        saveAllDetails(details, commande.getDateCommande() != null ? commande.getDateCommande().toLocalDate() : LocalDate.now());
+        saveAllDetails(details,
+                commande.getDateCommande() != null ? commande.getDateCommande().toLocalDate() : LocalDate.now());
     }
 
     @Transactional
@@ -183,7 +275,7 @@ public class CommandeService {
 
     @Transactional
     public void saveAllDetails(List<DetailCommandeModel> details, LocalDate dateSortie) {
-        for(DetailCommandeModel detailCommandeModel : details) {
+        for (DetailCommandeModel detailCommandeModel : details) {
             SortieStockDTO sortieStockDTO = new SortieStockDTO();
             sortieStockDTO.setDateSortie(dateSortie);
             sortieStockDTO.setIdMotif(1);
@@ -194,8 +286,102 @@ public class CommandeService {
         detailCommandeRepository.saveAll(details);
     }
 
-        @Transactional
-    public void saveDetail(DetailCommandeModel detail) {
+    @Transactional
+    public void saveDetail(DetailCommandeModel detail) throws StockUnavailableException {
+        stockAvailable(detail);
+        SortieStockDTO sortieStockDTO = new SortieStockDTO();
+        sortieStockDTO.setDateSortie(LocalDate.now());
+        sortieStockDTO.setIdMotif(1);
+        sortieStockDTO.setIdProduit(detail.getProduit().getId());
+        sortieStockDTO.setQuantite(detail.getQuantite());
+        mouvementStockService.saveSortieStock(sortieStockDTO);
+        detailCommandeRepository.save(detail);
+    }
+
+    private String genererReferenceLot() {
+        // Compte le nombre de lots existants et génère le suivant
+        long count = lotProductionRepository.count();
+        return String.format("LOT-%03d", count + 1);
+    }
+
+    @Transactional
+    public void update(DetailCommandeModel detail) throws StockUnavailableException, InvalidDetailException {
+        DetailCommandeModel oldDetail = detailCommandeRepository.findById(detail.getId()).orElse(null);
+        Integer quantity = Math.abs(oldDetail.getQuantite() - detail.getQuantite());
+        DetailCommandeModel temp = new DetailCommandeModel();
+        temp.setQuantite(quantity);
+        temp.setProduit(oldDetail.getProduit());
+        if (oldDetail != null) {
+            if (detail.getQuantite() > oldDetail.getQuantite()) {
+                if (statutCommandeRepository.getLastStatutOf(oldDetail.getCommande().getId()).getStatut()
+                        .getId() == 3) {
+                    LivraisonModel livraisonModel = livraisonRepository.findByCommandeId(detail.getCommande().getId())
+                            .orElse(null);
+                    LivraisonResteModel livraisonResteModel = livraisonResteRepository
+                            .findByProduitIdAndLivraisonId(detail.getProduit().getId(), livraisonModel.getId())
+                            .orElse(null);
+                    if (livraisonResteModel != null) {
+                        if (livraisonResteModel.getReste() < quantity) {
+                            InvalidDetailException ex = new InvalidDetailException();
+                            DetailErrorWrapper wrapper = new DetailErrorWrapper();
+                            wrapper.setQuantiteError("Stock en livraison insuffisant.");
+                            ex.setFieldErrors(wrapper);
+                            throw ex;
+                        }
+                        livraisonResteModel.setReste(livraisonResteModel.getReste() - quantity);
+                        livraisonResteRepository.save(livraisonResteModel);
+                    }
+                }
+                stockAvailable(temp);
+                SortieStockDTO sortieStockDTO = new SortieStockDTO();
+                sortieStockDTO.setDateSortie(LocalDate.now());
+                sortieStockDTO.setIdMotif(1);
+                sortieStockDTO.setIdProduit(detail.getProduit().getId());
+                sortieStockDTO.setQuantite(quantity);
+                mouvementStockService.saveSortieStock(sortieStockDTO);
+            } else if (detail.getQuantite() < oldDetail.getQuantite()) {
+                if (statutCommandeRepository.getLastStatutOf(oldDetail.getCommande().getId()).getStatut()
+                        .getId() == 3) {
+                    LivraisonModel livraisonModel = livraisonRepository.findByCommandeId(detail.getCommande().getId())
+                            .orElse(null);
+                    LivraisonResteModel livraisonResteModel = livraisonResteRepository
+                            .findByProduitIdAndLivraisonId(detail.getProduit().getId(), livraisonModel.getId())
+                            .orElse(null);
+                    if (livraisonResteModel != null) {
+                        livraisonResteModel.setReste(livraisonResteModel.getReste() + quantity);
+                        livraisonResteRepository.save(livraisonResteModel);
+                    }
+                } else {
+                    LotProductionModel modified = new LotProductionModel();
+                    modified.setDateEntreeLot(LocalDateTime.now());
+                    modified.setDateFinReelle(LocalDateTime.now());
+                    modified.setProduit(detail.getProduit());
+                    modified.setQuantiteMatiereUtilisee(new BigDecimal(0));
+                    modified.setQuantiteProduitPrevues(0);
+                    modified.setQuantiteProduitReelle(0);
+                    modified.setRemarques("Depuis commande modifiee");
+                    modified.setReference(genererReferenceLot() + "-MODIF");
+                    TypeMatierePremiereModel typeMatierePremiereModel = new TypeMatierePremiereModel();
+                    typeMatierePremiereModel.setId(999);
+                    typeMatierePremiereModel.setFournisseur(new FournisseurModel());
+                    typeMatierePremiereModel.getFournisseur().setId(999);
+                    modified.setTypeMatierePremiere(typeMatierePremiereModel);
+                    LotProductionModel lotSaved = lotProductionRepository.save(modified);
+                    StatutsLotProductionModel statutsLotProductionModel = new StatutsLotProductionModel();
+                    LotStatutsModel lotStatutsModel = new LotStatutsModel();
+                    lotStatutsModel.setId(2);
+                    statutsLotProductionModel.setLotStatuts(lotStatutsModel);
+                    statutsLotProductionModel.setLotProduction(lotSaved);
+                    statutsLotProductionModel.setDateStatut(LocalDateTime.now());
+                    statutsLotProductionRepository.save(statutsLotProductionModel);
+                    EntreeStockDTO entreeStockDTO = new EntreeStockDTO();
+                    entreeStockDTO.setDateEntree(LocalDate.now());
+                    entreeStockDTO.setIdLot(lotSaved.getId());
+                    entreeStockDTO.setQuantite(quantity);
+                    mouvementStockService.saveEntreeStock(entreeStockDTO);
+                }
+            }
+        }
         detailCommandeRepository.save(detail);
     }
 
@@ -228,6 +414,34 @@ public class CommandeService {
 
     @Transactional
     public void deleteDetail(Integer id) {
+        DetailCommandeModel detail = detailCommandeRepository.findById(id).orElse(null);
+        LotProductionModel modified = new LotProductionModel();
+        modified.setDateEntreeLot(LocalDateTime.now());
+        modified.setDateFinReelle(LocalDateTime.now());
+        modified.setProduit(detail.getProduit());
+        modified.setQuantiteMatiereUtilisee(new BigDecimal(0));
+        modified.setQuantiteProduitPrevues(0);
+        modified.setQuantiteProduitReelle(0);
+        modified.setRemarques("Depuis commande modifiee");
+        modified.setReference(genererReferenceLot() + "-MODIF");
+        TypeMatierePremiereModel typeMatierePremiereModel = new TypeMatierePremiereModel();
+        typeMatierePremiereModel.setId(999);
+        typeMatierePremiereModel.setFournisseur(new FournisseurModel());
+        typeMatierePremiereModel.getFournisseur().setId(999);
+        modified.setTypeMatierePremiere(typeMatierePremiereModel);
+        LotProductionModel lotSaved = lotProductionRepository.save(modified);
+        StatutsLotProductionModel statutsLotProductionModel = new StatutsLotProductionModel();
+        LotStatutsModel lotStatutsModel = new LotStatutsModel();
+        lotStatutsModel.setId(2);
+        statutsLotProductionModel.setLotStatuts(lotStatutsModel);
+        statutsLotProductionModel.setLotProduction(lotSaved);
+        statutsLotProductionModel.setDateStatut(LocalDateTime.now());
+        statutsLotProductionRepository.save(statutsLotProductionModel);
+        EntreeStockDTO entreeStockDTO = new EntreeStockDTO();
+        entreeStockDTO.setDateEntree(LocalDate.now());
+        entreeStockDTO.setIdLot(lotSaved.getId());
+        entreeStockDTO.setQuantite(detail.getQuantite());
+        mouvementStockService.saveEntreeStock(entreeStockDTO);
         detailCommandeRepository.deleteById(id);
     }
 
@@ -245,7 +459,7 @@ public class CommandeService {
         }
     }
 
-     @Transactional
+    @Transactional
     public void save(CommandeModel commande) {
         commandeRepository.save(commande);
     }
