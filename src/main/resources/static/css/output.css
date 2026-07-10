@@ -1152,6 +1152,10 @@ input:where([type='file']):focus {
   width: 6rem;
 }
 
+.w-28 {
+  width: 7rem;
+}
+
 .w-3 {
   width: 0.75rem;
 }
@@ -2651,6 +2655,11 @@ input:where([type='file']):focus {
   color: rgb(22 101 52 / var(--tw-text-opacity, 1));
 }
 
+.text-indigo-600 {
+  --tw-text-opacity: 1;
+  color: rgb(79 70 229 / var(--tw-text-opacity, 1));
+}
+
 .text-on-surface {
   --tw-text-opacity: 1;
   color: rgb(26 28 28 / var(--tw-text-opacity, 1));
@@ -3124,6 +3133,11 @@ input:where([type='file']):focus {
   color: rgb(45 90 63 / var(--tw-text-opacity, 1));
 }
 
+.hover\:text-emerald-800:hover {
+  --tw-text-opacity: 1;
+  color: rgb(6 95 70 / var(--tw-text-opacity, 1));
+}
+
 .hover\:text-gray-600:hover {
   --tw-text-opacity: 1;
   color: rgb(75 85 99 / var(--tw-text-opacity, 1));
@@ -3137,6 +3151,11 @@ input:where([type='file']):focus {
 .hover\:text-green-800:hover {
   --tw-text-opacity: 1;
   color: rgb(22 101 52 / var(--tw-text-opacity, 1));
+}
+
+.hover\:text-indigo-800:hover {
+  --tw-text-opacity: 1;
+  color: rgb(55 48 163 / var(--tw-text-opacity, 1));
 }
 
 .hover\:text-red-600:hover {

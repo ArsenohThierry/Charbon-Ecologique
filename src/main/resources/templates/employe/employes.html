@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Employés - Charbon Vert</title>
+    <link rel="stylesheet" th:href="@{/css/output.css}" />
+    <link rel="stylesheet" th:href="@{/css/fonts.css}" />
+</head>
+
+<body class="bg-brand-light font-sans text-slate-800 min-h-screen flex">
+    <aside th:replace="~{fragments/sidebar :: sidebar('employes')}"></aside>
+
+    <main class="flex-1 flex flex-col min-w-0">
+        <header class="h-16 px-8 flex items-center justify-between border-b border-gray-200">
+            <div>
+                <h2 class="text-sm font-bold text-gray-800">Administration</h2>
+                <p class="text-[10px] text-gray-500 uppercase tracking-wide">Gestion des employés</p>
+            </div>
+        </header>
+
+        <section class="flex-1 p-12 overflow-y-auto">
+            <div class="max-w-6xl mx-auto">
+
+                <div th:if="${success}" class="mb-6 p-4 bg-green-100 border border-green-200 text-green-800 rounded-lg text-sm font-medium" th:text="${success}"></div>
+                <div th:if="${error}" class="mb-6 p-4 bg-red-100 border border-red-200 text-red-800 rounded-lg text-sm font-medium" th:text="${error}"></div>
+
+                <!-- Formulaire -->
+                <div class="mb-12">
+                    <div class="mb-8">
+                        <h1 class="text-4xl font-serif text-brand-dark mb-2" th:text="${employeModel.id != null} ? 'Modifier l\'employé' : 'Ajouter un employé'">Ajouter un employé</h1>
+                        <p class="text-gray-600 text-sm">Enregistrer ou mettre à jour un employé.</p>
+                    </div>
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
+                        <form th:action="${employeModel.id != null} ? @{/employes/update} : @{/employes/add}" th:object="${employeModel}" method="POST" class="space-y-6">
+                            <input type="hidden" th:field="*{id}" />
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                                <div class="space-y-1.5">
+                                    <label class="block text-sm font-medium text-gray-700" for="nom">Nom complet</label>
+                                    <input th:field="*{nom}" class="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-gray-700 text-sm focus:ring-1 focus:ring-brand-success focus:border-brand-success" id="nom" type="text" placeholder="Jean Rakoto" />
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="block text-sm font-medium text-gray-700" for="dateEmbauche">Date d'embauche</label>
+                                    <input th:field="*{dateEmbauche}" class="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-gray-700 text-sm focus:ring-1 focus:ring-brand-success focus:border-brand-success" id="dateEmbauche" type="date" />
+                                </div>
+                                <div class="space-y-1.5 md:col-span-2">
+                                    <label class="block text-sm font-medium text-gray-700" for="emploi">Poste</label>
+                                    <select th:field="*{emploi}" class="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-gray-700 text-sm focus:ring-1 focus:ring-brand-success focus:border-brand-success">
+                                        <option value="">Sélectionner un poste...</option>
+                                        <option th:each="p : ${emplois}" th:value="${p.id}" th:text="${p.libelle + ' - ' + #numbers.formatDecimal(p.salaire, 1, 'COMMA', 0, 'POINT') + ' Ar'}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="pt-4 flex items-center gap-4">
+                                <button class="bg-brand-success hover:bg-emerald-800 text-white font-semibold py-2 px-6 rounded-lg transition-colors text-sm" type="submit" th:text="${employeModel.id != null} ? 'Enregistrer les modifications' : 'Enregistrer l\'employé'">Enregistrer l'employé</button>
+                                <a th:href="@{/employes/home}" class="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-medium py-2 px-8 rounded-lg transition-colors text-sm text-center">Annuler</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Liste -->
+                <div>
+                    <div class="mb-8">
+                        <h1 class="text-4xl font-serif text-brand-dark mb-2">Liste des employés</h1>
+                        <p class="text-gray-600 text-sm">Consulter, modifier ou supprimer un employé.</p>
+                    </div>
+
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                        <!-- Recherche -->
+                        <form th:action="@{/employes/home}" method="get" class="p-5 bg-gray-50/80 border-b border-gray-100">
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1.5">Nom</label>
+                                    <input type="text" name="nom" th:value="${nom}" placeholder="Nom..." class="w-full px-4 py-2.5 text-sm bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-brand-light transition-all">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1.5">Référence</label>
+                                    <input type="text" name="reference" th:value="${reference}" placeholder="EMP-001..." class="w-full px-4 py-2.5 text-sm bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-brand-light transition-all">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1.5">Poste</label>
+                                    <select name="idEmploi" class="w-full px-4 py-2.5 text-sm bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-brand-light transition-all">
+                                        <option value="">Tous</option>
+                                        <option th:each="p : ${emplois}" th:value="${p.id}" th:text="${p.libelle}" th:selected="${idEmploi == p.id}"></option>
+                                    </select>
+                                </div>
+                                <div class="flex items-end space-x-4 mt-3">
+                                    <button type="submit" class="px-5 py-2.5 text-sm font-semibold bg-slate-800 hover:bg-slate-900 text-white rounded-xl transition-colors shadow-sm">Rechercher</button>
+                                    <a th:href="@{/employes/home(size=${pageSize})}" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">Réinitialiser</a>
+                                </div>
+                            </div>
+                            <input type="hidden" name="sort" th:value="${sortParam}" th:if="${sortParam != null}" />
+                            <input type="hidden" name="size" th:value="${pageSize}" />
+                        </form>
+
+                        <!-- Tableau -->
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead>
+                                    <tr class="bg-gray-50 border-b border-gray-100 text-gray-500 text-sm">
+                                        <th class="px-6 py-4 font-medium text-left w-16">
+                                            <a th:href="@{/employes/home(nom=${nom}, reference=${reference}, idEmploi=${idEmploi}, page=0, size=${pageSize}, sort=${T(com.example.charbonecolo.controller.EmployeController).toggleSortColumn(sortParam, 'id')})}" class="hover:text-gray-700 inline-flex items-center gap-1">
+                                                ID
+                                                <span th:if="${sortParam != null and #strings.startsWith(sortParam, 'id,')}" th:text="${#strings.endsWith(sortParam, 'asc') ? '▲' : '▼'}" class="text-blue-600"></span>
+                                            </a>
+                                        </th>
+                                        <th class="px-6 py-4 font-medium text-left w-28">
+                                            <a th:href="@{/employes/home(nom=${nom}, reference=${reference}, idEmploi=${idEmploi}, page=0, size=${pageSize}, sort=${T(com.example.charbonecolo.controller.EmployeController).toggleSortColumn(sortParam, 'reference')})}" class="hover:text-gray-700 inline-flex items-center gap-1">
+                                                Réf.
+                                                <span th:if="${sortParam != null and #strings.startsWith(sortParam, 'reference,')}" th:text="${#strings.endsWith(sortParam, 'asc') ? '▲' : '▼'}" class="text-blue-600"></span>
+                                            </a>
+                                        </th>
+                                        <th class="px-6 py-4 font-medium text-left w-48">
+                                            <a th:href="@{/employes/home(nom=${nom}, reference=${reference}, idEmploi=${idEmploi}, page=0, size=${pageSize}, sort=${T(com.example.charbonecolo.controller.EmployeController).toggleSortColumn(sortParam, 'nom')})}" class="hover:text-gray-700 inline-flex items-center gap-1">
+                                                Nom
+                                                <span th:if="${sortParam != null and #strings.startsWith(sortParam, 'nom,')}" th:text="${#strings.endsWith(sortParam, 'asc') ? '▲' : '▼'}" class="text-blue-600"></span>
+                                            </a>
+                                        </th>
+                                        <th class="px-6 py-4 font-medium text-left w-40">
+                                            <a th:href="@{/employes/home(nom=${nom}, reference=${reference}, idEmploi=${idEmploi}, page=0, size=${pageSize}, sort=${T(com.example.charbonecolo.controller.EmployeController).toggleSortColumn(sortParam, 'dateEmbauche')})}" class="hover:text-gray-700 inline-flex items-center gap-1">
+                                                Embauche
+                                                <span th:if="${sortParam != null and #strings.startsWith(sortParam, 'dateEmbauche,')}" th:text="${#strings.endsWith(sortParam, 'asc') ? '▲' : '▼'}" class="text-blue-600"></span>
+                                            </a>
+                                        </th>
+                                        <th class="px-6 py-4 font-medium text-left w-48">
+                                            <a th:href="@{/employes/home(nom=${nom}, reference=${reference}, idEmploi=${idEmploi}, page=0, size=${pageSize}, sort=${T(com.example.charbonecolo.controller.EmployeController).toggleSortColumn(sortParam, 'emploi.libelle')})}" class="hover:text-gray-700 inline-flex items-center gap-1">
+                                                Poste
+                                                <span th:if="${sortParam != null and #strings.startsWith(sortParam, 'emploi.libelle,')}" th:text="${#strings.endsWith(sortParam, 'asc') ? '▲' : '▼'}" class="text-blue-600"></span>
+                                            </a>
+                                        </th>
+                                        <th class="px-6 py-4 font-medium text-right w-28">Salaire base</th>
+                                        <th class="px-6 py-4 font-medium text-right w-28">Total</th>
+                                        <th class="px-6 py-4 font-medium text-right w-40">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="e : ${listeEmployes}" class="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
+                                        <td class="px-6 py-4" th:text="${e.id}"></td>
+                                        <td class="px-6 py-4 font-medium text-brand-dark" th:text="${e.reference}"></td>
+                                        <td class="px-6 py-4" th:text="${e.nom}"></td>
+                                        <td class="px-6 py-4" th:text="${#temporals.format(e.dateEmbauche, 'dd/MM/yyyy')}"></td>
+                                        <td class="px-6 py-4" th:text="${e.emploi.libelle}"></td>
+                                        <td class="px-6 py-4 text-right font-medium" th:text="${#numbers.formatDecimal(e.emploi.salaire, 1, 'COMMA', 0, 'POINT') + ' Ar'}"></td>
+                                        <td class="px-6 py-4 text-right font-bold text-brand-dark" th:text="${#numbers.formatDecimal(e.totalSalaire, 1, 'COMMA', 0, 'POINT') + ' Ar'}"></td>
+                                        <td class="px-6 py-4 text-right space-x-2">
+                                            <a th:href="@{/employes/salaire/{id}(id=${e.id})}" class="text-indigo-600 hover:text-indigo-800 font-medium transition-colors">Détails</a>
+                                            <a th:href="@{/employes/salarier?id=${e.id}}" class="text-emerald-600 hover:text-emerald-800 font-medium transition-colors">Salarier</a>
+                                            <a th:href="@{/employes/update/{id}(id=${e.id})}" class="text-blue-600 hover:text-blue-800 font-medium transition-colors">Modifier</a>
+                                            <a th:href="@{/employes/delete/{id}(id=${e.id})}" class="text-red-600 hover:text-red-800 font-medium transition-colors" onclick="return confirm('Supprimer cet employé ?');">Supprimer</a>
+                                        </td>
+                                    </tr>
+                                    <tr th:if="${listeEmployes.empty}">
+                                        <td colspan="8" class="px-6 py-8 text-center text-gray-500 text-sm">Aucun employé trouvé.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination -->
+                        <div th:if="${totalPages > 1}" class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
+                            <span class="text-sm text-gray-500" th:text="${totalElements} + ' résultat(s)'"></span>
+                            <div class="flex items-center gap-1.5">
+                                <a th:if="${hasPrevious}" th:href="@{/employes/home(page=${pageNumber - 1}, size=${pageSize}, sort=${sortParam}, nom=${nom}, reference=${reference}, idEmploi=${idEmploi})}" class="px-3 py-1.5 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-600 transition-colors">←</a>
+                                <th:block th:each="p : ${pagination}">
+                                    <span th:if="${p.ellipsis}" class="px-2 py-1.5 text-sm text-gray-400 select-none">...</span>
+                                    <span th:if="${!p.ellipsis && p.current}" th:text="${p.number}" class="px-3 py-1.5 text-sm bg-slate-800 text-white rounded-lg font-medium"></span>
+                                    <a th:if="${!p.ellipsis && !p.current}" th:href="@{/employes/home(page=${p.index}, size=${pageSize}, sort=${sortParam}, nom=${nom}, reference=${reference}, idEmploi=${idEmploi})}" th:text="${p.number}" class="px-3 py-1.5 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-600 transition-colors"></a>
+                                </th:block>
+                                <a th:if="${hasNext}" th:href="@{/employes/home(page=${pageNumber + 1}, size=${pageSize}, sort=${sortParam}, nom=${nom}, reference=${reference}, idEmploi=${idEmploi})}" class="px-3 py-1.5 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-600 transition-colors">→</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
