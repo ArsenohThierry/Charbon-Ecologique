@@ -1,5 +1,6 @@
 package com.example.charbonecolo.config;
 
+import com.example.charbonecolo.exception.AccessDeniedException;
 import com.example.charbonecolo.exception.BusinessException;
 import com.example.charbonecolo.exception.ResourceNotFoundException;
 import org.slf4j.Logger;
@@ -14,6 +15,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class GlobalExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public String handleAccessDenied(AccessDeniedException e, Model model) {
+        model.addAttribute("error", e.getMessage());
+        return "error";
+    }
 
     @ExceptionHandler(BusinessException.class)
     public String handleBusiness(BusinessException e, Model model) {

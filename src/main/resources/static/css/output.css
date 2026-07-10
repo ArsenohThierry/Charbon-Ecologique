@@ -2086,10 +2086,6 @@ input:where([type='file']):focus {
   background-color: rgb(255 255 255 / 0.1);
 }
 
-.bg-white\/15 {
-  background-color: rgb(255 255 255 / 0.15);
-}
-
 .bg-white\/5 {
   background-color: rgb(255 255 255 / 0.05);
 }
@@ -2154,6 +2150,11 @@ input:where([type='file']):focus {
 
 .p-8 {
   padding: 2rem;
+}
+
+.px-1 {
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
 }
 
 .px-12 {
