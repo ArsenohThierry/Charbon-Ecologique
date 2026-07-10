@@ -159,7 +159,7 @@ public class LivraisonService {
     }
 
     @Transactional
-    public void terminerLivraison(Integer id) {
+    public Integer terminerLivraison(Integer id) {
         LivraisonModel livraison = livraisonRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Livraison introuvable : " + id));
 
@@ -171,8 +171,11 @@ public class LivraisonService {
         sl.setStatut(statutTermine);
         statutLivraisonRepository.save(sl);
 
+        Integer commandeId = null;
+
         // Statut commande → "livre" (4)
         if (livraison.getCommande() != null) {
+            commandeId = livraison.getCommande().getId();
             CommandeStatutModel statutLivre = new CommandeStatutModel();
             statutLivre.setId(4);
             StatutCommandeModel sc = new StatutCommandeModel();
@@ -180,6 +183,8 @@ public class LivraisonService {
             sc.setStatut(statutLivre);
             statutCommandeRepository.save(sc);
         }
+
+        return commandeId;
     }
 
     @Transactional
