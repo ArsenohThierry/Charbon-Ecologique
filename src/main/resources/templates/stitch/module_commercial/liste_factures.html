@@ -118,6 +118,11 @@
                                        class="inline-flex items-center gap-1 text-brand-success hover:text-brand-dark transition border border-brand-success px-3 py-1.5 rounded text-xs font-medium">
                                         Facturer
                                     </a>
+                                    <a th:if="${cmd.statutPaiement == 'Payée'}"
+                                       th:href="@{/factures/new(commandeId=${cmd.id})}"
+                                       class="inline-flex items-center gap-1 text-brand-success hover:text-brand-dark transition border border-brand-success px-3 py-1.5 rounded text-xs font-medium">
+                                        Voir Facture
+                                    </a>
                                     <span th:if="${cmd.statutPaiement == 'Payée'}" class="text-xs text-slate-400">Déjà facturée</span>
                                 </td>
                             </tr>

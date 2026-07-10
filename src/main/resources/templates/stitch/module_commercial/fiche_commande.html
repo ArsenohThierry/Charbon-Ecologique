@@ -214,33 +214,85 @@
     </header>
 
     <main class="ml-sidebar-width p-container-padding max-w-[1400px]">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-            <div>
-                <div class="flex items-center gap-3 mb-2 flex-wrap">
-                    <h3 th:text="${commande.reference}" class="font-display-lg text-display-lg text-primary"></h3>
-                    <span th:text="${commande.statutLibelle}"
-                        class="bg-secondary-container text-on-secondary-container font-bold text-xs px-3 py-1 rounded-full uppercase tracking-wider">
-                        En cours de traitement
+        <div class="mb-8">
+            <!-- En-tête principal : Titre + Actions de base -->
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-6">
+                <div>
+                    <div class="flex items-center gap-3 mb-2 flex-wrap">
+                        <h3 th:text="${commande.reference}"
+                            class="text-2xl md:text-3xl font-bold tracking-tight text-primary">CMD-2026-001</h3>
+                        <span th:text="${commande.statutLibelle}"
+                            class="bg-secondary-container text-on-secondary-container font-bold text-[10px] tracking-widest uppercase px-2.5 py-1 rounded-full border border-outline/10">
+                            En cours de traitement
+                        </span>
+                    </div>
+                    <p class="text-sm text-on-surface-variant max-w-2xl">
+                        Aperçu complet des détails de la commande, informations de livraison et articles associés.
+                    </p>
+                </div>
+
+                <!-- Actions rapides de la commande -->
+                <div class="flex items-center gap-3 w-full md:w-auto justify-end">
+                    <a th:href="@{/cmd/update/{id}(id=${commande.id})}"
+                        class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold border border-outline text-on-surface-variant hover:bg-surface-container active:scale-[0.98] transition-all">
+                        <span class="material-symbols-outlined text-lg">edit</span>
+                        Modifier
+                    </a>
+                    <a th:if="${idFacture != null}" th:href="@{/factures/{id}(id=${idFacture})}"
+                        class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold border border-outline text-on-surface-variant hover:bg-surface-container active:scale-[0.98] transition-all">
+                        <span class="material-symbols-outlined text-lg">edit</span>
+                        Voir facture
+                    </a>
+                    <form action="/cmd/cancel" method="post" class="inline">
+                        <input type="hidden" name="id" th:value="${commande.id}">
+                        <button type="submit"
+                            class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-error bg-error-container/20 hover:bg-error-container hover:text-on-error-container active:scale-[0.98] transition-all">
+                            <span class="material-symbols-outlined text-lg">cancel</span>
+                            Annuler
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div th:if="${error != null && !#strings.isEmpty(error)}"
+                class="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+                <span th:text="${error}">Une erreur est survenue.</span>
+            </div>
+            <div th:if="${errorMessage != null && !#strings.isEmpty(errorMessage)}"
+                class="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+                <span th:text="${errorMessage}">Une erreur est survenue.</span>
+            </div>
+            <div th:if="${success != null && !#strings.isEmpty(success)}"
+                class="mb-6 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700">
+                <span th:text="${success}">Opération réalisée avec succès.</span>
+            </div>
+            <div th:if="${successMessage != null && !#strings.isEmpty(successMessage)}"
+                class="mb-6 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700">
+                <span th:text="${successMessage}">Opération réalisée avec succès.</span>
+            </div>
+            <div th:if="${message != null && !#strings.isEmpty(message)}"
+                class="mb-6 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-700">
+                <span th:text="${message}">Information.</span>
+            </div>
+
+            <!-- Bannière de confirmation contextuelle (s'affiche en dessous si éligible) -->
+            <form th:if="${canConvert}" action="/cmd/convert" method="post"
+                class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 rounded-xl bg-primary-container/10 border border-primary-container/30 shadow-sm animate-fade-in">
+
+                <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-primary text-xl flex-shrink-0">info</span>
+                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">
+                        La commande peut maintenant être confirmée.
                     </span>
                 </div>
-                <p class="text-on-surface-variant max-w-2xl">Aperçu complet des détails de la commande, informations de
-                    livraison et articles associés.</p>
-            </div>
-            <div class="flex items-center gap-3">
-                <a href="#"
-                    class="border border-outline text-on-surface-variant px-5 py-2.5 rounded-lg font-bold hover:bg-surface-container transition-all flex items-center gap-2 text-sm">
-                    <span class="material-symbols-outlined text-sm">edit</span>
-                    Modifier
-                </a>
-                <form action="/cmd/cancel" method="post">
-                    <input type="hidden" name="id" th:value="${commande.id}">
-                    <button
-                        class="bg-primary-container text-on-primary px-5 py-2.5 rounded-lg font-bold hover:bg-primary transition-all flex items-center gap-2 text-sm shadow-sm">
-                        <span class="material-symbols-outlined text-sm">cancel</span>
-                        Annuler
-                    </button>
-                </form>
-            </div>
+
+                <input type="hidden" name="id" th:value="${commande.id}">
+                <button type="submit"
+                    class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold text-on-primary bg-primary bg-primary-container hover:shadow-md active:scale-[0.98] transition-all whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-primary">
+                    <span class="material-symbols-outlined text-lg">check_circle</span>
+                    Confirmer la commande
+                </button>
+            </form>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">

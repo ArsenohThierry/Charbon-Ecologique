@@ -154,8 +154,11 @@ public class LivraisonController {
 
     @PostMapping("/terminer/{id}")
     public String terminer(@PathVariable Integer id) {
-        livraisonService.terminerLivraison(id);
-        return "redirect:/livraisons?success=termine";
+        Integer commandeId = livraisonService.terminerLivraison(id);
+        if (commandeId == null) {
+            return "redirect:/livraisons?error=pas_de_commande";
+        }
+        return "redirect:/factures/new?commandeId=" + commandeId;
     }
 
     @PostMapping("/reporter/{id}")
@@ -181,5 +184,12 @@ public class LivraisonController {
     @ResponseBody
     public List<LivraisonAnnuleeDto> getLivraisonsAnnulees() {
         return livraisonService.getLivraisonsAnnulees();
+    }
+
+    @PostMapping("/fermer/{id}")
+    public ModelAndView close(@PathVariable Integer id) {
+        livraisonService.closeLivraison(id);
+        ModelAndView mav = new ModelAndView("redirect:/livraisons?success=ferme");
+        return mav;
     }
 }

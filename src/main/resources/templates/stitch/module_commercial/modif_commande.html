@@ -12,9 +12,6 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
         rel="stylesheet">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-        rel="stylesheet">
     <!-- Tailwind Configuration -->
     <script id="tailwind-config">
         tailwind.config = {
@@ -232,80 +229,108 @@
     <!-- Main Content -->
     <main class="ml-sidebar-width p-container-padding max-w-[1400px]">
         <div class="mb-8">
-            <h3 class="font-display-lg text-display-lg text-primary mb-2">Modifier la commande <span th:text="${commande.reference}" ></span></h3>
+            <h3 class="font-display-lg text-display-lg text-primary mb-2">Modifier la commande <span
+                    th:text="${commande.reference}"></span></h3>
             <p class="text-on-surface-variant max-w-2xl">Mettez à jour les informations de livraison et les articles du
                 panier pour cette commande client. Les totaux sont recalculés dynamiquement.</p>
         </div>
+
         <div class="heritage-card p-8 shadow-sm">
+            <!-- Information Indicator Message[cite: 1] -->
+            <div th:if="${statutLibelle == 'en attente' || statutLibelle == 'annule'}"
+                class="flex items-center gap-3 p-4 mb-6 rounded-xl bg-amber-50 border border-amber-200 text-amber-800">
+                <span class="material-symbols-outlined text-xl text-amber-600 flex-shrink-0">lock</span>
+                <span class="text-sm font-medium">
+                    Cette commande est actuellement <strong th:text="${statutLibelle}">en attente</strong>. Toute modification ou ajout d'article
+                    est temporairement bloqué.
+                </span>
+            </div>
+
             <!-- Order Info Header -->
             <form action="/cmd/update" th:object="${clientDto}" method="post">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                     <div>
                         <label class="block font-label-sm text-label-sm text-on-surface-variant mb-2">Client</label>
-                        <input class="w-full form-input bg-surface-container-lowest px-4 py-2.5 text-on-surface"
-                            placeholder="Nom du client" th:field="*{clientNom}" id="client" list="client-list" autocomplete="off" type="text">
+                        <input
+                            class="w-full form-input bg-surface-container-lowest px-4 py-2.5 text-on-surface disabled:bg-slate-100 disabled:opacity-60 disabled:cursor-not-allowed"
+                            placeholder="Nom du client" th:field="*{clientNom}" id="client" list="client-list"
+                            autocomplete="off" type="text" th:disabled="${statutLibelle == 'en attente' || statutLibelle == 'annule'}">
                         <datalist id="client-list"></datalist>
                         <input type="hidden" name="client.id" th:value="*{id}" id="client-id">
-                        <span class="text-error" th:if="${#fields.hasErrors('clientNom')}" th:errors="*{clientNom}" ></span>
-                        <span class="text-error" th:if="${clientError != null && clientError['client'] != null}" th:text="${clientError['client']}"></span>
+                        <span class="text-error" th:if="${#fields.hasErrors('clientNom')}"
+                            th:errors="*{clientNom}"></span>
+                        <span class="text-error" th:if="${clientError != null && clientError['client'] != null}"
+                            th:text="${clientError['client']}"></span>
                     </div>
                     <div>
                         <label class="block font-label-sm text-label-sm text-on-surface-variant mb-2">Date
                             souhaitée</label>
-                        <input class="w-full form-input bg-surface-container-lowest px-4 py-2.5 text-on-surface"
-                            type="date" value="2023-10-25">
+                        <input
+                            class="w-full form-input bg-surface-container-lowest px-4 py-2.5 text-on-surface disabled:bg-slate-100 disabled:opacity-60 disabled:cursor-not-allowed"
+                            type="date" value="2023-10-25" th:disabled="${statutLibelle == 'en attente' || statutLibelle == 'annule'}">
                     </div>
                     <div>
                         <label class="block font-label-sm text-label-sm text-on-surface-variant mb-2">Lieu de
                             livraison</label>
-                        <input class="w-full form-input bg-surface-container-lowest px-4 py-2.5 text-on-surface"
-                            placeholder="Adresse ou quartier" type="text" value="Anosizato">
+                        <input
+                            class="w-full form-input bg-surface-container-lowest px-4 py-2.5 text-on-surface disabled:bg-slate-100 disabled:opacity-60 disabled:cursor-not-allowed"
+                            placeholder="Adresse ou quartier" type="text" value="Anosizato"
+                            th:disabled="${statutLibelle == 'en attente' || statutLibelle == 'annule'}">
                     </div>
-                    <!-- Footer Actions -->
                 </div>
+                <!-- Footer Actions[cite: 1] -->
                 <div class="flex items-center gap-4 mb-4">
-                    <button
-                        class="bg-primary-container text-on-primary px-8 py-3 rounded-lg font-bold hover:bg-primary transition-all shadow-md active:scale-95 flex items-center gap-2">
+                    <button type="submit" th:disabled="${statutLibelle == 'en attente' || statutLibelle == 'annule'}"
+                        class="bg-primary-container text-on-primary px-8 py-3 rounded-lg font-bold hover:bg-primary transition-all shadow-md active:scale-95 flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-primary-container disabled:scale-100">
                         <span class="material-symbols-outlined text-sm" data-icon="save">save</span>
                         Enregistrer les modifications
                     </button>
-                    <button
+                    <button type="button"
                         class="border border-outline text-on-surface-variant px-8 py-3 rounded-lg font-bold hover:bg-surface-container transition-all active:scale-95">
                         Annuler
                     </button>
                 </div>
             </form>
-            <!-- Add Item Widget -->
-            <div class="bg-surface-container-low rounded-xl p-6 mb-8 border border-outline-variant/30">
+
+            <!-- Add Item Widget[cite: 1] -->
+            <div class="bg-surface-container-low rounded-xl p-6 mb-8 border border-outline-variant/30 opacity-100"
+                th:classappend="${statutLibelle == 'en attente' || statutLibelle == 'annule'} ? 'opacity-60 bg-slate-50'">
                 <h4 class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-4">AJOUTER
                     UN ARTICLE AU PANIER</h4>
                 <form action="/cmd/detail/update/add" method="post">
                     <div class="flex flex-col md:flex-row gap-4">
                         <div class="flex-1">
                             <label class="block text-xs font-bold text-on-surface-variant mb-1 ml-1">Produit</label>
-                            <select class="w-full form-input bg-white px-4 py-2.5 appearance-none" name="produit.id">
+                            <select
+                                class="w-full form-input bg-white px-4 py-2.5 appearance-none disabled:cursor-not-allowed"
+                                name="produit.id" th:disabled="${statutLibelle == 'en attente' || statutLibelle == 'annule'}">
                                 <option th:each="p : ${produits}" th:value="${p.id}" th:text="${p.nom}">Charbon Éco Rond
                                     (Sac 5kg) (15.00 Ar)</option>
-                                <!-- <option>Charbon Premium (Sac 10kg) (30.00 Ar)</option>
-                                <option>Bois de chauffe (Lot 5kg) (10.00 Ar)</option> -->
                             </select>
+                            <span th:if="${entryError != null}" th:text="${entryError.produitError}"
+                                class="text-error"></span>
                         </div>
                         <div class="w-full md:w-32">
                             <label class="block text-xs font-bold text-on-surface-variant mb-1 ml-1">Quantité
                                 (kg)</label>
-                            <input name="quantite" class="w-full form-input bg-white px-4 py-2.5" type="number"
-                                value="1">
+                            <input name="quantite"
+                                class="w-full form-input bg-white px-4 py-2.5 disabled:cursor-not-allowed" type="number"
+                                value="1" th:disabled="${statutLibelle == 'en attente' || statutLibelle == 'annule'}">
+                            <span th:if="${entryError != null}" th:text="${entryError.quantiteError}"
+                                class="text-error"></span>
+                            <span th:if="${saveError != null}" th:text="${saveError.message}" class="text-error"></span>
                         </div>
                         <div class="flex items-end">
-                            <button
-                                class="bg-primary-container text-on-primary px-8 py-2.5 rounded-lg font-bold hover:bg-primary transition-all active:scale-95 shadow-md">
+                            <button type="submit" th:disabled="${statutLibelle == 'en attente' || statutLibelle == 'annule'}"
+                                class="bg-primary-container text-on-primary px-8 py-2.5 rounded-lg font-bold hover:bg-primary transition-all active:scale-95 shadow-md disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-primary-container">
                                 Ajouter
                             </button>
                         </div>
                     </div>
                 </form>
             </div>
-            <!-- Order Table -->
+
+            <!-- Order Table[cite: 1] -->
             <div class="overflow-x-auto mb-8">
                 <table class="w-full border-collapse">
                     <thead>
@@ -337,44 +362,47 @@
                                 <input type="hidden" name="id" th:value="${detail.id}">
                                 <input type="hidden" name="produit.id" th:value="${detail.produit.id}">
                                 <td th:text="${detail.produit.nom}" class="py-4 px-4 font-body-md text-on-surface">
-                                    Charbon
-                                    Éco Rond (Sac 5kg)</td>
+                                    Charbon Éco Rond (Sac 5kg)</td>
                                 <td th:text="${detail.produit.pu}" class="py-4 px-4 font-body-md text-on-surface">15.00
-                                    Ar
-                                </td>
+                                    Ar</td>
                                 <td class="py-4 px-4 font-body-md text-on-surface text-center font-bold">
                                     <div class="flex items-center justify-center gap-2">
                                         <input type="number"
-                                            class="w-20 form-input bg-white px-2 py-1 text-center font-bold"
-                                            th:value="${detail.quantite}" name="quantite">
+                                            class="w-20 form-input bg-white px-2 py-1 text-center font-bold disabled:bg-slate-100 disabled:opacity-60 disabled:cursor-not-allowed"
+                                            th:value="${detail.quantite}" name="quantite"
+                                            th:disabled="${statutLibelle == 'en attente' || statutLibelle == 'annule'}">
                                         <span class="text-sm text-on-surface-variant">kg</span>
                                     </div>
+                                    <span th:if="${errors != null && errors.get(detail.id) != null}"
+                                        th:text="${errors.get(detail.id).message}" class="text-error"></span>
+                                    <span th:if="${entryErrors != null && entryErrors.get(detail.id) != null}"
+                                        th:text="${entryErrors.get(detail.id).quantiteError}" class="text-error"></span>
                                 </td>
                                 <td th:text="${detail.findMontant() + ' Ar'}"
                                     class="py-4 px-4 font-body-md text-on-surface text-right font-bold">60.0 Ar</td>
                                 <td class="py-4 px-4 text-center">
-                                    <button
-                                        class="bg-slate-50 hover:underline font-bold text-xs uppercase transition-colors">Modifier</button>
+                                    <button type="submit" th:disabled="${statutLibelle == 'en attente' || statutLibelle == 'annule'}"
+                                        class="bg-slate-50 hover:underline font-bold text-xs uppercase transition-colors disabled:opacity-40 disabled:no-underline disabled:cursor-not-allowed">Modifier</button>
                                 </td>
                             </form>
                             <form th:if="${details.size() > 1}" action="/cmd/detail/delete" method="post">
                                 <input type="hidden" name="id" th:value="${detail.id}">
                                 <td class="py-4 px-4 text-center">
-                                    <button
-                                        class="text-error hover:underline font-bold text-xs uppercase transition-colors">Supprimer</button>
+                                    <button type="submit" th:disabled="${statutLibelle == 'en attente' || statutLibelle == 'annule'}"
+                                        class="text-error hover:underline font-bold text-xs uppercase transition-colors disabled:opacity-40 disabled:no-underline disabled:cursor-not-allowed">Supprimer</button>
                                 </td>
                             </form>
                         </tr>
                     </tbody>
                 </table>
             </div>
+
             <!-- Total Summary -->
             <div class="bg-surface-container p-6 rounded-xl flex justify-between items-center mb-10">
                 <span class="font-headline-md text-headline-md text-on-surface-variant">Montant total estimé</span>
                 <span th:text="${total + ' Ar'}" class="font-display-lg text-display-lg text-primary">60 Ar</span>
             </div>
         </div>
-        <!-- Order Logs (Bonus/Contextual) -->
     </main>
 
     <script>
@@ -384,47 +412,42 @@
             const clientId = document.getElementById('client-id');
             let debounceTimeout;
 
-            inputClient.addEventListener('input', (e) => {
-                const valeur = e.target.value.trim();
-                const selected = dataList.querySelector(`option[value="${valeur}"]`);
-                clientId.value = "";
-                if (selected) {
-                    clientId.value = selected.getAttribute("real-value");
-                }
-                clearTimeout(debounceTimeout);
+            // Stop dynamic fetch if input is disabled[cite: 1]
+            if (inputClient && !inputClient.disabled) {
+                inputClient.addEventListener('input', (e) => {
+                    const valeur = e.target.value.trim();
+                    const selected = dataList.querySelector(`option[value="${valeur}"]`);
+                    clientId.value = "";
+                    if (selected) {
+                        clientId.value = selected.getAttribute("real-value");
+                    }
+                    clearTimeout(debounceTimeout);
 
-                if (valeur.length >= 3) {
-                    debounceTimeout = setTimeout(() => {
-                        fetchClients(valeur);
-                    }, 300);
-                } else {
-                    dataList.innerHTML = '';
-                }
-            });
+                    if (valeur.length >= 3) {
+                        debounceTimeout = setTimeout(() => {
+                            fetchClients(valeur);
+                        }, 300);
+                    } else {
+                        dataList.innerHTML = '';
+                    }
+                });
+            }
 
             async function fetchClients(motCle) {
                 try {
                     const url = `http://localhost:8080/cmd/api/cli?kw=${encodeURIComponent(motCle)}`;
-
                     const response = await fetch(url);
-
                     if (!response.ok) {
                         throw new Error(`Erreur HTTP: ${response.status}`);
                     }
-
                     const clients = await response.json();
-
                     dataList.innerHTML = '';
-
                     clients.forEach(client => {
                         const option = document.createElement('option');
-
                         option.value = client.nom || client;
                         option.setAttribute("real-value", client.id);
-
                         dataList.appendChild(option);
                     });
-
                 } catch (error) {
                     console.error("Erreur lors de la récupération des clients :", error);
                 }

@@ -2,6 +2,7 @@ package com.example.charbonecolo.controller;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.data.domain.PageRequest;
@@ -17,8 +18,15 @@ import com.example.charbonecolo.dto.FactureCriteriaWrapper;
 import com.example.charbonecolo.dto.FactureDto;
 import com.example.charbonecolo.dto.FactureErrorWrapper;
 import com.example.charbonecolo.model.CommandeModel;
+import com.example.charbonecolo.model.DetailCommandeModel;
+import com.example.charbonecolo.model.FactureDetailModel;
+import com.example.charbonecolo.model.FactureModel;
 import com.example.charbonecolo.repository.CommandeRepository;
+import com.example.charbonecolo.repository.DetailCommandeRepository;
+import com.example.charbonecolo.repository.FactureDetailRepository;
+import com.example.charbonecolo.repository.FactureRepository;
 import com.example.charbonecolo.repository.MethodePaiementRepository;
+import com.example.charbonecolo.service.CommandeService;
 import com.example.charbonecolo.service.PaiementService;
 
 @Controller
@@ -30,6 +38,10 @@ public class FactureController {
     private final PaiementService paiementService;
     private final CommandeRepository commandeRepository;
     private final MethodePaiementRepository methodePaiementRepository;
+    private final DetailCommandeRepository detailCommandeRepository;
+    private final FactureRepository factureRepository;
+    private final FactureDetailRepository factureDetailRepository;
+    private final CommandeService commandeService;
 
     static {
         sortReferences = new HashMap<>();
@@ -41,11 +53,16 @@ public class FactureController {
     }
 
     public FactureController(PaiementService paiementService,
-                             CommandeRepository commandeRepository,
-                             MethodePaiementRepository methodePaiementRepository) {
+            CommandeRepository commandeRepository,
+            MethodePaiementRepository methodePaiementRepository, DetailCommandeRepository detailCommandeRepository,
+            FactureDetailRepository factureDetailRepository, FactureRepository factureRepository, CommandeService commandeService) {
         this.paiementService = paiementService;
         this.commandeRepository = commandeRepository;
         this.methodePaiementRepository = methodePaiementRepository;
+        this.detailCommandeRepository = detailCommandeRepository;
+        this.factureRepository = factureRepository;
+        this.factureDetailRepository = factureDetailRepository;
+        this.commandeService = commandeService;
     }
 
     @GetMapping
@@ -91,17 +108,19 @@ public class FactureController {
         if (commande == null) {
             return "redirect:/factures?error=commande_introuvable";
         }
+        List<DetailCommandeModel> details = detailCommandeRepository.findByCommandeId(commandeId);
         BigDecimal montant = paiementService.calculerMontantCommande(commandeId);
         model.addAttribute("commande", commande);
         model.addAttribute("montantCommande", montant);
         model.addAttribute("methodes", methodePaiementRepository.findAll());
+        model.addAttribute("details", details);
         return "stitch/module_commercial/formulaire_facture";
     }
 
     @PostMapping("/save")
     public ModelAndView saveFacture(@RequestParam("commandeId") Integer commandeId,
-                                     @RequestParam(value = "fraisLivraison", required = false) BigDecimal fraisLivraison,
-                                     @RequestParam(value = "methodePaiementId", required = false) Integer methodePaiementId) {
+            @RequestParam(value = "fraisLivraison", required = false) BigDecimal fraisLivraison,
+            @RequestParam(value = "methodePaiementId", required = false) Integer methodePaiementId) {
         FactureErrorWrapper errors = paiementService.validerFacture(fraisLivraison, methodePaiementId);
         if (errors != null) {
             ModelAndView mav = new ModelAndView("stitch/module_commercial/formulaire_facture");
@@ -121,8 +140,21 @@ public class FactureController {
 
     @GetMapping("/{id}")
     public String detailFacture(@PathVariable Integer id, Model model) {
-        Map<String, Object> facture = paiementService.getFactureDetail(id);
+        // 1. Récupérer l'entité principale Facture
+        FactureModel facture = factureRepository.findById(id).get();
+
+        // 2. Récupérer la liste des détails associés à cette facture
+        List<FactureDetailModel> details = factureDetailRepository.findByFactureId(id);
+
+        // 3. Passer les objets typés au modèle de la vue Thymeleaf
         model.addAttribute("facture", facture);
+        model.addAttribute("details", details);
+
+        // Vous pouvez également calculer et passer le montant total de la facture si
+        // nécessaire
+        int montantTotal = details.stream().mapToInt(FactureDetailModel::getMontant).sum();
+        model.addAttribute("montantTotal", montantTotal);
+
         return "stitch/module_commercial/detail_facture";
     }
 }

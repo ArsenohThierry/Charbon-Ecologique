@@ -26,7 +26,7 @@
                 <div class="flex justify-between items-start mb-8">
                     <div>
                         <h1 class="font-serif text-4xl text-brand-dark mb-2">Détail de la facture</h1>
-                        <p class="text-gray-500" th:text="${facture.facture_reference}">FACT-2026-0001</p>
+                        <p class="text-gray-500" th:text="${facture.reference}">FACT-2026-0001</p>
                     </div>
                     <a href="/factures" class="text-sm text-slate-500 hover:text-brand-success transition flex items-center gap-1">
                         ← Retour
@@ -34,47 +34,53 @@
                 </div>
 
                 <div class="bg-white rounded-xl border border-slate-200 p-8 shadow-sm space-y-6">
-                    <div class="grid grid-cols-2 gap-6">
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
                         <div>
                             <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Réf. paiement</label>
-                            <p class="text-lg font-bold text-brand-dark mt-1" th:text="${facture.paiement_reference}">PAI-001</p>
+                            <p class="text-lg font-bold text-brand-dark mt-1" th:text="${facture.paiement != null ? facture.paiement.id : 'N/A'}">PAI-001</p>
                         </div>
                         <div>
                             <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Réf. commande</label>
-                            <p class="text-lg font-bold text-brand-dark mt-1" th:text="${facture.commande_reference}">CMD-001</p>
+                            <p class="text-lg font-bold text-brand-dark mt-1" th:text="${facture.paiement != null && facture.paiement.commande != null ? facture.paiement.commande.reference : 'N/A'}">CMD-001</p>
                         </div>
                         <div>
                             <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Client</label>
-                            <p class="text-lg font-bold text-brand-dark mt-1" th:text="${facture.client_nom}">Client</p>
+                            <p class="text-lg font-bold text-brand-dark mt-1" th:text="${facture.paiement != null && facture.paiement.commande != null ? facture.paiement.commande.client.nom : 'Client'}">Client</p>
                         </div>
                     </div>
 
                     <div class="border-t border-slate-200 pt-6">
                         <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">Lignes de facture</h3>
-                        <table class="w-full text-left">
-                            <thead>
-                                <tr class="text-xs uppercase tracking-wider text-slate-400 border-b border-slate-100">
-                                    <th class="pb-2 font-semibold">Libellé</th>
-                                    <th class="pb-2 font-semibold text-right">Montant</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-50">
-                                <tr th:each="d : ${facture.details}" class="text-sm">
-                                    <td class="py-3 text-slate-700" th:text="${d.libelle}">Montant commande</td>
-                                    <td class="py-3 text-right font-medium text-slate-700"
-                                        th:text="${#numbers.formatDecimal(d.montant, 1, 'DEFAULT', 2, 'POINT')} + ' Ar'">0.00 Ar</td>
-                                </tr>
-                            </tbody>
-                            <tfoot>
-                                <tr class="border-t border-slate-200">
-                                    <td class="pt-3 font-bold text-brand-dark">Total</td>
-                                    <td class="pt-3 text-right font-bold text-brand-dark text-lg"
-                                        th:text="${#numbers.formatDecimal(facture.total, 1, 'DEFAULT', 2, 'POINT')} + ' Ar'">
-                                        0.00 Ar
-                                    </td>
-                                </tr>
-                            </tfoot>
-                        </table>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="text-xs uppercase tracking-wider text-slate-400 border-b border-slate-100">
+                                        <th class="pb-2 font-semibold">Libellé</th>
+                                        <th class="pb-2 font-semibold text-right">P.U (Ar)</th>
+                                        <th class="pb-2 font-semibold text-center">Quantité</th>
+                                        <th class="pb-2 font-semibold text-right">Montant</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-50 text-slate-700 text-sm">
+                                    <tr th:each="d : ${details}" class="hover:bg-slate-50/50 transition-colors">
+                                        <td class="py-3 font-medium" th:text="${d.libelle}">Montant commande</td>
+                                        <td class="py-3 text-right" th:text="${d.pu != null ? #numbers.formatDecimal(d.pu, 1, 'DEFAULT', 2, 'POINT') : '0.00'}">0.00</td>
+                                        <td class="py-3 text-center font-semibold text-slate-600" th:text="${d.quantite != null ? d.quantite : '1'}">1</td>
+                                        <td class="py-3 text-right font-semibold text-brand-dark"
+                                            th:text="${#numbers.formatDecimal(d.montant, 1, 'DEFAULT', 2, 'POINT')} + ' Ar'">0.00 Ar</td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr class="border-t border-slate-200">
+                                        <td colspan="3" class="pt-4 font-bold text-brand-dark text-base">Total Général</td>
+                                        <td class="pt-4 text-right font-bold text-brand-dark text-xl"
+                                            th:text="${#numbers.formatDecimal(montantTotal, 1, 'DEFAULT', 2, 'POINT')} + ' Ar'">
+                                            0.00 Ar
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -1,6 +1,7 @@
 package com.example.charbonecolo.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -69,4 +70,6 @@ public interface LivraisonRepository extends JpaRepository<LivraisonModel, Integ
 
     @Query("SELECT COUNT(l) > 0 FROM LivraisonModel l WHERE l.commande.id = :commandeId")
     boolean existsByCommandeId(@Param("commandeId") Integer commandeId);
+
+    public Optional<LivraisonModel> findByCommandeId(Integer idCommande);
 }

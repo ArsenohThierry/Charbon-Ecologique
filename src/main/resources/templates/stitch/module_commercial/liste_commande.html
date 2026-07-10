@@ -75,6 +75,27 @@
                     </a>
                 </div>
 
+                <div th:if="${error != null && !#strings.isEmpty(error)}"
+                    class="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+                    <span th:text="${error}">Une erreur est survenue.</span>
+                </div>
+                <div th:if="${errorMessage != null && !#strings.isEmpty(errorMessage)}"
+                    class="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+                    <span th:text="${errorMessage}">Une erreur est survenue.</span>
+                </div>
+                <div th:if="${success != null && !#strings.isEmpty(success)}"
+                    class="mb-6 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700">
+                    <span th:text="${success}">Opération réalisée avec succès.</span>
+                </div>
+                <div th:if="${successMessage != null && !#strings.isEmpty(successMessage)}"
+                    class="mb-6 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700">
+                    <span th:text="${successMessage}">Opération réalisée avec succès.</span>
+                </div>
+                <div th:if="${message != null && !#strings.isEmpty(message)}"
+                    class="mb-6 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-700">
+                    <span th:text="${message}">Information.</span>
+                </div>
+
                 <form action="" method="get" id="filterForm" class="space-y-4 mb-6">
                     <input type="hidden" name="page" th:value="1">
                     <input type="hidden" name="limit" th:value="${page.size}">
@@ -224,7 +245,7 @@
                                     90 000.00 Ar</td>
                                 <td class="px-6 py-4 align-top">
                                     <span th:if="${dto.statutLibelle != null}"
-                                        th:class="'badge badge-' + ${#strings.toLowerCase(dto.statutLibelle) == 'en attente' ? 'pending' : 'delivered'}"
+                                        th:class="'badge badge-' + (${#strings.toLowerCase(dto.statutLibelle) == 'en attente'} ? 'pending' : (${#strings.toLowerCase(dto.statutLibelle) == 'annule'} ? 'cancelled' : 'delivered'))"
                                         th:text="${dto.statutLibelle}">En attente</span>
                                     <span th:if="${dto.statutLibelle == null}" class="badge text-slate-400">-</span>
                                 </td>
