@@ -78,7 +78,19 @@ public interface JournalFinancierRepository extends JpaRepository<JournalFinanci
               Pageable pageable
        );
        Optional<JournalFinancierModel> findByIdSourceAndTypeSource(
-              Long idSource,
-              String typeSource
+               Long idSource,
+               String typeSource
+       );
+
+       List<JournalFinancierModel> findByReferenceContainingOrderByDateOperationDesc(
+              String reference
+       );
+
+       List<JournalFinancierModel> findByTypeJournal_CodeOrderByDateOperationDesc(
+              String code
+       );
+
+       List<JournalFinancierModel> findByOrigine_CodeOrderByDateOperationDesc(
+              String code
        );
 }
