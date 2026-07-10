@@ -151,10 +151,10 @@ public class JournalController {
         baos.write(0xBB);
         baos.write(0xBF);
 
-        writer.write("ID;Date;Type Journal;Origine;Debit;Credit;Reference;Description\n");
+        writer.write("ID;Date;Type Journal;Origine;Debit;Credit;Reference;Description;Source\n");
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         for (JournalFinancierModel e : ecritures) {
-            writer.write(String.format("%d;%s;%s;%s;%s;%s;%s;%s\n",
+            writer.write(String.format("%d;%s;%s;%s;%s;%s;%s;%s;%s\n",
                     e.getId(),
                     e.getDateOperation().format(fmt),
                     e.getTypeJournal().getLibelle(),
@@ -162,7 +162,8 @@ public class JournalController {
                     e.getDebit().toPlainString(),
                     e.getCredit().toPlainString(),
                     e.getReference() != null ? e.getReference() : "",
-                    e.getDescription() != null ? e.getDescription() : ""
+                    e.getDescription() != null ? e.getDescription() : "",
+                    e.getTypeSource() != null ? e.getTypeSource() : "Manuel"
             ));
         }
         writer.flush();

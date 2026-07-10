@@ -1,5 +1,6 @@
 package com.example.charbonecolo.repository;
 
+import java.util.Optional;
 import com.example.charbonecolo.model.JournalFinancierModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -58,4 +59,38 @@ public interface JournalFinancierRepository extends JpaRepository<JournalFinanci
                    "GROUP BY mois ORDER BY mois",
            nativeQuery = true)
     List<Map<String, Object>> evolutionMensuelleCA(@Param("debut") LocalDateTime debut);
+    // Vérifie si une écriture existe déjà
+       boolean existsByReferenceAndOrigine_Id(String reference, Integer origineId); 
+       // Recherche une écriture par référence et origine
+       Optional<JournalFinancierModel> findByReferenceAndOrigine_Id(
+              String reference,
+              Integer origineId
+       );     
+       // Recherche toutes les écritures provenant d'un même objet métier
+       List<JournalFinancierModel> findByTypeSourceAndIdSourceOrderByDateOperationDesc(
+              String typeSource,
+              Long idSource
+       );     
+       // Recherche paginée
+       Page<JournalFinancierModel> findByTypeSourceAndIdSource(
+              String typeSource,
+              Long idSource,
+              Pageable pageable
+       );
+       Optional<JournalFinancierModel> findByIdSourceAndTypeSource(
+               Long idSource,
+               String typeSource
+       );
+
+       List<JournalFinancierModel> findByReferenceContainingOrderByDateOperationDesc(
+              String reference
+       );
+
+       List<JournalFinancierModel> findByTypeJournal_CodeOrderByDateOperationDesc(
+              String code
+       );
+
+       List<JournalFinancierModel> findByOrigine_CodeOrderByDateOperationDesc(
+              String code
+       );
 }

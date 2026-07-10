@@ -1,5 +1,6 @@
 package com.example.charbonecolo.dto;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import jakarta.validation.constraints.NotNull;
@@ -17,6 +18,8 @@ public class EntreeStockDTO {
 
     private LocalDate dateEntree;
 
+    private BigDecimal prixAchat;
+
     // 1. Le constructeur EXACT pour le @SqlResultSetMapping (without id)
     public EntreeStockDTO(Integer idLot, LocalDate dateEntree, Integer quantite) {
         this.idLot = idLot;
@@ -30,6 +33,14 @@ public class EntreeStockDTO {
         this.idLot = idLot;
         this.dateEntree = dateEntree;
         this.quantite = quantite;
+    }
+
+    // Constructor with prixAchat
+    public EntreeStockDTO(Integer idLot, LocalDate dateEntree, Integer quantite, BigDecimal prixAchat) {
+        this.idLot = idLot;
+        this.dateEntree = dateEntree;
+        this.quantite = quantite;
+        this.prixAchat = prixAchat;
     }
 
     // 2. Constructeur par défaut (recommandé)
@@ -67,5 +78,13 @@ public class EntreeStockDTO {
 
     public void setQuantite(Integer quantite) {
         this.quantite = quantite;
+    }
+
+    public BigDecimal getPrixAchat() {
+        return prixAchat;
+    }
+
+    public void setPrixAchat(BigDecimal prixAchat) {
+        this.prixAchat = prixAchat;
     }
 }
