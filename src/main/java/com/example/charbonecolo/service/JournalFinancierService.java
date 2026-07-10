@@ -26,9 +26,26 @@ public class JournalFinancierService {
         if (ecriture.getDebit() == null) {
             ecriture.setDebit(BigDecimal.ZERO);
         }
+
         if (ecriture.getCredit() == null) {
             ecriture.setCredit(BigDecimal.ZERO);
         }
+
+        if (ecriture.getCreatedAt() == null) {
+            ecriture.setCreatedAt(LocalDateTime.now());
+        }
+
+        if (ecriture.getReference() != null
+                && ecriture.getOrigine() != null
+                && journalRepo.existsByReferenceAndOrigine_Id(
+                        ecriture.getReference(),
+                        ecriture.getOrigine().getId())) {
+
+            throw new IllegalArgumentException(
+                    "Une écriture existe déjà avec cette référence."
+            );
+        }
+
         return journalRepo.save(ecriture);
     }
 
@@ -114,5 +131,54 @@ public class JournalFinancierService {
                 .findByTypeJournal_IdOrderByDateOperationDesc(
                         typeJournalId,
                         pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public boolean existeDeja(String reference, Integer origineId) {
+
+        return journalRepo.existsByReferenceAndOrigine_Id(
+                reference,
+                origineId
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public List<JournalFinancierModel> rechercherParSource(
+            String typeSource,
+            Long idSource) {
+
+        return journalRepo.findByTypeSourceAndIdSourceOrderByDateOperationDesc(
+                typeSource,
+                idSource
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public Page<JournalFinancierModel> rechercherParSource(
+            String typeSource,
+            Long idSource,
+            Pageable pageable) {
+
+        return journalRepo.findByTypeSourceAndIdSource(
+                typeSource,
+                idSource,
+                pageable
+        );
+    }
+
+    public JournalFinancierModel enregistrerVente(JournalFinancierModel ecriture) {
+        return enregistrer(ecriture);
+    }
+
+    public JournalFinancierModel enregistrerPaiement(JournalFinancierModel ecriture) {
+        return enregistrer(ecriture);
+    }
+
+    public JournalFinancierModel enregistrerAchat(JournalFinancierModel ecriture) {
+        return enregistrer(ecriture);
+    }
+
+    public JournalFinancierModel enregistrerFraisLivraison(JournalFinancierModel ecriture) {
+        return enregistrer(ecriture);
     }
 }
