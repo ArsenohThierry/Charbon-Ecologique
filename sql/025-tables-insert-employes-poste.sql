@@ -10,8 +10,8 @@ CREATE TABLE IF NOT EXISTS employe (
     nom            VARCHAR(150) NOT NULL,
     date_embauche  DATE NOT NULL,
     id_emploi      INTEGER NOT NULL REFERENCES emploi(id),
-    indemnite      NUMERIC(1,1),
-    prime      NUMERIC(1,1) 
+    indemnite      NUMERIC(12,2),
+    prime      NUMERIC(12,2) 
 );
 
 -- Postes (emplois) avec salaire de base

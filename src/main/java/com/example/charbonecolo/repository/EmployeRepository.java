@@ -13,6 +13,7 @@ import com.example.charbonecolo.model.EmployeModel;
 public interface EmployeRepository extends JpaRepository<EmployeModel, Integer> {
 
     boolean existsByReference(String reference);
+    long countByEmploiId(Integer emploiId);
 
     @Query(value = "SELECT e FROM EmployeModel e JOIN FETCH e.emploi p " +
            "WHERE ( :nom = '' OR LOWER(e.nom) LIKE CONCAT('%', LOWER(:nom), '%') ) " +

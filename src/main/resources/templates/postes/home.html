@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Postes - Charbon Vert</title>
+    <link rel="stylesheet" th:href="@{/css/output.css}" />
+    <link rel="stylesheet" th:href="@{/css/fonts.css}" />
+</head>
+
+<body class="bg-brand-light font-sans text-slate-800 min-h-screen flex">
+    <aside th:replace="~{fragments/sidebar :: sidebar('postes')}"></aside>
+
+    <main class="flex-1 flex flex-col min-w-0">
+        <header class="h-16 px-8 flex items-center justify-between border-b border-gray-200">
+            <div>
+                <h2 class="text-sm font-bold text-gray-800">Administration</h2>
+                <p class="text-[10px] text-gray-500 uppercase tracking-wide">Gestion des postes</p>
+            </div>
+        </header>
+
+        <section class="flex-1 p-12 overflow-y-auto">
+            <div class="max-w-4xl mx-auto">
+
+                <div th:if="${success}" class="mb-6 p-4 bg-green-100 border border-green-200 text-green-800 rounded-lg text-sm font-medium" th:text="${success}"></div>
+                <div th:if="${error}" class="mb-6 p-4 bg-red-100 border border-red-200 text-red-800 rounded-lg text-sm font-medium" th:text="${error}"></div>
+
+                <!-- Formulaire -->
+                <div class="mb-12">
+                    <div class="mb-8">
+                        <h1 class="text-4xl font-serif text-brand-dark mb-2" th:text="${emploiModel.id != null} ? 'Modifier le poste' : 'Ajouter un poste'">Ajouter un poste</h1>
+                        <p class="text-gray-600 text-sm">Enregistrer ou mettre à jour un poste et son salaire de base.</p>
+                    </div>
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
+                        <form th:action="${emploiModel.id != null} ? @{/postes/update} : @{/postes/add}" th:object="${emploiModel}" method="POST" class="space-y-6">
+                            <input type="hidden" th:field="*{id}" />
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                                <div class="space-y-1.5">
+                                    <label class="block text-sm font-medium text-gray-700" for="libelle">Libellé du poste</label>
+                                    <input th:field="*{libelle}" class="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-gray-700 text-sm focus:ring-1 focus:ring-brand-success focus:border-brand-success" id="libelle" type="text" placeholder="Ouvrier de production" />
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="block text-sm font-medium text-gray-700" for="salaire">Salaire de base (Ar)</label>
+                                    <input th:field="*{salaire}" class="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-gray-700 text-sm focus:ring-1 focus:ring-brand-success focus:border-brand-success" id="salaire" type="number" step="0.01" min="0" />
+                                </div>
+                            </div>
+                            <div class="pt-4 flex items-center gap-4">
+                                <button class="bg-brand-success hover:bg-emerald-800 text-white font-semibold py-2 px-6 rounded-lg transition-colors text-sm" type="submit" th:text="${emploiModel.id != null} ? 'Enregistrer les modifications' : 'Enregistrer le poste'">Enregistrer le poste</button>
+                                <a th:href="@{/postes/home}" class="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-medium py-2 px-8 rounded-lg transition-colors text-sm text-center">Annuler</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Liste -->
+                <div>
+                    <div class="mb-8">
+                        <h1 class="text-4xl font-serif text-brand-dark mb-2">Liste des postes</h1>
+                        <p class="text-gray-600 text-sm">Consulter, modifier ou supprimer un poste.</p>
+                    </div>
+
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead>
+                                    <tr class="bg-gray-50 border-b border-gray-100 text-gray-500 text-sm">
+                                        <th class="px-6 py-4 font-medium text-left w-16">ID</th>
+                                        <th class="px-6 py-4 font-medium text-left">Poste</th>
+                                        <th class="px-6 py-4 font-medium text-right w-48">Salaire de base</th>
+                                        <th class="px-6 py-4 font-medium text-right w-40">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="p : ${postes}" class="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
+                                        <td class="px-6 py-4" th:text="${p.id}"></td>
+                                        <td class="px-6 py-4 font-medium text-brand-dark" th:text="${p.libelle}"></td>
+                                        <td class="px-6 py-4 text-right font-medium" th:text="${#numbers.formatDecimal(p.salaire, 1, 'COMMA', 0, 'POINT') + ' Ar'}"></td>
+                                        <td class="px-6 py-4 text-right space-x-2">
+                                            <a th:href="@{/postes/update/{id}(id=${p.id})}" class="text-blue-600 hover:text-blue-800 font-medium transition-colors">Modifier</a>
+                                            <a th:href="@{/postes/delete/{id}(id=${p.id})}" class="text-red-600 hover:text-red-800 font-medium transition-colors" onclick="return confirm('Supprimer ce poste ?');">Supprimer</a>
+                                        </td>
+                                    </tr>
+                                    <tr th:if="${postes.empty}">
+                                        <td colspan="4" class="px-6 py-8 text-center text-gray-500 text-sm">Aucun poste trouvé.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </main>
+</body>
+</html>

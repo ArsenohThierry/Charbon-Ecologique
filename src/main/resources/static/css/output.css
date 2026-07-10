@@ -1434,6 +1434,10 @@ input:where([type='file']):focus {
        column-gap: 2rem;
 }
 
+.gap-y-5 {
+  row-gap: 1.25rem;
+}
+
 .gap-y-6 {
   row-gap: 1.5rem;
 }
@@ -3131,11 +3135,6 @@ input:where([type='file']):focus {
 .hover\:text-cv-primary-green:hover {
   --tw-text-opacity: 1;
   color: rgb(45 90 63 / var(--tw-text-opacity, 1));
-}
-
-.hover\:text-emerald-800:hover {
-  --tw-text-opacity: 1;
-  color: rgb(6 95 70 / var(--tw-text-opacity, 1));
 }
 
 .hover\:text-gray-600:hover {

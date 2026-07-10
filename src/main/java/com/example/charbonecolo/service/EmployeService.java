@@ -58,6 +58,23 @@ public class EmployeService {
         employeRepository.deleteById(id);
     }
 
+    public EmploiModel getEmploiById(Integer id) {
+        return emploiRepository.findById(id).orElseThrow();
+    }
+
+    @Transactional
+    public EmploiModel saveEmploi(EmploiModel emploi) {
+        return emploiRepository.save(emploi);
+    }
+
+    @Transactional
+    public void deleteEmploiById(Integer id) {
+        if (employeRepository.countByEmploiId(id) > 0) {
+            throw new RuntimeException("Ce poste est attribué à un ou plusieurs employés.");
+        }
+        emploiRepository.deleteById(id);
+    }
+
     public List<EmployeModel> getAllEmployes() {
         return employeRepository.findAll();
     }
@@ -67,9 +84,14 @@ public class EmployeService {
     }
 
     @Transactional
-    public SalaireHistoriqueModel salarier(Integer employeId, BigDecimal salaireBase, BigDecimal prime,
-                                            BigDecimal indemnite, LocalDate dateEffet) {
+    public SalaireHistoriqueModel salarier(Integer employeId, Integer emploiId, BigDecimal salaireBase,
+                                            BigDecimal prime, BigDecimal indemnite, LocalDate dateEffet) {
         EmployeModel employe = getById(employeId);
+
+        if (emploiId != null) {
+            EmploiModel emploi = emploiRepository.findById(emploiId).orElseThrow();
+            employe.setEmploi(emploi);
+        }
 
         SalaireHistoriqueModel histo = new SalaireHistoriqueModel();
         histo.setEmploye(employe);

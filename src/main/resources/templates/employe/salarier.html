@@ -38,22 +38,22 @@
                         </select>
                     </div>
 
-                    <div class="space-y-1.5">
-                        <label class="block text-sm font-medium text-gray-700">Salaire de base (Ar)</label>
-                        <input type="number" name="salaireBase" step="0.01" min="0"
-                               th:value="${salaireBase}"
-                               class="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-gray-700 text-sm focus:ring-1 focus:ring-brand-success focus:border-brand-success" />
+                    <div class="space-y-1.5" th:if="${employe != null}">
+                        <label class="block text-sm font-medium text-gray-700">Rôle</label>
+                        <p class="text-lg font-bold text-brand-dark" th:text="${employe.emploi.libelle + ' - ' + #numbers.formatDecimal(employe.emploi.salaire, 1, 'COMMA', 0, 'POINT') + ' Ar'}">Développeur - 2 000 000 Ar</p>
                     </div>
-
+                    <input type="hidden" name="salaireBase" th:value="${salaireBase}" />
                     <div class="grid grid-cols-2 gap-6">
                         <div class="space-y-1.5">
                             <label class="block text-sm font-medium text-gray-700">Prime (Ar)</label>
-                            <input type="number" name="prime" step="0.01" min="0" value="0"
+                            <input type="number" name="prime" step="0.01" min="0"
+                                   th:value="${prime}"
                                    class="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-gray-700 text-sm focus:ring-1 focus:ring-brand-success focus:border-brand-success" />
                         </div>
                         <div class="space-y-1.5">
                             <label class="block text-sm font-medium text-gray-700">Indemnité (Ar)</label>
-                            <input type="number" name="indemnite" step="0.01" min="0" value="0"
+                            <input type="number" name="indemnite" step="0.01" min="0"
+                                   th:value="${indemnite}"
                                    class="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-gray-700 text-sm focus:ring-1 focus:ring-brand-success focus:border-brand-success" />
                         </div>
                     </div>

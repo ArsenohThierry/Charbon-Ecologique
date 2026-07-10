@@ -39,6 +39,8 @@ public class EmployeController {
 
     public record PageLink(int index, int number, boolean current, boolean ellipsis) {}
 
+    public record HistoEntry(LocalDate dateEffet, BigDecimal ancien, BigDecimal nouveau) {}
+
     public static String toggleSortColumn(String currentSort, String column) {
         if (currentSort != null && currentSort.startsWith(column + ",")) {
             String dir = currentSort.substring(column.length() + 1);
@@ -121,6 +123,7 @@ public class EmployeController {
     public String getUpdateForm(@PathVariable Integer id, RedirectAttributes rad) {
         try {
             EmployeModel employe = employeService.getById(id);
+            employe.getEmploi().getLibelle();
             rad.addFlashAttribute("employeModel", employe);
         } catch (Exception e) {
             rad.addFlashAttribute("error", "Employé introuvable.");
@@ -171,6 +174,7 @@ public class EmployeController {
 
     @GetMapping("/salaire/{id}")
     public String ficheSalaire(@PathVariable Integer id,
+                               @RequestParam(defaultValue = "false") boolean edit,
                                @RequestParam(defaultValue = "0") int page,
                                @RequestParam(defaultValue = "10") int size,
                                Model model) {
@@ -178,19 +182,53 @@ public class EmployeController {
         model.addAttribute("employe", employe);
         model.addAttribute("salaireBase", employe.getSalaireBase());
         model.addAttribute("totalSalaire", employe.getTotalSalaire());
+        model.addAttribute("edit", edit);
 
         int histSize = Math.min(Math.max(size, 1), 10);
         Pageable pageable = PageRequest.of(Math.max(page, 0), histSize);
         Page<SalaireHistoriqueModel> histo = employeService.getHistoriqueByEmployeId(id, pageable);
 
-        model.addAttribute("historique", histo.getContent());
+        List<SalaireHistoriqueModel> histoContent = histo.getContent();
+        List<HistoEntry> histoEntries = new ArrayList<>();
+        BigDecimal prev = null;
+        for (int i = histoContent.size() - 1; i >= 0; i--) {
+            SalaireHistoriqueModel h = histoContent.get(i);
+            histoEntries.add(new HistoEntry(h.getDateEffet(), prev, h.getTotal()));
+            prev = h.getTotal();
+        }
+
+        model.addAttribute("histoEntries", histoEntries);
         model.addAttribute("histPageNumber", histo.getNumber());
         model.addAttribute("histTotalPages", histo.getTotalPages());
         model.addAttribute("histHasPrevious", histo.hasPrevious());
         model.addAttribute("histHasNext", histo.hasNext());
         model.addAttribute("histPagination", buildPagination(histo.getNumber(), histo.getTotalPages()));
+        model.addAttribute("emplois", employeService.getAllEmplois());
 
         return "employe/fiche_salaire";
+    }
+
+    @PostMapping("/salaire/{id}")
+    public String enregistrerFiche(@PathVariable Integer id,
+                                    @RequestParam String nom,
+                                    @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateEmbauche,
+                                    @RequestParam(required = false) Integer emploiId,
+                                    @RequestParam(defaultValue = "0") BigDecimal prime,
+                                    @RequestParam(defaultValue = "0") BigDecimal indemnite,
+                                    @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateEffet,
+                                    RedirectAttributes rad) {
+        if (dateEffet == null) dateEffet = LocalDate.now();
+        try {
+            EmployeModel emp = employeService.getById(id);
+            emp.setNom(nom);
+            emp.setDateEmbauche(dateEmbauche);
+            employeService.salarier(id, emploiId, emp.getSalaireBase(), prime, indemnite, dateEffet);
+            rad.addFlashAttribute("success", "Fiche salariale mise à jour avec succès !");
+            return "redirect:/employes/salaire/" + id;
+        } catch (Exception e) {
+            rad.addFlashAttribute("error", "Erreur lors de la mise à jour.");
+            return "redirect:/employes/salaire/" + id + "?edit=true";
+        }
     }
 
     @GetMapping("/salarier")
@@ -199,24 +237,54 @@ public class EmployeController {
             EmployeModel employe = employeService.getById(id);
             model.addAttribute("employe", employe);
             model.addAttribute("salaireBase", employe.getSalaireBase());
+            model.addAttribute("prime", employe.getPrime());
+            model.addAttribute("indemnite", employe.getIndemnite());
         } else {
             model.addAttribute("employe", null);
             model.addAttribute("salaireBase", BigDecimal.ZERO);
+            model.addAttribute("prime", BigDecimal.ZERO);
+            model.addAttribute("indemnite", BigDecimal.ZERO);
         }
         model.addAttribute("employes", employeService.getAllEmployes());
         model.addAttribute("emplois", employeService.getAllEmplois());
         return "employe/salarier";
     }
 
+    @GetMapping("/prime")
+    public String formulairePrime(@RequestParam Integer id, Model model) {
+        EmployeModel employe = employeService.getById(id);
+        model.addAttribute("employe", employe);
+        return "employe/ajouter_prime";
+    }
+
+    @PostMapping("/prime")
+    public String enregistrerPrime(@RequestParam Integer employeId,
+                                    @RequestParam(defaultValue = "0") BigDecimal prime,
+                                    @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateEffet,
+                                    RedirectAttributes rad) {
+        if (dateEffet == null) dateEffet = LocalDate.now();
+        try {
+            EmployeModel emp = employeService.getById(employeId);
+            employeService.salarier(employeId, null, emp.getSalaireBase(), prime, emp.getIndemnite(), dateEffet);
+            rad.addFlashAttribute("success", "Prime enregistrée avec succès !");
+            return "redirect:/employes/salaire/" + employeId;
+        } catch (Exception e) {
+            rad.addFlashAttribute("error", "Erreur lors de l'enregistrement de la prime.");
+            return "redirect:/employes/prime?id=" + employeId;
+        }
+    }
+
     @PostMapping("/salarier")
     public String enregistrerSalarier(@RequestParam Integer employeId,
-                                      @RequestParam BigDecimal salaireBase,
-                                      @RequestParam BigDecimal prime,
-                                      @RequestParam BigDecimal indemnite,
-                                      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateEffet,
-                                      RedirectAttributes rad) {
+                                       @RequestParam(required = false) Integer emploiId,
+                                       @RequestParam(defaultValue = "0") BigDecimal salaireBase,
+                                       @RequestParam(defaultValue = "0") BigDecimal prime,
+                                       @RequestParam(defaultValue = "0") BigDecimal indemnite,
+                                       @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateEffet,
+                                       RedirectAttributes rad) {
+        if (dateEffet == null) dateEffet = LocalDate.now();
         try {
-            employeService.salarier(employeId, salaireBase, prime, indemnite, dateEffet);
+            employeService.salarier(employeId, emploiId, salaireBase, prime, indemnite, dateEffet);
             rad.addFlashAttribute("success", "Salaire enregistré avec succès !");
             return "redirect:/employes/salaire/" + employeId;
         } catch (Exception e) {
