@@ -472,11 +472,16 @@ CREATE TABLE journal_financier (
     credit          NUMERIC(15,2) NOT NULL DEFAULT 0,
     reference       VARCHAR(50),
     description     TEXT,
+    type_source     VARCHAR(50),
+    id_source       BIGINT,
+    created_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_jf_type_journal
         FOREIGN KEY (id_type_journal) REFERENCES type_journal(id),
     CONSTRAINT fk_jf_origine
-        FOREIGN KEY (id_origine) REFERENCES origine(id)
+        FOREIGN KEY (id_origine) REFERENCES origine(id),
+    CONSTRAINT uk_reference_origine
+        UNIQUE(reference, id_origine)
 );
 
 -- Historique des imports Excel
@@ -548,6 +553,13 @@ CREATE INDEX idx_client ON clients(nom);
 
 -- Salaire historique : recherche par employé
 CREATE INDEX idx_salaire_historique_employe ON salaire_historique(id_employe, date_effet DESC);
+
+-- Journal financier : index de performance
+CREATE INDEX idx_journal_date      ON journal_financier(date_operation);
+CREATE INDEX idx_journal_type      ON journal_financier(id_type_journal);
+CREATE INDEX idx_journal_origine   ON journal_financier(id_origine);
+CREATE INDEX idx_journal_reference ON journal_financier(reference);
+CREATE INDEX idx_journal_source    ON journal_financier(type_source, id_source);
 
 
 -- ============================================================================
@@ -719,14 +731,19 @@ INSERT INTO type_journal (libelle, code) VALUES
     ('Vente',  'VTE'),
     ('Achat',  'ACH'),
     ('Banque', 'BNQ'),
-    ('Caisse', 'CSS');
+    ('Caisse', 'CSS'),
+    ('Opérations diverses', 'OD')
+ON CONFLICT (code) DO UPDATE SET libelle = EXCLUDED.libelle;
 
 -- --- Origines des opérations ---
 INSERT INTO origine (libelle, code) VALUES
     ('Commande',          'COMMANDE'),
     ('Paiement',          'PAIEMENT'),
     ('Achat fournisseur', 'ACHAT_FOURNISSEUR'),
-    ('Frais livraison',   'FRAIS_LIVRAISON');
+    ('Frais livraison',   'FRAIS_LIVRAISON'),
+    ('Import Excel',      'IMPORT_EXCEL'),
+    ('Saisie manuelle',   'MANUEL')
+ON CONFLICT (code) DO UPDATE SET libelle = EXCLUDED.libelle;
 
 -- --- Postes / Emplois ---
 INSERT INTO emploi (libelle, salaire) VALUES
@@ -941,7 +958,7 @@ INSERT INTO statuts_livraisons (id_livraison, id_livraisons_statuts, date_statut
 
 -- --- Employés ---
 INSERT INTO employe (reference, nom, date_embauche, id_emploi, prime, indemnite) VALUES
-    ('EMP-001', 'Andry Rajoelina',  '2024-01-15', (SELECT id FROM emploi WHERE libelle = 'Responsable Financier'),  100000, 50000),
+    ('EMP-001', 'Andyh Razafy',  '2024-01-15', (SELECT id FROM emploi WHERE libelle = 'Responsable Financier'),  100000, 50000),
     ('EMP-002', 'Nomena Razakandraina', '2024-06-01', (SELECT id FROM emploi WHERE libelle = 'Ouvrier de production'), 0, 20000),
     ('EMP-003', 'Tahina Razafindrabe', '2025-03-01', (SELECT id FROM emploi WHERE libelle = 'Livreur'), 0, 0),
     ('EMP-004', 'Hery Rambeloson',  '2025-09-15', (SELECT id FROM emploi WHERE libelle = 'Responsable Production'), 50000, 30000),
@@ -1002,6 +1019,51 @@ SELECT setval('lot_statuts_id_seq',      (SELECT COALESCE(MAX(id), 0) FROM lot_s
 SELECT setval('emploi_id_seq',           (SELECT COALESCE(MAX(id), 0) FROM emploi));
 SELECT setval('type_matiere_premiere_ref_seq',
     (SELECT COALESCE(MAX(id), 0) FROM type_matiere_premiere));
+
+
+-- ============================================================================
+-- 13. VUES SQL
+-- ============================================================================
+
+-- Trésorerie : soldes journaliers (entrées, sorties, solde)
+CREATE OR REPLACE VIEW tresorerie AS
+SELECT
+    date_operation,
+    SUM(debit)  AS entrees,
+    SUM(credit) AS sorties,
+    SUM(debit - credit) AS solde
+FROM journal_financier
+GROUP BY date_operation
+ORDER BY date_operation;
+
+-- Chiffre d'affaires journalier (ventes)
+CREATE OR REPLACE VIEW chiffre_affaires AS
+SELECT
+    DATE(date_operation) AS jour,
+    SUM(debit) AS chiffre_affaires
+FROM journal_financier jf
+JOIN type_journal tj ON tj.id = jf.id_type_journal
+WHERE tj.code = 'VTE'
+GROUP BY DATE(date_operation)
+ORDER BY jour;
+
+-- Dépenses journalières
+CREATE OR REPLACE VIEW depenses AS
+SELECT
+    DATE(date_operation) AS jour,
+    SUM(credit) AS montant
+FROM journal_financier
+GROUP BY DATE(date_operation)
+ORDER BY jour;
+
+-- Solde global
+CREATE OR REPLACE VIEW solde_global AS
+SELECT
+    COALESCE(SUM(debit),0)
+    -
+    COALESCE(SUM(credit),0)
+    AS solde
+FROM journal_financier;
 
 
 -- ============================================================================
