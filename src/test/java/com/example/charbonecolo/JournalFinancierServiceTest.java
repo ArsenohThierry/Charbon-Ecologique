@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -243,7 +242,7 @@ class JournalFinancierServiceTest {
         Integer origineId = journalService.rechercherParReference("CMD-EXISTE-001")
                 .get(0).getOrigine().getId();
 
-        assertTrue(journalService.existeDeja("CMD-EXISTE-001", origineId));
-        assertFalse(journalService.existeDeja("CMD-NEXISTE-PAS", origineId));
+        assertTrue(journalService.verifierDoublon("CMD-EXISTE-001", origineId));
+        assertFalse(journalService.verifierDoublon("CMD-NEXISTE-PAS", origineId));
     }
 }

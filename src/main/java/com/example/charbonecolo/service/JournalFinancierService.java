@@ -166,12 +166,6 @@ public class JournalFinancierService {
     // ================================================================
     // Vérification doublons
     // ================================================================
-
-    @Transactional(readOnly = true)
-    public boolean existeDeja(String reference, Integer origineId) {
-        return journalRepo.existsByReferenceAndOrigine_Id(reference, origineId);
-    }
-
     @Transactional(readOnly = true)
     public boolean verifierDoublon(String reference, Integer origineId) {
         return journalRepo.existsByReferenceAndOrigine_Id(reference, origineId);
@@ -203,6 +197,30 @@ public class JournalFinancierService {
         return journalRepo.findByIdSourceAndTypeSource(idSource, typeSource);
     }
 
+    private JournalFinancierModel creerEcriture(
+            LocalDateTime dateOperation,
+            TypeJournalModel typeJournal,
+            OrigineModel origine,
+            BigDecimal debit,
+            BigDecimal credit,
+            String reference,
+            String description,
+            String typeSource,
+            Long idSource) {
+
+        JournalFinancierModel ecriture = new JournalFinancierModel();
+        ecriture.setDateOperation(dateOperation);
+        ecriture.setTypeJournal(typeJournal);
+        ecriture.setOrigine(origine);
+        ecriture.setDebit(debit);
+        ecriture.setCredit(credit);
+        ecriture.setReference(reference);
+        ecriture.setDescription(description);
+        ecriture.setTypeSource(typeSource);
+        ecriture.setIdSource(idSource);
+        return ecriture;
+    }
+
     // ================================================================
     // Écritures inter-modules (appelées par les autres modules)
     // ================================================================
@@ -221,18 +239,16 @@ public class JournalFinancierService {
         OrigineModel origineCommande = origineRepo.findByCode("COMMANDE")
                 .orElseThrow(() -> new RuntimeException("Origine COMMANDE introuvable"));
 
-        JournalFinancierModel ecriture = new JournalFinancierModel();
-        ecriture.setDateOperation(dateOperation);
-        ecriture.setTypeJournal(typeVente);
-        ecriture.setOrigine(origineCommande);
-        ecriture.setDebit(montant);
-        ecriture.setCredit(BigDecimal.ZERO);
-        ecriture.setReference(reference);
-        ecriture.setDescription(description);
-        ecriture.setTypeSource(typeSource);
-        ecriture.setIdSource(idSource);
-
-        return enregistrer(ecriture);
+        return enregistrer(creerEcriture(
+            dateOperation,
+            typeVente,
+            origineCommande,
+            montant,
+            BigDecimal.ZERO,
+            reference,
+            description,
+            typeSource,
+            idSource));
     }
 
     public JournalFinancierModel enregistrerPaiement(
@@ -251,18 +267,16 @@ public class JournalFinancierService {
         OrigineModel originePaiement = origineRepo.findByCode("PAIEMENT")
                 .orElseThrow(() -> new RuntimeException("Origine PAIEMENT introuvable"));
 
-        JournalFinancierModel ecriture = new JournalFinancierModel();
-        ecriture.setDateOperation(dateOperation);
-        ecriture.setTypeJournal(typePaiement);
-        ecriture.setOrigine(originePaiement);
-        ecriture.setDebit(montant);
-        ecriture.setCredit(BigDecimal.ZERO);
-        ecriture.setReference(reference);
-        ecriture.setDescription(description);
-        ecriture.setTypeSource(typeSource);
-        ecriture.setIdSource(idSource);
-
-        return enregistrer(ecriture);
+        return enregistrer(creerEcriture(
+            dateOperation,
+            typePaiement,
+            originePaiement,
+            montant,
+            BigDecimal.ZERO,
+            reference,
+            description,
+            typeSource,
+            idSource));
     }
 
     public JournalFinancierModel enregistrerAchat(
@@ -279,18 +293,16 @@ public class JournalFinancierService {
         OrigineModel origineAchat = origineRepo.findByCode("ACHAT_FOURNISSEUR")
                 .orElseThrow(() -> new RuntimeException("Origine ACHAT_FOURNISSEUR introuvable"));
 
-        JournalFinancierModel ecriture = new JournalFinancierModel();
-        ecriture.setDateOperation(dateOperation);
-        ecriture.setTypeJournal(typeAchat);
-        ecriture.setOrigine(origineAchat);
-        ecriture.setDebit(BigDecimal.ZERO);
-        ecriture.setCredit(montant);
-        ecriture.setReference(reference);
-        ecriture.setDescription(description);
-        ecriture.setTypeSource(typeSource);
-        ecriture.setIdSource(idSource);
-
-        return enregistrer(ecriture);
+        return enregistrer(creerEcriture(
+            dateOperation,
+            typeAchat,
+            origineAchat,
+            BigDecimal.ZERO,
+            montant,
+            reference,
+            description,
+            typeSource,
+            idSource));
     }
 
     public JournalFinancierModel enregistrerFraisLivraison(
@@ -307,17 +319,15 @@ public class JournalFinancierService {
         OrigineModel origineFrais = origineRepo.findByCode("FRAIS_LIVRAISON")
                 .orElseThrow(() -> new RuntimeException("Origine FRAIS_LIVRAISON introuvable"));
 
-        JournalFinancierModel ecriture = new JournalFinancierModel();
-        ecriture.setDateOperation(dateOperation);
-        ecriture.setTypeJournal(typeAchat);
-        ecriture.setOrigine(origineFrais);
-        ecriture.setDebit(BigDecimal.ZERO);
-        ecriture.setCredit(montant);
-        ecriture.setReference(reference);
-        ecriture.setDescription(description);
-        ecriture.setTypeSource(typeSource);
-        ecriture.setIdSource(idSource);
-
-        return enregistrer(ecriture);
+        return enregistrer(creerEcriture(
+            dateOperation,
+            typeAchat,
+            origineFrais,
+            BigDecimal.ZERO,
+            montant,
+            reference,
+            description,
+            typeSource,
+            idSource));
     }
 }
