@@ -29,6 +29,14 @@ public class RoleInterceptor implements HandlerInterceptor {
         String role = user.getRole().getLibelle();
         String path = request.getRequestURI();
 
+        if ("STOCK_MANAGER".equals(role) && path.startsWith("/employes")) {
+            throw new AccessDeniedException("Vous n'avez pas accès à cette fonctionnalité.");
+        }
+
+        if ("FINANCE_MANAGER".equals(role) && path.startsWith("/employes")) {
+            throw new AccessDeniedException("Vous n'avez pas accès à cette fonctionnalité.");
+        }
+
         if ("ADMIN".equals(role)) {
             return true;
         }
