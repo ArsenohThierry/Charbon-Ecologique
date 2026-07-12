@@ -53,7 +53,7 @@
                                     <option th:each="p : ${emplois}" th:value="${p.id}" th:text="${p.libelle}"></option>
                                 </select>
                             </div>
-                            <button type="submit" class="px-5 py-2.5 text-sm font-semibold bg-slate-800 hover:bg-slate-900 text-white rounded-lg transition-colors shadow-sm">
+                            <button type="submit" class="px-5 py-2.5 text-sm font-semibold bg-brand-success hover:bg-slate-900 text-white rounded-lg transition-colors shadow-sm">
                                 Enregistrer
                             </button>
                         </form>
@@ -87,7 +87,7 @@
                                     </select>
                                 </div>
                                 <div class="flex items-end space-x-4 mt-3">
-                                    <button type="submit" class="px-5 py-2.5 text-sm font-semibold bg-slate-800 hover:bg-slate-900 text-white rounded-xl transition-colors shadow-sm">Rechercher</button>
+                                    <button type="submit" class="px-5 py-2.5 text-sm font-semibold bg-brand-success hover:bg-slate-900 text-white rounded-xl transition-colors shadow-sm">Rechercher</button>
                                     <a th:href="@{/employes/home(size=${pageSize})}" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">Réinitialiser</a>
                                 </div>
                             </div>
@@ -163,7 +163,7 @@
                                 <a th:if="${hasPrevious}" th:href="@{/employes/home(page=${pageNumber - 1}, size=${pageSize}, sort=${sortParam}, nom=${nom}, reference=${reference}, idEmploi=${idEmploi})}" class="px-3 py-1.5 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-600 transition-colors">←</a>
                                 <th:block th:each="p : ${pagination}">
                                     <span th:if="${p.ellipsis}" class="px-2 py-1.5 text-sm text-gray-400 select-none">...</span>
-                                    <span th:if="${!p.ellipsis && p.current}" th:text="${p.number}" class="px-3 py-1.5 text-sm bg-slate-800 text-white rounded-lg font-medium"></span>
+                                    <span th:if="${!p.ellipsis && p.current}" th:text="${p.number}" class="px-3 py-1.5 text-sm bg-brand-success text-white rounded-lg font-medium"></span>
                                     <a th:if="${!p.ellipsis && !p.current}" th:href="@{/employes/home(page=${p.index}, size=${pageSize}, sort=${sortParam}, nom=${nom}, reference=${reference}, idEmploi=${idEmploi})}" th:text="${p.number}" class="px-3 py-1.5 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-600 transition-colors"></a>
                                 </th:block>
                                 <a th:if="${hasNext}" th:href="@{/employes/home(page=${pageNumber + 1}, size=${pageSize}, sort=${sortParam}, nom=${nom}, reference=${reference}, idEmploi=${idEmploi})}" class="px-3 py-1.5 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-600 transition-colors">→</a>

@@ -84,11 +84,11 @@
                             class="w-full border-gray-300 rounded-md text-sm p-2" />
                     </div>
                     <button th:if="${isBlocked == null}" type="submit"
-                        class="bg-slate-700 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-slate-800">
+                        class="bg-slate-700 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-brand-success">
                         Ajouter
                     </button>
                     <div th:if="${isBlocked != null}" type="submit"
-                        class="bg-slate-700 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-slate-800">
+                        class="bg-slate-700 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-brand-success">
                         Vous ne pouvez pas ajouter pour le moment
                     </button>
                 </form>

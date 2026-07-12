@@ -76,7 +76,7 @@
                 </div>
             </div>
             <p id="caValue"
-               class="text-3xl font-bold text-green-600 leading-tight"
+               class="text-3xl font-serif text-green-600 leading-tight"
                th:text="${#numbers.formatDecimal(ca, 1, 'COMMA', 0, 'POINT')}"></p>
             <p class="text-xs text-slate-400 mt-1">MGA</p>
             <!-- Variation vs mois précédent -->
@@ -97,7 +97,7 @@
                 </div>
             </div>
             <p id="beneficeValue"
-               class="text-3xl font-bold leading-tight"
+               class="text-3xl font-serif leading-tight"
                th:classappend="${benefice >= 0} ? 'text-green-600' : 'text-red-600'"
                th:text="${#numbers.formatDecimal(benefice, 1, 'COMMA', 0, 'POINT')}"></p>
             <p class="text-xs text-slate-400 mt-1">MGA</p>
@@ -112,7 +112,7 @@
                 </div>
             </div>
             <p id="soldeValue"
-               class="text-3xl font-bold text-blue-600 leading-tight"
+               class="text-3xl font-serif text-blue-600 leading-tight"
                th:text="${#numbers.formatDecimal(solde, 1, 'COMMA', 0, 'POINT')}"></p>
             <p class="text-xs text-slate-400 mt-1">MGA</p>
         </div>
@@ -126,7 +126,7 @@
                 </div>
             </div>
             <p id="entreesValue"
-               class="text-3xl font-bold text-teal-600 leading-tight"
+               class="text-3xl font-serif text-teal-600 leading-tight"
                th:text="${#numbers.formatDecimal(entrees, 1, 'COMMA', 0, 'POINT')}"></p>
     
                <p class="text-xs text-slate-400 mt-1">MGA</p>
@@ -141,7 +141,7 @@
                 </div>
             </div>
             <p id="sortiesValue"
-               class="text-3xl font-bold text-red-600 leading-tight"
+               class="text-3xl font-serif text-red-600 leading-tight"
                th:text="${#numbers.formatDecimal(sorties, 1, 'COMMA', 0, 'POINT')}"></p>
             <p class="text-xs text-slate-400 mt-1">MGA</p>
         </div>

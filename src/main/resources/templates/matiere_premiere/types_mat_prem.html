@@ -31,8 +31,8 @@
 
             <!-- Formulaire -->
             <section class="max-w-5xl mx-auto mb-12">
-                <div class="text-center mb-8">
-                    <h3 class="text-4xl font-bold text-brand-dark mb-2"
+                <div class="mb-8">
+                    <h3 class="text-4xl font-serif text-brand-dark mb-2"
                         th:text="${typeMatiere.id != null} ? 'Modifier le type de matière' : 'Nouveaux types de matières premières'">
                         Nouveaux types de matières premières
                     </h3>
@@ -78,7 +78,7 @@
                             <a th:if="${typeMatiere.id != null}" th:href="@{/matiere/home}"
                                 class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">Annuler</a>
                             <button type="submit"
-                                class="px-5 py-2.5 text-sm font-semibold bg-slate-800 hover:bg-slate-900 rounded-xl transition-colors shadow-sm">Enregistrer</button>
+                                class="px-5 py-2.5 text-sm font-semibold bg-brand-success hover:bg-slate-900 rounded-xl transition-colors shadow-sm">Enregistrer</button>
                         </div>
                     </form>
                 </div>
@@ -152,7 +152,7 @@
                             
                             <th:block th:each="p : ${pagination}">
                                 <span th:if="${p.ellipsis}" class="px-2 py-1.5 text-sm text-gray-400 select-none">...</span>
-                                <span th:if="${!p.ellipsis && p.current}" th:text="${p.number}" class="px-3 py-1.5 text-sm bg-slate-800 text-white rounded-lg font-medium"></span>
+                                <span th:if="${!p.ellipsis && p.current}" th:text="${p.number}" class="px-3 py-1.5 text-sm bg-brand-success text-white rounded-lg font-medium"></span>
                                 <a th:if="${!p.ellipsis && !p.current}"
                                    th:href="@{/matiere/home(page=${p.index}, size=${pageSize}, sortColumn=${sortColumn}, sortDir=${sortDir})}"
                                    th:text="${p.number}"

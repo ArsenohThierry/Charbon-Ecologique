@@ -162,7 +162,7 @@
                             <a th:if="${histHasPrevious}" th:href="@{/employes/salaire/{id}(id=${employe.id}, page=${histPageNumber - 1}, edit=${edit})}" class="px-3 py-1.5 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-600 transition-colors">←</a>
                             <th:block th:each="p : ${histPagination}">
                                 <span th:if="${p.ellipsis}" class="px-2 py-1.5 text-sm text-gray-400 select-none">...</span>
-                                <span th:if="${!p.ellipsis && p.current}" th:text="${p.number}" class="px-3 py-1.5 text-sm bg-slate-800 text-white rounded-lg font-medium"></span>
+                                <span th:if="${!p.ellipsis && p.current}" th:text="${p.number}" class="px-3 py-1.5 text-sm bg-brand-success text-white rounded-lg font-medium"></span>
                                 <a th:if="${!p.ellipsis && !p.current}" th:href="@{/employes/salaire/{id}(id=${employe.id}, page=${p.index}, edit=${edit})}" th:text="${p.number}" class="px-3 py-1.5 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-600 transition-colors"></a>
                             </th:block>
                             <a th:if="${histHasNext}" th:href="@{/employes/salaire/{id}(id=${employe.id}, page=${histPageNumber + 1}, edit=${edit})}" class="px-3 py-1.5 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-600 transition-colors">→</a>

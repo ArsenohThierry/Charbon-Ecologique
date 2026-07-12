@@ -116,7 +116,7 @@
                                     </select>
                                 </div>
                                 <div class="md:col-span-5 lg:col-span-3 flex items-end space-x-4 mt-3">
-                                    <button type="submit" class="px-5 py-2.5 text-sm font-semibold bg-slate-800 hover:bg-slate-900 text-white rounded-xl transition-colors shadow-sm">Rechercher</button>
+                                    <button type="submit" class="px-5 py-2.5 text-sm font-semibold bg-brand-success hover:bg-slate-900 text-white rounded-xl transition-colors shadow-sm">Rechercher</button>
                                     <a th:href="@{/fournisseur/home(size=${pageSize})}" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">Réinitialiser</a>
                                     <a th:href="@{/fournisseur/import}" class="px-5 py-2.5 text-sm font-medium text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-xl transition-colors">
                                         Importer CSV
@@ -201,7 +201,7 @@
                                 <a th:if="${hasPrevious}" th:href="@{/fournisseur/home(page=${pageNumber - 1}, size=${pageSize}, sort=${sortParam}, nom=${nom}, email=${email}, telephone=${telephone}, adresse=${adresse}, actif=${actif})}" class="px-3 py-1.5 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-600 transition-colors">←</a>
                                 <th:block th:each="p : ${pagination}">
                                     <span th:if="${p.ellipsis}" class="px-2 py-1.5 text-sm text-gray-400 select-none">...</span>
-                                    <span th:if="${!p.ellipsis && p.current}" th:text="${p.number}" class="px-3 py-1.5 text-sm bg-slate-800 text-white rounded-lg font-medium"></span>
+                                    <span th:if="${!p.ellipsis && p.current}" th:text="${p.number}" class="px-3 py-1.5 text-sm bg-brand-success text-white rounded-lg font-medium"></span>
                                     <a th:if="${!p.ellipsis && !p.current}" th:href="@{/fournisseur/home(page=${p.index}, size=${pageSize}, sort=${sortParam}, nom=${nom}, email=${email}, telephone=${telephone}, adresse=${adresse}, actif=${actif})}" th:text="${p.number}" class="px-3 py-1.5 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-600 transition-colors"></a>
                                 </th:block>
                                 <a th:if="${hasNext}" th:href="@{/fournisseur/home(page=${pageNumber + 1}, size=${pageSize}, sort=${sortParam}, nom=${nom}, email=${email}, telephone=${telephone}, adresse=${adresse}, actif=${actif})}" class="px-3 py-1.5 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-600 transition-colors">→</a>

@@ -11,7 +11,7 @@
 <aside th:replace="~{fragments/sidebar :: sidebar('produits')}"></aside>
 <main class="flex-1 p-8">
 
-<h1 class="text-3xl font-bold text-brand-dark mb-6" th:text="${titre}">Produit</h1>
+<h1 class="text-3xl font-serif text-brand-dark mb-6" th:text="${titre}">Produit</h1>
 
 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-8 max-w-2xl">
 <form th:action="${produit.id == null} ? @{/produits/nouveau} : @{/produits/{id}/modifier(id=${produit.id})}"
