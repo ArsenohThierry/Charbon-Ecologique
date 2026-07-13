@@ -292,7 +292,7 @@ public class LivraisonService {
                 modified.setQuantiteMatiereUtilisee(new BigDecimal(0));
                 modified.setQuantiteProduitPrevues(0);
                 modified.setQuantiteProduitReelle(0);
-                modified.setRemarques("Depuis commande annulee");
+                modified.setRemarques("Depuis livraison annulee");
                 modified.setReference(genererReference() + "-REST");
                 TypeMatierePremiereModel typeMatierePremiereModel = new TypeMatierePremiereModel();
                 typeMatierePremiereModel.setId(999);
@@ -302,7 +302,7 @@ public class LivraisonService {
                 LotProductionModel lotSaved = lotProductionRepository.save(modified);
                 StatutsLotProductionModel statutsLotProductionModel = new StatutsLotProductionModel();
                 LotStatutsModel lotStatutsModel = new LotStatutsModel();
-                lotStatutsModel.setId(2);
+                lotStatutsModel.setId(3);
                 statutsLotProductionModel.setLotStatuts(lotStatutsModel);
                 statutsLotProductionModel.setLotProduction(lotSaved);
                 statutsLotProductionModel.setDateStatut(LocalDateTime.now());

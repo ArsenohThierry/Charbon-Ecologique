@@ -131,7 +131,7 @@ public class FactureToPdf {
         cellule.setPaddingLeft(6);
         cellule.setPaddingRight(6);
         cellule.setBorder(PdfPCell.BOTTOM);
-        cellule.setBorderColor(Color.DARK_GRAY); // Adapté pour OpenPDF
+        cellule.setBorderColor(Color.DARK_GRAY); 
         table.addCell(cellule);
     }
 
@@ -143,7 +143,7 @@ public class FactureToPdf {
         cellule.setPaddingLeft(6);
         cellule.setPaddingRight(6);
         cellule.setBorder(PdfPCell.BOTTOM);
-        cellule.setBorderColor(couleurLigne); // Adapté pour OpenPDF
+        cellule.setBorderColor(couleurLigne); 
         return cellule;
     }
 

@@ -872,10 +872,6 @@ input:where([type='file']):focus {
   z-index: 10;
 }
 
-.z-20 {
-  z-index: 20;
-}
-
 .z-50 {
   z-index: 50;
 }
@@ -958,10 +954,6 @@ input:where([type='file']):focus {
 
 .ml-10 {
   margin-left: 2.5rem;
-}
-
-.ml-12 {
-  margin-left: 3rem;
 }
 
 .ml-2 {
@@ -1246,10 +1238,6 @@ input:where([type='file']):focus {
 
 .max-w-\[12rem\] {
   max-width: 12rem;
-}
-
-.max-w-\[1400px\] {
-  max-width: 1400px;
 }
 
 .max-w-\[14rem\] {
@@ -1619,10 +1607,6 @@ input:where([type='file']):focus {
 
 .border-b {
   border-bottom-width: 1px;
-}
-
-.border-r {
-  border-right-width: 1px;
 }
 
 .border-r-2 {
@@ -2385,12 +2369,6 @@ input:where([type='file']):focus {
   line-height: 1.5rem;
 }
 
-.text-body-md {
-  font-size: 14px;
-  line-height: 20px;
-  font-weight: 400;
-}
-
 .text-headline-md {
   font-size: 24px;
   line-height: 32px;
@@ -3063,11 +3041,6 @@ input:where([type='file']):focus {
   background-color: rgb(238 238 238 / var(--tw-bg-opacity, 1));
 }
 
-.hover\:bg-surface-container-high:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(232 232 232 / var(--tw-bg-opacity, 1));
-}
-
 .hover\:bg-surface-container-lowest\/50:hover {
   background-color: rgb(255 255 255 / 0.5);
 }
@@ -3461,10 +3434,6 @@ input:where([type='file']):focus {
 
   .lg\:col-span-3 {
     grid-column: span 3 / span 3;
-  }
-
-  .lg\:flex {
-    display: flex;
   }
 
   .lg\:grid-cols-3 {

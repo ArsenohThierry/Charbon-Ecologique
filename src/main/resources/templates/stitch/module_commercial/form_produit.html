@@ -26,21 +26,10 @@
 <body class="bg-brand-light font-sans text-slate-800 min-h-screen flex">
     <aside th:replace="~{fragments/sidebar :: sidebar('commandes')}"></aside>
     <!-- BEGIN: MainContent -->
-    <main class="flex-1 p-8">
-        <header class="flex justify-between items-start mb-10">
-            <div>
-                <h2 class="text-2xl font-bold text-brand-dark">Commercial &amp; finance</h2>
-                <p class="text-sm text-gray-500">Commandes, livraisons &amp; trésorerie</p>
-            </div>
-            <div class="flex items-center gap-4">
-                <span class="text-xs px-3 py-1 bg-gray-100 rounded-full text-gray-600 font-medium">Commande</span>
-                <div
-                    class="w-10 h-10 bg-brand-success rounded-full flex items-center justify-center text-white font-bold">
-                    N</div>
-            </div>
-        </header>
+    <main class="flex-1">
+        <header th:replace="~{fragments/commande-header}"></header>
         <!-- Form Title Section -->
-        <div class="mb-8">
+        <div class="mb-8 p-8">
             <h3 class="text-3xl font-serif text-brand-dark mb-1">Nouvelle commande</h3>
             <p class="text-sm text-gray-500">Enregistrer une commande client. Le montant à payer est calculé
                 automatiquement.</p>
@@ -90,7 +79,7 @@
                     <div th:if="${isBlocked != null}" type="submit"
                         class="bg-slate-700 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-slate-800">
                         Vous ne pouvez pas ajouter pour le moment
-                    </button>
+                        </button>
                 </form>
             </div>
 
@@ -152,8 +141,8 @@
                 <div class="flex items-center gap-4 pt-4">
                     <button
                         class="bg-brand-success text-white px-6 py-2.5 rounded-md text-sm font-medium hover:bg-opacity-90 shadow-sm"
-                        type="submit" th:disabled="${panier==null || panier.isEmpty() || !isSavable}">
-                        Enregistrer la commande finale
+                        type="submit" th:disabled="${panier==null || panier.isEmpty() || !isSavable}"
+                        th:text="${panier==null || panier.isEmpty() || !isSavable} ? 'L\'enregistrement est impossible' : 'Enregistrer la commande finale'">
                     </button>
                 </div>
             </form>
