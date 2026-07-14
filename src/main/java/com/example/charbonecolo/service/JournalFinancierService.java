@@ -330,4 +330,56 @@ public class JournalFinancierService {
             typeSource,
             idSource));
     }
+
+    public JournalFinancierModel enregistrerSortieStock(
+            LocalDateTime dateOperation,
+            BigDecimal montant,
+            String reference,
+            String description,
+            String typeSource,
+            Long idSource) {
+
+        TypeJournalModel typeOD = typeJournalRepo.findByCode("OD")
+                .orElseThrow(() -> new RuntimeException("Type journal OD introuvable"));
+
+        OrigineModel origineSortie = origineRepo.findByCode("SORTIE_STOCK")
+                .orElseThrow(() -> new RuntimeException("Origine SORTIE_STOCK introuvable"));
+
+        return enregistrer(creerEcriture(
+            dateOperation,
+            typeOD,
+            origineSortie,
+            BigDecimal.ZERO,
+            montant,
+            reference,
+            description,
+            typeSource,
+            idSource));
+    }
+
+    public JournalFinancierModel enregistrerPaiementSalaire(
+            LocalDateTime dateOperation,
+            BigDecimal montant,
+            String reference,
+            String description,
+            String typeSource,
+            Long idSource) {
+
+        TypeJournalModel typeCSS = typeJournalRepo.findByCode("CSS")
+                .orElseThrow(() -> new RuntimeException("Type journal CSS introuvable"));
+
+        OrigineModel origineSalaire = origineRepo.findByCode("PAIEMENT_SALAIRE")
+                .orElseThrow(() -> new RuntimeException("Origine PAIEMENT_SALAIRE introuvable"));
+
+        return enregistrer(creerEcriture(
+            dateOperation,
+            typeCSS,
+            origineSalaire,
+            BigDecimal.ZERO,
+            montant,
+            reference,
+            description,
+            typeSource,
+            idSource));
+    }
 }

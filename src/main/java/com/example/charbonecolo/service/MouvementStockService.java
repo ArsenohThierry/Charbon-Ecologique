@@ -312,6 +312,23 @@ public class MouvementStockService {
         }
 
         mouvementSortieDetailRepository.saveAll(details);
+
+        ProduitModel produit = lotsDisponibles.get(0).getProduit();
+        BigDecimal montantSortie = BigDecimal.valueOf(produit.getPu() != null ? produit.getPu() : 0.0)
+                .multiply(new BigDecimal(quantite));
+        MotifSortieModel motif = mouvement.getMotifSortie();
+        String description = "Sortie stock — " + produit.getNom()
+                + " — " + quantite + " unité(s)"
+                + (motif != null ? " — " + motif.getLibelle() : "");
+
+        journalFinancierService.enregistrerSortieStock(
+                mouvement.getDateMouvement(),
+                montantSortie,
+                "MOUV-" + mouvement.getId(),
+                description,
+                "MOUVEMENT_STOCK",
+                mouvement.getId().longValue()
+        );
     }
 
     @Transactional
