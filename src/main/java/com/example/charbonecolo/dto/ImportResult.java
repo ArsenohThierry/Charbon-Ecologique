@@ -1,4 +1,4 @@
-package com.example.charbonecolo.util;
+package com.example.charbonecolo.dto;
 
 import java.util.Collections;
 import java.util.List;
@@ -7,11 +7,12 @@ public class ImportResult {
     private final int successCount;
     private final int errorCount;
     private final int skippedCount;
-    private final List<String> errors;
+    private List<ImportDataErrorWrapper> errors;   // ← changé ici
     private final List<String> warnings;
 
-    public ImportResult(int successCount, int errorCount, int skippedCount, 
-                        List<String> errors, List<String> warnings) {
+    public ImportResult(int successCount, int errorCount, int skippedCount,
+                        List<ImportDataErrorWrapper> errors,   // ← changé ici
+                        List<String> warnings) {
         this.successCount = successCount;
         this.errorCount = errorCount;
         this.skippedCount = skippedCount;
@@ -19,19 +20,11 @@ public class ImportResult {
         this.warnings = warnings != null ? List.copyOf(warnings) : Collections.emptyList();
     }
 
-    public int getSuccessCount() {
-        return successCount;
-    }
+    public int getSuccessCount() { return successCount; }
+    public int getErrorCount() { return errorCount; }
+    public int getSkippedCount() { return skippedCount; }
 
-    public int getErrorCount() {
-        return errorCount;
-    }
-
-    public int getSkippedCount() {
-        return skippedCount;
-    }
-
-    public List<String> getErrors() {
+    public List<ImportDataErrorWrapper> getErrors() {   // ← changé ici
         return errors;
     }
 

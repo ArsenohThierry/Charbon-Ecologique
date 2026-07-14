@@ -2,8 +2,12 @@ package com.example.charbonecolo.controller;
 
 import jakarta.validation.Valid;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -11,12 +15,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.example.charbonecolo.dto.ImportResult;
+import com.example.charbonecolo.dto.PageLink;
 import com.example.charbonecolo.model.TypeMatierePremiereModel;
 import com.example.charbonecolo.service.TypeMatierePremiereService;
 import com.example.charbonecolo.service.FournisseurService;
@@ -25,140 +34,113 @@ import com.example.charbonecolo.service.FournisseurService;
 @RequestMapping("/matiere")
 public class TypeMatierePremiereController {
 
-    private static final List<String> ALLOWED_SORT_FIELDS = 
-            List.of("reference", "libelle", "prixUnitaire", "fournisseur.nom");
+    private static final List<String> ALLOWED_SORT_FIELDS = List.of("reference", "libelle", "prixUnitaire",
+            "fournisseur.nom");
     private static final String DEFAULT_SORT_FIELD = "reference";
-    private static final String DEFAULT_SORT_DIR = "asc";
     private static final int DEFAULT_PAGE_SIZE = 10;
 
     private TypeMatierePremiereService typeMatierePremiereService;
     private FournisseurService fournisseurService;
 
     public TypeMatierePremiereController(TypeMatierePremiereService typeMatierePremiereService,
-                                 FournisseurService fournisseurService) {
+            FournisseurService fournisseurService) {
         this.typeMatierePremiereService = typeMatierePremiereService;
         this.fournisseurService = fournisseurService;
-    }
-
-    public record PageLink(int index, int number, boolean current, boolean ellipsis) {}
-
-    /**
-     * Retourne la direction suivante pour une colonne.
-     * Cycle : asc → desc → asc (retour au défaut).
-     */
-    public static String toggleSortDir(String currentColumn, String currentDir, String column) {
-        if (column.equals(currentColumn)) {
-            if ("asc".equalsIgnoreCase(currentDir)) return "desc";
-            return "asc"; // 3e clic = retour à asc
-        }
-        return "asc"; // nouvelle colonne = toujours asc
     }
 
     private List<PageLink> buildPagination(int currentPage, int totalPages) {
         List<PageLink> links = new ArrayList<>();
         links.add(new PageLink(0, 1, currentPage == 0, false));
-        if (currentPage > 2) links.add(new PageLink(-1, 0, false, true));
+        if (currentPage > 2)
+            links.add(new PageLink(-1, 0, false, true));
         for (int i = Math.max(1, currentPage - 1); i <= Math.min(totalPages - 2, currentPage + 1); i++) {
             links.add(new PageLink(i, i + 1, i == currentPage, false));
         }
-        if (currentPage < totalPages - 3) links.add(new PageLink(-1, 0, false, true));
-        if (totalPages > 1) links.add(new PageLink(totalPages - 1, totalPages, currentPage == totalPages - 1, false));
+        if (currentPage < totalPages - 3)
+            links.add(new PageLink(-1, 0, false, true));
+        if (totalPages > 1)
+            links.add(new PageLink(totalPages - 1, totalPages, currentPage == totalPages - 1, false));
         return links;
     }
 
     @GetMapping("/home")
-    public String home(
-            @RequestParam(required = false) String sortColumn,
-            @RequestParam(required = false) String sortDir,
+    public ModelAndView home(
+            @RequestParam(defaultValue = "") String libelle,
+            @RequestParam(required = false) BigDecimal prixMin,
+            @RequestParam(required = false) BigDecimal prixMax,
+            @RequestParam(required = false) Integer idFournisseur,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateDebut,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFin,
+            @RequestParam(required = false) String actif,
+            @RequestParam(required = false) String sort,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            Model model) {
+            @RequestParam(defaultValue = "10") int size) {
 
-        String column = (sortColumn != null && ALLOWED_SORT_FIELDS.contains(sortColumn)) ? sortColumn : DEFAULT_SORT_FIELD;
-        String dir = (sortDir != null && "desc".equalsIgnoreCase(sortDir)) ? "desc" : "asc";
-        Sort sortObj = Sort.by("desc".equals(dir) ? Sort.Direction.DESC : Sort.Direction.ASC, column);
+        // ─── Conversion des filtres ───
+        Boolean actifBool = (actif != null && !actif.isBlank()) ? Boolean.parseBoolean(actif) : null;
 
+        LocalDateTime dateDebutDt = (dateDebut != null) ? dateDebut.atStartOfDay() : null;
+        LocalDateTime dateFinDt = (dateFin != null) ? dateFin.atTime(LocalTime.MAX) : null;
+
+        // ─── Tri (même système que Fournisseur) ───
+        Sort sortObj;
+        String sortParam;
+
+        if (sort != null && !sort.isBlank()) {
+            String[] parts = sort.split(",");
+            if (parts.length == 2 && ALLOWED_SORT_FIELDS.contains(parts[0].trim())) {
+                String field = parts[0].trim();
+                String dir = parts[1].trim().toLowerCase();
+                sortObj = Sort.by("desc".equals(dir) ? Sort.Direction.DESC : Sort.Direction.ASC, field);
+                sortParam = sort;
+            } else {
+                sortObj = Sort.by(Sort.Direction.ASC, DEFAULT_SORT_FIELD);
+                sortParam = DEFAULT_SORT_FIELD + ",asc";
+            }
+        } else {
+            sortObj = Sort.by(Sort.Direction.ASC, DEFAULT_SORT_FIELD);
+            sortParam = DEFAULT_SORT_FIELD + ",asc";
+        }
+
+        // ─── Pagination ───
         int pageSize = Math.min(Math.max(size, 1), DEFAULT_PAGE_SIZE);
         Pageable pageable = PageRequest.of(Math.max(page, 0), pageSize, sortObj);
-        Page<TypeMatierePremiereModel> result = typeMatierePremiereService.findAllPaginated(pageable);
+        Page<TypeMatierePremiereModel> result = typeMatierePremiereService.searchTypeMatieres(
+                libelle, prixMin, prixMax, idFournisseur, dateDebutDt, dateFinDt, actifBool, pageable);
 
+        ModelAndView mav = new ModelAndView("matiere_premiere/list");
+        // ─── Modèle ───
+        mav.addObject("listeMatieres", result.getContent());
+        mav.addObject("listeFournisseurs", fournisseurService.getAll());
+
+        mav.addObject("pageNumber", result.getNumber());
+        mav.addObject("pageSize", pageSize);
+        mav.addObject("totalPages", result.getTotalPages());
+        mav.addObject("totalElements", result.getTotalElements());
+        mav.addObject("hasPrevious", result.hasPrevious());
+        mav.addObject("hasNext", result.hasNext());
+        mav.addObject("pagination", buildPagination(result.getNumber(), result.getTotalPages()));
+
+        // Valeurs des filtres pour ré-affichage
+        mav.addObject("libelle", libelle);
+        mav.addObject("prixMin", prixMin);
+        mav.addObject("prixMax", prixMax);
+        mav.addObject("idFournisseur", idFournisseur);
+        mav.addObject("dateDebut", dateDebut);
+        mav.addObject("dateFin", dateFin);
+        mav.addObject("actif", actif);
+        mav.addObject("sortParam", sortParam);
+
+        return mav;
+    }
+
+    @GetMapping("/form")
+    public String getForm(Model model) {
         if (!model.containsAttribute("typeMatiere")) {
             model.addAttribute("typeMatiere", new TypeMatierePremiereModel());
         }
-        model.addAttribute("listeMatieres", result.getContent());
         model.addAttribute("listeFournisseurs", fournisseurService.getAll());
-
-        model.addAttribute("pageNumber", result.getNumber());
-        model.addAttribute("pageSize", pageSize);
-        model.addAttribute("totalPages", result.getTotalPages());
-        model.addAttribute("totalElements", result.getTotalElements());
-        model.addAttribute("hasPrevious", result.hasPrevious());
-        model.addAttribute("hasNext", result.hasNext());
-        model.addAttribute("pagination", buildPagination(result.getNumber(), result.getTotalPages()));
-
-        model.addAttribute("sortColumn", column);
-        model.addAttribute("sortDir", dir);
-
-        return "matiere_premiere/types_mat_prem";
-    }
-
-    @PostMapping("/add")
-    public String addMatiere(@Valid @ModelAttribute("typeMatiere") TypeMatierePremiereModel typeMatiere,
-            BindingResult result,
-            @RequestParam(value = "id_fournisseur", required = false) Integer idFournisseur,
-            Model model,
-            RedirectAttributes rad) {
-
-        if (idFournisseur == null || idFournisseur <= 0) {
-            result.rejectValue("fournisseur", "error.typeMatiere", "Le choix du fournisseur est obligatoire.");
-        }
-
-        if (result.hasErrors()) {
-            model.addAttribute("listeFournisseurs", fournisseurService.getAll());
-            model.addAttribute("listeMatieres", typeMatierePremiereService.getAll());
-            model.addAttribute("selectedIdFournisseur", idFournisseur);
-            return "matiere_premiere/types_mat_prem"; // Pas de redirection
-        }
-
-        try {
-            typeMatierePremiereService.saveMatiere(typeMatiere, idFournisseur);
-            rad.addFlashAttribute("success", "Type de matière ajouté avec succès !");
-        } catch (NoSuchElementException e) {
-            rad.addFlashAttribute("error", "Le fournisseur sélectionné n'existe pas.");
-        }
-        return "redirect:/matiere/home";
-    }
-
-    @PostMapping("/update")
-    public String updateMatiere(@Valid @ModelAttribute("typeMatiere") TypeMatierePremiereModel typeMatiere,
-            BindingResult result,
-            @RequestParam(value = "id_fournisseur", required = false) Integer idFournisseur,
-            Model model,
-            RedirectAttributes rad) {
-        if (typeMatiere.getId() == null) {
-            rad.addFlashAttribute("error", "Impossible de modifier une matière sans identifiant.");
-            return "redirect:/matiere/home";
-        }
-
-        if (idFournisseur == null || idFournisseur <= 0) {
-            result.rejectValue("fournisseur", "error.typeMatiere", "Le choix du fournisseur est obligatoire.");
-        }
-
-        if (result.hasErrors()) {
-            model.addAttribute("listeFournisseurs", fournisseurService.getAll());
-            model.addAttribute("listeMatieres", typeMatierePremiereService.getAll());
-            model.addAttribute("selectedIdFournisseur", idFournisseur);
-            return "matiere_premiere/types_mat_prem";
-        }
-
-        try {
-            typeMatierePremiereService.getById(typeMatiere.getId());
-            typeMatierePremiereService.saveMatiere(typeMatiere, idFournisseur);
-            rad.addFlashAttribute("success", "Type de matière mis à jour !");
-        } catch (NoSuchElementException e) {
-            rad.addFlashAttribute("error", "Élément ou fournisseur introuvable.");
-        }
-        return "redirect:/matiere/home";
+        return "matiere_premiere/form";
     }
 
     @GetMapping("/update/{id}")
@@ -176,7 +158,93 @@ public class TypeMatierePremiereController {
         } catch (Exception e) {
             rad.addFlashAttribute("error", "Impossible de charger la matière : " + e.getMessage());
         }
+        return "redirect:/matiere/form";
+    }
+
+    @PostMapping("/add")
+    public String addMatiere(@Valid @ModelAttribute("typeMatiere") TypeMatierePremiereModel typeMatiere,
+            BindingResult result,
+            @RequestParam(value = "id_fournisseur", required = false) Integer idFournisseur,
+            RedirectAttributes rad) {
+
+        if (idFournisseur == null || idFournisseur <= 0) {
+            result.rejectValue("fournisseur", "error.typeMatiere", "Le choix du fournisseur est obligatoire.");
+        }
+
+        if (result.hasErrors()) {
+            rad.addFlashAttribute("typeMatiere", typeMatiere);
+            rad.addFlashAttribute("selectedIdFournisseur", idFournisseur);
+            return "redirect:/matiere/form";
+        }
+
+        try {
+            typeMatierePremiereService.saveMatiere(typeMatiere, idFournisseur);
+            rad.addFlashAttribute("success", "Type de matière ajouté avec succès !");
+        } catch (NoSuchElementException e) {
+            rad.addFlashAttribute("error", "Le fournisseur sélectionné n'existe pas.");
+        }
         return "redirect:/matiere/home";
+    }
+
+    @PostMapping("/update")
+    public String updateMatiere(@Valid @ModelAttribute("typeMatiere") TypeMatierePremiereModel typeMatiere,
+            BindingResult result,
+            @RequestParam(value = "id_fournisseur", required = false) Integer idFournisseur,
+            RedirectAttributes rad) {
+        if (typeMatiere.getId() == null) {
+            rad.addFlashAttribute("error", "Impossible de modifier une matière sans identifiant.");
+            return "redirect:/matiere/home";
+        }
+
+        if (idFournisseur == null || idFournisseur <= 0) {
+            result.rejectValue("fournisseur", "error.typeMatiere", "Le choix du fournisseur est obligatoire.");
+        }
+
+        if (result.hasErrors()) {
+            rad.addFlashAttribute("listeMatieres", typeMatierePremiereService.getAll());
+            rad.addFlashAttribute("selectedIdFournisseur", idFournisseur);
+            return "redirect:/matiere/form";
+        }
+
+        try {
+            typeMatierePremiereService.getById(typeMatiere.getId());
+            typeMatierePremiereService.saveMatiere(typeMatiere, idFournisseur);
+            rad.addFlashAttribute("success", "Type de matière mis à jour !");
+        } catch (NoSuchElementException e) {
+            rad.addFlashAttribute("error", "Élément ou fournisseur introuvable.");
+        }
+        return "redirect:/matiere/home";
+    }
+
+    @GetMapping("/import")
+    public String afficherFormulaireImport() {
+        return "matiere_premiere/import";
+    }
+
+    @PostMapping("/import")
+    public String traiterImportCsv(@RequestParam("fichier") MultipartFile fichier,
+            RedirectAttributes rad) {
+        try {
+            ImportResult resultat = typeMatierePremiereService.importerTypeMatieresCsv(fichier);
+            if (resultat.getSuccessCount() > 0) {
+                rad.addFlashAttribute("success",
+                        resultat.getSuccessCount() + " type(s) de matière importé(s).");
+            }
+            if (resultat.hasWarnings()) {
+                rad.addFlashAttribute("warnings", resultat.getWarnings());
+            }
+            if (resultat.hasErrors()) {
+                rad.addFlashAttribute("importErrors", resultat.getErrors());
+                return "redirect:/matiere/import";
+            }
+            return "redirect:/matiere/home";
+
+        } catch (IllegalArgumentException e) {
+            rad.addFlashAttribute("error", e.getMessage());
+        } catch (IOException e) {
+            rad.addFlashAttribute("error", "Erreur lecture fichier : " + e.getMessage());
+        }
+        return "redirect:/matiere/import";
     }
 
     @GetMapping("/delete/{id}")

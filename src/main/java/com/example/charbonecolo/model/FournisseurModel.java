@@ -39,6 +39,9 @@ public class FournisseurModel {
     @NotNull(message = "Le statut est obligatoire.")
     private boolean actif;
 
+    @Column(name = "delete_at")
+    private LocalDateTime delete_at;
+
     // --- Gardez vos getters, setters et méthodes utilitaires existants ---
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
@@ -55,4 +58,6 @@ public class FournisseurModel {
     public void setAdresse(String adresse) { this.adresse = adresse; }
     public LocalDateTime getDate_creation() { return date_creation; }
     public void setDate_creation(LocalDateTime date_creation) { this.date_creation = date_creation; }
+    public LocalDateTime getDelete_at() {return delete_at;}
+    public void setDelete_at(LocalDateTime delete_at) {this.delete_at = delete_at;}
 }
