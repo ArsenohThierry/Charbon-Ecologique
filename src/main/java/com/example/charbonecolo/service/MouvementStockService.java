@@ -401,6 +401,23 @@ public class MouvementStockService {
         }
 
         mouvementSortieDetailRepository.saveAll(newDetails);
+
+        // Mettre à jour l'écriture comptable associée
+        ProduitModel produit = newDetails.get(0).getLotProduction().getProduit();
+        BigDecimal montantSortie = BigDecimal.valueOf(produit.getPu() != null ? produit.getPu() : 0.0)
+                .multiply(new BigDecimal(dto.getQuantite()));
+        MotifSortieModel motif = mouvement.getMotifSortie();
+        String description = "Sortie stock — " + produit.getNom()
+                + " — " + dto.getQuantite() + " unité(s)"
+                + (motif != null ? " — " + motif.getLibelle() : "");
+
+        journalFinancierService.trouverParSource("MOUVEMENT_STOCK", mouvement.getId().longValue())
+                .ifPresent(ecriture -> {
+                    ecriture.setDateOperation(mouvement.getDateMouvement());
+                    ecriture.setCredit(montantSortie);
+                    ecriture.setDescription(description);
+                    journalFinancierService.mettreAJourEcriture(ecriture);
+                });
     }
 
     // ── SUPPRESSION ──────────────────────────────────────────────
@@ -425,6 +442,8 @@ public class MouvementStockService {
 
         } else {
             mouvementSortieDetailRepository.deleteByMouvementSortie(mouvement);
+            journalFinancierService.supprimerEcrituresParSource(
+                    "MOUVEMENT_STOCK", mouvement.getId().longValue());
         }
 
         mouvementStockRepository.delete(mouvement);

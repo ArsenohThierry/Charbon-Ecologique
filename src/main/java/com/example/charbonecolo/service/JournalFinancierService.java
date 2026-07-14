@@ -197,6 +197,25 @@ public class JournalFinancierService {
         return journalRepo.findByIdSourceAndTypeSource(idSource, typeSource);
     }
 
+    @Transactional
+    public void mettreAJourEcriture(JournalFinancierModel ecriture) {
+        if (ecriture.getDebit() == null) ecriture.setDebit(BigDecimal.ZERO);
+        if (ecriture.getCredit() == null) ecriture.setCredit(BigDecimal.ZERO);
+        journalRepo.save(ecriture);
+    }
+
+    @Transactional
+    public void supprimerEcriture(Long id) {
+        journalRepo.deleteById(id);
+    }
+
+    @Transactional
+    public void supprimerEcrituresParSource(String typeSource, Long idSource) {
+        List<JournalFinancierModel> ecritures = journalRepo
+                .findByTypeSourceAndIdSourceOrderByDateOperationDesc(typeSource, idSource);
+        journalRepo.deleteAll(ecritures);
+    }
+
     private JournalFinancierModel creerEcriture(
             LocalDateTime dateOperation,
             TypeJournalModel typeJournal,

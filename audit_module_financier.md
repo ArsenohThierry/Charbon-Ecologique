@@ -6,7 +6,7 @@
 
 ---
 
-## 1. Résumé Exécutif
+## 1. Résumé Exécutif   
 
 Le module financier repose sur un **journal comptable** (`journal_financier`) avec colonnes `debit`/`credit`, alimenté par des événements métier (facturation, stock, salaires) et consultable via 4 pages web + 1 page facturation.
 
