@@ -46,6 +46,13 @@ public class JournalFinancierService {
             ecriture.setCredit(BigDecimal.ZERO);
         }
 
+        if (ecriture.getDebit().compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Le débit ne peut pas être négatif.");
+        }
+        if (ecriture.getCredit().compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Le crédit ne peut pas être négatif.");
+        }
+
         if (ecriture.getCreatedAt() == null) {
             ecriture.setCreatedAt(LocalDateTime.now());
         }
@@ -201,6 +208,12 @@ public class JournalFinancierService {
     public void mettreAJourEcriture(JournalFinancierModel ecriture) {
         if (ecriture.getDebit() == null) ecriture.setDebit(BigDecimal.ZERO);
         if (ecriture.getCredit() == null) ecriture.setCredit(BigDecimal.ZERO);
+        if (ecriture.getDebit().compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Le débit ne peut pas être négatif.");
+        }
+        if (ecriture.getCredit().compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Le crédit ne peut pas être négatif.");
+        }
         journalRepo.save(ecriture);
     }
 
