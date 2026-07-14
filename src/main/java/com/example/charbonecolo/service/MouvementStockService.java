@@ -40,7 +40,6 @@ import com.example.charbonecolo.model.ProduitModel;
 import com.example.charbonecolo.model.SeuilModel;
 import com.example.charbonecolo.model.StatutsLotProductionModel;
 import com.example.charbonecolo.model.TypeMouvementStockModel;
-import com.example.charbonecolo.repository.AlerteSeuilRepository;
 import com.example.charbonecolo.repository.LotProductionRepository;
 import com.example.charbonecolo.repository.LotStatutsRepository;
 import com.example.charbonecolo.repository.MotifSortieRepository;
@@ -50,8 +49,6 @@ import com.example.charbonecolo.repository.ProduitRepository;
 import com.example.charbonecolo.repository.SeuilRepository;
 import com.example.charbonecolo.repository.StatutsLotProductionRepository;
 import com.example.charbonecolo.repository.TypeMouvementStockRepository;
-import com.example.charbonecolo.repository.TypeJournalRepository;
-import com.example.charbonecolo.repository.OrigineRepository;
 
 @Service
 public class MouvementStockService {
@@ -76,20 +73,7 @@ public class MouvementStockService {
     @Autowired
     private SeuilRepository seuilRepository;
     @Autowired
-    private AlerteSeuilRepository alerteSeuilRepository;
-    @Autowired
     private JournalFinancierService journalFinancierService;
-    @Autowired
-    private TypeJournalRepository typeJournalRepository;
-    @Autowired
-    private OrigineRepository origineRepository;
-
-    private TypeMouvementStockModel sortieType;
-    private List<MouvementStockModel> sorties;
-    private TypeMouvementStockModel entreeType;
-    private List<MouvementStockModel> entrees;
-    private List<SeuilModel> ruptures;
-    private List<SeuilModel> faibles;
 
     // ── Méthodes existantes ──────────────────────────────────────
 
@@ -584,15 +568,6 @@ public class MouvementStockService {
                 (LocalDateTime) ligne[4],
                 (String) ligne[5]));
     }
-// @Autowired
-//     private AlerteSeuilRepository alerteSeuilRepository;
-
-//     private TypeMouvementStockModel sortieType;
-//     private List<MouvementStockModel> sorties;
-//     private TypeMouvementStockModel entreeType;
-//     private List<MouvementStockModel> entrees;
-//     private List<SeuilModel> ruptures;
-//     private List<SeuilModel> faibles;
     @Transactional(readOnly = true)
     public Slice<EntreeDto> listEntrees(Pageable pageable, EntreeCriteriaWrapper wrapper) {
         Slice<Object[]> sliceBrut = mouvementStockRepository.findCustomEntrees(pageable, wrapper);
