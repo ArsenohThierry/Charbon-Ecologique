@@ -23,7 +23,7 @@
     </style>
 </head>
 
-<body class="bg-brand-light font-sans text-slate-800 h-screen overflow-hidden flex">
+<body class="bg-brand-light font-sans text-[#432818] h-screen overflow-hidden flex">
     <aside th:replace="~{fragments/sidebar :: sidebar('commandes')}"></aside>
     <!-- BEGIN: MainContent -->
     <main class="flex-1">
@@ -44,20 +44,20 @@
             <span th:text="${errorMessage}">Une erreur est survenue.</span>
         </div>
         <div th:if="${success != null && !#strings.isEmpty(success)}"
-            class="mb-6 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700">
+            class="mb-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-700">
             <span th:text="${success}">Opération réalisée avec succès.</span>
         </div>
         <div th:if="${successMessage != null && !#strings.isEmpty(successMessage)}"
-            class="mb-6 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700">
+            class="mb-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-700">
             <span th:text="${successMessage}">Opération réalisée avec succès.</span>
         </div>
         <div th:if="${message != null && !#strings.isEmpty(message)}"
-            class="mb-6 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-700">
+            class="mb-6 rounded-lg border border-[#e5e3d8] bg-amber-50 px-4 py-3 text-sm font-medium text-[#432818]">
             <span th:text="${message}">Information.</span>
         </div>
         <!-- Main Form Card -->
         <section class="bg-white rounded-xl shadow-sm border border-gray-100 p-8 max-w-5xl" data-purpose="order-form">
-            <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 mb-6">
+            <div class="bg-amber-50 p-4 rounded-lg border border-[#e5e3d8] mb-6">
                 <h3 class="text-xs font-bold text-gray-700 uppercase mb-3">Ajouter un article au panier</h3>
                 <form action="" method="POST" class="flex items-end gap-4">
                     <div class="flex-1">
@@ -73,11 +73,11 @@
                             class="w-full border-gray-300 rounded-md text-sm p-2" />
                     </div>
                     <button th:if="${isBlocked == null}" type="submit"
-                        class="bg-slate-700 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-slate-800">
+                        class="bg-[#99582a] text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-[#6f1d1b]">
                         Ajouter
                     </button>
                     <div th:if="${isBlocked != null}" type="submit"
-                        class="bg-slate-700 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-slate-800">
+                        class="bg-[#99582a] text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-[#6f1d1b]">
                         Vous ne pouvez pas ajouter pour le moment
                         </button>
                 </form>
@@ -85,9 +85,9 @@
 
             <form th:action="@{/cmd/save}" method="POST" class="space-y-6">
 
-                <div class="mt-4 border border-slate-100 rounded-lg overflow-hidden">
+                <div class="mt-4 border border-amber-100 rounded-lg overflow-hidden">
                     <table class="w-full text-left border-collapse text-sm">
-                        <thead class="bg-slate-100 text-xs text-slate-600 uppercase">
+                        <thead class="bg-amber-50 text-xs text-[#5e5e5e] uppercase">
                             <tr>
                                 <th class="p-3">Produit</th>
                                 <th class="p-3">P.U</th>
@@ -97,9 +97,9 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr th:each="ligne, iter : ${panier}" class="border-b border-slate-100">
+                            <tr th:each="ligne, iter : ${panier}" class="border-b border-amber-100">
                                 <td class="p-3 align-top">
-                                    <div class="font-medium text-slate-800" th:text="${ligne.produit.nom}">Charbon Rond
+                                    <div class="font-medium text-[#432818]" th:text="${ligne.produit.nom}">Charbon Rond
                                     </div>
 
                                     <div th:if="${errors != null && errors[iter.index] != null}"
@@ -115,9 +115,9 @@
                                         <span th:text="${errors[iter.index].message}">Exemple de message d'erreur</span>
                                     </div>
                                 </td>
-                                <td class="p-3 text-slate-600" th:text="${ligne.produit.pu} + ' Ar'">15 Ar</td>
+                                <td class="p-3 text-[#5e5e5e]" th:text="${ligne.produit.pu} + ' Ar'">15 Ar</td>
                                 <td class="p-3 font-medium" th:text="${ligne.quantite} + ' U'">2 U</td>
-                                <td class="p-3 font-semibold text-slate-700" th:text="${ligne.findMontant()} + ' Ar'">30
+                                <td class="p-3 font-semibold text-[#432818]" th:text="${ligne.findMontant()} + ' Ar'">30
                                     Ar</td>
                                 <td class="p-3 text-center">
                                     <a th:href="@{|/cmd/session/products/delete/${iter.index}|}"
