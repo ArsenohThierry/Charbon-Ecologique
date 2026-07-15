@@ -23,21 +23,12 @@
     </style>
 </head>
 
-<body class="bg-brand-light font-sans text-slate-800 min-h-screen flex">
+<body class="bg-brand-light font-sans text-[#432818] h-screen overflow-hidden flex">
     <aside th:replace="~{fragments/sidebar :: sidebar('commandes')}"></aside>
     <!-- BEGIN: MainContent -->
-    <main class="flex-1 p-8">
-        <header class="flex justify-between items-start mb-10">
-            <div>
-                <h2 class="text-2xl font-bold text-brand-dark">Commercial &amp; finance</h2>
-                <p class="text-sm text-gray-500">Commandes, livraisons &amp; trésorerie</p>
-            </div>
-            <div class="flex items-center gap-4">
-                <span class="text-xs px-3 py-1 bg-gray-100 rounded-full text-gray-600 font-medium">Commande</span>
-                <div class="w-10 h-10 bg-brand-success rounded-full flex items-center justify-center text-white font-bold">N</div>
-            </div>
-        </header>
-        <section class="mb-10">
+    <main class="flex-1">
+        <header th:replace="~{fragments/commande-header}"></header>
+        <section class="mb-10 p-8">
             <!-- Form Title Section -->
             <div class="mb-8">
                 <h3 class="text-3xl font-serif text-brand-dark mb-1">Nouvelle commande</h3>
@@ -54,15 +45,15 @@
                 <span th:text="${errorMessage}">Une erreur est survenue.</span>
             </div>
             <div th:if="${success != null && !#strings.isEmpty(success)}"
-                class="mb-6 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700">
+                class="mb-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-700">
                 <span th:text="${success}">Opération réalisée avec succès.</span>
             </div>
             <div th:if="${successMessage != null && !#strings.isEmpty(successMessage)}"
-                class="mb-6 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700">
+                class="mb-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-700">
                 <span th:text="${successMessage}">Opération réalisée avec succès.</span>
             </div>
             <div th:if="${message != null && !#strings.isEmpty(message)}"
-                class="mb-6 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-700">
+                class="mb-6 rounded-lg border border-[#e5e3d8] bg-amber-50 px-4 py-3 text-sm font-medium text-[#432818]">
                 <span th:text="${message}">Information.</span>
             </div>
             <!-- Main Form Card -->
@@ -80,6 +71,7 @@
                             <datalist id="clients">
                                 <option th:each="client : ${clients}" th:value="${client.nom}" th:attr="data-real-value=${client.id}"></option>
                             </datalist>
+                            <span th:if="${errorClient != null}" th:text="${errorClient}" class="text-red-700" ></span>
                         </div>
                         <!-- Row 2 -->
                         <div>
@@ -87,7 +79,7 @@
                             <div class="relative">
                                 <input
                                     class="w-full border-gray-300 rounded-md shadow-sm focus:border-brand-success focus:ring-brand-success text-sm px-4 py-2.5"
-                                    placeholder="jj / mm / aaaa" type="date" name="dateCommandeStr" />
+                                    placeholder="jj / mm / aaaa" id="date" type="date" name="dateCommandeStr" />
                             </div>
                         </div>
 
@@ -106,8 +98,7 @@
                             Annuler
                         </button>
                         </a>
-                        <p class="text-[11px] text-gray-400 italic ml-2">Si le stock est insuffisant, la commande passe
-                            en attente.</p>
+                        <p class="text-[11px] text-gray-400 italic ml-2">Si la date n'est pas fournie, la date du jour sera utiliée.</p>
                     </div>
                 </form>
             </section>
@@ -122,8 +113,11 @@
             if(selected) {
                 const realValue = selected.getAttribute("data-real-value");
                 document.getElementById("idClient").value = realValue;
+            } else {
+                document.getElementById("idClient").value = "";
             }
         });
+        document.getElementById("date").valueAsDate = new Date();
      </script>
 </body>
 

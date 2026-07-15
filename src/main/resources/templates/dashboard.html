@@ -6,55 +6,153 @@
     <title>Tableau de bord - Charbon Vert</title>
     <link rel="stylesheet" th:href="@{/css/output.css}" href="../static/css/output.css" />
     <link rel="stylesheet" th:href="@{/css/fonts.css}" href="../static/css/fonts.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
     <style>
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
     </style>
 </head>
-<body class="bg-brand-light font-sans text-slate-800 min-h-screen flex">
+<body class="bg-brand-light font-sans text-[#432818] h-screen overflow-hidden flex">
     <aside th:replace="~{fragments/sidebar :: sidebar('dashboard')}"></aside>
-    <!-- Main Content -->
-    <main class="flex-1 flex flex-col min-w-0">
-        <!-- Top Bar -->
+    <main class="flex-1 flex flex-col min-w-0 min-h-0">
         <header class="h-16 px-8 flex items-center justify-between border-b border-gray-200">
             <div>
-                <h2 class="text-sm font-bold text-gray-800">Gestionnaire de stock</h2>
-                <p class="text-[10px] text-gray-500 uppercase tracking-wide">Approvisionnement, lots &amp; inventaire</p>
+                <h2 class="text-sm font-bold text-gray-800">Tableau de bord</h2>
+                <p class="text-[10px] text-gray-500 uppercase tracking-wide">Vue d'ensemble</p>
             </div>
             <div class="flex items-center gap-4">
-                <span class="text-[11px] bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full font-medium" th:text="${user.role.libelle}">Rôle</span>
-                <div class="w-8 h-8 rounded-full bg-emerald-700 text-white flex items-center justify-center font-bold text-sm"
+                <span class="text-[11px] bg-amber-100 text-amber-800 px-3 py-1 rounded-full font-medium" th:text="${user.role.libelle}">Rôle</span>
+                <div class="w-8 h-8 rounded-full bg-amber-700 text-white flex items-center justify-center font-bold text-sm"
                     th:text="${#strings.substring(user.prenom, 0, 1)}">N</div>
             </div>
         </header>
-        <!-- Page Body -->
         <section class="flex-1 p-12 overflow-y-auto">
             <div class="max-w-6xl mx-auto">
                 <!-- Welcome -->
-                <div class="mb-12">
+                <div class="mb-8">
                     <h1 class="text-4xl font-serif text-brand-dark mb-2" th:text="|Bienvenue, ${user.prenom} !|">Bienvenue !</h1>
-                    <p class="text-gray-600 text-sm">Tableau de bord du gestionnaire de stock.</p>
+                    <p class="text-gray-600 text-sm">Tableau de bord administrateur.</p>
                 </div>
-                <!-- Role content -->
-                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 mb-8">
-                    <div th:switch="${user.role.libelle}">
-                        <div th:case="'ADMIN'" class="text-gray-600 text-sm">
-                            <p class="mb-2">Vous êtes <strong>administrateur</strong> du système.</p>
-                            <p>Vous avez accès à l'ensemble des fonctionnalités : gestion des utilisateurs, des stocks, des finances et des rapports.</p>
+
+                <div th:if="${ca != null}">
+                    <!-- Financial KPIs -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                            <p class="text-xs text-gray-500 mb-1">Chiffre d'affaires (mois)</p>
+                            <p class="text-2xl font-serif text-brand-dark"><span th:text="${#numbers.formatDecimal(ca, 0, 0)}">0</span> Ar</p>
+                            <p class="text-[10px] mt-1" th:if="${caPrecedent != null && caPrecedent > 0}"
+                               th:text="|Mois précédent : ${#numbers.formatDecimal(caPrecedent, 0, 0)} Ar|">
+                            </p>
                         </div>
-                        <div th:case="'STOCK_MANAGER'" class="text-gray-600 text-sm">
-                            <p class="mb-2">Vous êtes <strong>responsable des stocks</strong>.</p>
-                            <p>Vous pouvez gérer les matières premières, suivre les inventaires et les mouvements de stock.</p>
+                        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                            <p class="text-xs text-gray-500 mb-1">Bénéfice (mois)</p>
+                            <p class="text-2xl font-serif text-brand-dark"><span th:text="${#numbers.formatDecimal(benefice, 0, 0)}">0</span> Ar</p>
                         </div>
-                        <div th:case="'FINANCE_MANAGER'" class="text-gray-600 text-sm">
-                            <p class="mb-2">Vous êtes <strong>responsable financier</strong>.</p>
-                            <p>Vous avez accès aux rapports financiers, aux transactions et à la comptabilité.</p>
+                        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                            <p class="text-xs text-gray-500 mb-1">Solde trésorerie</p>
+                            <p class="text-2xl font-serif text-brand-dark"><span th:text="${#numbers.formatDecimal(solde, 0, 0)}">0</span> Ar</p>
                         </div>
-                        <div th:case="*" class="text-gray-600 text-sm">
-                            <p>Votre rôle ne dispose pas de fonctionnalités spécifiques pour le moment.</p>
+                        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                            <p class="text-xs text-gray-500 mb-1">Flux du mois</p>
+                            <p class="text-sm font-semibold text-amber-600"><span th:text="|Entrées : ${#numbers.formatDecimal(totalEntrees, 0, 0)} Ar|">Entrées : 0 Ar</span></p>
+                            <p class="text-sm font-semibold text-red-600"><span th:text="|Sorties : ${#numbers.formatDecimal(totalSorties, 0, 0)} Ar|">Sorties : 0 Ar</span></p>
+                        </div>
+                    </div>
+
+                    <!-- Stock KPIs -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                            <p class="text-xs text-gray-500 mb-1">Stock restant global</p>
+                            <p class="text-2xl font-serif text-brand-dark" th:text="${stockRestant}">0</p>
+                        </div>
+                        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                            <p class="text-xs text-gray-500 mb-1">Lots finis</p>
+                            <p class="text-2xl font-serif text-brand-dark" th:text="${nombreLotsFinis}">0</p>
+                        </div>
+                        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                            <p class="text-xs text-gray-500 mb-1">Fournisseurs actifs</p>
+                            <p class="text-2xl font-serif text-brand-dark" th:text="${nombreFournisseursActifs}">0</p>
+                        </div>
+                        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                            <p class="text-xs text-gray-500 mb-1">Alertes stock</p>
+                            <p class="text-2xl font-serif text-red-600" th:text="${nbAlertes}">0</p>
+                        </div>
+                    </div>
+
+                    <!-- General counts -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                            <p class="text-xs text-gray-500 mb-1">Produits</p>
+                            <p class="text-2xl font-serif text-brand-dark" th:text="${nbProduits}">0</p>
+                        </div>
+                        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                            <p class="text-xs text-gray-500 mb-1">Employés</p>
+                            <p class="text-2xl font-serif text-brand-dark" th:text="${nbEmployes}">0</p>
+                        </div>
+                        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                            <p class="text-xs text-gray-500 mb-1">Clients</p>
+                            <p class="text-2xl font-serif text-brand-dark" th:text="${nbClients}">0</p>
+                        </div>
+                    </div>
+
+                    <!-- Charts -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
+                            <h3 class="text-lg font-serif text-brand-dark mb-4">Évolution du CA (12 mois)</h3>
+                            <div style="position: relative; width: 100%; height: 260px;">
+                                <canvas id="caChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
+                            <h3 class="text-lg font-serif text-brand-dark mb-4">Mouvements de stock (12 mois)</h3>
+                            <div style="display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 12px; font-size: 12px; color: #6b7280;">
+                                <span style="display: flex; align-items: center; gap: 4px;">
+                                    <span style="width: 10px; height: 10px; border-radius: 2px; background: #2a78d6;"></span>Entrées
+                                </span>
+                                <span style="display: flex; align-items: center; gap: 4px;">
+                                    <span style="width: 10px; height: 10px; border-radius: 2px; background: #eb6834;"></span>Sorties
+                                </span>
+                            </div>
+                            <div style="position: relative; width: 100%; height: 260px;">
+                                <canvas id="stockChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Alertes stock -->
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 mb-8" th:if="${!alertesActives.isEmpty()}">
+                        <h3 class="text-lg font-serif text-brand-dark mb-4">Alertes stock</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead>
+                                    <tr class="text-left text-gray-500 text-[10px] uppercase tracking-wide border-b border-gray-100">
+                                        <th class="pb-3 font-medium">Produit</th>
+                                        <th class="pb-3 font-medium">Stock actuel</th>
+                                        <th class="pb-3 font-medium">Seuil</th>
+                                        <th class="pb-3 font-medium">Niveau</th>
+                                        <th class="pb-3 font-medium">Vente moyenne/jour</th>
+                                        <th class="pb-3 font-medium">Rupture estimée</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-b border-gray-50" th:each="alerte : ${alertesActives}">
+                                        <td class="py-3 font-medium" th:text="${alerte.produitNom}">Produit</td>
+                                        <td class="py-3" th:text="${alerte.stockActuel}">0</td>
+                                        <td class="py-3" th:text="${alerte.seuil}">0</td>
+                                        <td class="py-3">
+                                            <span class="text-[10px] px-2 py-0.5 rounded-full font-medium"
+                                                  th:classappend="${alerte.niveauAlerte == 'Rupture'} ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'"
+                                                  th:text="${alerte.niveauAlerte}">Normal</span>
+                                        </td>
+                                        <td class="py-3" th:text="${#numbers.formatDecimal(alerte.venteMoyenneJour, 0, 2)}">0</td>
+                                        <td class="py-3" th:text="${alerte.ruptureEstimee != null ? #temporals.format(alerte.ruptureEstimee, 'dd/MM/yyyy') : '-'}">-</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
+
                 <!-- Quick actions -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                     <a th:href="@{/cmd}" class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 hover:shadow-md hover:border-brand-accent transition-all block">
@@ -89,6 +187,7 @@
                         <p class="text-xl font-serif text-brand-dark" th:text="${user.role.libelle}">Rôle</p>
                     </div>
                 </div>
+
                 <!-- User info cards -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
@@ -103,5 +202,63 @@
             </div>
         </section>
     </main>
+
+    <script th:inline="javascript">
+        /*[[${ca}]]*/ null;
+        const caData = /*[[${evolutionCA}]]*/ [];
+        if (caData.length > 0) {
+            const caMois = caData.map(d => d.mois);
+            const caTotals = caData.map(d => d.total);
+            new Chart(document.getElementById('caChart'), {
+                type: 'line',
+                data: {
+                    labels: caMois,
+                    datasets: [{
+                        label: 'CA',
+                        data: caTotals,
+                        borderColor: '#99582a',
+                        backgroundColor: 'rgba(153, 88, 42, 0.1)',
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+        const stockData = /*[[${mouvementsParMois}]]*/ [];
+        if (stockData.length > 0) {
+            const sMois = stockData.map(d => d.mois);
+            const sEntrees = stockData.map(d => d.totalEntree);
+            const sSorties = stockData.map(d => d.totalSortie);
+            new Chart(document.getElementById('stockChart'), {
+                type: 'bar',
+                data: {
+                    labels: sMois,
+                    datasets: [
+                        { label: 'Entrées', data: sEntrees, backgroundColor: '#2a78d6', borderRadius: 4, maxBarThickness: 24 },
+                        { label: 'Sorties', data: sSorties, backgroundColor: '#eb6834', borderRadius: 4, maxBarThickness: 24 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+    </script>
 </body>
 </html>

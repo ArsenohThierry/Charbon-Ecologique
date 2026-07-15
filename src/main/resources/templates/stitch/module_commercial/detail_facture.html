@@ -9,9 +9,9 @@
     <link rel="stylesheet" th:href="@{/css/fonts.css}" href="../../../static/css/fonts.css" />
 </head>
 
-<body class="bg-brand-light font-sans text-slate-800 min-h-screen flex">
+<body class="bg-brand-light font-sans text-[#432818] h-screen overflow-hidden flex">
     <aside th:replace="~{fragments/sidebar :: sidebar('factures')}"></aside>
-    <main class="flex-1 min-h-screen">
+    <main class="flex-1 overflow-y-auto">
         <header class="flex items-center justify-between px-8 py-4 bg-white border-b border-gray-100">
             <div>
                 <h2 class="text-lg font-bold text-brand-dark">Commercial & finance</h2>
@@ -34,55 +34,55 @@
                         <p class="text-gray-500" th:text="${facture.reference}">FACT-2026-0001</p>
                     </div>
                     <a href="/factures"
-                        class="text-sm text-slate-500 hover:text-brand-success transition flex items-center gap-1">
+                        class="text-sm text-[#6b7280] hover:text-brand-success transition flex items-center gap-1">
                         ← Retour
                     </a>
                 </div>
 
-                <div class="bg-white rounded-xl border border-slate-200 p-8 shadow-sm space-y-6">
+                <div class="bg-white rounded-xl border border-[#e5e3d8] p-8 shadow-sm space-y-6">
                     <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
                         <div>
-                            <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Réf.
+                            <label class="text-xs font-semibold text-[#6b7280] uppercase tracking-wider">Réf.
                                 paiement</label>
                             <p class="text-lg font-bold text-brand-dark mt-1"
                                 th:text="${facture.paiement != null ? facture.paiement.id : 'N/A'}">PAI-001</p>
                         </div>
                         <div>
-                            <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Réf.
+                            <label class="text-xs font-semibold text-[#6b7280] uppercase tracking-wider">Réf.
                                 commande</label>
                             <p class="text-lg font-bold text-brand-dark mt-1"
                                 th:text="${facture.paiement != null && facture.paiement.commande != null ? facture.paiement.commande.reference : 'N/A'}">
                                 CMD-001</p>
                         </div>
                         <div>
-                            <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Client</label>
+                            <label class="text-xs font-semibold text-[#6b7280] uppercase tracking-wider">Client</label>
                             <p class="text-lg font-bold text-brand-dark mt-1"
                                 th:text="${facture.paiement != null && facture.paiement.commande != null ? facture.paiement.commande.client.nom : 'Client'}">
                                 Client</p>
                         </div>
                     </div>
 
-                    <div class="border-t border-slate-200 pt-6">
-                        <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">Lignes de facture
+                    <div class="border-t border-[#e5e3d8] pt-6">
+                        <h3 class="text-sm font-semibold text-[#6b7280] uppercase tracking-wider mb-4">Lignes de facture
                         </h3>
                         <div class="overflow-x-auto">
                             <table class="w-full text-left border-collapse">
                                 <thead>
                                     <tr
-                                        class="text-xs uppercase tracking-wider text-slate-400 border-b border-slate-100">
+                                        class="text-xs uppercase tracking-wider text-[#9ca3af] border-b border-amber-100">
                                         <th class="pb-2 font-semibold">Libellé</th>
                                         <th class="pb-2 font-semibold text-right">P.U (Ar)</th>
                                         <th class="pb-2 font-semibold text-center">Quantité</th>
                                         <th class="pb-2 font-semibold text-right">Montant</th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-slate-50 text-slate-700 text-sm">
-                                    <tr th:each="d : ${details}" class="hover:bg-slate-50/50 transition-colors">
+                                <tbody class="divide-y divide-amber-50 text-[#432818] text-sm">
+                                    <tr th:each="d : ${details}" class="hover:bg-amber-50/50 transition-colors">
                                         <td class="py-3 font-medium" th:text="${d.libelle}">Montant commande</td>
                                         <td class="py-3 text-right"
                                             th:text="${d.pu != null ? #numbers.formatDecimal(d.pu, 1, 'DEFAULT', 2, 'POINT') : '0.00'}">
                                             0.00</td>
-                                        <td class="py-3 text-center font-semibold text-slate-600"
+                                        <td class="py-3 text-center font-semibold text-[#5e5e5e]"
                                             th:text="${d.quantite != null ? d.quantite : '1'}">1</td>
                                         <td class="py-3 text-right font-semibold text-brand-dark"
                                             th:text="${#numbers.formatDecimal(d.montant, 1, 'DEFAULT', 2, 'POINT')} + ' Ar'">
@@ -90,7 +90,7 @@
                                     </tr>
                                 </tbody>
                                 <tfoot>
-                                    <tr class="border-t border-slate-200">
+                                    <tr class="border-t border-[#e5e3d8]">
                                         <td colspan="3" class="pt-4 font-bold text-brand-dark text-base">Total Général
                                         </td>
                                         <td class="pt-4 text-right font-bold text-brand-dark text-xl"

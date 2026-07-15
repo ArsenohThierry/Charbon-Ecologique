@@ -10,7 +10,7 @@
   <link rel="stylesheet" th:href="@{/css/fonts.css}" href="../../../static/css/fonts.css" />
   <style>
     .step-item.step-done {
-      border-color: #34d399;
+      border-color: #bb9457;
       background-color: #ecfdf5;
     }
 
@@ -48,9 +48,9 @@
   </style>
 </head>
 
-<body class="bg-brand-light font-sans text-slate-800 min-h-screen flex">
+<body class="bg-brand-light font-sans text-[#432818] h-screen overflow-hidden flex">
   <aside th:replace="~{fragments/sidebar :: sidebar('lots')}"></aside>
-  <main class="flex-1 min-h-screen">
+  <main class="flex-1 overflow-y-auto">
     <!-- BEGIN: Top Bar -->
     <header class="flex items-center justify-between px-8 py-4 bg-white border-b border-gray-100">
       <div>
@@ -105,7 +105,7 @@
         </div>
 
         <!-- Validation du statut en cours -->
-        <div th:if="${statutActuelLibelle == 'Termine'}" class="mb-6 p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-lg text-sm">
+        <div th:if="${statutActuelLibelle == 'Termine'}" class="mb-6 p-4 bg-amber-50 border border-amber-200 text-amber-800 rounded-lg text-sm">
           Ce lot a terminé toutes les étapes de production. Le passage en stock se fait depuis le module « Entrée stock ».
         </div>
 

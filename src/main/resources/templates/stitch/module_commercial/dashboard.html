@@ -11,9 +11,9 @@
     <link rel="stylesheet" th:href="@{/css/fonts.css}" />
 </head>
 
-<body class="bg-brand-light font-sans text-slate-800 min-h-screen flex">
+<body class="bg-brand-light font-sans text-[#432818] h-screen overflow-hidden flex">
     <aside th:replace="~{fragments/sidebar :: sidebar('dashboard')}"></aside>
-    <main class="flex-1 p-8">
+    <main class="flex-1 overflow-y-auto p-8">
         <header class="flex justify-between items-start mb-10">
             <div>
                 <h2 class="text-2xl font-bold text-brand-dark">Commercial &amp; finance</h2>
@@ -80,7 +80,7 @@
             </div>
             <!-- KPI 4: Trésorerie -->
             <div class="bg-white p-6 rounded-2xl card-shadow border border-gray-50 flex items-start space-x-4">
-                <div class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center text-brand-success">
+                <div class="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center text-brand-success">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
                         <path
                             d="M3 10h18M7 15h1m4 0h1m-7 4h12a2 2 0 002-2V7a2 2 0 00-2-2H6a2 2 0 00-2 2v10a2 2 0 002 2z"

@@ -92,8 +92,12 @@ public class CommandeController {
 
     @SuppressWarnings("unchecked")
     @GetMapping("/new/products")
-    public ModelAndView inputProducts(HttpSession session) {
+    public ModelAndView inputProducts(HttpSession session, RedirectAttributes ra) {
         ModelAndView mav = new ModelAndView("stitch/module_commercial/form_produit");
+        if(session.getAttribute("tmp_cmd") == null) {
+            mav.setViewName("redirect:/cmd/new");
+            ra.addFlashAttribute("errorMessage", "Aucun commande en session actuellement.");
+        }
         List<DetailCommandeModel> details = (List<DetailCommandeModel>) session.getAttribute("tmp_details");
         Map<Integer, SessionDetailErrorWrapper> errors = (Map<Integer, SessionDetailErrorWrapper>) session
                 .getAttribute("tmp_errors");
@@ -164,6 +168,11 @@ public class CommandeController {
             commande.setDateCommande(dateCommande.atStartOfDay());
         } else {
             commande.setDateCommande(LocalDateTime.now());
+        }
+        if (commande.getClient() == null || commande.getClient().getId() == null) {
+            ra.addFlashAttribute("errorClient", "Le client est introuvable.");
+            mav.setViewName("redirect:/cmd/new");
+            return mav;
         }
         session.setAttribute("tmp_cmd", commande);
         ra.addFlashAttribute("message", "Informations de commande enregistrées. Ajoutez maintenant les produits.");
@@ -271,10 +280,10 @@ public class CommandeController {
             input.setClientNom(commande.getClient().getNom());
             input.setId(commande.getClient().getId());
             mav.addObject("clientDto", input);
-            
+
         } else {
             mav.addObject("org.springframework.validation.BindingResult.clientDto",
-            model.getAttribute("org.springframework.validation.BindingResult.clientDto"));
+                    model.getAttribute("org.springframework.validation.BindingResult.clientDto"));
             mav.addObject("clientDto", model.getAttribute("clientDto"));
         }
         List<DetailCommandeModel> details = commandeService.findDetails(id);

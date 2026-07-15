@@ -7,74 +7,74 @@
     <link rel="stylesheet" th:href="@{/css/output.css}" />
     <link rel="stylesheet" th:href="@{/css/fonts.css}" />
 </head>
-<body class="bg-brand-light font-sans text-slate-800 min-h-screen flex">
+<body class="bg-brand-light font-sans text-[#432818] h-screen overflow-hidden flex">
 
 <aside th:replace="~{fragments/sidebar :: sidebar('tresorerie')}"></aside>
-<main class="flex-1 min-h-screen p-8">
+<main class="flex-1 overflow-y-auto p-8">
     <div class="mb-8">
-        <h1 class="text-2xl font-bold text-slate-900">Trésorerie</h1>
-        <p class="text-sm text-slate-500 mt-1">Suivi des mouvements de trésorerie</p>
+        <h1 class="text-2xl font-bold text-[#432818]">Trésorerie</h1>
+        <p class="text-sm text-[#6b7280] mt-1">Suivi des mouvements de trésorerie</p>
     </div>
 
     <!-- Solde courant -->
-    <div class="bg-gradient-to-br from-brand-dark to-green-800 rounded-2xl p-6 mb-8 text-white">
-        <p class="text-sm text-green-200 mb-1">Solde courant</p>
+    <div class="bg-gradient-to-br from-brand-dark to-amber-800 rounded-2xl p-6 mb-8 text-white">
+        <p class="text-sm text-amber-200 mb-1">Solde courant</p>
         <p class="text-4xl font-bold"
            th:text="${#numbers.formatDecimal(solde, 1, 'COMMA', 0, 'POINT')} + ' MGA'"></p>
-        <p class="text-xs text-green-300 mt-2">Calcule depuis le journal financier</p>
+        <p class="text-xs text-amber-300 mt-2">Calcule depuis le journal financier</p>
     </div>
 
     <!-- Stats rapides -->
     <div class="grid grid-cols-2 gap-5 mb-8">
-        <div class="bg-white rounded-xl border border-slate-100 shadow-sm p-5">
-            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">Total entrees</p>
+        <div class="bg-white rounded-xl border border-amber-100 shadow-sm p-5">
+            <p class="text-xs font-semibold text-[#9ca3af] uppercase tracking-wide mb-2">Total entrees</p>
             <p class="text-2xl font-bold text-blue-600"
                th:text="${#numbers.formatDecimal(totalEntrees, 1, 'COMMA', 0, 'POINT')} + ' MGA'"></p>
         </div>
-        <div class="bg-white rounded-xl border border-slate-100 shadow-sm p-5">
-            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">Total sorties</p>
+        <div class="bg-white rounded-xl border border-amber-100 shadow-sm p-5">
+            <p class="text-xs font-semibold text-[#9ca3af] uppercase tracking-wide mb-2">Total sorties</p>
             <p class="text-2xl font-bold text-red-600"
                th:text="${#numbers.formatDecimal(totalSorties, 1, 'COMMA', 0, 'POINT')} + ' MGA'"></p>
         </div>
     </div>
 
     <!-- Filtres -->
-    <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-5 mb-6">
+    <div class="bg-white rounded-xl shadow-sm border border-amber-100 p-5 mb-6">
         <form method="get" action="/finance/tresorerie" class="flex flex-wrap gap-4 items-end">
             <div>
-                <label class="block text-xs font-medium text-slate-500 mb-1" for="filtreDate">Date</label>
+                <label class="block text-xs font-medium text-[#6b7280] mb-1" for="filtreDate">Date</label>
                 <input type="date" name="date" th:value="${date}" id="filtreDate"
-                       class="px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-success focus:outline-none"/>
+                       class="px-3 py-2 text-sm border border-[#e5e3d8] rounded-lg focus:ring-2 focus:ring-brand-success focus:outline-none"/>
             </div>
             <div>
-                <label class="block text-xs font-medium text-slate-500 mb-1" for="filtreReference">Référence</label>
+                <label class="block text-xs font-medium text-[#6b7280] mb-1" for="filtreReference">Référence</label>
                 <input type="text" name="reference" th:value="${reference}" id="filtreReference" placeholder="Référence"
-                       class="px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-success focus:outline-none"/>
+                       class="px-3 py-2 text-sm border border-[#e5e3d8] rounded-lg focus:ring-2 focus:ring-brand-success focus:outline-none"/>
             </div>
             <div>
-                <label class="block text-xs font-medium text-slate-500 mb-1" for="filtreKeyword">Mot clé</label>
+                <label class="block text-xs font-medium text-[#6b7280] mb-1" for="filtreKeyword">Mot clé</label>
                 <input type="text" name="keyword" th:value="${keyword}" id="filtreKeyword" placeholder="Description ou référence"
-                       class="px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-success focus:outline-none"/>
+                       class="px-3 py-2 text-sm border border-[#e5e3d8] rounded-lg focus:ring-2 focus:ring-brand-success focus:outline-none"/>
             </div>
             <button type="submit"
-                    class="px-4 py-2 bg-brand-dark text-white text-sm rounded-lg hover:bg-green-900 transition-colors">
+                    class="px-4 py-2 bg-brand-dark text-white text-sm rounded-lg hover:bg-amber-900 transition-colors">
                 Filtrer
             </button>
-            <a href="/finance/tresorerie" class="px-4 py-2 text-sm text-slate-600 hover:text-slate-900 transition-colors">
+            <a href="/finance/tresorerie" class="px-4 py-2 text-sm text-[#5e5e5e] hover:text-[#432818] transition-colors">
                 Réinitialiser
             </a>
         </form>
     </div>
 
     <!-- Tableau des mouvements -->
-    <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
-        <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
-            <h2 class="font-semibold text-slate-800">Historique des mouvements</h2>
-            <span class="text-xs text-slate-400" th:text="${page.totalElements} + ' mouvement(s)'"></span>
+    <div class="bg-white rounded-xl shadow-sm border border-amber-100 overflow-hidden">
+        <div class="px-6 py-4 border-b border-amber-100 flex items-center justify-between">
+            <h2 class="font-semibold text-[#432818]">Historique des mouvements</h2>
+            <span class="text-xs text-[#9ca3af]" th:text="${page.totalElements} + ' mouvement(s)'"></span>
         </div>
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
-                <thead class="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">
+                <thead class="bg-amber-50 text-xs text-[#6b7280] uppercase tracking-wide">
                     <tr>
                         <th class="px-6 py-3 text-left">Date</th>
                         <th class="px-6 py-3 text-left">Reference</th>
@@ -84,38 +84,38 @@
                         <th class="px-6 py-3 text-right">Solde cumule</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100">
-                    <tr th:each="m : ${mouvements}" class="hover:bg-slate-50 transition-colors">
-                        <td class="px-6 py-3 text-slate-600 whitespace-nowrap"
+                <tbody class="divide-y divide-amber-100">
+                    <tr th:each="m : ${mouvements}" class="hover:bg-amber-50 transition-colors">
+                        <td class="px-6 py-3 text-[#5e5e5e] whitespace-nowrap"
                             th:text="${#temporals.format(m.dateOperation,'dd/MM/yyyy HH:mm')}"></td>
-                        <td class="px-6 py-3 text-slate-500 font-mono text-xs" th:text="${m.reference != null ? m.reference : '—'}"></td>
-                        <td class="px-6 py-3 text-slate-600" th:text="${m.description != null ? m.description : '—'}"></td>
-                        <td class="px-6 py-3 text-right font-semibold text-green-600"
+                        <td class="px-6 py-3 text-[#6b7280] font-mono text-xs" th:text="${m.reference != null ? m.reference : '—'}"></td>
+                        <td class="px-6 py-3 text-[#5e5e5e]" th:text="${m.description != null ? m.description : '—'}"></td>
+                        <td class="px-6 py-3 text-right font-semibold text-amber-600"
                             th:text="${#numbers.formatDecimal(m.debit, 1, 'COMMA', 0, 'POINT')} + ' MGA'"></td>
                         <td class="px-6 py-3 text-right font-semibold text-red-600"
                             th:text="${#numbers.formatDecimal(m.credit, 1, 'COMMA', 0, 'POINT')} + ' MGA'"></td>
-                        <td class="px-6 py-3 text-right text-slate-700 font-mono text-xs"
+                        <td class="px-6 py-3 text-right text-[#432818] font-mono text-xs"
                             th:text="${m.solde != null ? #numbers.formatDecimal(m.solde, 1, 'COMMA', 0, 'POINT') + ' MGA' : '—'}"></td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(mouvements)}">
-                        <td colspan="6" class="px-6 py-12 text-center text-slate-400">Aucun mouvement enregistré.</td>
+                        <td colspan="6" class="px-6 py-12 text-center text-[#9ca3af]">Aucun mouvement enregistré.</td>
                     </tr>
                 </tbody>
             </table>
         </div>
     </div>
 
-    <div class="flex flex-col sm:flex-row justify-between items-center gap-4 p-4 border-t border-slate-100 bg-white rounded-b-2xl">
+    <div class="flex flex-col sm:flex-row justify-between items-center gap-4 p-4 border-t border-amber-100 bg-white rounded-b-2xl">
         <div class="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto text-center sm:text-left">
-            <span class="text-xs text-slate-500">
-                Affichage des éléments de la page <strong class="text-slate-700"
+            <span class="text-xs text-[#6b7280]">
+                Affichage des éléments de la page <strong class="text-[#432818]"
                     th:text="${page.number + 1}">1</strong>
             </span>
 
             <div class="flex items-center gap-2">
-                <label for="limitSelect" class="text-xs text-slate-400">Afficher par :</label>
+                <label for="limitSelect" class="text-xs text-[#9ca3af]">Afficher par :</label>
                 <select id="limitSelect"
-                    class="bg-slate-50 border border-slate-200 text-slate-700 text-xs rounded-lg focus:ring-emerald-500 focus:border-emerald-500 p-1.5 font-medium cursor-pointer transition">
+                    class="bg-amber-50 border border-[#e5e3d8] text-[#432818] text-xs rounded-lg focus:ring-amber-500 focus:border-amber-500 p-1.5 font-medium cursor-pointer transition">
                     <option value="5" th:selected="${page.size == 5}">5</option>
                     <option value="10" th:selected="${page.size == 10}">10</option>
                     <option value="25" th:selected="${page.size == 25}">25</option>
@@ -126,7 +126,7 @@
 
         <div class="flex items-center gap-3">
             <button type="button" th:data-page="${page.number}" th:disabled="${!page.hasPrevious()}"
-                class="page-btn inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border text-xs font-medium bg-white text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-40 disabled:pointer-events-none">
+                class="page-btn inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border text-xs font-medium bg-white text-[#432818] shadow-sm transition hover:bg-amber-50 disabled:opacity-40 disabled:pointer-events-none">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
                     stroke="currentColor" class="w-4 h-4">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
@@ -135,12 +135,12 @@
             </button>
 
             <span
-                class="inline-flex items-center justify-center px-3 py-1.5 rounded-md bg-slate-100 text-slate-700 font-semibold text-xs">
+                class="inline-flex items-center justify-center px-3 py-1.5 rounded-md bg-amber-50 text-[#432818] font-semibold text-xs">
                 Page <span class="ml-1" th:text="${page.number + 1}">1</span>
             </span>
 
             <button type="button" th:data-page="${page.number + 2}" th:disabled="${!page.hasNext()}"
-                class="page-btn inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border text-xs font-medium bg-white text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-40 disabled:pointer-events-none">
+                class="page-btn inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border text-xs font-medium bg-white text-[#432818] shadow-sm transition hover:bg-amber-50 disabled:opacity-40 disabled:pointer-events-none">
                 Suivant
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
                     stroke="currentColor" class="w-4 h-4">

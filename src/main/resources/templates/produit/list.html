@@ -7,13 +7,13 @@
     <link rel="stylesheet" th:href="@{/css/output.css}" href="../static/css/output.css" />
     <link rel="stylesheet" th:href="@{/css/fonts.css}" href="../static/css/fonts.css" />
 </head>
-<body class="bg-brand-light font-sans text-slate-800 min-h-screen flex">
+<body class="bg-brand-light font-sans text-[#432818] h-screen overflow-hidden flex">
 <aside th:replace="~{fragments/sidebar :: sidebar('produits')}"></aside>
-<main class="flex-1 p-8">
+<main class="flex-1 overflow-y-auto p-8">
 
 <h1 class="text-3xl font-bold text-brand-dark mb-6">Produits</h1>
 
-<p th:if="${succes}" th:text="${succes}" class="mb-4 p-4 bg-green-100 text-green-800 rounded-xl"></p>
+<p th:if="${succes}" th:text="${succes}" class="mb-4 p-4 bg-amber-100 text-amber-800 rounded-xl"></p>
 
 <a th:href="@{/produits/nouveau}" class="inline-block mb-6 px-6 py-2 bg-brand-success text-white rounded-lg hover:opacity-90 transition-colors">+ Nouveau produit</a>
 

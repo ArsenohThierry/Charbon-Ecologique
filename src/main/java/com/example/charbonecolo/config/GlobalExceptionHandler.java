@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -33,6 +34,13 @@ public class GlobalExceptionHandler {
     public String handleNotFound(ResourceNotFoundException e, Model model) {
         log.warn("Resource not found: {}", e.getMessage());
         model.addAttribute("error", e.getMessage());
+        return "error";
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public String handleNoResource(NoResourceFoundException e, Model model) {
+        log.debug("Static resource not found: {}", e.getResourcePath());
+        model.addAttribute("error", "Ressource introuvable");
         return "error";
     }
 

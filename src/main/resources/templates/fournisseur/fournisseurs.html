@@ -9,10 +9,10 @@
     <link rel="stylesheet" th:href="@{/css/fonts.css}" href="../static/css/fonts.css" />
 </head>
 
-<body class="bg-brand-light font-sans text-slate-800 min-h-screen flex">
+<body class="bg-brand-light font-sans text-[#432818] h-screen overflow-hidden flex">
     <aside th:replace="~{fragments/sidebar :: sidebar('fournisseurs')}"></aside>
 
-    <main class="flex-1 flex flex-col min-w-0">
+    <main class="flex-1 flex flex-col min-w-0 min-h-0">
         <header class="h-16 px-8 flex items-center justify-between border-b border-gray-200">
             <div>
                 <h2 class="text-sm font-bold text-gray-800">Gestionnaire de stock</h2>
@@ -23,7 +23,7 @@
         <section class="flex-1 p-12 overflow-y-auto">
             <div class="max-w-6xl mx-auto">
 
-                <div th:if="${success}" class="mb-6 p-4 bg-green-100 border border-green-200 text-green-800 rounded-lg text-sm font-medium" th:text="${success}"></div>
+                <div th:if="${success}" class="mb-6 p-4 bg-amber-100 border border-amber-200 text-amber-800 rounded-lg text-sm font-medium" th:text="${success}"></div>
                 <div th:if="${error}" class="mb-6 p-4 bg-red-100 border border-red-200 text-red-800 rounded-lg text-sm font-medium" th:text="${error}"></div>
 
                 <!-- Formulaire -->
@@ -73,7 +73,7 @@
                                 </div>
                             </div>
                             <div class="pt-4 flex items-center gap-4">
-                                <button class="bg-brand-success hover:bg-emerald-800 text-white font-semibold py-2 px-6 rounded-lg transition-colors text-sm" type="submit" th:text="${fournisseurModel.id != null} ? 'Enregistrer les modifications' : 'Enregistrer le fournisseur'">Enregistrer le fournisseur</button>
+                                <button class="bg-brand-success hover:bg-amber-800 text-white font-semibold py-2 px-6 rounded-lg transition-colors text-sm" type="submit" th:text="${fournisseurModel.id != null} ? 'Enregistrer les modifications' : 'Enregistrer le fournisseur'">Enregistrer le fournisseur</button>
                                 <a th:href="@{/fournisseur/home}" class="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-medium py-2 px-8 rounded-lg transition-colors text-sm text-center">Annuler</a>
                             </div>
                         </form>
@@ -116,9 +116,9 @@
                                     </select>
                                 </div>
                                 <div class="md:col-span-5 lg:col-span-3 flex items-end space-x-4 mt-3">
-                                    <button type="submit" class="px-5 py-2.5 text-sm font-semibold bg-slate-800 hover:bg-slate-900 text-white rounded-xl transition-colors shadow-sm">Rechercher</button>
+                                    <button type="submit" class="px-5 py-2.5 text-sm font-semibold bg-[#6f1d1b] hover:bg-[#432818] text-white rounded-xl transition-colors shadow-sm">Rechercher</button>
                                     <a th:href="@{/fournisseur/home(size=${pageSize})}" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">Réinitialiser</a>
-                                    <a th:href="@{/fournisseur/import}" class="px-5 py-2.5 text-sm font-medium text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-xl transition-colors">
+                                    <a th:href="@{/fournisseur/import}" class="px-5 py-2.5 text-sm font-medium text-amber-700 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-xl transition-colors">
                                         Importer CSV
                                     </a>
                                 </div>
@@ -179,7 +179,7 @@
                                         <td class="px-6 py-4 truncate max-w-[10rem]" th:text="${f.telephone}"></td>
                                         <td class="px-6 py-4 truncate max-w-[12rem]" th:text="${f.adresse}" th:title="${f.adresse}"></td>
                                         <td class="px-6 py-4">
-                                            <span th:if="${f.actif}" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Actif</span>
+                                            <span th:if="${f.actif}" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">Actif</span>
                                             <span th:unless="${f.actif}" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">Inactif</span>
                                         </td>
                                         <td class="px-6 py-4 text-right space-x-2">
@@ -201,7 +201,7 @@
                                 <a th:if="${hasPrevious}" th:href="@{/fournisseur/home(page=${pageNumber - 1}, size=${pageSize}, sort=${sortParam}, nom=${nom}, email=${email}, telephone=${telephone}, adresse=${adresse}, actif=${actif})}" class="px-3 py-1.5 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-600 transition-colors">←</a>
                                 <th:block th:each="p : ${pagination}">
                                     <span th:if="${p.ellipsis}" class="px-2 py-1.5 text-sm text-gray-400 select-none">...</span>
-                                    <span th:if="${!p.ellipsis && p.current}" th:text="${p.number}" class="px-3 py-1.5 text-sm bg-slate-800 text-white rounded-lg font-medium"></span>
+                                    <span th:if="${!p.ellipsis && p.current}" th:text="${p.number}" class="px-3 py-1.5 text-sm bg-[#6f1d1b] text-white rounded-lg font-medium"></span>
                                     <a th:if="${!p.ellipsis && !p.current}" th:href="@{/fournisseur/home(page=${p.index}, size=${pageSize}, sort=${sortParam}, nom=${nom}, email=${email}, telephone=${telephone}, adresse=${adresse}, actif=${actif})}" th:text="${p.number}" class="px-3 py-1.5 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-600 transition-colors"></a>
                                 </th:block>
                                 <a th:if="${hasNext}" th:href="@{/fournisseur/home(page=${pageNumber + 1}, size=${pageSize}, sort=${sortParam}, nom=${nom}, email=${email}, telephone=${telephone}, adresse=${adresse}, actif=${actif})}" class="px-3 py-1.5 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-600 transition-colors">→</a>
