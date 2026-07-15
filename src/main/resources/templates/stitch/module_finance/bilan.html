@@ -11,11 +11,11 @@
         .kpi-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,.08); }
     </style>
 </head>
-<body class="bg-brand-light font-sans text-slate-800 min-h-screen flex">
+<body class="bg-brand-light font-sans text-slate-800 h-screen overflow-hidden flex">
 
 <aside th:replace="~{fragments/sidebar :: sidebar('bilan')}"></aside>
 
-<main class="flex-1 min-h-screen p-8">
+<main class="flex-1 overflow-y-auto p-8">
     <div class="mb-8">
         <h1 class="text-2xl font-bold text-slate-900">Bilan Financier</h1>
         <p class="text-sm text-slate-500 mt-1">

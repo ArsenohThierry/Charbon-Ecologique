@@ -1124,6 +1124,10 @@ input:where([type='file']):focus {
   max-height: 12rem;
 }
 
+.min-h-0 {
+  min-height: 0px;
+}
+
 .min-h-screen {
   min-height: 100vh;
 }
@@ -2276,6 +2280,10 @@ input:where([type='file']):focus {
 
 .pb-20 {
   padding-bottom: 5rem;
+}
+
+.pb-3 {
+  padding-bottom: 0.75rem;
 }
 
 .pb-4 {
