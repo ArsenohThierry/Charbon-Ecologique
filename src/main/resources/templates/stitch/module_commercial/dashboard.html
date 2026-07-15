@@ -11,9 +11,9 @@
     <link rel="stylesheet" th:href="@{/css/fonts.css}" />
 </head>
 
-<body class="bg-brand-light font-sans text-slate-800 min-h-screen flex">
+<body class="bg-brand-light font-sans text-slate-800 h-screen overflow-hidden flex">
     <aside th:replace="~{fragments/sidebar :: sidebar('dashboard')}"></aside>
-    <main class="flex-1 p-8">
+    <main class="flex-1 overflow-y-auto p-8">
         <header class="flex justify-between items-start mb-10">
             <div>
                 <h2 class="text-2xl font-bold text-brand-dark">Commercial &amp; finance</h2>

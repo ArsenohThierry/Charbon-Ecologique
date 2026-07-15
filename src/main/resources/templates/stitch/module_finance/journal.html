@@ -7,10 +7,10 @@
     <link rel="stylesheet" th:href="@{/css/output.css}" />
     <link rel="stylesheet" th:href="@{/css/fonts.css}" />
 </head>
-<body class="bg-brand-light font-sans text-slate-800 min-h-screen flex">
+<body class="bg-brand-light font-sans text-slate-800 h-screen overflow-hidden flex">
 
 <aside th:replace="~{fragments/sidebar :: sidebar('journal')}"></aside>
-<main class="flex-1 min-h-screen p-8">
+<main class="flex-1 overflow-y-auto p-8">
 
     <!-- En-tête -->
     <div class="flex items-center justify-between mb-8">
