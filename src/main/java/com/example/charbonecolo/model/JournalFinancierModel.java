@@ -29,17 +29,32 @@ public class JournalFinancierModel {
     @Column(nullable = false, precision = 15, scale = 2)
     private BigDecimal credit = BigDecimal.ZERO;
 
-    @Column(length = 50)
+    @Column(length = 500)
     private String reference;
 
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    @Column(name = "type_source", length = 50)
+    private String typeSource;
+
+    @Column(name = "id_source")
+    private Long idSource;
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+    @PrePersist
+    public void prePersist() {
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
+    }
+
     public JournalFinancierModel() {}
 
     public JournalFinancierModel(LocalDateTime dateOperation, TypeJournalModel typeJournal,
                                   OrigineModel origine, BigDecimal debit,
-                                  BigDecimal credit, String reference, String description) {
+                                  BigDecimal credit, String reference, String description, String typeSource, Long idSource) {
         this.dateOperation = dateOperation;
         this.typeJournal = typeJournal;
         this.origine = origine;
@@ -47,6 +62,8 @@ public class JournalFinancierModel {
         this.credit = credit;
         this.reference = reference;
         this.description = description;
+        this.typeSource = typeSource;
+        this.idSource = idSource;
     }
 
     public Long getId() { return id; }
@@ -72,4 +89,13 @@ public class JournalFinancierModel {
 
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
+
+    public String getTypeSource() { return typeSource; }
+    public void setTypeSource(String typeSource) { this.typeSource = typeSource; }
+
+    public Long getIdSource() { return idSource; }
+    public void setIdSource(Long idSource) { this.idSource = idSource; }
+
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 }

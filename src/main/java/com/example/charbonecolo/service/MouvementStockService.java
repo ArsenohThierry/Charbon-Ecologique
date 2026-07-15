@@ -1,5 +1,6 @@
 package com.example.charbonecolo.service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -49,6 +50,8 @@ import com.example.charbonecolo.repository.ProduitRepository;
 import com.example.charbonecolo.repository.SeuilRepository;
 import com.example.charbonecolo.repository.StatutsLotProductionRepository;
 import com.example.charbonecolo.repository.TypeMouvementStockRepository;
+import com.example.charbonecolo.repository.TypeJournalRepository;
+import com.example.charbonecolo.repository.OrigineRepository;
 
 @Service
 public class MouvementStockService {
@@ -74,6 +77,12 @@ public class MouvementStockService {
     private SeuilRepository seuilRepository;
     @Autowired
     private AlerteSeuilRepository alerteSeuilRepository;
+    @Autowired
+    private JournalFinancierService journalFinancierService;
+    @Autowired
+    private TypeJournalRepository typeJournalRepository;
+    @Autowired
+    private OrigineRepository origineRepository;
 
     private TypeMouvementStockModel sortieType;
     private List<MouvementStockModel> sorties;
@@ -180,6 +189,22 @@ public class MouvementStockService {
         mouvement.setMotifSortie(null);
 
         mouvementStockRepository.save(mouvement);
+
+        // Créer l'écriture d'achat si prixAchat est fourni
+        if (entry.getPrixAchat() != null && entry.getPrixAchat().compareTo(BigDecimal.ZERO) > 0) {
+            BigDecimal montantAchat = entry.getPrixAchat().multiply(new BigDecimal(entry.getQuantite()));
+            String description = "Achat " + lot.getTypeMatierePremiere().getLibelle() 
+                    + " — " + lot.getTypeMatierePremiere().getFournisseur().getNom();
+            
+            journalFinancierService.enregistrerAchat(
+                    dateEntree,
+                    montantAchat,
+                    lot.getReference(),
+                    description,
+                    "MOUVEMENT_STOCK",
+                    mouvement.getId().longValue()
+            );
+        }
     }
 
     @Transactional
@@ -209,6 +234,22 @@ public class MouvementStockService {
         mouvement.setDateMouvement(toDateTimeOuMaintenant(dto.getDateEntree()));
 
         mouvementStockRepository.save(mouvement);
+
+        // Mettre à jour l'écriture d'achat si prixAchat a changé
+        if (dto.getPrixAchat() != null && dto.getPrixAchat().compareTo(BigDecimal.ZERO) > 0) {
+            BigDecimal montantAchat = dto.getPrixAchat().multiply(new BigDecimal(dto.getQuantite()));
+            String description = "Achat " + lot.getTypeMatierePremiere().getLibelle() 
+                    + " — " + lot.getTypeMatierePremiere().getFournisseur().getNom();
+            
+            journalFinancierService.enregistrerAchat(
+                    mouvement.getDateMouvement(),
+                    montantAchat,
+                    lot.getReference(),
+                    description,
+                    "MOUVEMENT_STOCK",
+                    mouvement.getId().longValue()
+            );
+        }
     }
 
     // ── SORTIE (FIFO) ────────────────────────────────────────────
@@ -271,6 +312,23 @@ public class MouvementStockService {
         }
 
         mouvementSortieDetailRepository.saveAll(details);
+
+        ProduitModel produit = lotsDisponibles.get(0).getProduit();
+        BigDecimal montantSortie = BigDecimal.valueOf(produit.getPu() != null ? produit.getPu() : 0.0)
+                .multiply(new BigDecimal(quantite));
+        MotifSortieModel motif = mouvement.getMotifSortie();
+        String description = "Sortie stock — " + produit.getNom()
+                + " — " + quantite + " unité(s)"
+                + (motif != null ? " — " + motif.getLibelle() : "");
+
+        journalFinancierService.enregistrerSortieStock(
+                mouvement.getDateMouvement(),
+                montantSortie,
+                "MOUV-" + mouvement.getId(),
+                description,
+                "MOUVEMENT_STOCK",
+                mouvement.getId().longValue()
+        );
     }
 
     @Transactional
@@ -343,6 +401,23 @@ public class MouvementStockService {
         }
 
         mouvementSortieDetailRepository.saveAll(newDetails);
+
+        // Mettre à jour l'écriture comptable associée
+        ProduitModel produit = newDetails.get(0).getLotProduction().getProduit();
+        BigDecimal montantSortie = BigDecimal.valueOf(produit.getPu() != null ? produit.getPu() : 0.0)
+                .multiply(new BigDecimal(dto.getQuantite()));
+        MotifSortieModel motif = mouvement.getMotifSortie();
+        String description = "Sortie stock — " + produit.getNom()
+                + " — " + dto.getQuantite() + " unité(s)"
+                + (motif != null ? " — " + motif.getLibelle() : "");
+
+        journalFinancierService.trouverParSource("MOUVEMENT_STOCK", mouvement.getId().longValue())
+                .ifPresent(ecriture -> {
+                    ecriture.setDateOperation(mouvement.getDateMouvement());
+                    ecriture.setCredit(montantSortie);
+                    ecriture.setDescription(description);
+                    journalFinancierService.mettreAJourEcriture(ecriture);
+                });
     }
 
     // ── SUPPRESSION ──────────────────────────────────────────────
@@ -367,6 +442,8 @@ public class MouvementStockService {
 
         } else {
             mouvementSortieDetailRepository.deleteByMouvementSortie(mouvement);
+            journalFinancierService.supprimerEcrituresParSource(
+                    "MOUVEMENT_STOCK", mouvement.getId().longValue());
         }
 
         mouvementStockRepository.delete(mouvement);

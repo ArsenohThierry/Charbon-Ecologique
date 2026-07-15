@@ -16,6 +16,7 @@ import com.example.charbonecolo.dto.FactureDto;
 import com.example.charbonecolo.dto.FactureErrorWrapper;
 import com.example.charbonecolo.model.*;
 import com.example.charbonecolo.repository.*;
+import com.example.charbonecolo.service.JournalFinancierService;
 
 import jakarta.annotation.PostConstruct;
 
@@ -29,13 +30,15 @@ public class PaiementService {
     private final JdbcTemplate jdbcTemplate;
     private final FactureRepository factureRepository;
     private final FactureDetailRepository factureDetailRepository;
+    private final JournalFinancierService journalFinancierService;
 
     public PaiementService(PaiementRepository paiementRepository,
             CommandeRepository commandeRepository,
             DetailCommandeRepository detailCommandeRepository,
             StatutCommandeRepository statutCommandeRepository,
             JdbcTemplate jdbcTemplate, FactureDetailRepository factureDetailRepository,
-            FactureRepository factureRepository) {
+            FactureRepository factureRepository,
+            JournalFinancierService journalFinancierService) {
         this.paiementRepository = paiementRepository;
         this.commandeRepository = commandeRepository;
         this.detailCommandeRepository = detailCommandeRepository;
@@ -43,6 +46,7 @@ public class PaiementService {
         this.jdbcTemplate = jdbcTemplate;
         this.factureRepository = factureRepository;
         this.factureDetailRepository = factureDetailRepository;
+        this.journalFinancierService = journalFinancierService;
     }
 
     @PostConstruct
@@ -183,6 +187,44 @@ public class PaiementService {
         sc.setCommande(commande);
         sc.setStatut(statutPayee);
         statutCommandeRepository.save(sc);
+
+        Long factureId = Long.valueOf(saved.getId());
+        LocalDateTime maintenant = LocalDateTime.now();
+
+        journalFinancierService.enregistrerVente(
+                maintenant,
+                montantCmd,
+                commande.getReference(),
+                "Facture n°" + refFacture + " — " + commande.getClient().getNom(),
+                "FACTURE",
+                factureId
+        );
+
+        if (fraisLivraison != null && fraisLivraison.compareTo(BigDecimal.ZERO) > 0) {
+            journalFinancierService.enregistrerFraisLivraison(
+                    maintenant,
+                    fraisLivraison,
+                    commande.getReference(),
+                    "Frais de livraison — Commande " + commande.getReference(),
+                    "FACTURE",
+                    factureId
+            );
+        }
+
+        String methodeLibelle = jdbcTemplate.queryForObject(
+                "SELECT libelle FROM methode_paiement WHERE id = ?",
+                String.class, methodePaiementId);
+        String typeJournalPaiement = "Espèces".equals(methodeLibelle) ? "CSS" : "BNQ";
+
+        journalFinancierService.enregistrerPaiement(
+                maintenant,
+                montantCmd.add(fraisLivraison != null ? fraisLivraison : BigDecimal.ZERO),
+                refPaiement,
+                "Paiement " + methodeLibelle + " — Commande " + commande.getReference(),
+                typeJournalPaiement,
+                "PAIEMENT",
+                paiement.getId().longValue()
+        );
 
         Map<String, Object> result = new HashMap<>();
         result.put("refFacture", refFacture);

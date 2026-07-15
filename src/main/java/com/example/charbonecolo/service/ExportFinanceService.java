@@ -34,6 +34,7 @@ public class ExportFinanceService {
         header.createCell(5).setCellValue("Credit");
         header.createCell(6).setCellValue("Reference");
         header.createCell(7).setCellValue("Description");
+        header.createCell(8).setCellValue("Source");
 
         int rowIdx = 1;
 
@@ -54,9 +55,12 @@ public class ExportFinanceService {
             row.createCell(7).setCellValue(
                     e.getDescription() != null ? e.getDescription() : ""
             );
+            row.createCell(8).setCellValue(
+                    e.getTypeSource() != null ? e.getTypeSource() : "Manuel"
+            );
         }
 
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < 9; i++) {
             sheet.autoSizeColumn(i);
         }
 

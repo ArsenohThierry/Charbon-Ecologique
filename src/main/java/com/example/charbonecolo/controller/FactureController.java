@@ -9,6 +9,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +30,7 @@ import com.example.charbonecolo.repository.FactureDetailRepository;
 import com.example.charbonecolo.repository.FactureRepository;
 import com.example.charbonecolo.repository.MethodePaiementRepository;
 import com.example.charbonecolo.service.CommandeService;
+import com.example.charbonecolo.service.FactureService;
 import com.example.charbonecolo.service.PaiementService;
 
 @Controller
@@ -42,6 +46,7 @@ public class FactureController {
     private final FactureRepository factureRepository;
     private final FactureDetailRepository factureDetailRepository;
     private final CommandeService commandeService;
+    private final FactureService factureService;
 
     static {
         sortReferences = new HashMap<>();
@@ -55,7 +60,7 @@ public class FactureController {
     public FactureController(PaiementService paiementService,
             CommandeRepository commandeRepository,
             MethodePaiementRepository methodePaiementRepository, DetailCommandeRepository detailCommandeRepository,
-            FactureDetailRepository factureDetailRepository, FactureRepository factureRepository, CommandeService commandeService) {
+            FactureDetailRepository factureDetailRepository, FactureRepository factureRepository, CommandeService commandeService, FactureService factureService) {
         this.paiementService = paiementService;
         this.commandeRepository = commandeRepository;
         this.methodePaiementRepository = methodePaiementRepository;
@@ -63,6 +68,7 @@ public class FactureController {
         this.factureRepository = factureRepository;
         this.factureDetailRepository = factureDetailRepository;
         this.commandeService = commandeService;
+        this.factureService = factureService;
     }
 
     @GetMapping
@@ -156,5 +162,21 @@ public class FactureController {
         model.addAttribute("montantTotal", montantTotal);
 
         return "stitch/module_commercial/detail_facture";
+    }
+
+    @GetMapping("/export/{id}")
+    public ResponseEntity<byte[]> exportFacture(@PathVariable Integer id) throws Exception {
+        FactureModel found = factureRepository.findById(id).get();
+        try {
+            byte[] pdfBytes = factureService.exportToPdf(id);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            headers.setContentDispositionFormData("attachment", found.getReference() + ".pdf");
+            headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+            return ResponseEntity.ok().headers(headers).body(pdfBytes);
+        } catch(Exception e) {
+            throw e;
+            // return ResponseEntity.internalServerError().build();
+        }
     }
 }

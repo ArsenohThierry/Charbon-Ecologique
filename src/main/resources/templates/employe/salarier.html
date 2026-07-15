@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Nouvelle salarisation - Charbon Vert</title>
+    <link rel="stylesheet" th:href="@{/css/output.css}" />
+    <link rel="stylesheet" th:href="@{/css/fonts.css}" />
+</head>
+<body class="bg-brand-light font-sans text-slate-800 min-h-screen flex">
+    <aside th:replace="~{fragments/sidebar :: sidebar('employes')}"></aside>
+    <main class="flex-1 flex flex-col min-w-0">
+        <header class="h-16 px-8 flex items-center justify-between border-b border-gray-200">
+            <div>
+                <h2 class="text-sm font-bold text-gray-800">Administration</h2>
+                <p class="text-[10px] text-gray-500 uppercase tracking-wide">Nouvelle salarisation</p>
+            </div>
+            <a th:href="@{/employes/home}" class="text-sm text-slate-500 hover:text-brand-success transition flex items-center gap-1">← Retour</a>
+        </header>
+        <section class="flex-1 p-12 overflow-y-auto">
+            <div class="max-w-2xl mx-auto">
+
+                <div th:if="${error}" class="mb-6 p-4 bg-red-100 border border-red-200 text-red-800 rounded-lg text-sm font-medium" th:text="${error}"></div>
+
+                <div class="mb-8">
+                    <h1 class="text-4xl font-serif text-brand-dark mb-2">Nouvelle salarisation</h1>
+                    <p class="text-gray-600 text-sm">Enregistrer un nouveau salaire pour un employé.</p>
+                </div>
+
+                <form th:action="@{/employes/salarier}" method="POST" class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 space-y-6">
+                    <div class="space-y-1.5">
+                        <label class="block text-sm font-medium text-gray-700">Employé</label>
+                        <select name="employeId" class="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-gray-700 text-sm focus:ring-1 focus:ring-brand-success focus:border-brand-success">
+                            <option value="">Sélectionner un employé...</option>
+                            <option th:each="e : ${employes}" th:value="${e.id}"
+                                    th:text="${e.nom + ' (' + e.reference + ') - ' + e.emploi.libelle}"
+                                    th:selected="${employe != null and employe.id == e.id}"></option>
+                        </select>
+                    </div>
+
+                    <div class="space-y-1.5" th:if="${employe != null}">
+                        <label class="block text-sm font-medium text-gray-700">Rôle</label>
+                        <p class="text-lg font-bold text-brand-dark" th:text="${employe.emploi.libelle + ' - ' + #numbers.formatDecimal(employe.emploi.salaire, 1, 'COMMA', 0, 'POINT') + ' Ar'}">Développeur - 2 000 000 Ar</p>
+                    </div>
+                    <input type="hidden" name="salaireBase" th:value="${salaireBase}" />
+                    <div class="grid grid-cols-2 gap-6">
+                        <div class="space-y-1.5">
+                            <label class="block text-sm font-medium text-gray-700">Prime (Ar)</label>
+                            <input type="number" name="prime" step="0.01" min="0"
+                                   th:value="${prime}"
+                                   class="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-gray-700 text-sm focus:ring-1 focus:ring-brand-success focus:border-brand-success" />
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block text-sm font-medium text-gray-700">Indemnité (Ar)</label>
+                            <input type="number" name="indemnite" step="0.01" min="0"
+                                   th:value="${indemnite}"
+                                   class="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-gray-700 text-sm focus:ring-1 focus:ring-brand-success focus:border-brand-success" />
+                        </div>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label class="block text-sm font-medium text-gray-700">Date d'effet</label>
+                        <input type="date" name="dateEffet" th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}"
+                               class="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-gray-700 text-sm focus:ring-1 focus:ring-brand-success focus:border-brand-success" />
+                    </div>
+
+                    <div class="pt-4 flex items-center gap-4">
+                        <button type="submit"
+                                class="bg-brand-success hover:bg-brand-dark text-white font-semibold py-2 px-8 rounded-lg transition-colors text-sm">
+                            Enregistrer
+                        </button>
+                        <a th:href="@{/employes/home}"
+                           class="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-medium py-2 px-8 rounded-lg transition-colors text-sm text-center">
+                            Annuler
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
