@@ -35,12 +35,14 @@ import com.example.charbonecolo.model.FactureModel;
 import com.example.charbonecolo.model.FournisseurModel;
 import com.example.charbonecolo.model.LivraisonModel;
 import com.example.charbonecolo.model.LivraisonResteModel;
+import com.example.charbonecolo.model.LivraisonStatutModel;
 import com.example.charbonecolo.model.LotProductionModel;
 import com.example.charbonecolo.model.LotStatutsModel;
 import com.example.charbonecolo.model.MouvementSortieDetailModel;
 import com.example.charbonecolo.model.MouvementStockModel;
 import com.example.charbonecolo.model.PaiementModel;
 import com.example.charbonecolo.model.StatutCommandeModel;
+import com.example.charbonecolo.model.StatutLivraisonModel;
 import com.example.charbonecolo.model.StatutsLotProductionModel;
 import com.example.charbonecolo.model.TypeMatierePremiereModel;
 import com.example.charbonecolo.model.TypeMouvementStockModel;
@@ -53,6 +55,7 @@ import com.example.charbonecolo.repository.LotProductionRepository;
 import com.example.charbonecolo.repository.MouvementSortieDetailRepository;
 import com.example.charbonecolo.repository.PaiementRepository;
 import com.example.charbonecolo.repository.StatutCommandeRepository;
+import com.example.charbonecolo.repository.StatutLivraisonRepository;
 import com.example.charbonecolo.repository.StatutsLotProductionRepository;
 
 @Service
@@ -71,6 +74,7 @@ public class CommandeService {
     private final LivraisonRepository livraisonRepository;
     private final FactureRepository factureRepository;
     private final PaiementRepository paiementRepository;
+    private final StatutLivraisonRepository statutLivraisonRepository;
 
     public CommandeService(CommandeRepository commandeRepository, StatutCommandeRepository statutCommandeRepository,
             DetailCommandeRepository detailCommandeRepository, ClientService clientService,
@@ -78,7 +82,7 @@ public class CommandeService {
             MouvementSortieDetailRepository mouvementSortieDetailRepository,
             LotProductionRepository lotProductionRepository,
             StatutsLotProductionRepository statutsLotProductionRepository, LivraisonService livraisonService,
-            LivraisonResteRepository livraisonResteRepository, LivraisonRepository livraisonRepository, FactureRepository factureRepository, PaiementRepository paiementRepository) {
+            LivraisonResteRepository livraisonResteRepository, LivraisonRepository livraisonRepository, FactureRepository factureRepository, PaiementRepository paiementRepository, StatutLivraisonRepository statutLivraisonRepository) {
         this.commandeRepository = commandeRepository;
         this.statutCommandeRepository = statutCommandeRepository;
         this.detailCommandeRepository = detailCommandeRepository;
@@ -92,6 +96,7 @@ public class CommandeService {
         this.livraisonRepository = livraisonRepository;
         this.factureRepository = factureRepository;
         this.paiementRepository = paiementRepository;
+        this.statutLivraisonRepository = statutLivraisonRepository;
     }
 
     public void stockAvailable(DetailCommandeModel detail) throws StockUnavailableException {
@@ -207,7 +212,7 @@ public class CommandeService {
                 LotProductionModel lotSaved = lotProductionRepository.save(modified);
                 StatutsLotProductionModel statutsLotProductionModel = new StatutsLotProductionModel();
                 LotStatutsModel lotStatutsModel = new LotStatutsModel();
-                lotStatutsModel.setId(2);
+                lotStatutsModel.setId(3);
                 statutsLotProductionModel.setLotStatuts(lotStatutsModel);
                 statutsLotProductionModel.setLotProduction(lotSaved);
                 statutsLotProductionModel.setDateStatut(LocalDateTime.now());
@@ -218,6 +223,15 @@ public class CommandeService {
                 entreeStockDTO.setQuantite(detail.getQuantite());
                 mouvementStockService.saveEntreeStock(entreeStockDTO);
             }
+        } else if(lastStatus.getStatut().getId() == 3) {
+            LivraisonModel livraison = livraisonRepository.findByCommandeId(idCommande).get();
+            StatutLivraisonModel statutLivraisonModel = new StatutLivraisonModel();
+            LivraisonStatutModel livraisonStatutModel = new LivraisonStatutModel();
+            livraisonStatutModel.setId(3);
+            statutLivraisonModel.setDateStatutsLivraison(LocalDateTime.now());
+            statutLivraisonModel.setLivraison(livraison);
+            statutLivraisonModel.setStatut(livraisonStatutModel);
+            statutLivraisonRepository.save(statutLivraisonModel);
         }
         commandeStatutModel.setId(5);
         statutCommandeModel.setStatut(commandeStatutModel);
@@ -435,7 +449,7 @@ public class CommandeService {
                     LotProductionModel lotSaved = lotProductionRepository.save(modified);
                     StatutsLotProductionModel statutsLotProductionModel = new StatutsLotProductionModel();
                     LotStatutsModel lotStatutsModel = new LotStatutsModel();
-                    lotStatutsModel.setId(2);
+                    lotStatutsModel.setId(3);
                     statutsLotProductionModel.setLotStatuts(lotStatutsModel);
                     statutsLotProductionModel.setLotProduction(lotSaved);
                     statutsLotProductionModel.setDateStatut(LocalDateTime.now());
@@ -498,7 +512,7 @@ public class CommandeService {
         LotProductionModel lotSaved = lotProductionRepository.save(modified);
         StatutsLotProductionModel statutsLotProductionModel = new StatutsLotProductionModel();
         LotStatutsModel lotStatutsModel = new LotStatutsModel();
-        lotStatutsModel.setId(2);
+        lotStatutsModel.setId(3);
         statutsLotProductionModel.setLotStatuts(lotStatutsModel);
         statutsLotProductionModel.setLotProduction(lotSaved);
         statutsLotProductionModel.setDateStatut(LocalDateTime.now());
