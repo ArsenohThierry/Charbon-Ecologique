@@ -7,7 +7,7 @@
     <link rel="stylesheet" th:href="@{/css/output.css}" />
     <link rel="stylesheet" th:href="@{/css/fonts.css}" />
 </head>
-<body class="bg-brand-light font-sans text-slate-800 h-screen overflow-hidden flex">
+<body class="bg-brand-light font-sans text-[#432818] h-screen overflow-hidden flex">
     <aside th:replace="~{fragments/sidebar :: sidebar('employes')}"></aside>
     <main class="flex-1 flex flex-col min-w-0 min-h-0">
         <header class="h-16 px-8 flex items-center justify-between border-b border-gray-200">
@@ -15,7 +15,7 @@
                 <h2 class="text-sm font-bold text-gray-800">Administration</h2>
                 <p class="text-[10px] text-gray-500 uppercase tracking-wide">Ajouter une prime</p>
             </div>
-            <a th:href="@{/employes/salaire/{id}(id=${employe.id})}" class="text-sm text-slate-500 hover:text-brand-success transition flex items-center gap-1">← Retour</a>
+            <a th:href="@{/employes/salaire/{id}(id=${employe.id})}" class="text-sm text-[#6b7280] hover:text-brand-success transition flex items-center gap-1">← Retour</a>
         </header>
         <section class="flex-1 p-12 overflow-y-auto">
             <div class="max-w-2xl mx-auto">

@@ -21,51 +21,51 @@
                 extend: {
                     "colors": {
                         "on-primary": "#ffffff",
-                        "surface-variant": "#dce4df",
-                        "surface-dim": "#d4dcd6",
-                        "on-primary-container": "#83a794",
+                        "surface-variant": "#e5e3d8",
+                        "surface-dim": "#e5e3d8",
+                        "on-primary-container": "#bb9457",
                         "on-secondary-fixed": "#291800",
                         "tertiary-container": "#353633",
                         "tertiary": "#20211e",
-                        "on-background": "#161d1a",
-                        "primary": "#032619",
-                        "inverse-primary": "#aacfbb",
-                        "surface-container-low": "#edf6f0",
-                        "inverse-surface": "#2a322f",
+                        "on-background": "#432818",
+                        "primary": "#432818",
+                        "inverse-primary": "#ffe6a7",
+                        "surface-container-low": "#FFF8F0",
+                        "inverse-surface": "#432818",
                         "on-secondary-container": "#785213",
                         "on-tertiary-container": "#9f9f9a",
                         "on-error": "#ffffff",
-                        "primary-container": "#1b3c2e",
+                        "primary-container": "#432818",
                         "on-tertiary-fixed-variant": "#464744",
                         "secondary-fixed": "#ffddb3",
                         "error-container": "#ffdad6",
-                        "primary-fixed-dim": "#aacfbb",
+                        "primary-fixed-dim": "#ffe6a7",
                         "tertiary-fixed": "#e3e3de",
-                        "surface-container": "#e8f0ea",
+                        "surface-container": "#fef3c7",
                         "secondary-fixed-dim": "#f1be75",
                         "on-error-container": "#93000a",
                         "secondary-container": "#fec97f",
-                        "outline": "#727974",
-                        "on-primary-fixed": "#002115",
+                        "outline": "#747878",
+                        "on-primary-fixed": "#432818",
                         "on-secondary": "#ffffff",
                         "error": "#ba1a1a",
-                        "on-primary-fixed-variant": "#2c4d3e",
-                        "inverse-on-surface": "#ebf3ed",
-                        "surface": "#f3fbf6",
-                        "surface-bright": "#f3fbf6",
+                        "on-primary-fixed-variant": "#6f1d1b",
+                        "inverse-on-surface": "#ffe6a7",
+                        "surface": "#FFF8F0",
+                        "surface-bright": "#FFF8F0",
                         "on-tertiary": "#ffffff",
                         "tertiary-fixed-dim": "#c7c7c2",
-                        "on-surface-variant": "#414844",
+                        "on-surface-variant": "#5e5e5e",
                         "surface-container-lowest": "#ffffff",
                         "on-secondary-fixed-variant": "#624000",
-                        "surface-tint": "#446555",
-                        "background": "#f3fbf6",
-                        "surface-container-highest": "#dce4df",
+                        "surface-tint": "#6f1d1b",
+                        "background": "#FFF8F0",
+                        "surface-container-highest": "#e5e3d8",
                         "secondary": "#7e5718",
-                        "primary-fixed": "#c6ebd7",
+                        "primary-fixed": "#ffe6a7",
                         "on-tertiary-fixed": "#1b1c19",
                         "surface-container-high": "#e2eae5",
-                        "on-surface": "#161d1a",
+                        "on-surface": "#432818",
                         "outline-variant": "#c1c8c2"
                     },
                     "borderRadius": {
@@ -139,7 +139,7 @@
     </style>
 </head>
 
-<body class="bg-brand-light font-sans text-slate-800 min-h-screen flex">
+<body class="bg-brand-light font-sans text-[#432818] min-h-screen flex">
     <aside th:replace="~{fragments/sidebar :: sidebar('commandes')}"></aside>
     <main class="flex-1">
         <header th:replace="~{fragments/commande-header}"></header>
@@ -166,7 +166,7 @@
                     <div>
                         <label class="block font-label-sm text-label-sm text-on-surface-variant mb-2">Client</label>
                         <input
-                            class="w-full form-input bg-surface-container-lowest px-4 py-2.5 text-on-surface disabled:bg-slate-100 disabled:opacity-60 disabled:cursor-not-allowed"
+                            class="w-full form-input bg-surface-container-lowest px-4 py-2.5 text-on-surface disabled:bg-amber-50 disabled:opacity-60 disabled:cursor-not-allowed"
                             placeholder="Nom du client" th:field="*{clientNom}" id="client" list="client-list"
                             autocomplete="off" type="text"
                             th:disabled="${#lists.contains(cannotUpdateLabels, statutLibelle)}">
@@ -181,7 +181,7 @@
                         <label class="block font-label-sm text-label-sm text-on-surface-variant mb-2">Date
                             souhaitée</label>
                         <input
-                            class="w-full form-input bg-surface-container-lowest px-4 py-2.5 text-on-surface disabled:bg-slate-100 disabled:opacity-60 disabled:cursor-not-allowed"
+                            class="w-full form-input bg-surface-container-lowest px-4 py-2.5 text-on-surface disabled:bg-amber-50 disabled:opacity-60 disabled:cursor-not-allowed"
                             type="date" value="2023-10-25"
                             th:disabled="${#lists.contains(cannotUpdateLabels, statutLibelle)}">
                     </div>
@@ -189,7 +189,7 @@
                         <label class="block font-label-sm text-label-sm text-on-surface-variant mb-2">Lieu de
                             livraison</label>
                         <input
-                            class="w-full form-input bg-surface-container-lowest px-4 py-2.5 text-on-surface disabled:bg-slate-100 disabled:opacity-60 disabled:cursor-not-allowed"
+                            class="w-full form-input bg-surface-container-lowest px-4 py-2.5 text-on-surface disabled:bg-amber-50 disabled:opacity-60 disabled:cursor-not-allowed"
                             placeholder="Adresse ou quartier" type="text" value="Anosizato"
                             th:disabled="${#lists.contains(cannotUpdateLabels, statutLibelle)}">
                     </div>
@@ -209,7 +209,7 @@
 
             <div th:if="${statutLibelle != 'en livraison'}"
                 class="bg-surface-container-low rounded-xl p-6 mb-8 border border-outline-variant/30 opacity-100"
-                th:classappend="${#lists.contains(cannotUpdateLabels, statutLibelle)} ? 'opacity-60 bg-slate-50'">
+                th:classappend="${#lists.contains(cannotUpdateLabels, statutLibelle)} ? 'opacity-60 bg-amber-50'">
                 <h4 class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-4">AJOUTER
                     UN ARTICLE AU PANIER</h4>
                 <form action="/cmd/detail/update/add" method="post">
@@ -291,7 +291,7 @@
                                 <td class="py-4 px-4 font-body-md text-on-surface text-center font-bold">
                                     <div class="flex items-center justify-center gap-2">
                                         <input type="number"
-                                            class="w-20 form-input bg-white px-2 py-1 text-center font-bold disabled:bg-slate-100 disabled:opacity-60 disabled:cursor-not-allowed"
+                                            class="w-20 form-input bg-white px-2 py-1 text-center font-bold disabled:bg-amber-50 disabled:opacity-60 disabled:cursor-not-allowed"
                                             th:value="${detail.quantite}" name="quantite"
                                             th:disabled="${#lists.contains(cannotUpdateLabels, statutLibelle)}">
                                         <span class="text-sm text-on-surface-variant">kg</span>
@@ -306,7 +306,7 @@
                                 <td class="py-4 px-4 text-center">
                                     <button type="submit"
                                         th:disabled="${#lists.contains(cannotUpdateLabels, statutLibelle)}"
-                                        class="bg-slate-50 hover:underline font-bold text-xs uppercase transition-colors disabled:opacity-40 disabled:no-underline disabled:cursor-not-allowed">Modifier</button>
+                                        class="bg-amber-50 hover:underline font-bold text-xs uppercase transition-colors disabled:opacity-40 disabled:no-underline disabled:cursor-not-allowed">Modifier</button>
                                 </td>
                             </form>
                             <form th:if="${details.size() > 1}" action="/cmd/detail/delete" method="post">
