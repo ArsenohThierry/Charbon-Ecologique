@@ -14,9 +14,9 @@
         .badge-unpaid { background-color: #fee2e2; color: #991b1b; }
     </style>
 </head>
-<body class="bg-brand-light font-sans text-slate-800 min-h-screen flex">
+<body class="bg-brand-light font-sans text-slate-800 h-screen overflow-hidden flex">
     <aside th:replace="~{fragments/sidebar :: sidebar('factures')}"></aside>
-    <main class="flex-1 min-h-screen">
+    <main class="flex-1 overflow-y-auto">
         <header class="flex items-center justify-between px-8 py-4 bg-white border-b border-gray-100">
             <div>
                 <h2 class="text-lg font-bold text-brand-dark">Commercial & finance</h2>

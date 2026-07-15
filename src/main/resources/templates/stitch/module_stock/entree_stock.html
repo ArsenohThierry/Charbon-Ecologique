@@ -9,9 +9,9 @@
   <link rel="stylesheet" th:href="@{/css/fonts.css}" href="../../../static/css/fonts.css" />
 </head>
 
-<body class="bg-brand-light font-sans text-slate-800 min-h-screen flex">
+<body class="bg-brand-light font-sans text-slate-800 h-screen overflow-hidden flex">
   <aside th:replace="~{fragments/sidebar :: sidebar('entree-stock')}"></aside>
-  <main class="flex-1 p-8">
+  <main class="flex-1 overflow-y-auto p-8">
     <header class="flex justify-between items-start mb-10">
       <div>
         <h2 class="text-2xl font-bold text-brand-dark">Gestionnaire de stock</h2>
@@ -61,6 +61,12 @@
         <div class="space-y-1.5">
           <label class="block text-sm font-semibold text-gray-700">Date</label>
           <input th:field="*{dateEntree}" type="date"
+            class="w-full h-11 px-4 rounded-lg border-gray-200 focus:ring-brand-success focus:border-brand-success text-sm" />
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="block text-sm font-semibold text-gray-700">Prix d'achat unitaire (optionnel)</label>
+          <input th:field="*{prixAchat}" type="number" placeholder="0.00" step="0.01" min="0"
             class="w-full h-11 px-4 rounded-lg border-gray-200 focus:ring-brand-success focus:border-brand-success text-sm" />
         </div>
 

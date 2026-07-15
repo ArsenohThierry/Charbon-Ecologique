@@ -154,8 +154,11 @@ public class LivraisonController {
 
     @PostMapping("/terminer/{id}")
     public String terminer(@PathVariable Integer id) {
-        livraisonService.terminerLivraison(id);
-        return "redirect:/livraisons?success=termine";
+        Integer commandeId = livraisonService.terminerLivraison(id);
+        if (commandeId == null) {
+            return "redirect:/livraisons?error=pas_de_commande";
+        }
+        return "redirect:/factures/new?commandeId=" + commandeId;
     }
 
     @PostMapping("/reporter/{id}")
