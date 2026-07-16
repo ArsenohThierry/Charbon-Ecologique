@@ -293,7 +293,7 @@ public class MouvementStockController {
     private static final Map<String, String> sortReferencesEtatStock;
     static {
         sortReferencesEtatStock = new HashMap<>();
-        sortReferencesEtatStock.put("produit", "nom");
+        sortReferencesEtatStock.put("produit", "produit_nom");
         sortReferencesEtatStock.put("reference", "reference");
         sortReferencesEtatStock.put("entree", "total_entree");
         sortReferencesEtatStock.put("sortie", "total_sortie");

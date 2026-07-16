@@ -760,7 +760,9 @@ INSERT INTO origine (libelle, code) VALUES
     ('Achat fournisseur', 'ACHAT_FOURNISSEUR'),
     ('Frais livraison',   'FRAIS_LIVRAISON'),
     ('Import Excel',      'IMPORT_EXCEL'),
-    ('Saisie manuelle',   'MANUEL')
+    ('Saisie manuelle',   'MANUEL'),
+    ('Sortie de stock',   'SORTIE_STOCK'),
+    ('Paiement salaire',  'PAIEMENT_SALAIRE')
 ON CONFLICT (code) DO UPDATE SET libelle = EXCLUDED.libelle;
 
 -- --- Postes / Emplois ---

@@ -133,31 +133,31 @@
                             </thead>
                             <tbody class="divide-y divide-gray-100">
                                 <tr>
-                                    <td class="px-3 py-2 font-mono text-green-600">nom</td>
+                                    <td class="px-3 py-2 font-mono text-amber-600">nom</td>
                                     <td class="px-3 py-2 text-gray-600">Texte</td>
                                     <td class="px-3 py-2 text-gray-500">Obligatoire, 1-255 car.</td>
                                     <td class="px-3 py-2 text-gray-500">Coopérative Andry</td>
                                 </tr>
                                 <tr>
-                                    <td class="px-3 py-2 font-mono text-green-600">email</td>
+                                    <td class="px-3 py-2 font-mono text-amber-600">email</td>
                                     <td class="px-3 py-2 text-gray-600">Email</td>
                                     <td class="px-3 py-2 text-gray-500">Unique, format valide</td>
                                     <td class="px-3 py-2 text-gray-500">contact@andry.mg</td>
                                 </tr>
                                 <tr>
-                                    <td class="px-3 py-2 font-mono text-green-600">telephone</td>
+                                    <td class="px-3 py-2 font-mono text-amber-600">telephone</td>
                                     <td class="px-3 py-2 text-gray-600">Texte</td>
                                     <td class="px-3 py-2 text-gray-500">7-20 car., chiffres/espaces/+-</td>
                                     <td class="px-3 py-2 text-gray-500">034 12 345 67</td>
                                 </tr>
                                 <tr>
-                                    <td class="px-3 py-2 font-mono text-green-600">adresse</td>
+                                    <td class="px-3 py-2 font-mono text-amber-600">adresse</td>
                                     <td class="px-3 py-2 text-gray-600">Texte</td>
                                     <td class="px-3 py-2 text-gray-500">Obligatoire</td>
                                     <td class="px-3 py-2 text-gray-500">Ambohitrimanjaka</td>
                                 </tr>
                                 <tr>
-                                    <td class="px-3 py-2 font-mono text-green-600">actif</td>
+                                    <td class="px-3 py-2 font-mono text-amber-600">actif</td>
                                     <td class="px-3 py-2 text-gray-600">Booléen</td>
                                     <td class="px-3 py-2 text-gray-500">true/false, 1/0, oui/non</td>
                                     <td class="px-3 py-2 text-gray-500">true</td>
@@ -168,7 +168,7 @@
 
                     <div class="bg-gray-50 rounded-lg p-4 font-mono text-xs text-gray-700">
                         <p class="text-gray-500 mb-1"># Exemple de fichier CSV :</p>
-                        <p class="text-green-600">nom,email,telephone,adresse,actif</p>
+                        <p class="text-amber-600">nom,email,telephone,adresse,actif</p>
                         <p>Coopérative Andry,contact@andry.mg,034 12 345 67,Ambohitrimanjaka,true</p>
                         <p>SARL Charbon Vert,info@charbon.mg,033 45 678 90,Antananarivo,false</p>
                     </div>
@@ -199,8 +199,8 @@
                         </div>
 
                         <div class="flex items-center gap-4 pt-2">
-                            <button type="submit"
-                                class="bg-brand-success hover:bg-emerald-800 text-white font-semibold py-2.5 px-6 rounded-lg transition-colors text-sm">
+                            <button type="submit" 
+                                    class="bg-brand-success hover:bg-amber-800 text-white font-semibold py-2.5 px-6 rounded-lg transition-colors text-sm">
                                 Importer
                             </button>
                             <a th:href="@{/fournisseur/home}"

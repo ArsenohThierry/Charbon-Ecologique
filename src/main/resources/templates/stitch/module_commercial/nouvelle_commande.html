@@ -23,7 +23,7 @@
     </style>
 </head>
 
-<body class="bg-brand-light font-sans text-slate-800 h-screen overflow-hidden flex">
+<body class="bg-brand-light font-sans text-[#432818] h-screen overflow-hidden flex">
     <aside th:replace="~{fragments/sidebar :: sidebar('commandes')}"></aside>
     <!-- BEGIN: MainContent -->
     <main class="flex-1">
@@ -45,15 +45,15 @@
                 <span th:text="${errorMessage}">Une erreur est survenue.</span>
             </div>
             <div th:if="${success != null && !#strings.isEmpty(success)}"
-                class="mb-6 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700">
+                class="mb-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-700">
                 <span th:text="${success}">Opération réalisée avec succès.</span>
             </div>
             <div th:if="${successMessage != null && !#strings.isEmpty(successMessage)}"
-                class="mb-6 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700">
+                class="mb-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-700">
                 <span th:text="${successMessage}">Opération réalisée avec succès.</span>
             </div>
             <div th:if="${message != null && !#strings.isEmpty(message)}"
-                class="mb-6 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-700">
+                class="mb-6 rounded-lg border border-[#e5e3d8] bg-amber-50 px-4 py-3 text-sm font-medium text-[#432818]">
                 <span th:text="${message}">Information.</span>
             </div>
             <!-- Main Form Card -->

@@ -12,7 +12,7 @@
         .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
     </style>
 </head>
-<body class="bg-brand-light font-sans text-slate-800 h-screen overflow-hidden flex">
+<body class="bg-brand-light font-sans text-[#432818] h-screen overflow-hidden flex">
     <aside th:replace="~{fragments/sidebar :: sidebar('dashboard')}"></aside>
     <main class="flex-1 flex flex-col min-w-0 min-h-0">
         <header class="h-16 px-8 flex items-center justify-between border-b border-gray-200">
@@ -21,8 +21,8 @@
                 <p class="text-[10px] text-gray-500 uppercase tracking-wide">Vue d'ensemble</p>
             </div>
             <div class="flex items-center gap-4">
-                <span class="text-[11px] bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full font-medium" th:text="${user.role.libelle}">Rôle</span>
-                <div class="w-8 h-8 rounded-full bg-emerald-700 text-white flex items-center justify-center font-bold text-sm"
+                <span class="text-[11px] bg-amber-100 text-amber-800 px-3 py-1 rounded-full font-medium" th:text="${user.role.libelle}">Rôle</span>
+                <div class="w-8 h-8 rounded-full bg-amber-700 text-white flex items-center justify-center font-bold text-sm"
                     th:text="${#strings.substring(user.prenom, 0, 1)}">N</div>
             </div>
         </header>
@@ -54,7 +54,7 @@
                         </div>
                         <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
                             <p class="text-xs text-gray-500 mb-1">Flux du mois</p>
-                            <p class="text-sm font-semibold text-emerald-600"><span th:text="|Entrées : ${#numbers.formatDecimal(totalEntrees, 0, 0)} Ar|">Entrées : 0 Ar</span></p>
+                            <p class="text-sm font-semibold text-amber-600"><span th:text="|Entrées : ${#numbers.formatDecimal(totalEntrees, 0, 0)} Ar|">Entrées : 0 Ar</span></p>
                             <p class="text-sm font-semibold text-red-600"><span th:text="|Sorties : ${#numbers.formatDecimal(totalSorties, 0, 0)} Ar|">Sorties : 0 Ar</span></p>
                         </div>
                     </div>
@@ -235,8 +235,8 @@
                     datasets: [{
                         label: 'CA',
                         data: caTotals,
-                        borderColor: '#059669',
-                        backgroundColor: 'rgba(5, 150, 105, 0.1)',
+                        borderColor: '#99582a',
+                        backgroundColor: 'rgba(153, 88, 42, 0.1)',
                         fill: true,
                         tension: 0.3,
                         pointRadius: 3

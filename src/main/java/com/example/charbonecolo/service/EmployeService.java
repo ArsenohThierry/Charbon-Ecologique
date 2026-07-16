@@ -2,6 +2,7 @@ package com.example.charbonecolo.service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -22,12 +23,15 @@ public class EmployeService {
     private final EmployeRepository employeRepository;
     private final EmploiRepository emploiRepository;
     private final SalaireHistoriqueRepository historiqueRepository;
+    private final JournalFinancierService journalFinancierService;
 
     public EmployeService(EmployeRepository employeRepository, EmploiRepository emploiRepository,
-                          SalaireHistoriqueRepository historiqueRepository) {
+                          SalaireHistoriqueRepository historiqueRepository,
+                          JournalFinancierService journalFinancierService) {
         this.employeRepository = employeRepository;
         this.emploiRepository = emploiRepository;
         this.historiqueRepository = historiqueRepository;
+        this.journalFinancierService = journalFinancierService;
     }
 
     public List<EmploiModel> getAllEmplois() {
@@ -105,6 +109,21 @@ public class EmployeService {
         employe.setPrime(prime);
         employe.setIndemnite(indemnite);
         employeRepository.save(employe);
+
+        String description = "Paiement salaire — " + employe.getNom()
+                + " (" + employe.getReference() + ")"
+                + " — Base: " + salaireBase
+                + " + Prime: " + prime
+                + " + Indemnité: " + indemnite;
+
+        journalFinancierService.enregistrerPaiementSalaire(
+                LocalDateTime.of(dateEffet, java.time.LocalTime.now()),
+                histo.getTotal(),
+                "SALAIRE-" + employe.getReference() + "-" + dateEffet,
+                description,
+                "SALAIRE_HISTORIQUE",
+                histo.getId().longValue()
+        );
 
         return histo;
     }

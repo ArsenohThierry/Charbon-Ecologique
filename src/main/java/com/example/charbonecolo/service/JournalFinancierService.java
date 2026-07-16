@@ -46,6 +46,13 @@ public class JournalFinancierService {
             ecriture.setCredit(BigDecimal.ZERO);
         }
 
+        if (ecriture.getDebit().compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Le débit ne peut pas être négatif.");
+        }
+        if (ecriture.getCredit().compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Le crédit ne peut pas être négatif.");
+        }
+
         if (ecriture.getCreatedAt() == null) {
             ecriture.setCreatedAt(LocalDateTime.now());
         }
@@ -212,6 +219,31 @@ public class JournalFinancierService {
         return journalRepo.findByIdSourceAndTypeSource(idSource, typeSource);
     }
 
+    @Transactional
+    public void mettreAJourEcriture(JournalFinancierModel ecriture) {
+        if (ecriture.getDebit() == null) ecriture.setDebit(BigDecimal.ZERO);
+        if (ecriture.getCredit() == null) ecriture.setCredit(BigDecimal.ZERO);
+        if (ecriture.getDebit().compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Le débit ne peut pas être négatif.");
+        }
+        if (ecriture.getCredit().compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Le crédit ne peut pas être négatif.");
+        }
+        journalRepo.save(ecriture);
+    }
+
+    @Transactional
+    public void supprimerEcriture(Long id) {
+        journalRepo.deleteById(id);
+    }
+
+    @Transactional
+    public void supprimerEcrituresParSource(String typeSource, Long idSource) {
+        List<JournalFinancierModel> ecritures = journalRepo
+                .findByTypeSourceAndIdSourceOrderByDateOperationDesc(typeSource, idSource);
+        journalRepo.deleteAll(ecritures);
+    }
+
     private JournalFinancierModel creerEcriture(
             LocalDateTime dateOperation,
             TypeJournalModel typeJournal,
@@ -340,6 +372,58 @@ public class JournalFinancierService {
             origineFrais,
             montant,
             BigDecimal.ZERO,
+            reference,
+            description,
+            typeSource,
+            idSource));
+    }
+
+    public JournalFinancierModel enregistrerSortieStock(
+            LocalDateTime dateOperation,
+            BigDecimal montant,
+            String reference,
+            String description,
+            String typeSource,
+            Long idSource) {
+
+        TypeJournalModel typeOD = typeJournalRepo.findByCode("OD")
+                .orElseThrow(() -> new RuntimeException("Type journal OD introuvable"));
+
+        OrigineModel origineSortie = origineRepo.findByCode("SORTIE_STOCK")
+                .orElseThrow(() -> new RuntimeException("Origine SORTIE_STOCK introuvable"));
+
+        return enregistrer(creerEcriture(
+            dateOperation,
+            typeOD,
+            origineSortie,
+            BigDecimal.ZERO,
+            montant,
+            reference,
+            description,
+            typeSource,
+            idSource));
+    }
+
+    public JournalFinancierModel enregistrerPaiementSalaire(
+            LocalDateTime dateOperation,
+            BigDecimal montant,
+            String reference,
+            String description,
+            String typeSource,
+            Long idSource) {
+
+        TypeJournalModel typeCSS = typeJournalRepo.findByCode("CSS")
+                .orElseThrow(() -> new RuntimeException("Type journal CSS introuvable"));
+
+        OrigineModel origineSalaire = origineRepo.findByCode("PAIEMENT_SALAIRE")
+                .orElseThrow(() -> new RuntimeException("Origine PAIEMENT_SALAIRE introuvable"));
+
+        return enregistrer(creerEcriture(
+            dateOperation,
+            typeCSS,
+            origineSalaire,
+            BigDecimal.ZERO,
+            montant,
             reference,
             description,
             typeSource,
