@@ -103,6 +103,7 @@ CREATE TABLE type_matiere_premiere (
     libelle         VARCHAR(150) NOT NULL,
     prix_unitaire   NUMERIC(10,2) NOT NULL,
     id_fournisseur  INTEGER NOT NULL,
+    rendement       NUMERIC(5,2) NOT NULL DEFAULT 1.00,  -- ratio matière → produit
     date_ajout      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     actif           BOOLEAN NOT NULL DEFAULT TRUE,
 
@@ -763,9 +764,9 @@ OVERRIDING SYSTEM VALUE
 VALUES (9999, 'Inconnu', '2000-01-01', false);
 
 -- --- Matière première spéciale "Inconnu" ---
-INSERT INTO type_matiere_premiere (id, reference, libelle, prix_unitaire, id_fournisseur, date_ajout, actif)
+INSERT INTO type_matiere_premiere (id, reference, libelle, prix_unitaire, rendement, id_fournisseur, date_ajout, actif)
 OVERRIDING SYSTEM VALUE
-VALUES (999, 'NO_REF', 'Inconnu', 0, 9999, '2000-01-01', false);
+VALUES (999, 'NO_REF', 'Inconnu', 0, 0, 9999, '2000-01-01', false);
 
 
 -- ============================================================================
@@ -780,10 +781,10 @@ VALUES
     ('AgriRésines',      'info@agriresines.mg', '0342223344');
 
 -- --- Matières premières ---
-INSERT INTO type_matiere_premiere (reference, libelle, prix_unitaire, id_fournisseur) VALUES
-    ('MAT-001', 'Feuille de maïs',     500.00,  1),
-    ('MAT-002', 'Résidus de bois',      300.00,  2),
-    ('MAT-003', 'Résine naturelle',     800.00,  3);
+INSERT INTO type_matiere_premiere (reference, libelle, prix_unitaire, rendement, id_fournisseur) VALUES
+    ('MAT-001', 'Feuille de maïs',     500.00, 0.40,  1),
+    ('MAT-002', 'Résidus de bois',      300.00, 0.40,  2),
+    ('MAT-003', 'Résine naturelle',     800.00, 0.35,  3);
 
 -- --- Produits finis ---
 INSERT INTO produit (id, nom, pu) VALUES

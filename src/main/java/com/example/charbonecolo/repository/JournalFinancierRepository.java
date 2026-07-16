@@ -59,6 +59,22 @@ public interface JournalFinancierRepository extends JpaRepository<JournalFinanci
                    "GROUP BY mois ORDER BY mois",
            nativeQuery = true)
     List<Map<String, Object>> evolutionMensuelleCA(@Param("debut") LocalDateTime debut);
+
+    @Query(value = "SELECT TO_CHAR(j.date_operation, 'IYYY-\"W\"IW') AS mois, SUM(j.debit) AS total " +
+                   "FROM journal_financier j " +
+                   "JOIN type_journal tj ON j.id_type_journal = tj.id " +
+                   "WHERE tj.code IN ('VTE', 'VENTE') AND j.date_operation >= :debut " +
+                   "GROUP BY mois ORDER BY mois",
+           nativeQuery = true)
+    List<Map<String, Object>> evolutionHebdomadaireCA(@Param("debut") LocalDateTime debut);
+
+    @Query(value = "SELECT TO_CHAR(j.date_operation, 'YYYY') AS mois, SUM(j.debit) AS total " +
+                   "FROM journal_financier j " +
+                   "JOIN type_journal tj ON j.id_type_journal = tj.id " +
+                   "WHERE tj.code IN ('VTE', 'VENTE') AND j.date_operation >= :debut " +
+                   "GROUP BY mois ORDER BY mois",
+           nativeQuery = true)
+    List<Map<String, Object>> evolutionAnnuelleCA(@Param("debut") LocalDateTime debut);
     // Vérifie si une écriture existe déjà
        boolean existsByReferenceAndOrigine_Id(String reference, Integer origineId); 
        // Recherche une écriture par référence et origine

@@ -255,8 +255,8 @@
             <div class="flex flex-col gap-2">
               <label class="text-sm font-semibold text-gray-700" for="quantiteProduitPrevues">Quantité prévue
                 (unités)</label>
-              <input class="rounded-eight border-gray-300 focus:border-brand focus:ring-brand h-11 px-4 text-gray-800"
-                id="quantiteProduitPrevues" type="number" min="1" placeholder="50" th:field="*{quantiteProduitPrevues}">
+              <input class="rounded-eight border-gray-300 bg-gray-50 focus:border-brand focus:ring-brand h-11 px-4 text-gray-800"
+                id="quantiteProduitPrevues" type="number" min="1" placeholder="Calculé automatiquement" readonly th:field="*{quantiteProduitPrevues}">
               <span class="text-red-500 text-xs" th:if="${#fields.hasErrors('quantiteProduitPrevues')}"
                 th:errors="*{quantiteProduitPrevues}"></span>
             </div>
@@ -302,6 +302,30 @@
   </main>
   <!-- END: MainContent -->
 
+<script th:inline="javascript">
+const MATIERES = [
+  /*[# th:each="m : ${matieres}"]*/
+  { id: /*[[${m.id}]]*/ 0, rendement: /*[[${m.rendement}]]*/ 1 },
+  /*[/]*/
+];
+const $matiereSelect = document.querySelector('[name="idTypeMatierePremiere"]');
+const $qteMatiere = document.getElementById('quantiteMatiereUtilisee');
+const $qtePrevue = document.getElementById('quantiteProduitPrevues');
+
+function recalculer() {
+  const id = parseInt($matiereSelect.value);
+  const matiere = MATIERES.find(m => m.id === id);
+  const qte = parseFloat($qteMatiere.value) || 0;
+  if (matiere && qte > 0) {
+    $qtePrevue.value = Math.round(qte * matiere.rendement);
+  } else {
+    $qtePrevue.value = '';
+  }
+}
+
+$matiereSelect.addEventListener('change', recalculer);
+$qteMatiere.addEventListener('input', recalculer);
+</script>
 </body>
 
 </html>

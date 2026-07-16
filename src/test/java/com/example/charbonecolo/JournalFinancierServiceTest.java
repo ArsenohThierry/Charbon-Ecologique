@@ -106,9 +106,9 @@ class JournalFinancierServiceTest {
         );
 
         assertNotNull(ecriture.getId());
-        assertEquals("ACH", ecriture.getTypeJournal().getCode());
+        assertEquals("VTE", ecriture.getTypeJournal().getCode());
         assertEquals("FRAIS_LIVRAISON", ecriture.getOrigine().getCode());
-        assertEquals(new BigDecimal("25000.00"), ecriture.getCredit());
+        assertEquals(new BigDecimal("25000.00"), ecriture.getDebit());
     }
 
     @Test

@@ -141,6 +141,28 @@ public interface MouvementStockRepository extends JpaRepository<MouvementStockMo
     List<Object[]> sumEntreesParMois(LocalDateTime depuis);
 
     @Query(value = """
+            SELECT TO_CHAR(m.date_mouvement, 'IYYY-"W"IW') AS mois, COALESCE(SUM(m.quantite), 0) AS total
+            FROM mouvement_stock m
+            JOIN type_mouvement_stock t ON t.id = m.id_type_mouvement
+            WHERE t.libelle = 'Entree'
+            AND m.date_mouvement >= :depuis
+            GROUP BY TO_CHAR(m.date_mouvement, 'IYYY-"W"IW')
+            ORDER BY mois
+            """, nativeQuery = true)
+    List<Object[]> sumEntreesParSemaine(LocalDateTime depuis);
+
+    @Query(value = """
+            SELECT TO_CHAR(m.date_mouvement, 'YYYY') AS mois, COALESCE(SUM(m.quantite), 0) AS total
+            FROM mouvement_stock m
+            JOIN type_mouvement_stock t ON t.id = m.id_type_mouvement
+            WHERE t.libelle = 'Entree'
+            AND m.date_mouvement >= :depuis
+            GROUP BY TO_CHAR(m.date_mouvement, 'YYYY')
+            ORDER BY mois
+            """, nativeQuery = true)
+    List<Object[]> sumEntreesParAn(LocalDateTime depuis);
+
+    @Query(value = """
             SELECT TO_CHAR(m.date_mouvement, 'YYYY-MM') AS mois, COALESCE(SUM(m.quantite), 0) AS total
             FROM mouvement_stock m
             JOIN type_mouvement_stock t ON t.id = m.id_type_mouvement
@@ -150,6 +172,28 @@ public interface MouvementStockRepository extends JpaRepository<MouvementStockMo
             ORDER BY mois
             """, nativeQuery = true)
     List<Object[]> sumSortiesParMois(LocalDateTime depuis);
+
+    @Query(value = """
+            SELECT TO_CHAR(m.date_mouvement, 'IYYY-"W"IW') AS mois, COALESCE(SUM(m.quantite), 0) AS total
+            FROM mouvement_stock m
+            JOIN type_mouvement_stock t ON t.id = m.id_type_mouvement
+            WHERE t.libelle = 'Sortie'
+            AND m.date_mouvement >= :depuis
+            GROUP BY TO_CHAR(m.date_mouvement, 'IYYY-"W"IW')
+            ORDER BY mois
+            """, nativeQuery = true)
+    List<Object[]> sumSortiesParSemaine(LocalDateTime depuis);
+
+    @Query(value = """
+            SELECT TO_CHAR(m.date_mouvement, 'YYYY') AS mois, COALESCE(SUM(m.quantite), 0) AS total
+            FROM mouvement_stock m
+            JOIN type_mouvement_stock t ON t.id = m.id_type_mouvement
+            WHERE t.libelle = 'Sortie'
+            AND m.date_mouvement >= :depuis
+            GROUP BY TO_CHAR(m.date_mouvement, 'YYYY')
+            ORDER BY mois
+            """, nativeQuery = true)
+    List<Object[]> sumSortiesParAn(LocalDateTime depuis);
 
     @Query(value = """
             SELECT COALESCE(SUM(m.quantite), 0)

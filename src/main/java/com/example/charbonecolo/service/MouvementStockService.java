@@ -653,14 +653,60 @@ public class MouvementStockService {
             sortiesParMois.put((String) ligne[0], ((Number) ligne[1]).intValue());
         }
 
-        // Génère les 12 derniers mois dans l'ordre, même ceux sans mouvement (affiche
-        // 0)
         List<MouvementMensuelDTO> result = new ArrayList<>();
         for (int i = 11; i >= 0; i--) {
             String mois = LocalDate.now().minusMonths(i).format(DateTimeFormatter.ofPattern("yyyy-MM"));
             int entree = entreesParMois.getOrDefault(mois, 0);
             int sortie = sortiesParMois.getOrDefault(mois, 0);
             result.add(new MouvementMensuelDTO(mois, entree, sortie));
+        }
+        return result;
+    }
+
+    public List<MouvementMensuelDTO> getMouvementsParPeriode(String periode) {
+        return switch (periode.toUpperCase()) {
+            case "HEBDO" -> getMouvementsParSemaine();
+            case "ANNUEL" -> getMouvementsParAn();
+            default -> getMouvementsParMois();
+        };
+    }
+
+    private List<MouvementMensuelDTO> getMouvementsParSemaine() {
+        LocalDateTime depuis = LocalDateTime.now().minusWeeks(12);
+        List<Object[]> entreesBrutes = mouvementStockRepository.sumEntreesParSemaine(depuis);
+        List<Object[]> sortiesBrutes = mouvementStockRepository.sumSortiesParSemaine(depuis);
+
+        Map<String, Integer> entrees = new HashMap<>();
+        for (Object[] l : entreesBrutes) entrees.put((String) l[0], ((Number) l[1]).intValue());
+        Map<String, Integer> sorties = new HashMap<>();
+        for (Object[] l : sortiesBrutes) sorties.put((String) l[0], ((Number) l[1]).intValue());
+
+        List<MouvementMensuelDTO> result = new ArrayList<>();
+        for (int i = 11; i >= 0; i--) {
+            String semaine = LocalDate.now().minusWeeks(i).format(DateTimeFormatter.ofPattern("YYYY-'W'ww"));
+            result.add(new MouvementMensuelDTO(semaine,
+                    entrees.getOrDefault(semaine, 0),
+                    sorties.getOrDefault(semaine, 0)));
+        }
+        return result;
+    }
+
+    private List<MouvementMensuelDTO> getMouvementsParAn() {
+        LocalDateTime depuis = LocalDateTime.now().minusYears(5);
+        List<Object[]> entreesBrutes = mouvementStockRepository.sumEntreesParAn(depuis);
+        List<Object[]> sortiesBrutes = mouvementStockRepository.sumSortiesParAn(depuis);
+
+        Map<String, Integer> entrees = new HashMap<>();
+        for (Object[] l : entreesBrutes) entrees.put((String) l[0], ((Number) l[1]).intValue());
+        Map<String, Integer> sorties = new HashMap<>();
+        for (Object[] l : sortiesBrutes) sorties.put((String) l[0], ((Number) l[1]).intValue());
+
+        List<MouvementMensuelDTO> result = new ArrayList<>();
+        for (int i = 4; i >= 0; i--) {
+            String an = LocalDate.now().minusYears(i).format(DateTimeFormatter.ofPattern("yyyy"));
+            result.add(new MouvementMensuelDTO(an,
+                    entrees.getOrDefault(an, 0),
+                    sorties.getOrDefault(an, 0)));
         }
         return result;
     }
