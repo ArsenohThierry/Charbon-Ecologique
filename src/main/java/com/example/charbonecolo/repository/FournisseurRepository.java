@@ -43,4 +43,9 @@ public interface FournisseurRepository extends JpaRepository<FournisseurModel, I
 
        @Query("SELECT COUNT(f) > 0 FROM FournisseurModel f WHERE f.telephone = :telephone AND f.telephone <> ''")
        boolean existsByTelephone(@Param("telephone") String telephone);
+
+       Optional<FournisseurModel> findByEmail(@Param("email") String email);
+
+       @Query("SELECT f FROM FournisseurModel f WHERE LOWER(f.nom) = LOWER(:nom) AND f.delete_at IS NULL")
+       Optional<FournisseurModel> findFirstByNomIgnoreCase(@Param("nom") String nom);
 }

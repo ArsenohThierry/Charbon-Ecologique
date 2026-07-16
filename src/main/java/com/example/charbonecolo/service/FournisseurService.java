@@ -254,6 +254,22 @@ public class FournisseurService {
         return fournisseurRepository.findById(id);
     }
 
+    public Optional<FournisseurModel> getByEmail(String email) {
+        return fournisseurRepository.findByEmail(email.trim());
+    }
+
+    public Optional<FournisseurModel> getByNom(String nom) {
+        return fournisseurRepository.findFirstByNomIgnoreCase(nom.trim());
+    }
+
+    @Transactional
+    public FournisseurModel save(FournisseurModel fournisseur) {
+        if (fournisseur.getId() == null) {
+            fournisseur.setDate_creation(LocalDateTime.now());
+        }
+        return fournisseurRepository.save(fournisseur);
+    }
+
     @Transactional
     public void deleteById(Integer id) {
         FournisseurModel f = getById(id).get();

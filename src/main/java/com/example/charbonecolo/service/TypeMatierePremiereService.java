@@ -127,20 +127,56 @@ public class TypeMatierePremiereService {
                     }
                 }
 
+                BigDecimal rendement = BigDecimal.ONE;
+                if (indexColumns.containsKey("rendement")) {
+                    String rendementTexte = columns[indexColumns.get("rendement")].trim();
+                    if (!rendementTexte.isEmpty()) {
+                        try {
+                            rendement = new BigDecimal(rendementTexte);
+                            if (rendement.compareTo(BigDecimal.ZERO) <= 0) {
+                                ligneErr.addError("rendement", "Le rendement doit être supérieur à 0");
+                            } else if (rendement.scale() > 2) {
+                                ligneErr.addError("rendement", "Le rendement ne peut avoir plus de 2 décimales");
+                            }
+                        } catch (NumberFormatException e) {
+                            ligneErr.addError("rendement", "Format numérique invalide : '" + rendementTexte + "'");
+                        }
+                    }
+                }
+
                 fournisseur = null;
                 if (fournisseurTexte.isEmpty()) {
                     ligneErr.addError("fournisseur", "Le fournisseur est vide");
                 } else {
-                    Integer idx = Integer.parseInt(fournisseurTexte);
-                    if (keepFournisseur.containsKey(idx)) {
-                        fournisseur = keepFournisseur.get(idx);
-                    } else {
-                        Optional<FournisseurModel> optFournisseur = fournisseurService.getById(idx);
+                    try {
+                        Integer idx = Integer.parseInt(fournisseurTexte);
+                        if (keepFournisseur.containsKey(idx)) {
+                            fournisseur = keepFournisseur.get(idx);
+                        } else {
+                            Optional<FournisseurModel> optFournisseur = fournisseurService.getById(idx);
+                            if (optFournisseur.isEmpty()) {
+                                ligneErr.addError("fournisseur", "Fournisseur inconnu (ID) : '" + fournisseurTexte + "'");
+                            } else {
+                                fournisseur = optFournisseur.orElseThrow();
+                                keepFournisseur.put(idx, fournisseur);
+                            }
+                        }
+                    } catch (NumberFormatException e) {
+                        Optional<FournisseurModel> optFournisseur = fournisseurService.getByEmail(fournisseurTexte);
                         if (optFournisseur.isEmpty()) {
-                            // optFournisseur = fournisseurService.get
-                            ligneErr.addError("fournisseur", "Fournisseur inconnu : '" + fournisseurTexte + "'");
-                            numeroLigne++;
-                            continue;
+                            optFournisseur = fournisseurService.getByNom(fournisseurTexte);
+                        }
+                        if (optFournisseur.isEmpty()) {
+                            FournisseurModel nouveau = new FournisseurModel();
+                            if (fournisseurTexte.contains("@")) {
+                                nouveau.setEmail(fournisseurTexte);
+                                nouveau.setNom(fournisseurTexte.substring(0, fournisseurTexte.indexOf('@')));
+                            } else {
+                                nouveau.setNom(fournisseurTexte);
+                            }
+                            nouveau.setActif(true);
+                            fournisseur = fournisseurService.save(nouveau);
+                            warnings.add("Fournisseur créé automatiquement : '" + fournisseurTexte + "'");
                         } else {
                             fournisseur = optFournisseur.orElseThrow();
                         }
@@ -162,6 +198,7 @@ public class TypeMatierePremiereService {
                     matiere.setFournisseur(fournisseur);
                     matiere.setDateAjout(LocalDateTime.now());
                     matiere.setActif(actif);
+                    matiere.setRendement(rendement);
                     keep.add(matiere);
                 } catch (IllegalArgumentException e) {
                     ligneErr.addError("actif", e.getMessage());
