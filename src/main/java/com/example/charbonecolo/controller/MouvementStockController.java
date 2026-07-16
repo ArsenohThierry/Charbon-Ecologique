@@ -325,6 +325,8 @@ public class MouvementStockController {
         mav.addObject("currentPage", wrapper.getPage());
         mav.addObject("currentDir", wrapper.getCurrentDir());
         mav.addObject("currentSort", wrapper.getCurrentSort());
+        mav.addObject("dateMin", wrapper.getDateMin());
+        mav.addObject("dateMax", wrapper.getDateMax());
         mav.addObject("produits", mouvementStockService.getAllProduits());
         mav.addObject("page", pageResult);
         mav.addObject("totalEntree", mouvementStockService.getTotalEntreeGlobal());

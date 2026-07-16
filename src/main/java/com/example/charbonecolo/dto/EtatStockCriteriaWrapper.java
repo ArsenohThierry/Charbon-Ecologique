@@ -1,8 +1,12 @@
 package com.example.charbonecolo.dto;
 
+import java.time.LocalDate;
+
 public class EtatStockCriteriaWrapper {
 
     private Integer idProduit;
+    private LocalDate dateMin;
+    private LocalDate dateMax;
     private Integer page = 1;
     private Integer limit = 10;
     private String currentSort;
@@ -10,6 +14,12 @@ public class EtatStockCriteriaWrapper {
 
     public Integer getIdProduit() { return idProduit; }
     public void setIdProduit(Integer idProduit) { this.idProduit = idProduit; }
+
+    public LocalDate getDateMin() { return dateMin; }
+    public void setDateMin(LocalDate dateMin) { this.dateMin = dateMin; }
+
+    public LocalDate getDateMax() { return dateMax; }
+    public void setDateMax(LocalDate dateMax) { this.dateMax = dateMax; }
 
     public Integer getPage() { return page; }
     public void setPage(Integer page) { this.page = page; }

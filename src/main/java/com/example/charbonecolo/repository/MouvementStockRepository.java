@@ -130,6 +130,8 @@ public interface MouvementStockRepository extends JpaRepository<MouvementStockMo
             ) sorties ON sorties.id_lot_production = lp.id
             WHERE lp.date_suppression IS NULL
               AND (CAST(:#{#cri.idProduit} AS integer) IS NULL OR p.id = CAST(:#{#cri.idProduit} AS integer))
+              AND (CAST(:#{#cri.dateMin} AS date) IS NULL OR CAST(lp.date_entree_lot AS date) >= CAST(:#{#cri.dateMin} AS date))
+              AND (CAST(:#{#cri.dateMax} AS date) IS NULL OR CAST(lp.date_entree_lot AS date) <= CAST(:#{#cri.dateMax} AS date))
             """, nativeQuery = true)
     Slice<Object[]> findEtatStock(Pageable pageable, @Param("cri") EtatStockCriteriaWrapper wrapper);
 
