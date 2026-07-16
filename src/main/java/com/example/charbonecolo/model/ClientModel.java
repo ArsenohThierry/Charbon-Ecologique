@@ -8,9 +8,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Table(name = "clients")
+@SQLDelete(sql = "UPDATE clients SET date_suppression = CURRENT_TIMESTAMP WHERE id = ?")
+@SQLRestriction("date_suppression IS NULL")
 public class ClientModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,6 +31,9 @@ public class ClientModel {
 
     @Column(name = "date_ajout")
     private LocalDateTime dateAjout;
+
+    @Column(name = "date_suppression")
+    private LocalDateTime dateSuppression;
 
     public Integer getId() {
         return id;
@@ -67,4 +74,7 @@ public class ClientModel {
     public void setDateAjout(LocalDateTime dateAjout) {
         this.dateAjout = dateAjout;
     }
+
+    public LocalDateTime getDateSuppression() { return dateSuppression; }
+    public void setDateSuppression(LocalDateTime dateSuppression) { this.dateSuppression = dateSuppression; }
 }

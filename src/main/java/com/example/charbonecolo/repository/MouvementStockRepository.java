@@ -75,6 +75,7 @@ public interface MouvementStockRepository extends JpaRepository<MouvementStockMo
             JOIN lot_production lp ON lp.id = d.id_lot_production
             JOIN produit p ON p.id = lp.id_produit
             WHERE t.libelle = 'Sortie'
+              AND m.date_suppression IS NULL
               AND (CAST(:#{#cri.idProduit} AS integer) IS NULL OR p.id = CAST(:#{#cri.idProduit} AS integer))
               AND (CAST(:#{#cri.idMotif} AS integer) IS NULL OR mo.id = CAST(:#{#cri.idMotif} AS integer))
               AND (CAST(:#{#cri.dateMin} AS date) IS NULL OR CAST(m.date_mouvement AS date) >= CAST(:#{#cri.dateMin} AS date))
@@ -97,6 +98,7 @@ public interface MouvementStockRepository extends JpaRepository<MouvementStockMo
             JOIN type_matiere_premiere tmp ON tmp.id = lp.id_type_matiere_premiere
             JOIN fournisseur f ON f.id = tmp.id_fournisseur
             WHERE t.libelle = 'Entree'
+              AND m.date_suppression IS NULL
               AND (CAST(:#{#cri.idProduit} AS integer) IS NULL OR lp.id_produit = CAST(:#{#cri.idProduit} AS integer))
               AND (CAST(:#{#cri.dateMin} AS date) IS NULL OR CAST(m.date_mouvement AS date) >= CAST(:#{#cri.dateMin} AS date))
               AND (CAST(:#{#cri.dateMax} AS date) IS NULL OR CAST(m.date_mouvement AS date) <= CAST(:#{#cri.dateMax} AS date))
@@ -118,6 +120,7 @@ public interface MouvementStockRepository extends JpaRepository<MouvementStockMo
                 FROM mouvement_stock m
                 JOIN type_mouvement_stock t ON t.id = m.id_type_mouvement
                 WHERE t.libelle = 'Entree'
+                  AND m.date_suppression IS NULL
                 GROUP BY m.id_lot_production
             ) entrees ON entrees.id_lot_production = lp.id
             LEFT JOIN (
@@ -125,7 +128,8 @@ public interface MouvementStockRepository extends JpaRepository<MouvementStockMo
                 FROM mouvement_sortie_detail d
                 GROUP BY d.id_lot_production
             ) sorties ON sorties.id_lot_production = lp.id
-            WHERE (CAST(:#{#cri.idProduit} AS integer) IS NULL OR p.id = CAST(:#{#cri.idProduit} AS integer))
+            WHERE lp.date_suppression IS NULL
+              AND (CAST(:#{#cri.idProduit} AS integer) IS NULL OR p.id = CAST(:#{#cri.idProduit} AS integer))
             """, nativeQuery = true)
     Slice<Object[]> findEtatStock(Pageable pageable, @Param("cri") EtatStockCriteriaWrapper wrapper);
 
@@ -134,6 +138,7 @@ public interface MouvementStockRepository extends JpaRepository<MouvementStockMo
             FROM mouvement_stock m
             JOIN type_mouvement_stock t ON t.id = m.id_type_mouvement
             WHERE t.libelle = 'Entree'
+            AND m.date_suppression IS NULL
             AND m.date_mouvement >= :depuis
             GROUP BY TO_CHAR(m.date_mouvement, 'YYYY-MM')
             ORDER BY mois
@@ -145,6 +150,7 @@ public interface MouvementStockRepository extends JpaRepository<MouvementStockMo
             FROM mouvement_stock m
             JOIN type_mouvement_stock t ON t.id = m.id_type_mouvement
             WHERE t.libelle = 'Entree'
+            AND m.date_suppression IS NULL
             AND m.date_mouvement >= :depuis
             GROUP BY TO_CHAR(m.date_mouvement, 'IYYY-"W"IW')
             ORDER BY mois
@@ -156,6 +162,7 @@ public interface MouvementStockRepository extends JpaRepository<MouvementStockMo
             FROM mouvement_stock m
             JOIN type_mouvement_stock t ON t.id = m.id_type_mouvement
             WHERE t.libelle = 'Entree'
+            AND m.date_suppression IS NULL
             AND m.date_mouvement >= :depuis
             GROUP BY TO_CHAR(m.date_mouvement, 'YYYY')
             ORDER BY mois
@@ -167,6 +174,7 @@ public interface MouvementStockRepository extends JpaRepository<MouvementStockMo
             FROM mouvement_stock m
             JOIN type_mouvement_stock t ON t.id = m.id_type_mouvement
             WHERE t.libelle = 'Sortie'
+            AND m.date_suppression IS NULL
             AND m.date_mouvement >= :depuis
             GROUP BY TO_CHAR(m.date_mouvement, 'YYYY-MM')
             ORDER BY mois
@@ -178,6 +186,7 @@ public interface MouvementStockRepository extends JpaRepository<MouvementStockMo
             FROM mouvement_stock m
             JOIN type_mouvement_stock t ON t.id = m.id_type_mouvement
             WHERE t.libelle = 'Sortie'
+            AND m.date_suppression IS NULL
             AND m.date_mouvement >= :depuis
             GROUP BY TO_CHAR(m.date_mouvement, 'IYYY-"W"IW')
             ORDER BY mois
@@ -189,6 +198,7 @@ public interface MouvementStockRepository extends JpaRepository<MouvementStockMo
             FROM mouvement_stock m
             JOIN type_mouvement_stock t ON t.id = m.id_type_mouvement
             WHERE t.libelle = 'Sortie'
+            AND m.date_suppression IS NULL
             AND m.date_mouvement >= :depuis
             GROUP BY TO_CHAR(m.date_mouvement, 'YYYY')
             ORDER BY mois
@@ -200,6 +210,7 @@ public interface MouvementStockRepository extends JpaRepository<MouvementStockMo
             FROM mouvement_stock m
             JOIN type_mouvement_stock t ON t.id = m.id_type_mouvement
             WHERE t.libelle = 'Entree'
+            AND m.date_suppression IS NULL
             """, nativeQuery = true)
     Integer sumTotalEntrees();
 }

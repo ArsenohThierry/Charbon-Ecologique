@@ -398,6 +398,9 @@ public class MouvementStockService {
         if (isEntree) {
 
             LotProductionModel lot = mouvement.getLotProduction();
+            if (lot == null) {
+                throw new BusinessException("Impossible de supprimer cette entrée : le lot associé est introuvable.");
+            }
 
             int stock = getStockDisponible(lot.getId()) - mouvement.getQuantite();
 

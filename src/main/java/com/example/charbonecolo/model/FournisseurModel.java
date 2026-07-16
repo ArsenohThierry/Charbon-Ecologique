@@ -6,9 +6,13 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Table(name = "fournisseur")
+@SQLDelete(sql = "UPDATE fournisseur SET delete_at = CURRENT_TIMESTAMP WHERE id = ?")
+@SQLRestriction("delete_at IS NULL")
 public class FournisseurModel {
 
     @Id
