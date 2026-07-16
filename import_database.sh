@@ -1,0 +1,1 @@
+PGPASSWORD="admin" psql -U admin -h localhost -p 5432 -d charbon_4 -f ./sql/complet/charbon.sql
