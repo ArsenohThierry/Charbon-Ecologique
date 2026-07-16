@@ -302,6 +302,30 @@
   </main>
   <!-- END: MainContent -->
 
+<script th:inline="javascript">
+const MATIERES = [
+  /*[# th:each="m : ${matieres}"]*/
+  { id: /*[[${m.id}]]*/ 0, rendement: /*[[${m.rendement}]]*/ 1 },
+  /*[/]*/
+];
+const $matiereSelect = document.querySelector('[name="idTypeMatierePremiere"]');
+const $qteMatiere = document.getElementById('quantiteMatiereUtilisee');
+const $qtePrevue = document.getElementById('quantiteProduitPrevues');
+
+function recalculer() {
+  const id = parseInt($matiereSelect.value);
+  const matiere = MATIERES.find(m => m.id === id);
+  const qte = parseFloat($qteMatiere.value) || 0;
+  if (matiere && qte > 0) {
+    $qtePrevue.value = Math.round(qte * matiere.rendement);
+  } else {
+    $qtePrevue.value = '';
+  }
+}
+
+$matiereSelect.addEventListener('change', recalculer);
+$qteMatiere.addEventListener('input', recalculer);
+</script>
 </body>
 
 </html>

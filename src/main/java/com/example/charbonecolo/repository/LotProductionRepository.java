@@ -20,7 +20,8 @@ public interface LotProductionRepository extends JpaRepository<LotProductionMode
     // cohérent avec LotProductionService.getLatestStatutsForAllLots().
     @Query(value = """
             SELECT lp.* FROM lot_production lp
-            WHERE (CAST(:reference AS text) IS NULL OR lp.reference ILIKE CONCAT('%', CAST(:reference AS text), '%'))
+            WHERE lp.date_suppression IS NULL
+              AND (CAST(:reference AS text) IS NULL OR lp.reference ILIKE CONCAT('%', CAST(:reference AS text), '%'))
               AND (CAST(:idProduit AS integer) IS NULL OR lp.id_produit = CAST(:idProduit AS integer))
               AND (CAST(:idTypeMatierePremiere AS integer) IS NULL OR lp.id_type_matiere_premiere = CAST(:idTypeMatierePremiere AS integer))
               AND (CAST(:dateDebut AS timestamp) IS NULL OR lp.date_entree_lot >= CAST(:dateDebut AS timestamp))

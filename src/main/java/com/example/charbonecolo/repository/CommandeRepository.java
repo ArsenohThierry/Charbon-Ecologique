@@ -70,7 +70,8 @@ public interface CommandeRepository extends JpaRepository<CommandeModel, Integer
                     FROM statuts_commandes
                     ORDER BY id_commandes, date_statut_commande DESC
                 ) dernier_statut ON dernier_statut.id_commandes = c.id
-                WHERE dernier_statut.id_commande_statuts = 2
+                WHERE c.deleted_at IS NULL
+                  AND dernier_statut.id_commande_statuts = 2
                 ORDER BY c.date_commande DESC
             """, nativeQuery = true)
     List<Object[]> findCommandesDisponibles();

@@ -5,21 +5,13 @@ import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-    import jakarta.persistence.Column;
-    import jakarta.persistence.Entity;
-    import jakarta.persistence.FetchType;
-    import jakarta.persistence.GeneratedValue;
-    import jakarta.persistence.GenerationType;
-    import jakarta.persistence.Id;
-    import jakarta.persistence.JoinColumn;
-    import jakarta.persistence.ManyToOne;
-    import jakarta.persistence.Table;
-
-    import java.math.BigDecimal;
-    import java.time.LocalDateTime;
+    import org.hibernate.annotations.SQLDelete;
+    import org.hibernate.annotations.SQLRestriction;
 
     @Entity
     @Table(name = "type_matiere_premiere")
+    @SQLDelete(sql = "UPDATE type_matiere_premiere SET delete_at = CURRENT_TIMESTAMP WHERE id = ?")
+    @SQLRestriction("delete_at IS NULL")
     public class TypeMatierePremiereModel {
 
         @Id
@@ -32,29 +24,35 @@ import java.time.LocalDateTime;
         @Column(name = "libelle", length = 150, nullable = false)
         private String libelle;
 
-        @Column(name = "prix_unitaire", precision = 10, scale = 2, nullable = false)
-        private BigDecimal prixUnitaire;
+    @Column(name = "prix_unitaire", precision = 10, scale = 2, nullable = false)
+    private BigDecimal prixUnitaire;
+
+    @Column(name = "rendement", precision = 5, scale = 2, nullable = false)
+    private BigDecimal rendement;
 
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "id_fournisseur", nullable = false)
         private FournisseurModel fournisseur;
 
-        @Column(name = "date_ajout", nullable = false, updatable = false)
-        private LocalDateTime dateAjout;
+    @Column(name = "date_ajout", nullable = false, updatable = false)
+    private LocalDateTime dateAjout;
 
-        @Column(name = "actif", nullable = false)
-        private Boolean actif = true; // valeur par défaut en Java
+    @Column(name = "actif", nullable = false)
+    private Boolean actif = true;
 
-        // ---- Constructeurs ----
-        public TypeMatierePremiereModel() {
-        }
+    @Column(name = "delete_at")
+    private LocalDateTime deleteAt;
 
-        public TypeMatierePremiereModel(String reference, String libelle, BigDecimal prixUnitaire, FournisseurModel fournisseur) {
-            this.reference = reference;
-            this.libelle = libelle;
-            this.prixUnitaire = prixUnitaire;
-            this.fournisseur = fournisseur;
-        }
+    // ---- Constructeurs ----
+    public TypeMatierePremiereModel() {
+    }
+
+    public TypeMatierePremiereModel(String reference, String libelle, BigDecimal prixUnitaire, FournisseurModel fournisseur) {
+        this.reference = reference;
+        this.libelle = libelle;
+        this.prixUnitaire = prixUnitaire;
+        this.fournisseur = fournisseur;
+    }
 
         // ---- Getters / Setters ----
         public Integer getId() { return id; }
@@ -77,4 +75,10 @@ import java.time.LocalDateTime;
 
         public Boolean getActif() { return actif; }
         public void setActif(Boolean actif) { this.actif = actif; }
+
+        public BigDecimal getRendement() { return rendement; }
+        public void setRendement(BigDecimal rendement) { this.rendement = rendement; }
+
+        public LocalDateTime getDeleteAt() { return deleteAt; }
+        public void setDeleteAt(LocalDateTime deleteAt) { this.deleteAt = deleteAt; }
     }

@@ -12,9 +12,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Table(name = "lot_production")
+@SQLDelete(sql = "UPDATE lot_production SET date_suppression = CURRENT_TIMESTAMP WHERE id = ?")
+@SQLRestriction("date_suppression IS NULL")
 public class LotProductionModel {
 
     @Id
@@ -55,6 +59,9 @@ public class LotProductionModel {
 
     @Column(name = "date_entree_lot", nullable = false)
     private LocalDateTime dateEntreeLot;
+
+    @Column(name = "date_suppression")
+    private LocalDateTime dateSuppression;
 
     // Getters and Setters
     public Integer getId() {
@@ -138,4 +145,7 @@ public class LotProductionModel {
     public void setDateEntreeLot(LocalDateTime dateEntreeLot) {
         this.dateEntreeLot = dateEntreeLot;
     }
+
+    public LocalDateTime getDateSuppression() { return dateSuppression; }
+    public void setDateSuppression(LocalDateTime dateSuppression) { this.dateSuppression = dateSuppression; }
 }

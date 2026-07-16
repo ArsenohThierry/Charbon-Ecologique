@@ -4,9 +4,9 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Import CSV - Fournisseurs</title>
-    <link rel="stylesheet" th:href="@{/css/output.css}" href="../static/css/output.css" />
-    <link rel="stylesheet" th:href="@{/css/fonts.css}" href="../static/css/fonts.css" />
+    <title>Import CSV - Types de matières premières</title>
+    <link rel="stylesheet" th:href="@{/css/output.css}" href="../../static/css/output.css" />
+    <link rel="stylesheet" th:href="@{/css/fonts.css}" href="../../static/css/fonts.css" />
     <style>
         .accordion-content {
             max-height: 0;
@@ -14,16 +14,13 @@
             transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
             opacity: 0;
         }
-
         .accordion-content.open {
             max-height: 500px;
             opacity: 1;
         }
-
         .accordion-arrow {
             transition: transform 0.3s ease;
         }
-
         .accordion-arrow.rotated {
             transform: rotate(180deg);
         }
@@ -31,26 +28,25 @@
 </head>
 
 <body class="bg-brand-light font-sans text-slate-800 min-h-screen flex">
-    <aside th:replace="~{fragments/sidebar :: sidebar('fournisseurs')}"></aside>
+    <aside th:replace="~{fragments/sidebar :: sidebar('matieres')}"></aside>
 
     <main class="flex-1 flex flex-col min-w-0">
         <header class="h-16 px-8 flex items-center justify-between">
             <div>
                 <h2 class="text-sm font-bold text-gray-800">Gestionnaire de stock</h2>
-                <p class="text-[10px] text-gray-500 uppercase tracking-wide">Approvisionnement, lots &amp; inventaire
-                </p>
+                <p class="text-[10px] text-gray-500 uppercase tracking-wide">Approvisionnement, lots &amp; inventaire</p>
             </div>
         </header>
 
         <section class="flex-1 p-12 overflow-y-auto">
             <div class="max-w-2xl mx-auto">
 
-                <!-- Succès (non rétractable, information courte) -->
+                <!-- Succès -->
                 <div th:if="${success}"
                     class="mb-6 p-4 bg-green-100 border border-green-200 text-green-800 rounded-lg text-sm font-medium"
                     th:text="${success}"></div>
 
-                <!-- Erreur globale rétractable -->
+                <!-- Erreur globale -->
                 <div th:if="${error}" class="mb-6 bg-red-100 border border-red-200 rounded-lg overflow-hidden">
                     <button type="button" onclick="toggleAccordion(this)"
                         class="w-full flex items-center justify-between p-4 text-left">
@@ -62,7 +58,7 @@
                     </button>
                 </div>
 
-                <!-- Erreurs de lignes rétractables -->
+                <!-- Erreurs de lignes -->
                 <div th:if="${importErrors}" class="mb-6 bg-red-50 border border-red-200 rounded-lg overflow-hidden">
                     <button type="button" onclick="toggleAccordion(this)"
                         class="w-full flex items-center justify-between p-4 text-left hover:bg-red-100/50 transition-colors">
@@ -83,7 +79,7 @@
                                     <li th:each="entry : ${err.errors}"
                                         class="text-xs text-red-600 flex items-start gap-1.5">
                                         <span th:text="${entry.key}"
-                                            class="font-medium text-red-800 uppercase text-[10px] tracking-wider mt-0.5 min-w-[4rem]"></span>
+                                            class="font-medium text-red-800 uppercase text-[10px] tracking-wider mt-0.5 min-w-[5rem]"></span>
                                         <span class="text-red-300 mt-0.5">→</span>
                                         <span th:text="${entry.value}" class="leading-tight"></span>
                                     </li>
@@ -93,7 +89,7 @@
                     </div>
                 </div>
 
-                <!-- Avertissements rétractables -->
+                <!-- Avertissements -->
                 <div th:if="${warnings}" class="mb-6 bg-amber-50 border border-amber-200 rounded-lg overflow-hidden">
                     <button type="button" onclick="toggleAccordion(this)"
                         class="w-full flex items-center justify-between p-4 text-left hover:bg-amber-100/50 transition-colors">
@@ -114,7 +110,7 @@
 
                 <div class="mb-8">
                     <h1 class="text-4xl font-serif text-brand-dark mb-2">Import CSV</h1>
-                    <p class="text-gray-600 text-sm">Importer des fournisseurs depuis un fichier CSV.</p>
+                    <p class="text-gray-600 text-sm">Importer des types de matières premières depuis un fichier CSV.</p>
                 </div>
 
                 <!-- Format attendu -->
@@ -133,31 +129,31 @@
                             </thead>
                             <tbody class="divide-y divide-gray-100">
                                 <tr>
-                                    <td class="px-3 py-2 font-mono text-amber-600">nom</td>
+                                    <td class="px-3 py-2 font-mono text-green-600">reference</td>
                                     <td class="px-3 py-2 text-gray-600">Texte</td>
-                                    <td class="px-3 py-2 text-gray-500">Obligatoire, 1-255 car.</td>
-                                    <td class="px-3 py-2 text-gray-500">Coopérative Andry</td>
+                                    <td class="px-3 py-2 text-gray-500">Obligatoire, unique, max 50 car.</td>
+                                    <td class="px-3 py-2 text-gray-500">CHARB-001</td>
                                 </tr>
                                 <tr>
-                                    <td class="px-3 py-2 font-mono text-amber-600">email</td>
-                                    <td class="px-3 py-2 text-gray-600">Email</td>
-                                    <td class="px-3 py-2 text-gray-500">Unique, format valide</td>
+                                    <td class="px-3 py-2 font-mono text-green-600">libelle</td>
+                                    <td class="px-3 py-2 text-gray-600">Texte</td>
+                                    <td class="px-3 py-2 text-gray-500">Obligatoire, max 150 car.</td>
+                                    <td class="px-3 py-2 text-gray-500">Charbon de bois premium</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-3 py-2 font-mono text-green-600">prix_unitaire</td>
+                                    <td class="px-3 py-2 text-gray-600">Nombre</td>
+                                    <td class="px-3 py-2 text-gray-500">Obligatoire, > 0, max 2 décimales</td>
+                                    <td class="px-3 py-2 text-gray-500">15000.00</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-3 py-2 font-mono text-green-600">fournisseur</td>
+                                    <td class="px-3 py-2 text-gray-600">Texte</td>
+                                    <td class="px-3 py-2 text-gray-500">Email ou nom du fournisseur existant</td>
                                     <td class="px-3 py-2 text-gray-500">contact@andry.mg</td>
                                 </tr>
                                 <tr>
-                                    <td class="px-3 py-2 font-mono text-amber-600">telephone</td>
-                                    <td class="px-3 py-2 text-gray-600">Texte</td>
-                                    <td class="px-3 py-2 text-gray-500">7-20 car., chiffres/espaces/+-</td>
-                                    <td class="px-3 py-2 text-gray-500">034 12 345 67</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-3 py-2 font-mono text-amber-600">adresse</td>
-                                    <td class="px-3 py-2 text-gray-600">Texte</td>
-                                    <td class="px-3 py-2 text-gray-500">Obligatoire</td>
-                                    <td class="px-3 py-2 text-gray-500">Ambohitrimanjaka</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-3 py-2 font-mono text-amber-600">actif</td>
+                                    <td class="px-3 py-2 font-mono text-green-600">actif</td>
                                     <td class="px-3 py-2 text-gray-600">Booléen</td>
                                     <td class="px-3 py-2 text-gray-500">true/false, 1/0, oui/non</td>
                                     <td class="px-3 py-2 text-gray-500">true</td>
@@ -168,15 +164,15 @@
 
                     <div class="bg-gray-50 rounded-lg p-4 font-mono text-xs text-gray-700">
                         <p class="text-gray-500 mb-1"># Exemple de fichier CSV :</p>
-                        <p class="text-amber-600">nom,email,telephone,adresse,actif</p>
-                        <p>Coopérative Andry,contact@andry.mg,034 12 345 67,Ambohitrimanjaka,true</p>
-                        <p>SARL Charbon Vert,info@charbon.mg,033 45 678 90,Antananarivo,false</p>
+                        <p class="text-green-600">reference,libelle,prix_unitaire,fournisseur,actif</p>
+                        <p>CHARB-001,Charbon de bois premium,15000.00,contact@andry.mg,true</p>
+                        <p>BOIS-002,Bois de chauffage,8500.50,info@charbon.mg,false</p>
                     </div>
                 </div>
 
                 <!-- Upload -->
                 <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
-                    <form th:action="@{/fournisseur/import}" method="post" enctype="multipart/form-data"
+                    <form th:action="@{/matiere/import}" method="post" enctype="multipart/form-data"
                         class="space-y-6">
 
                         <div class="space-y-2">
@@ -199,11 +195,11 @@
                         </div>
 
                         <div class="flex items-center gap-4 pt-2">
-                            <button type="submit" 
-                                    class="bg-brand-success hover:bg-amber-800 text-white font-semibold py-2.5 px-6 rounded-lg transition-colors text-sm">
+                            <button type="submit"
+                                class="bg-brand-success hover:bg-emerald-800 text-white font-semibold py-2.5 px-6 rounded-lg transition-colors text-sm">
                                 Importer
                             </button>
-                            <a th:href="@{/fournisseur/home}"
+                            <a th:href="@{/matiere/home}"
                                 class="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-medium py-2.5 px-6 rounded-lg transition-colors text-sm text-center">
                                 Annuler
                             </a>
@@ -219,7 +215,6 @@
         function toggleAccordion(button) {
             const content = button.nextElementSibling;
             const arrow = button.querySelector('.accordion-arrow');
-
             if (content.classList.contains('open')) {
                 content.classList.remove('open');
                 arrow.classList.remove('rotated');
@@ -238,5 +233,4 @@
         }
     </script>
 </body>
-
 </html>

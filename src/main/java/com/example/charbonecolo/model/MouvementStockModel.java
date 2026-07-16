@@ -2,9 +2,13 @@ package com.example.charbonecolo.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Table(name = "mouvement_stock")
+@SQLDelete(sql = "UPDATE mouvement_stock SET date_suppression = CURRENT_TIMESTAMP WHERE id = ?")
+@SQLRestriction("date_suppression IS NULL")
 public class MouvementStockModel {
 
     @Id
@@ -28,6 +32,9 @@ public class MouvementStockModel {
     @ManyToOne
     @JoinColumn(name = "id_motif_sortie")
     private MotifSortieModel motifSortie; // commande, suppression, perte, etc. (requis si sortie)
+
+    @Column(name = "date_suppression")
+    private LocalDateTime dateSuppression;
 
     // Getters and Setters
     public Integer getId() {
@@ -77,4 +84,7 @@ public class MouvementStockModel {
     public void setMotifSortie(MotifSortieModel motifSortie) {
         this.motifSortie = motifSortie;
     }
+
+    public LocalDateTime getDateSuppression() { return dateSuppression; }
+    public void setDateSuppression(LocalDateTime dateSuppression) { this.dateSuppression = dateSuppression; }
 }

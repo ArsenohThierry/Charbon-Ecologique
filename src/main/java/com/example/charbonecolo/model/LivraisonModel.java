@@ -2,10 +2,13 @@ package com.example.charbonecolo.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
-import com.example.charbonecolo.model.CommandeModel;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Table(name = "livraison")
+@SQLDelete(sql = "UPDATE livraison SET date_suppression = CURRENT_TIMESTAMP WHERE id = ?")
+@SQLRestriction("date_suppression IS NULL")
 public class LivraisonModel {
 
     @Id
@@ -35,6 +38,9 @@ public class LivraisonModel {
     @JoinColumn(name = "id_commande", referencedColumnName = "id")
     private CommandeModel commande;
 
+    @Column(name = "date_suppression")
+    private LocalDateTime dateSuppression;
+
     public CommandeModel getCommande() { return commande; }
     public void setCommande(CommandeModel commande) { this.commande = commande; }
 
@@ -58,4 +64,7 @@ public class LivraisonModel {
 
     public LivreurModel getLivreur() { return livreur; }
     public void setLivreur(LivreurModel livreur) { this.livreur = livreur; }
+
+    public LocalDateTime getDateSuppression() { return dateSuppression; }
+    public void setDateSuppression(LocalDateTime dateSuppression) { this.dateSuppression = dateSuppression; }
 }

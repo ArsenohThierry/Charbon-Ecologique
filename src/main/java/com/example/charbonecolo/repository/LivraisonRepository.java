@@ -37,7 +37,7 @@ public interface LivraisonRepository extends JpaRepository<LivraisonModel, Integ
             JOIN livraison_statuts ls ON ls.id = sl.id_livraisons_statuts
             ORDER BY sl.id_livraison, sl.date_statuts_livraison DESC
         ) dernier_statut ON dernier_statut.id_livraison = l.id
-        WHERE 1=1
+        WHERE l.date_suppression IS NULL
         AND (CAST(:#{#cri.dateLivMin} AS date) IS NULL OR CAST(l.date_livraison AS date) >= CAST(:#{#cri.dateLivMin} AS date))
         AND (CAST(:#{#cri.dateLivMax} AS date) IS NULL OR CAST(l.date_livraison AS date) <= CAST(:#{#cri.dateLivMax} AS date))
         AND (CAST(:#{#cri.statut} AS integer) IS NULL OR dernier_statut.libelle = (SELECT ls2.libelle FROM livraison_statuts ls2 WHERE ls2.id = CAST(:#{#cri.statut} AS integer)))
@@ -63,7 +63,8 @@ public interface LivraisonRepository extends JpaRepository<LivraisonModel, Integ
             JOIN livraison_statuts ls ON ls.id = sl.id_livraisons_statuts
             ORDER BY sl.id_livraison, sl.date_statuts_livraison DESC
         ) dernier_statut ON dernier_statut.id_livraison = l.id
-        WHERE dernier_statut.libelle = 'Annulé'
+        WHERE l.date_suppression IS NULL
+          AND dernier_statut.libelle = 'Annulé'
         ORDER BY l.date_livraison DESC
         """, nativeQuery = true)
     List<Object[]> findLivraisonsAnnulees();

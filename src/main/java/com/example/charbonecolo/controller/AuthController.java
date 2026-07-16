@@ -90,17 +90,19 @@ public class AuthController {
     }
 
     @GetMapping("/dashboard")
-    public String dashboard(HttpSession session, Model model) {
+    public String dashboard(HttpSession session, Model model,
+                            @RequestParam(defaultValue = "MENSUEL") String periode) {
         UtilisateurModel user = (UtilisateurModel) session.getAttribute("user");
         if (user == null) {
             return "redirect:/login";
         }
         model.addAttribute("user", user);
+        model.addAttribute("periode", periode);
 
         if ("STOCK_MANAGER".equals(user.getRole().getLibelle())) {
             model.addAttribute("nombreLotsFinis", mouvementStockService.getNombreLotsFinis());
             model.addAttribute("nombreFournisseursActifs", fournisseurService.getNombreFournisseursActifs());
-            model.addAttribute("mouvementsParMois", mouvementStockService.getMouvementsParMois());
+            model.addAttribute("mouvementsParMois", mouvementStockService.getMouvementsParPeriode(periode));
             return "stitch/module_stock/dashboard";
         }
 
@@ -116,13 +118,13 @@ public class AuthController {
             model.addAttribute("totalEntrees", journalFinancierService.calculerTotalEntrees(debut, fin));
             model.addAttribute("totalSorties", journalFinancierService.calculerTotalSorties(debut, fin));
             model.addAttribute("solde", journalFinancierService.calculerSolde());
-            model.addAttribute("evolutionCA", journalFinancierService.evolutionMensuelleCA());
+            model.addAttribute("evolutionCA", journalFinancierService.evolutionCAParPeriode(periode));
 
             model.addAttribute("stockRestant", mouvementStockService.getStockRestantGlobal());
             model.addAttribute("nombreLotsFinis", mouvementStockService.getNombreLotsFinis());
             model.addAttribute("alertesActives", mouvementStockService.getAlertesActives());
             model.addAttribute("nbAlertes", mouvementStockService.countAlertStock());
-            model.addAttribute("mouvementsParMois", mouvementStockService.getMouvementsParMois());
+            model.addAttribute("mouvementsParMois", mouvementStockService.getMouvementsParPeriode(periode));
 
             model.addAttribute("nombreFournisseursActifs", fournisseurService.getNombreFournisseursActifs());
             model.addAttribute("nbProduits", produitService.findAll().size());

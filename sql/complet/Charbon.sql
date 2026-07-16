@@ -103,6 +103,7 @@ CREATE TABLE type_matiere_premiere (
     libelle         VARCHAR(150) NOT NULL,
     prix_unitaire   NUMERIC(10,2) NOT NULL,
     id_fournisseur  INTEGER NOT NULL,
+    rendement       NUMERIC(5,2) NOT NULL DEFAULT 1.00,  -- ratio matière → produit
     date_ajout      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     actif           BOOLEAN NOT NULL DEFAULT TRUE,
 
@@ -649,6 +650,23 @@ EXECUTE FUNCTION apres_insertion_livraison();
 
 
 -- ============================================================================
+-- 09-BIS Modifiction des tables 
+-- ============================================================================
+
+-- Soft delete pour toutes les entités majeures
+-- Chaque table reçoit une colonne date_suppression TIMESTAMP
+-- Les lignes "supprimées" ont date_suppression != NULL
+
+ALTER TABLE produit ADD COLUMN date_suppression TIMESTAMP DEFAULT NULL;
+ALTER TABLE employe ADD COLUMN date_suppression TIMESTAMP DEFAULT NULL;
+ALTER TABLE clients ADD COLUMN date_suppression TIMESTAMP DEFAULT NULL;
+ALTER TABLE lot_production ADD COLUMN date_suppression TIMESTAMP DEFAULT NULL;
+ALTER TABLE emploi ADD COLUMN date_suppression TIMESTAMP DEFAULT NULL;
+ALTER TABLE livraison ADD COLUMN date_suppression TIMESTAMP DEFAULT NULL;
+ALTER TABLE mouvement_stock ADD COLUMN date_suppression TIMESTAMP DEFAULT NULL;
+ALTER TABLE utilisateur ADD COLUMN date_suppression TIMESTAMP DEFAULT NULL;
+
+-- ============================================================================
 -- 10. DONNÉES DE RÉFÉRENCE (Reference Data)
 -- ============================================================================
 
@@ -681,14 +699,14 @@ INSERT INTO motif_sortie (libelle) VALUES
     ('Suppression');
 
 -- --- Statuts de lot de production (avec ordre de progression) ---
-INSERT INTO lot_statuts (libelle, ordre) VALUES
-    ('En preparation', 10),
-    ('Broyage',        20),
-    ('Melange',        30),
-    ('Pressage',       40),
-    ('Sechage',         50),
-    ('Termine',        60),
-    ('En stock',       70);
+INSERT INTO lot_statuts (id, libelle, ordre) VALUES
+    (10, 'En preparation', 10),
+    (20, 'Broyage',        20),
+    (30, 'Melange',        30),
+    (40, 'Pressage',       40),
+    (50, 'Sechage',         50),
+    (60, 'Termine',        60),
+    (70, 'En stock',       70);
 
 -- --- Statuts de commande ---
 INSERT INTO commande_statuts (id, libelle) VALUES
@@ -765,9 +783,9 @@ OVERRIDING SYSTEM VALUE
 VALUES (9999, 'Inconnu', '2000-01-01', false);
 
 -- --- Matière première spéciale "Inconnu" ---
-INSERT INTO type_matiere_premiere (id, reference, libelle, prix_unitaire, id_fournisseur, date_ajout, actif)
+INSERT INTO type_matiere_premiere (id, reference, libelle, prix_unitaire, rendement, id_fournisseur, date_ajout, actif)
 OVERRIDING SYSTEM VALUE
-VALUES (999, 'NO_REF', 'Inconnu', 0, 9999, '2000-01-01', false);
+VALUES (999, 'NO_REF', 'Inconnu', 0, 0, 9999, '2000-01-01', false);
 
 
 -- ============================================================================
@@ -782,10 +800,10 @@ VALUES
     ('AgriRésines',      'info@agriresines.mg', '0342223344');
 
 -- --- Matières premières ---
-INSERT INTO type_matiere_premiere (reference, libelle, prix_unitaire, id_fournisseur) VALUES
-    ('MAT-001', 'Feuille de maïs',     500.00,  1),
-    ('MAT-002', 'Résidus de bois',      300.00,  2),
-    ('MAT-003', 'Résine naturelle',     800.00,  3);
+INSERT INTO type_matiere_premiere (reference, libelle, prix_unitaire, rendement, id_fournisseur) VALUES
+    ('MAT-001', 'Feuille de maïs',     500.00, 0.40,  1),
+    ('MAT-002', 'Résidus de bois',      300.00, 0.40,  2),
+    ('MAT-003', 'Résine naturelle',     800.00, 0.35,  3);
 
 -- --- Produits finis ---
 INSERT INTO produit (id, nom, pu) VALUES

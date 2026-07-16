@@ -170,6 +170,21 @@ public class JournalFinancierService {
         return journalRepo.evolutionMensuelleCA(debut);
     }
 
+    @Transactional(readOnly = true)
+    public List<Map<String, Object>> evolutionCAParPeriode(String periode) {
+        return switch (periode.toUpperCase()) {
+            case "HEBDO" -> {
+                LocalDateTime d = LocalDateTime.now().minusWeeks(12).withHour(0).withMinute(0);
+                yield journalRepo.evolutionHebdomadaireCA(d);
+            }
+            case "ANNUEL" -> {
+                LocalDateTime d = LocalDateTime.now().minusYears(5).withDayOfYear(1).withHour(0).withMinute(0);
+                yield journalRepo.evolutionAnnuelleCA(d);
+            }
+            default -> evolutionMensuelleCA();
+        };
+    }
+
     // ================================================================
     // Vérification doublons
     // ================================================================
@@ -345,18 +360,18 @@ public class JournalFinancierService {
             String typeSource,
             Long idSource) {
 
-        TypeJournalModel typeAchat = typeJournalRepo.findByCode("ACH")
-                .orElseThrow(() -> new RuntimeException("Type journal ACH introuvable"));
+        TypeJournalModel typeVente = typeJournalRepo.findByCode("VTE")
+                .orElseThrow(() -> new RuntimeException("Type journal VTE introuvable"));
 
         OrigineModel origineFrais = origineRepo.findByCode("FRAIS_LIVRAISON")
                 .orElseThrow(() -> new RuntimeException("Origine FRAIS_LIVRAISON introuvable"));
 
         return enregistrer(creerEcriture(
             dateOperation,
-            typeAchat,
+            typeVente,
             origineFrais,
-            BigDecimal.ZERO,
             montant,
+            BigDecimal.ZERO,
             reference,
             description,
             typeSource,

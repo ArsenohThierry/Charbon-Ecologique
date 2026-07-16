@@ -3,9 +3,14 @@ package com.example.charbonecolo.model;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Table(name = "employe")
+@SQLDelete(sql = "UPDATE employe SET date_suppression = CURRENT_TIMESTAMP WHERE id = ?")
+@SQLRestriction("date_suppression IS NULL")
 public class EmployeModel {
 
     @Id
@@ -31,6 +36,9 @@ public class EmployeModel {
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal indemnite = BigDecimal.ZERO;
 
+    @Column(name = "date_suppression")
+    private LocalDateTime dateSuppression;
+
     public EmployeModel() {}
 
     public Integer getId() { return id; }
@@ -55,4 +63,7 @@ public class EmployeModel {
     public BigDecimal getTotalSalaire() {
         return getSalaireBase().add(prime).add(indemnite);
     }
+
+    public LocalDateTime getDateSuppression() { return dateSuppression; }
+    public void setDateSuppression(LocalDateTime dateSuppression) { this.dateSuppression = dateSuppression; }
 }

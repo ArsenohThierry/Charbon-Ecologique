@@ -1,9 +1,9 @@
 package com.example.charbonecolo.controller;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import jakarta.validation.Valid;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -13,14 +13,17 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+
+import com.example.charbonecolo.dto.ImportResult;
+import com.example.charbonecolo.dto.PageLink;
 import com.example.charbonecolo.model.FournisseurModel;
 import com.example.charbonecolo.service.FournisseurService;
-import com.example.charbonecolo.util.ImportResult;
 
 @Controller
 @RequestMapping("/fournisseur")
@@ -41,25 +44,7 @@ public class FournisseurController {
     public List<String> allowedSortFields() {
         return ALLOWED_SORT_FIELDS;
     }
-
-    public record PageLink(int index, int number, boolean current, boolean ellipsis) {
-    }
-
-    /**
-     * Tri simple : String unique.
-     * null = retour au tri par défaut.
-     */
-    public static String toggleSortColumn(String currentSort, String column) {
-        if (currentSort != null && currentSort.startsWith(column + ",")) {
-            String dir = currentSort.substring(column.length() + 1);
-            if ("asc".equalsIgnoreCase(dir)) {
-                return column + ",desc";
-            }
-            return null; // 3e clic : suppression
-        }
-        return column + ",asc";
-    }
-
+    
     private List<PageLink> buildPagination(int currentPage, int totalPages) {
         List<PageLink> links = new ArrayList<>();
         links.add(new PageLink(0, 1, currentPage == 0, false));
@@ -82,35 +67,32 @@ public class FournisseurController {
 
     @PostMapping("/import")
     public String traiterImportCsv(@RequestParam("fichier") MultipartFile fichier,
-            RedirectAttributes attributsRedirect) {
+            RedirectAttributes rad) {
         try {
             ImportResult resultat = fournisseurService.importerFournisseursCsv(fichier);
-
             if (resultat.getSuccessCount() > 0) {
-                attributsRedirect.addFlashAttribute("success",
+                rad.addFlashAttribute("success",
                         resultat.getSuccessCount() + " fournisseur(s) importé(s).");
             }
             if (resultat.hasWarnings()) {
-                attributsRedirect.addFlashAttribute("warnings", resultat.getWarnings());
+                rad.addFlashAttribute("warnings", resultat.getWarnings());
             }
             if (resultat.hasErrors()) {
-                attributsRedirect.addFlashAttribute("importErrors", resultat.getErrors());
+                rad.addFlashAttribute("importErrors", resultat.getErrors());
                 return "redirect:/fournisseur/import";
             }
-
             return "redirect:/fournisseur/home";
 
         } catch (IllegalArgumentException e) {
-            attributsRedirect.addFlashAttribute("error", e.getMessage());
-            return "redirect:/fournisseur/import";
+            rad.addFlashAttribute("error", e.getMessage());
         } catch (IOException e) {
-            attributsRedirect.addFlashAttribute("error", "Erreur lecture fichier : " + e.getMessage());
-            return "redirect:/fournisseur/import";
+            rad.addFlashAttribute("error", "Erreur lecture fichier : " + e.getMessage());
         }
+        return "redirect:/fournisseur/import";
     }
 
     @GetMapping("/home")
-    public String getFournisseurList(
+    public ModelAndView getFournisseurList(
             @RequestParam(defaultValue = "") String nom,
             @RequestParam(defaultValue = "") String email,
             @RequestParam(defaultValue = "") String telephone,
@@ -118,8 +100,7 @@ public class FournisseurController {
             @RequestParam(required = false) String actif,
             @RequestParam(required = false) String sort, // ← String simple, pas List
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            Model model) {
+            @RequestParam(defaultValue = "10") int size) {
 
         Boolean actifBool = (actif != null && !actif.isBlank()) ? Boolean.parseBoolean(actif) : null;
 
@@ -148,45 +129,47 @@ public class FournisseurController {
         Page<FournisseurModel> result = fournisseurService.searchFournisseurs(
                 nom, email, telephone, adresse, actifBool, pageable);
 
-        if (!model.containsAttribute("fournisseurModel")) {
-            model.addAttribute("fournisseurModel", new FournisseurModel());
+        ModelAndView mav = new ModelAndView("fournisseur/list");
+        mav.addObject("listeFournisseurs", result.getContent());
+        mav.addObject("pageNumber", result.getNumber());
+        mav.addObject("pageSize", pageSize);
+        mav.addObject("totalPages", result.getTotalPages());
+        mav.addObject("totalElements", result.getTotalElements());
+        mav.addObject("hasPrevious", result.hasPrevious());
+        mav.addObject("hasNext", result.hasNext());
+        mav.addObject("pagination", buildPagination(result.getNumber(), result.getTotalPages()));
+        mav.addObject("nom", nom);
+        mav.addObject("email", email);
+        mav.addObject("telephone", telephone);
+        mav.addObject("adresse", adresse);
+        mav.addObject("actif", actif);
+        mav.addObject("sortParam", sortParam); 
+        return mav;
+    }
+
+    @GetMapping("/form")
+    public String getForm(Model model) {
+        if(!model.containsAttribute("fournisseurModel")){
+            System.out.println("OUi il contient deja");
+            model.addAttribute("fournisseurModel", new FournisseurModel());            
         }
-
-        model.addAttribute("listeFournisseurs", result.getContent());
-        model.addAttribute("pageNumber", result.getNumber());
-        model.addAttribute("pageSize", pageSize);
-        model.addAttribute("totalPages", result.getTotalPages());
-        model.addAttribute("totalElements", result.getTotalElements());
-        model.addAttribute("hasPrevious", result.hasPrevious());
-        model.addAttribute("hasNext", result.hasNext());
-        model.addAttribute("pagination", buildPagination(result.getNumber(), result.getTotalPages()));
-
-        model.addAttribute("nom", nom);
-        model.addAttribute("email", email);
-        model.addAttribute("telephone", telephone);
-        model.addAttribute("adresse", adresse);
-        model.addAttribute("actif", actif);
-        model.addAttribute("sortParam", sortParam); // ← String simple
-
-        return "fournisseur/fournisseurs";
+        return "fournisseur/form";
     }
 
     @GetMapping("/update/{id}")
-    public String getUpdateForm(@PathVariable("id") Integer id, RedirectAttributes rad) {
+    public String getUpdateForm(@PathVariable("id") Integer id, Model model, RedirectAttributes rad) {
         if (id <= 0) {
             rad.addFlashAttribute("error", "Identifiant du fournisseur invalide.");
-            return "redirect:/fournisseur/home";
+            return "redirect:/fournisseur/form";
         }
 
         try {
-            FournisseurModel fournisseurModel = fournisseurService.getById(id);
-            rad.addFlashAttribute("fournisseurModel", fournisseurModel);
+            FournisseurModel fournisseurModel = fournisseurService.getById(id).get();
+            model.addAttribute("fournisseurModel", fournisseurModel);
         } catch (NoSuchElementException e) {
-            rad.addFlashAttribute("error", "Action impossible : Element inexistant");
-        } catch (Exception e) {
-            rad.addFlashAttribute("error", "Une erreur est survenue lors de la récupération du fournisseur.");
+            rad.addFlashAttribute("error", String.format("Le fournisseur avec la reference %d n'existe pas" + id));
         }
-        return "redirect:/fournisseur/home";
+        return "fournisseur/form";
     }
 
     @PostMapping("/add")
@@ -196,44 +179,21 @@ public class FournisseurController {
             Model model,
             RedirectAttributes rad) {
         if (result.hasErrors()) {
-            model.addAttribute("listeFournisseurs", fournisseurService.getAll());
-            return "fournisseur/fournisseurs";
+            return "fournisseur/form";
         }
+
         try {
-            fournisseurModel.setDate_creation(LocalDateTime.now());
-
+            String message = fournisseurModel.getId() != null && fournisseurModel.getId().intValue() > 0
+                    ? "Le fournisseur a ete modifie avec succes"
+                    : "Le fournisseur a ete ajoute avec succes";
             fournisseurService.persistFournisseur(fournisseurModel);
-            rad.addFlashAttribute("success", "Le fournisseur a été ajouté avec succès !");
-        } catch (Exception e) {
-            rad.addFlashAttribute("error", "Une erreur est survenue lors de l'ajout.");
-        }
-        return "redirect:/fournisseur/home";
-    }
-
-    @PostMapping("/update")
-    public String updateFournisseur(
-            @Valid @ModelAttribute("fournisseurModel") FournisseurModel fournisseurModel,
-            BindingResult result,
-            Model model,
-            RedirectAttributes rad) {
-        if (fournisseurModel.getId() == null) {
-            rad.addFlashAttribute("error", "Impossible de modifier un fournisseur sans identifiant.");
+            rad.addFlashAttribute("success", message);
             return "redirect:/fournisseur/home";
+        } catch (DataIntegrityViolationException e) {
+            rad.addFlashAttribute("error", e.getMessage());
         }
-        if (result.hasErrors()) {
-            model.addAttribute("listeFournisseurs", fournisseurService.getAll());
-            return "fournisseur/fournisseurs";
-        }
-        try {
-            fournisseurService.getById(fournisseurModel.getId());
-            fournisseurService.persistFournisseur(fournisseurModel);
-            rad.addFlashAttribute("success", "Le fournisseur a été modifié avec succès !");
-        } catch (NoSuchElementException e) {
-            rad.addFlashAttribute("error", "Action impossible : Element inexistant");
-        } catch (Exception e) {
-            rad.addFlashAttribute("error", "Une erreur est survenue lors de la modification.");
-        }
-        return "redirect:/fournisseur/home";
+        rad.addFlashAttribute("fournisseurModel", fournisseurModel);
+        return "redirect:/fournisseur/form";
     }
 
     @GetMapping("/delete/{id}")
@@ -244,16 +204,13 @@ public class FournisseurController {
         }
 
         try {
-            fournisseurService.getById(id);
             fournisseurService.deleteById(id);
             rad.addFlashAttribute("success", "Le fournisseur a été supprimé avec succès.");
         } catch (NoSuchElementException e) {
             rad.addFlashAttribute("error", "Action impossible : Element inexistant");
-        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+        } catch (DataIntegrityViolationException e) {
             rad.addFlashAttribute("error",
                     "Impossible de supprimer ce fournisseur car il est lié à des matières premières.");
-        } catch (Exception e) {
-            rad.addFlashAttribute("error", "Une erreur inconnue est survenue lors de la suppression.");
         }
         return "redirect:/fournisseur/home";
     }
