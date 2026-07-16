@@ -122,8 +122,11 @@ public class MouvementStockService {
     }
 
     public List<MotifSortieModel> getAllMotifsSortie() {
-        return motifSortieRepository.findAll();
+        // return motifSortieRepository.findAll();
+        return motifSortieRepository.getMotifs();
     }
+
+    
 
     public List<ProduitModel> getAllProduits() {
         return produitRepository.findAll();

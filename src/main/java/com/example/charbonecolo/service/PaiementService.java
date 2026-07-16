@@ -156,6 +156,7 @@ public class PaiementService {
         FactureModel toSave = new FactureModel();
         toSave.setPaiement(paiement);
         toSave.setReference(refFacture);
+        toSave.setDateFacture(LocalDateTime.now());
         FactureModel saved = factureRepository.save(toSave);
         List<FactureDetailModel> factureDetails = new ArrayList<>();
         for (DetailCommandeModel detail : details) {

@@ -2140,11 +2140,6 @@ input:where([type='file']):focus {
   background-color: rgb(226 226 226 / var(--tw-bg-opacity, 1));
 }
 
-.bg-slate-800 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(30 41 59 / var(--tw-bg-opacity, 1));
-}
-
 .bg-surface-container {
   --tw-bg-opacity: 1;
   background-color: rgb(238 238 238 / var(--tw-bg-opacity, 1));

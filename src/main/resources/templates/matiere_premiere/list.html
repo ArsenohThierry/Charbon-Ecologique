@@ -161,7 +161,7 @@
                             <th class="px-6 py-4">
                                 <a th:href="@{/matiere/home(libelle=${libelle}, prixMin=${prixMin}, prixMax=${prixMax}, idFournisseur=${idFournisseur}, dateDebut=${dateDebut}, dateFin=${dateFin}, actif=${actif}, page=0, size=${pageSize}, sort=${@thymeleafUtils.toggleSortColumn(sortParam, 'libelle')})}"
                                     class="flex items-center gap-1 hover:text-brand-dark">
-                                    <span>Libellé_Reference</span>
+                                    <span>Libellé   Reference</span>
                                     <span th:if="${sortParam != null and #strings.startsWith(sortParam, 'libelle,')}"
                                         th:text="${#strings.endsWith(sortParam, 'asc') ? '▲' : '▼'}"
                                         class="text-brand-success"></span>
@@ -214,7 +214,7 @@
                     <tbody class="divide-y divide-gray-100 text-sm" th:if="${!#lists.isEmpty(listeMatieres)}">
                         <tr th:each="m : ${listeMatieres}" class="hover:bg-gray-50 transition-colors">
                             <td class="px-6 py-4 font-medium text-gray-700 truncate max-w-[8rem]"
-                                th:text="|#${m.libelle}_${m.reference}|" th:title="${m.reference}"></td>
+                                th:text="|#${m.libelle}     ${m.reference}|" th:title="${m.reference}"></td>
                             <td class="px-6 py-4 text-gray-600 truncate max-w-[10rem] text-right"
                                 th:text="${m.prixUnitaire} + ' Ar'"></td>
                             <td class="px-6 py-4 text-gray-600 text-right"
