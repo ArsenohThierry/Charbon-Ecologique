@@ -316,7 +316,9 @@ public class LivraisonService {
                 entreeStockDTO.setDateEntree(LocalDate.now());
                 entreeStockDTO.setIdLot(lotSaved.getId());
                 entreeStockDTO.setQuantite(reste.getReste());
-                mouvementStockService.saveEntreeStock(entreeStockDTO);
+                if(reste.getReste() != null && reste.getReste() != 0) {
+                    mouvementStockService.saveEntreeStock(entreeStockDTO);
+                }
                 reste.setReste(0);
                 livraisonResteRepository.save(reste);
         }
