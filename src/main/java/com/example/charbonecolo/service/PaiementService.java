@@ -191,39 +191,16 @@ public class PaiementService {
         Long factureId = Long.valueOf(saved.getId());
         LocalDateTime maintenant = LocalDateTime.now();
 
+        BigDecimal montantTotal = montantCmd.add(
+                fraisLivraison != null ? fraisLivraison : BigDecimal.ZERO);
+
         journalFinancierService.enregistrerVente(
                 maintenant,
-                montantCmd,
+                montantTotal,
                 commande.getReference(),
                 "Facture n°" + refFacture + " — " + commande.getClient().getNom(),
                 "FACTURE",
                 factureId
-        );
-
-        if (fraisLivraison != null && fraisLivraison.compareTo(BigDecimal.ZERO) > 0) {
-            journalFinancierService.enregistrerFraisLivraison(
-                    maintenant,
-                    fraisLivraison,
-                    commande.getReference(),
-                    "Frais de livraison — Commande " + commande.getReference(),
-                    "FACTURE",
-                    factureId
-            );
-        }
-
-        String methodeLibelle = jdbcTemplate.queryForObject(
-                "SELECT libelle FROM methode_paiement WHERE id = ?",
-                String.class, methodePaiementId);
-        String typeJournalPaiement = "Espèces".equals(methodeLibelle) ? "CSS" : "BNQ";
-
-        journalFinancierService.enregistrerPaiement(
-                maintenant,
-                montantCmd.add(fraisLivraison != null ? fraisLivraison : BigDecimal.ZERO),
-                refPaiement,
-                "Paiement " + methodeLibelle + " — Commande " + commande.getReference(),
-                typeJournalPaiement,
-                "PAIEMENT",
-                paiement.getId().longValue()
         );
 
         Map<String, Object> result = new HashMap<>();

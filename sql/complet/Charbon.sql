@@ -699,14 +699,14 @@ INSERT INTO motif_sortie (libelle) VALUES
     ('Suppression');
 
 -- --- Statuts de lot de production (avec ordre de progression) ---
-INSERT INTO lot_statuts (libelle, ordre) VALUES
-    ('En preparation', 10),
-    ('Broyage',        20),
-    ('Melange',        30),
-    ('Pressage',       40),
-    ('Sechage',         50),
-    ('Termine',        60),
-    ('En stock',       70);
+INSERT INTO lot_statuts (id, libelle, ordre) VALUES
+    (10, 'En preparation', 10),
+    (20, 'Broyage',        20),
+    (30, 'Melange',        30),
+    (40, 'Pressage',       40),
+    (50, 'Sechage',         50),
+    (60, 'Termine',        60),
+    (70, 'En stock',       70);
 
 -- --- Statuts de commande ---
 INSERT INTO commande_statuts (id, libelle) VALUES
