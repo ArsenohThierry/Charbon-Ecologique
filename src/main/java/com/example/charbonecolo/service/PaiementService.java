@@ -189,13 +189,12 @@ public class PaiementService {
         statutCommandeRepository.save(sc);
 
         Long factureId = Long.valueOf(saved.getId());
-        LocalDateTime maintenant = LocalDateTime.now();
 
         BigDecimal montantTotal = montantCmd.add(
                 fraisLivraison != null ? fraisLivraison : BigDecimal.ZERO);
 
         journalFinancierService.enregistrerVente(
-                maintenant,
+                commande.getDateCommande() != null ? commande.getDateCommande() : LocalDateTime.now(),
                 montantTotal,
                 commande.getReference(),
                 "Facture n°" + refFacture + " — " + commande.getClient().getNom(),
