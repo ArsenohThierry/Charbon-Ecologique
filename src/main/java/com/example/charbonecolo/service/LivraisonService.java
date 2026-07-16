@@ -307,7 +307,7 @@ public class LivraisonService {
                 LotProductionModel lotSaved = lotProductionRepository.save(modified);
                 StatutsLotProductionModel statutsLotProductionModel = new StatutsLotProductionModel();
                 LotStatutsModel lotStatutsModel = new LotStatutsModel();
-                lotStatutsModel.setId(3);
+                lotStatutsModel.setId(2);
                 statutsLotProductionModel.setLotStatuts(lotStatutsModel);
                 statutsLotProductionModel.setLotProduction(lotSaved);
                 statutsLotProductionModel.setDateStatut(LocalDateTime.now());
